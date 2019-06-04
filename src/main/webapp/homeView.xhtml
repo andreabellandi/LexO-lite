@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="content">
+
+            <div style="text-align: center; position:absolute; top:9%; width: 100%">
+                <span style="font-size: 18px; font-weight: bold;">Institute for Computational Linguistics (ILC)</span><br/>
+                <span style="font-size: 18px;">"A. Zampolli" CNR - Pisa, Italy</span><br/>
+                <span style="font-size: 18px;"><a style="color: blue" href="http://www.ilc.cnr.it" target="blank">www.ilc.cnr.it</a></span><br/>
+            </div>
+
+            <div style="text-align: center; position:absolute; top: 22%; width: 100%">
+                <h:form>
+                    <p:commandLink action="#{templateController.lexiconEditorAction()}" ajax="false" onclick="PF('loadingDialog').show()">
+                        <p:graphicImage value="/resources/image/LexOIcon.png" height="150px" width="150px"/>
+                    </p:commandLink>
+                    <br/>
+                    <span style="font-size: 22px; font-weight: bold; text-align: center">LexO-lite v1.0</span><br/>
+                </h:form>
+            </div>
+
+            <div style="text-align: center; font-weight: bold; position:absolute; bottom:8%; width: 100%">
+                <span style="font-size: 16px;">Instiute for Computational Linguistics "A. Zampolli", Pisa</span><br/>
+                <span style="font-size: 16px;"><a style="color: blue" href="http://ilc.cnr.it/" target="blank">http://ilc.cnr.it/</a></span><br/>
+            </div>
+
+        </ui:define>
+    </ui:composition>
+
+</html>

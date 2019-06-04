@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:form id="accountToolbarForm">
+        <p:toolbar styleClass="accountToolbar" >
+            <f:facet name="left">
+                <p:commandButton styleClass="accountToolbarButton" icon="ui-icon-plus" value="#{label['account.toolbar.new']}"
+                                 disabled="#{accountControllerToolbar.newDisabled}"
+                                 action="#{accountControllerToolbar.newAction()}" 
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":accountTableForm :accountToolbarForm :systemMessage"/>
+
+                <p:commandButton styleClass="accountToolbarButton" icon="ui-icon-trash" value="#{label['account.toolbar.remove']}"
+                                 disabled="#{accountControllerToolbar.removeDisabled}"
+                                 action="#{accountControllerToolbar.removeAction()}" 
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":accountTableForm :accountToolbarForm :systemMessage">
+                    <p:confirm message="#{label['account.toolbar.removeConfirm']}" icon="ui-icon-alert" />
+                </p:commandButton>
+            </f:facet>
+            <f:facet name="right">
+                <p:commandButton styleClass="accountToolbarButton" icon="ui-icon-arrowreturnthick-1-w" title="#{label['account.toolbar.undo']}"
+                                 disabled="#{accountControllerToolbar.undoDisabled}"
+                                 action="#{accountControllerToolbar.undoAction()}" 
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":accountToolbarForm :accountTableForm :systemMessage"/>
+
+                <p:commandButton styleClass="accountToolbarButton" icon="ui-icon-arrowreturnthick-1-e" title="#{label['account.toolbar.redo']}"
+                                 disabled="#{accountControllerToolbar.redoDisabled}"
+                                 action="#{accountControllerToolbar.redoAction()}" 
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":accountToolbarForm :accountTableForm :systemMessage"/>
+            </f:facet>
+        </p:toolbar>
+    </h:form> 
+
+</ui:composition>

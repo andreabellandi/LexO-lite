@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+
+    <h:form id="lexiconTabViewForm">
+
+        <p:panel id="tabViewPanel" styleClass="lexiconTabViewPanel" header="Multilingual Lexicon" 
+                 widgetVar="languageHeader" style="margin-bottom:20px; overflow: hidden; min-width: 460px;">
+
+            <p:tabView id="tabView" widgetVar="EditDictionaryTabView" activeIndex="#{lexiconControllerTabViewList.activeTab}" styleClass="lexiconTabView">
+                <p:tab title="Lemma" id="tabViewLemma" >
+                    <h:panelGrid id="lemmaGrid" columns="4" style="padding-top: 10px;" rendered="#{lexiconControllerTabViewList.enabledFilter}">
+                        <p:inputText id="lemmaFilter" value="#{lexiconControllerTabViewList.lemmaField}">
+                            <p:ajax event="keyup" listener="#{lexiconControllerTabViewList.lemmaKeyupFilterEvent}" 
+                                    update="lexiconTabViewForm:tabView:lemmaTree lexiconTabViewForm:tabView:lemmaFilterLabel" />
+                        </p:inputText>
+                        <p:watermark id="lemmaFilterWatermark" class="filterLabel" for="lemmaFilter" value="Search for lemma"/>
+                        <p:commandButton icon="ui-icon-refresh" actionListener="#{lexiconControllerTabViewList.searchReset('Lemma')}"   
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" title="Refresh lemmas list"
+                                         update="lexiconTabViewForm:tabView:lemmaTree lexiconTabViewForm:tabView:lemmaGrid"/>
+                        <p:outputLabel id="lemmaFilterLabel" value="#{lexiconControllerTabViewList.lemmaCounter}"                 styleClass="filterLabel" for="lemmaFilter"/>
+                    </h:panelGrid>
+                    <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+
+                    <ui:include src="/lexiconViewLemmaFilter.xhtml"/>
+                    <p:scrollPanel  id="scrollPanelLemmaTree" mode="native"  styleClass="roundedBox">
+                        <p:tree id="lemmaTree" value="#{lexiconControllerTabViewList.lemmaRoot}" 
+                                var="lemma" selectionMode="single" style="width: 100%;"
+                                selection="#{lexiconControllerTabViewList.selection}">
+                            <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
+                                    onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                    update=":editViewTab :systemMessage" >
+                            </p:ajax>
+                            <f:attribute name="LexicalEntryType" value="Lemma" />
+                            <p:treeNode id="treeNodeLemma" >
+                                <span class="colorCircle" style="background-color:#990000;"/>
+                                <h:outputText styleClass="#{!lemma.verified.equals('false') ? 'colorCircleTextLemmaVerified' : 'colorCircleText'}" value="#{lemma.name}"/>
+                                <span>
+                                    <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(lemma.language)}" value="@#{lemma.language}"/>
+                                </span>
+                            </p:treeNode>
+                        </p:tree>
+                    </p:scrollPanel>
+                </p:tab>
+                <p:tab title="Other Form" id="tabViewVariant" >
+                    <h:panelGrid id="formGrid" columns="4" style="padding-top: 10px;" 
+                                 rendered="#{lexiconControllerTabViewList.enabledFilter}">
+                        <p:inputText id="formFilter" value="#{lexiconControllerTabViewList.formField}">
+                            <p:ajax event="keyup" listener="#{lexiconControllerTabViewList.formKeyupFilterEvent}" 
+                                    update="lexiconTabViewForm:tabView:formTree lexiconTabViewForm:tabView:formFilterLabel" />
+                        </p:inputText>
+                            <p:watermark id="formFilterWatermark" class="filterLabel" for="formFilter" value="Search for variant"/>                        
+                            <p:commandButton icon="ui-icon-refresh" actionListener="#{lexiconControllerTabViewList.searchReset('Form')}" 
+                                             onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"  title="Refresh form list"
+                                             update="lexiconTabViewForm:tabView:formTree lexiconTabViewForm:tabView:formGrid"/>
+                            <p:outputLabel id="formFilterLabel" value="#{lexiconControllerTabViewList.formCounter}" styleClass="filterLabel" for="formFilter"/>
+                    </h:panelGrid>
+                    <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+                    <ui:include src="/lexiconViewFormFilter.xhtml"/>
+                    <p:scrollPanel  id="scrollPanelFormTree" mode="native" style="overflow-x: hidden; overflow-y: auto;" styleClass="roundedBox">
+                        <p:tree id="formTree" value="#{lexiconControllerTabViewList.formRoot}" var="form" selectionMode="single" 
+                                selection="#{lexiconControllerTabViewList.selection}">
+                            <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
+                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    update=":editViewTab :systemMessage"/>
+                            <f:attribute name="LexicalEntryType" value="Form" />
+                            <p:treeNode>
+                                <span class="colorCircle" style="background-color:#7286ad" />
+                                
+                                <h:outputText styleClass="#{!form.verified.equals('false') ? 'colorCircleTextVariantVerified' : 'colorCircleText'}" value="#{form.name}"/>
+                                <span>
+                                    <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(form.language)}" value="@#{form.language}"/>
+                                </span>
+                            </p:treeNode>
+                        </p:tree>
+                    </p:scrollPanel>
+                </p:tab>
+
+                <p:tab title="Ontology" id="tabViewOntology" disabled="#{!lexiconControllerOntologyDetail.ontologyTabEnabled}">
+                    <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+                    <ui:include src="/lexiconViewOntologyFilter.xhtml"/>
+                    <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+                    <p:scrollPanel  id="scrollPanelOntologyTree" mode="native" style="overflow-x: hidden; overflow-y: auto;" styleClass="roundedBox">
+                        <p:tree id="ontoTree" value="#{lexiconControllerTabViewList.ontoRoot}" var="ontoClass" selectionMode="single"
+                                selection="#{lexiconControllerTabViewList.selection}" >
+                            <p:ajax event="select" listener="#{lexiconControllerTabViewList.onOntoSelect}"
+                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    update=":editViewTab :systemMessage"/>
+
+                            <f:attribute name="Onto" value="Onto"/>
+                            <p:treeNode>
+                                <span class="colorCircle" style="background-color:#C0C0C0;"/>
+                                <h:outputText styleClass="colorCircleText" value="#{ontoClass.name}"/>
+                            </p:treeNode>
+                        </p:tree>
+                    </p:scrollPanel>
+                </p:tab>
+            </p:tabView>
+        </p:panel>
+
+    </h:form> 
+</ui:composition>

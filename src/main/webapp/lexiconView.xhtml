@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="content">
+
+            <ui:include src="/lexiconViewLanguageDetail.xhtml"/>
+
+            <p:layout id="lexiconViewLayout" styleClass="layout" style="overflow: auto;">
+                <p:layoutUnit styleClass="layoutUnit" size="30%"  minSize="470" position="west" resizable="true">
+
+                    <p:layout style="overflow: hidden; position: relative; "   >
+
+                        <p:layoutUnit id="lexiconViewCenter" styleClass="layoutUnit"  position="center"  style="overflow-y: hidden" >
+                            <ui:include src="/lexiconViewTabViewList.xhtml"/>
+                        </p:layoutUnit>    
+
+                        <p:layoutUnit id="lexiconViewSouth" styleClass="layoutUnit" position="south" style="overflow-y: hidden" >
+                            <ui:include src="/lexiconViewTabViewToolbar.xhtml"/>
+                        </p:layoutUnit>    
+
+                    </p:layout>
+
+                </p:layoutUnit>
+
+                <p:layoutUnit id="LU_A" styleClass="layoutUnit" position="center" style="overflow-y: hidden;">
+
+                    <p:layout id="LU_LA">
+
+                        <p:layoutUnit id="LU_LAA" styleClass="layoutUnit" position="center"  style="overflow-y: hidden;">
+                            <ui:include src="/lexiconViewSearchFilter.xhtml"/>
+
+                            <p:tabView id="editViewTab" activeIndex="#{lexiconControllerLinkedLexicalEntryDetail.activeTab}" styleClass="lexiconTabView" cache="false" >
+                                <p:ajax event="tabClose" listener="#{lexiconControllerLinkedLexicalEntryDetail.unlockRelationalEntry}"/>
+                                <p:tab id="editTab" title="Edit" rendered="#{lexiconControllerTabViewList.editTabRendered}">
+                                    <p:scrollPanel id="editTabScroll" mode="native" style="overflow-x: auto; overflow-y: auto;">
+                                        <ui:include src="/lexiconViewLexicalEntryDetail.xhtml"/>
+                                    </p:scrollPanel>
+                                </p:tab>
+                                <p:tab id="graphicTab" title="Relational View" rendered="false">
+
+                                </p:tab>
+                                <p:tab id="viewTab" title="Dictionary View">
+                                    <p:scrollPanel id="dictViewTabScroll" mode="native" style="overflow-x: auto; overflow-y: auto;">
+                                        <ui:include src="/lexiconViewDictionary.xhtml"/>
+                                    </p:scrollPanel>
+                                </p:tab>
+                                <p:tab  id="detailViewTab" title="#{'Detail view of '.concat(lexiconControllerLinkedLexicalEntryDetail.lemma.formWrittenRepr)}" 
+                                       rendered="#{lexiconControllerLinkedLexicalEntryDetail.relationLemmaRendered}" closable="true">
+                                    <p:scrollPanel  id="scrollPaneldetailViewTab" mode="native"  style="overflow-y: auto">
+
+                                        <ui:include src="/lexiconViewLinkedLexicalEntryDetail.xhtml"/>
+                                    </p:scrollPanel>
+                                </p:tab>
+                            </p:tabView>
+
+                        </p:layoutUnit>
+
+                        <p:layoutUnit id="LU_LBA" styleClass="layoutUnit" position="south" style="overflow-y: hidden;">
+                            <ui:include src="/lexiconViewToolbar.xhtml"/>
+                        </p:layoutUnit>
+
+                    </p:layout>
+
+                </p:layoutUnit>
+
+            </p:layout>
+        </ui:define>
+    </ui:composition>
+
+</html>

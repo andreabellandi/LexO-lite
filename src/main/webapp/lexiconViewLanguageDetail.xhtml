@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="newLanguagePanel" widgetVar="newLanguageDialog" header="#{label['newLanguage.header']}" resizable="false" closable="true"
+              modal="true">
+        <h:form>
+            <h:panelGrid columns="3" columnClasses="column">
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.name']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.langName}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langNameKeyupEvent}"
+                            update="newLangButtons"/>
+                </p:inputText>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.uri']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.uriCode}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langUriKeyupEvent}"
+                            update="newLangButtons"/>
+                </p:inputText>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.catalog']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerLanguageDetail.linguisticCatalog}">
+                    <f:selectItems value="#{lexiconControllerLanguageDetail.lingCatList}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.description']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.description}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langDescriptionKeyupEvent}"
+                            update="newLangButtons"/>
+                </p:inputText>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.creator']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.creator}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langCreatorKeyupEvent}"
+                            update="newLangButtons"/>
+                </p:inputText>
+
+                <h:panelGrid id="newLangButtons" columns="3" style="padding-top: 10px;">
+                    <p:commandButton icon="fa fa-save" 
+                                     actionListener="#{lexiconControllerLanguageDetail.save()}"
+                                     onstart="PF('loadingDialog').show();"
+                                     oncomplete="PF('newLanguageDialog').hide(); PF('loadingDialog').hide();"
+                                     update=":lexiconTabViewToolbarForm"/>
+                </h:panelGrid>
+
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property>
+        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.max_statements">200</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
+        <property name="hibernate.show_sql">false</property>
+<!--        <property name="hibernate.hbm2ddl.auto">validate</property>-->
+
+        <mapping class="it.cnr.ilc.lexolite.domain.SuperEntity"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.Account"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.AccountType"/>
+
+    </session-factory>
+</hibernate-configuration>

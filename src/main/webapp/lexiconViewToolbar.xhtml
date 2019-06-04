@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:form id="lexiconToolbarForm">
+        <p:toolbar styleClass="lexiconToolbar" >
+            <f:facet name="left">
+                <p:commandButton id="newButton" icon="ui-icon-triangle-1-s" value="New" type="button" styleClass="lexiconToolbarButton" 
+                                 disabled="#{!lexiconControllerToolbar.toolbarEnabled}"/>
+                <p:tieredMenu overlay="true" styleClass="lexiconTabView" trigger="newButton" my="left top" at="left top" style="width:120px">
+                    <p:menuitem value="Language" styleClass="lexiconTabView"
+                                actionListener="#{lexiconControllerToolbar.newLanguage()}"
+                                onstart="PF('loadingDialog').show();"
+                                oncomplete="PF('newLanguageDialog').show();PF('loadingDialog').hide();"
+                                update=":newLanguagePanel"/>
+                    <p:submenu styleClass="lexiconTabView" label="Lemma">
+                        <p:menuitem value="Word" styleClass="lexiconTabView" icon="fa fa-plus" action="#{lexiconControllerToolbar.newLemma('Word')}"
+                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm :editViewTab:lexiconRelationDetailForm
+                                    :editViewTab:lexiconViewDictionaryForm"/>
+                        <p:menuitem value="Multiword" icon="fa fa-plus" styleClass="lexiconTabView" action="#{lexiconControllerToolbar.newLemma('Multiword')}"
+                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm :editViewTab:lexiconRelationDetailForm
+                                    :editViewTab:lexiconViewDictionaryForm"/>
+                    </p:submenu>     
+                </p:tieredMenu>
+
+            </f:facet>
+            <f:facet name="right">
+                <p:menuButton value="Export" styleClass="lexiconToolbarButton" disabled="#{!lexiconControllerToolbar.toolbarEnabled}">
+                    <p:menuitem styleClass="lexiconTabView" value="RDF/XML (.owl)" ajax="false"
+                                onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{lexiconControllerToolbar.exportLexicon('rdf')}"/>
+                    </p:menuitem>
+                    <p:menuitem styleClass="lexiconTabView" value="OWL/XML (.owl)" ajax="false"
+                                onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{lexiconControllerToolbar.exportLexicon('owl')}"/>
+                    </p:menuitem>
+                    <p:menuitem styleClass="lexiconTabView" value="TURTLE (.ttl)" ajax="false"
+                                onclick="PrimeFaces.monitorDownload(start, stop);">
+                        <p:fileDownload value="#{lexiconControllerToolbar.exportLexicon('turtle')}"/>
+                    </p:menuitem>
+                </p:menuButton>    
+            </f:facet>
+        </p:toolbar>
+    </h:form> 
+
+    <script type="text/javascript">
+        function start() {
+            PF('loadingDialog').show();
+        }
+
+        function stop() {
+            PF('loadingDialog').hide();
+        }
+    </script>
+
+</ui:composition>

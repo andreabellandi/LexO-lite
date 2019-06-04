@@ -1,0 +1,11 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid id="lexiconDetailTable" columns="2" >
+        <ui:include id="inclFormDetail" src="/lexiconViewFormDetail.xhtml"/>
+        <ui:include id="inclSenseDetail" src="/lexiconViewSenseDetail.xhtml"/>
+        <ui:include id="inclOntoDetail" src="/lexiconViewOntologyDetail.xhtml"/>
+    </p:panelGrid>
+
+</ui:composition>

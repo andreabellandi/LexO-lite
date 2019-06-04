@@ -1,0 +1,10 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:confirmDialog global="true" closeOnEscape="true" header="#{label['template.confirm.header']}">
+        <p:commandButton value="#{label['template.confirm.yes']}" type="button" styleClass="ui-confirmdialog-yes confirmButton" icon="ui-icon-check" />
+        <p:commandButton value="#{label['template.confirm.no']}" type="button" styleClass="ui-confirmdialog-no confirmButton" icon="ui-icon-close" />
+    </p:confirmDialog>
+
+</ui:composition>

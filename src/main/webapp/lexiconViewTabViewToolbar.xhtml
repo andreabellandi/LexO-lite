@@ -1,0 +1,18 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:form id="lexiconTabViewToolbarForm">
+        <p:toolbar styleClass="lexiconToolbar" >
+            <f:facet name="left">
+                <p:commandButton id="languageButton" icon="ui-icon-triangle-1-s" value="Language" type="button" styleClass="lexiconToolbarButton" />
+                <p:menu overlay="true" styleClass="lexiconTabViewLanguage" trigger="languageButton" my="left top" at="left top" style="width:130px" 
+                        model="#{lexiconControllerTabViewToolbar.model}"/>
+            </f:facet>
+        </p:toolbar>
+    </h:form> 
+
+</ui:composition>

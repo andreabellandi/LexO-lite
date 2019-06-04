@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="lexiconViewAdavancedFilterForm">
+
+        <h:panelGrid columns="2">
+
+            <h:panelGrid columns="1" styleClass="generalFilterBox">
+
+                <h:panelGrid columns="2">
+                    <h:panelGrid  styleClass="advancedMainFilterBox" columns="6">
+                        <p:outputLabel styleClass="advancedFilterLabel" value="All"/>
+                        <h:selectBooleanCheckbox value="#{lexiconControllerAdvancedFilter.allEntries}">
+                            <p:ajax listener="#{lexiconControllerAdvancedFilter.allEntriesChanged}" update="lexiconViewAdavancedFilterForm"/>
+                        </h:selectBooleanCheckbox>
+                        <p:outputLabel styleClass="advancedFilterLabel" value="Word"/>
+                        <h:selectBooleanCheckbox value="#{lexiconControllerAdvancedFilter.word}">
+                            <p:ajax listener="#{lexiconControllerAdvancedFilter.wordChanged}" update="lexiconViewAdavancedFilterForm"/>
+                        </h:selectBooleanCheckbox>
+                        <p:outputLabel styleClass="advancedFilterLabel" value="Multiword"/>
+                        <h:selectBooleanCheckbox value="#{lexiconControllerAdvancedFilter.multiword}">
+                            <p:ajax listener="#{lexiconControllerAdvancedFilter.multiwordChanged}" update="lexiconViewAdavancedFilterForm"/>
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <h:outputLabel styleClass="titleStyle" value="@" for="entryLang"/>
+                        <h:panelGrid columns="1" cellpadding="0">
+                            <p:selectOneMenu id="entryLang" styleClass="menu" 
+                                             panelStyleClass="panel" value="#{lexiconControllerAdvancedFilter.language}" 
+                                             appendTo="entryLang">
+                                <f:selectItem itemLabel="All languages" itemValue="All languages" />
+                                <f:selectItems value="#{lexiconControllerFormDetail.lexicaLanguages}" />
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                </h:panelGrid>
+
+                <h:panelGrid id="advancedFilterMorpho" columns="2"> 
+                    <p:spacer width="12" height="12"/>
+                    <h:panelGrid styleClass="advancedFilterMorphoBox" columns="2">
+                        <h:outputLabel styleClass="titleStyle" value="Part fo speech" for="pos"/>
+                        <p:selectOneMenu id="pos" styleClass="menu"
+                                         panelStyleClass="panel" value="#{lexiconControllerAdvancedFilter.pos}" 
+                                         appendTo="pos">
+                            <f:selectItem itemLabel="any" itemValue="any" />
+                            <f:selectItem itemLabel="adjective" itemValue="adjective"/>
+                            <f:selectItem itemLabel="noun" itemValue="noun"/>
+                            <f:selectItem itemLabel="verb" itemValue="verb"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <h:panelGrid columns="2">
+                    <h:panelGrid  styleClass="advancedFilterVerifyBox" columns="4">
+                        <p:outputLabel styleClass="advancedFilterLabel" value="Verified"/>
+                        <h:selectBooleanCheckbox value="#{lexiconControllerAdvancedFilter.verified}">
+                            <p:ajax listener="#{lexiconControllerAdvancedFilter.verifiedChanged}" update="lexiconViewAdavancedFilterForm"/>
+                        </h:selectBooleanCheckbox>
+                        <p:outputLabel styleClass="advancedFilterLabel" value="Unverified"/>
+                        <h:selectBooleanCheckbox value="#{lexiconControllerAdvancedFilter.unverified}">
+                            <p:ajax listener="#{lexiconControllerAdvancedFilter.unverifiedChanged}" update="lexiconViewAdavancedFilterForm"/>
+                        </h:selectBooleanCheckbox>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <h:panelGrid columns="4">
+                <p:spacer width="18" height="18"/>
+                <p:commandButton value="Filter" icon="ui-icon-search" action="#{lexiconControllerAdvancedFilter.filter}"
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" 
+                                 update=":lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:lemmaFilterLabel  
+                                 :lexiconTabViewForm:tabView:formTree :lexiconTabViewForm:tabView:formFilterLabel" />
+                <p:spacer width="5"/>
+                <p:commandButton value="Reset" icon="ui-icon-refresh" action="#{lexiconControllerAdvancedFilter.resetFilter}"
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" 
+                                 update=":lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:lemmaFilterLabel  
+                                 :lexiconTabViewForm:tabView:formTree :lexiconTabViewForm:tabView:formFilterLabel" />
+            </h:panelGrid>
+        </h:panelGrid>
+    </h:form>
+
+</ui:composition>

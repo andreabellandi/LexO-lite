@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="domainOntologyDetailForm">
+        <h:panelGrid rendered="#{lexiconControllerOntologyDetail.ontologyClassRendered}" columns="2">
+            <h:panelGrid id="OntologyPanelGrid" styleClass="ontologyDetailBlock" columns="2" cellpadding="5">
+                <ui:repeat value="#{lexiconControllerOntologyDetail.ontologyClassDetail.metadata}" var="metadata">
+                    <h:panelGrid columns="2" rendered="#{metadata != null}">
+                        <h:outputText style="font-weight: bold;" value="#{metadata.label}: " />
+                        <h:outputText value="#{metadata.content}" />
+                    </h:panelGrid>
+                </ui:repeat>
+            </h:panelGrid>
+            <p:spacer height="20"/>
+            <p:accordionPanel styleClass="instancesAccordion" value="#{lexiconControllerOntologyDetail.ontologyClassDetail.individuals}" var="ind">
+                <p:tab title="#{ind.shortForm}" disabled="#{empty ind}">
+                    <f:facet name="title">
+                        <p:graphicImage style="margin-left: 3px; margin-top: 3px; margin-right: 3px;" value="/resources/image/instanceIcon.png" height="10" width="10"/>
+                        <h:outputText styleClass="instanceNameHeaderTitle" value="#{ind.shortForm}"/>
+                    </f:facet>
+                    <!--<p:scrollPanel mode="native" style="padding-left: 10px; overflow-x: hidden; overflow-y: auto; border: none; height: 150px;">-->
+                    <h:panelGrid styleClass="instanceMetadataDetails" columns="2" cellpadding="5">
+                        <ui:repeat value="#{ind.metadata}" var="md">
+                            <h:panelGrid columns="2" styleClass="lexiconTabView">
+                                <h:outputText style="font-weight: bold;" value="#{md.label}: " />
+                                <h:outputText style="color: gray;" value="#{md.content}" />
+                            </h:panelGrid>
+                        </ui:repeat>
+                    </h:panelGrid>
+                    <h:panelGrid styleClass="instanceAxiomsDetails" columns="2" cellpadding="5">
+                        <ui:repeat value="#{ind.axioms}" var="ax">
+                            <h:panelGrid columns="2" styleClass="lexiconTabView">
+                                <p:graphicImage style="margin-right: 1px;" 
+                                                value="#{ax.type == 'OBJECT_TYPE' ? '/resources/image/objectPropertyIcon.png' : '/resources/image/dataPropertyIcon.png'}" height="10" width="10"/>
+                                <h:outputText value="#{ax.property} #{ax.value}" />
+                            </h:panelGrid>
+                        </ui:repeat>
+                    </h:panelGrid>
+                    <!--</p:scrollPanel>-->
+                </p:tab>
+            </p:accordionPanel>
+        </h:panelGrid>
+    </h:form>
+
+
+</ui:composition>

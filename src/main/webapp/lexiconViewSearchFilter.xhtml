@@ -1,0 +1,18 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+
+    <p:panel id="idLexiconTabViewPanel" styleClass="lexiconTabViewPanel" header="Query filter" toggleable="true" collapsed="true" style="overflow-y: hidden">
+        <p:tabView id="searchViewTab" style="border: 0 !important;">
+            <p:tab id="advancedSearch" title="Advanced search">
+                <ui:include src="/lexiconViewAdvancedFilter.xhtml"/>
+            </p:tab>
+            <p:tab title="CNL queries">
+                <ui:include src="/lexiconViewQueryFilter.xhtml"/>
+            </p:tab>
+        </p:tabView>
+
+    </p:panel>
+
+</ui:composition>

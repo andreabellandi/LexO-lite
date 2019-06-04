@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="accountTableForm">
+
+        <p:dataTable id="accountTable" widgetVar="accountTable" emptyMessage="#{label['account.table.empry']}"
+                     var="account" value="#{accountControllerTable.data}" 
+                     selectionMode="single" selection="#{accountControllerTable.selection}" rowKey="#{account.id}">
+
+            <p:ajax event="sort" listener="#{accountControllerTable.onSort}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+            <p:ajax event="filter" listener="#{accountControllerTable.onFilter}" onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+            <p:ajax event="rowSelect" listener="#{accountControllerTable.onRowSelect}" update=":accountToolbarForm "/>
+
+            <p:column styleClass="accountTypeColumn" headerText="#{label['account.table.type']}" sortBy="#{account.type.name}" filterBy="#{account.type}" filterMatchMode="exact">
+                <f:facet name="filter">
+                    <p:selectOneMenu styleClass="filterTypes" var="type" onchange="PF('accountTable').filter()">
+                        <f:selectItem itemLabel="#{label['accountType.none']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{accountControllerTable.accountTypes}" var="t" itemLabel="#{label['accountType.'.concat(t.name)]}" itemValue="#{t}" />
+                        <p:column>
+                            <span class="colorCircle" style="background-color: #{type.color}" />
+                            <h:outputText styleClass="colorCircleText" value="#{type == null ? label['accountType.none'] : label['accountType.'.concat(type.name)]}" />
+                        </p:column>
+                    </p:selectOneMenu>
+                </f:facet>
+                <p:inplace editor="true" styleClass="accountTypeEditor" disabled="#{!accountControllerTable.permission}" effectSpeed="fast">
+                    <f:facet name="output">
+                        <span class="colorCircle" style="background-color: #{account.type.color}" />
+                        <h:outputText styleClass="colorCircleText" value="#{label['accountType.'.concat(account.type.name)]}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:selectOneMenu styleClass="filterTypes" var="type" value="#{account.type}">
+                            <f:selectItems value="#{accountControllerTable.accountTypes}" var="t" itemLabel="#{label['accountType.'.concat(t.name)]}" itemValue="#{t}" />
+                            <p:column>
+                                <span class="colorCircle" style="background-color: #{type.color}" />
+                                <h:outputText styleClass="colorCircleText" value="#{label['accountType.'.concat(type.name)]}" />
+                            </p:column>
+                            <p:ajax event="valueChange" listener="#{accountControllerTable.typeEditAction(account)}" 
+                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    update=":accountTableForm :accountToolbarForm :systemMessage"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                </p:inplace>
+            </p:column>
+
+            <p:column styleClass="accountEnabledColumn" sortBy="#{account.enabled}">
+                <h:selectBooleanCheckbox title="#{label['account.table.enable']}" disabled="#{!accountControllerTable.permission}" value="#{account.enabled}">
+                    <p:ajax listener="#{accountControllerTable.enabledEditAction(account)}" update="@this :systemMessage"/>
+                </h:selectBooleanCheckbox>
+            </p:column>
+
+            <p:column headerText="#{label['account.table.name']}" sortBy="#{account.name}" filterBy="#{account.name}" filterMatchMode="contains">
+                <p:inplace editor="true" disabled="#{!accountControllerTable.permission}" effectSpeed="fast">
+                    <p:ajax event="cancel" listener="#{accountControllerTable.cancelEditAction(account, 'name')}" />
+                    <p:ajax event="save" listener="#{accountControllerTable.nameEditAction(account)}" 
+                            onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                            update=":accountTableForm :accountToolbarForm :systemMessage"/>
+                    <f:facet name="output"><h:outputText value="#{accountControllerTable.emptyMessage(account.name, '...')}"/></f:facet>
+                    <f:facet name="input"><p:inputText styleClass="accountInputField" value="#{account.name}"/></f:facet>
+                </p:inplace>
+            </p:column>
+
+            <p:column styleClass="accountUsernameColumn" headerText="#{label['account.table.username']}" sortBy="#{account.username}" filterBy="#{account.username}">
+                <p:inplace editor="true" disabled="#{!accountControllerTable.permission}" effectSpeed="fast">
+                    <p:ajax event="cancel" listener="#{accountControllerTable.cancelEditAction(account, 'username')}" />
+                    <p:ajax event="save" listener="#{accountControllerTable.usernameEditAction(account)}" 
+                            onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                            update=":accountTableForm :accountToolbarForm :systemMessage"/>
+                    <f:facet name="output"><h:outputText value="#{accountControllerTable.emptyMessage(account.username, '...')}"/></f:facet>
+                    <f:facet name="input"><p:inputText styleClass="accountInputField" value="#{account.username}"/></f:facet>
+                </p:inplace>
+            </p:column>
+
+            <p:column styleClass="accountPasswordColumn" headerText="#{label['account.table.password']}">
+                <p:inplace editor="true" disabled="#{!accountControllerTable.permission}" effectSpeed="fast">
+                    <p:ajax event="cancel" listener="#{accountControllerTable.cancelEditAction(account, 'password')}" />
+                    <p:ajax event="save" listener="#{accountControllerTable.passwordEditAction(account)}" 
+                            onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                            update=":accountTableForm :accountToolbarForm :systemMessage"/>
+                    <f:facet name="output"><h:outputText value="#{accountControllerTable.emptyPassword(account.password, '...')}"/></f:facet>
+                    <f:facet name="input"><p:inputText styleClass="accountInputField" value="#{account.password}" converter="passwordConverter"/></f:facet>
+                </p:inplace>
+            </p:column>
+
+            <p:column styleClass="accountEmailColumn" headerText="#{label['account.table.email']}" sortBy="#{account.email}" filterBy="#{account.email}" filterMatchMode="contains">
+                <p:inplace editor="true" disabled="#{!accountControllerTable.permission}" effectSpeed="fast">
+                    <p:ajax event="cancel" listener="#{accountControllerTable.cancelEditAction(account, 'email')}" />
+                    <p:ajax event="save" listener="#{accountControllerTable.emailEditAction(account)}" 
+                            onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                            update=":accountTableForm :accountToolbarForm :systemMessage"/>
+                    <f:facet name="output"><h:outputText value="#{accountControllerTable.emptyMessage(account.email, '...')}"/></f:facet>
+                    <f:facet name="input"><p:inputText styleClass="accountInputField" value="#{account.email}"/></f:facet>
+                </p:inplace>
+            </p:column>
+
+        </p:dataTable>
+
+    </h:form> 
+
+</ui:composition>

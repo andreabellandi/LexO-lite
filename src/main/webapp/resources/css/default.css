@@ -1,0 +1,970 @@
+/* 
+    Created on : 04-nov-2016, 10.07.43
+    Author     : Andrea Bellandi
+*/
+
+html, body {
+    font-family: sans-serif;
+    font-size: 13px;
+    height:100%;
+    margin: 0;
+    background-color: #eeeeee;
+    color: #040404;
+}
+
+#content {
+    height: calc(100% - 46px);
+    margin-top: 5px;
+}
+
+.layout {
+    height: 100%;
+}
+
+.layoutUnit {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: transparent;
+}
+
+.ui-layout-unit .ui-layout-unit-content {
+    padding: 0 !important;
+}
+
+.prettyLayout {
+    font-size: 12px !important;
+    margin: 2px !important;
+}
+
+.welcomeMessage {
+    margin-top: 8px;
+    font-size: 18px; 
+}
+
+.lexiconToolbar {
+    overflow: hidden;
+    margin-bottom: 1px;
+}
+
+.queryMenu {
+    vertical-align: middle !important;
+}
+
+.lexiconToolbarButton {
+    font-size: 12px !important;
+    margin: 2px !important;
+    width: 110px;
+    height: 25px;
+}
+
+.loginButton {
+    font-size: 12px !important;
+    margin: 2px !important;
+    height: 25px;
+}
+
+.lexiconToolbarButton .ui-button {
+    width: 110px;
+    height: 25px;
+}
+
+.lexiconTabViewPanel {
+    font-size: 12px !important;
+    margin: 2px !important;   
+    border:0 !important;
+}
+
+.lexiconTabView {
+    font-size: 12px !important;
+    margin: 2px !important;   
+    border:0 !important;
+}
+
+.lexiconTabView div .ui-widget-content {
+    border: 0;
+}
+
+.lexiconTabViewLanguage {
+    font-size: 11px !important;
+    margin: 2px !important;   
+    border:0 !important;
+}
+
+.titleStyle {
+    font-size:12px; 
+    font-weight:bold;
+    display: block;
+    width: 100px;
+}
+
+.attTitleStyle {
+    font-size:12px; 
+    font-weight:bold;
+    display: block;
+    width: 150px;
+}
+
+.verifiedStyle {
+    font-size:12px; 
+    font-weight:bold;
+    color: #990000;
+}
+
+.biblioTitleStyle {
+    font-size:10px; 
+    font-weight:bold;
+}
+
+.biblioInputStyle {
+    font-size:10px; 
+}
+
+.biblioInputStyle .ui-inputfield {
+    padding-bottom: 1px;
+}
+
+.loginTitleStyle {
+    font-size:11px; 
+    font-weight:bold;
+}
+
+.loginFieldStyle {
+    font-size:11px; 
+}
+
+.newLangTitleStyle {
+    font-size:10px; 
+    font-weight:bold;
+}
+
+.newLangFieldStyle {
+    font-size:10px; 
+}
+
+.multiwordTitleStyle {
+    font-size:12px; 
+    font-weight:bold;
+}
+
+.entryErrorMessage {
+    font-size:11px; 
+    font-weight:bold;
+    color: red;
+}
+
+.noLemmaFoundMessage {
+    font-size:10px; 
+    font-weight:bold;
+}
+
+.inputTextStyle {
+    border: 1px solid #a8a8a8;
+    font-style: italic;
+    color: gray;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    border-radius: 5px;
+    /*    width: 70%;*/
+}
+
+.inputTextStyleRelationPanelForm {
+    border: 1px solid #a8a8a8;
+    font-style: italic;
+    color: gray;
+    padding-top: 5px;
+    padding-right: 13px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    border-radius: 5px;
+    /*    width: 95%;*/
+}
+
+.filterLabel {
+    font-size:11px !important; 
+    font-style:italic !important;
+    color: gray;
+    padding-left: 8px;
+    padding-bottom: 5px;
+}
+
+.advancedFilterLabel {
+    font-size:12px !important; 
+    font-style:italic !important;
+    color: black;
+    padding-left: 8px;
+    padding-bottom: 5px;
+}
+
+.generalFilterBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+}
+
+.filterLemmaBox {
+    border: 1px solid lightcoral;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: rgba(255,198,198, 0.4);
+}
+
+.filterDocBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: rgba(224,255,223, 0.4);
+}
+
+.filterAttBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: rgba(42,82,190, 0.1);
+}
+
+.filterBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+}
+
+.roundedBox {
+    border: 1px solid gainsboro !important;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+}
+.advancedFilterBox {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: lightgrey;
+}
+
+.advancedFilterVerifyBox {
+    border: 1px solid #00802b;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: #e6ffee;
+}
+
+.advancedFilterMorphoBox {
+    padding-left: 20px;
+    border: 1px solid #D78700;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: #F3E5AB;
+}
+
+.advancedMainFilterBox {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: lightgrey;
+}
+
+.lemmaTextBlock {
+    background-color: #ecc6c6;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #990000;
+    margin-top: 12px;
+}
+
+.lemmaBoxBackground {
+    background: transparent none repeat scroll 0 0;
+    font-size: 90%;
+    /*    background-image: url(../image/paperBiblio.png);
+        background-repeat: no-repeat;
+        background-position: center;*/
+}
+
+.attTextBlock {
+    background-color: lightskyblue;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #7286ad;
+}
+
+.formTextBlock {
+    background-color: ghostwhite;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #7286ad;
+    /*float: right;*/
+}
+
+.typeFormTextBlock {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    line-height: 1.5;
+    border: 2px solid #7286ad;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.attSiglaBlock {
+    background-color: #71B2CF;
+    border-radius: 5px;
+    line-height: 1.5;
+    border: 2px solid #004080;
+    padding-top: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+}
+
+.typeLemmaTextBlock {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    line-height: 1.5;
+    border: 2px solid #b74c4c;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.attTextDialog {
+    background-color: #E0F1FF;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    font-size: 12px !important;
+    margin: 2px !important;   
+    border:0 !important;
+    text-align: left;
+}
+
+
+.docTextBlock {
+    background-color: #ebfaeb;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #248f24;
+    float: right;
+}
+
+.manTextBlock {
+    background-color: #ebfaeb;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #248f24;
+    float: right;
+}
+
+.senseTextBlock {
+    background-color: lemonchiffon;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #ffcc00;
+}
+
+.noBorder > div {
+    font-size: 12px !important;
+    /*margin: 2px !important;   */
+    border:0 !important;
+}
+
+.ui-fileupload-buttonbar {
+    margin: 0px 0px 0px 0px !important;
+    padding: 0px 0px 0px 0px !important;
+    border: none;
+}
+
+.ui-fileupload {
+    margin: 0px 0px 0px 0px !important;
+    padding: 0px 0px 0px 0px !important;
+    display: inline-block;
+    border: none;
+}
+
+.ui-fileupload-content {
+    display: none;  
+}
+
+.ui-fileupload-buttonbar .ui-button {
+    top: -1px;
+}
+
+.ui-tree .ui-tree-container {
+    /*padding-top: 10px !important;*/
+}
+
+.colorCircle {
+    border: 1px solid gray;
+    border-radius: 7px;
+    float: left;
+    height: 6px;
+    width: 6px;
+    position: relative;
+    top: 3px;
+    left: 1px;
+}
+
+.colorCircleText {
+    margin-left: 5px;
+}
+
+.colorCircleTextLemmaVerified {
+    margin-left: 5px;
+    background-color: #F1948A;
+    font-weight: bold;
+}
+
+.colorCircleTextVariantVerified {
+    margin-left: 5px;
+    background-color: #85C1E9;
+    font-weight: bold;
+}
+
+.colorCircleTextSenseVerified {
+    margin-left: 5px;
+    background-color: #F9E79F;
+    font-weight: bold;
+}
+
+.loadingDialog  {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+} 
+
+.loadingDialog .ui-dialog-titlebar {
+    display: none !important;
+}
+
+.loadingImage {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ui-selectonemenu-items-wrapper {
+    font-size:	12px;
+}
+
+.menu .ui-selectonemenu-label { 
+    font-size:	12px;
+    height: 15px;
+    border-radius: 5px;
+    padding-top: 1px;
+    padding-top: 5px;
+}
+
+.menuBiblio .ui-selectonemenu-label { 
+    font-size:	10px;
+    height: 3px;
+    border-radius: 1px;
+    padding-bottom: 1px;
+}
+
+.panel .ui-selectonemenu-list { 
+    font-size:	12px;
+}
+
+.panelBiblio .ui-selectonemenu-list { 
+    font-size:	10px;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter {
+    width: 100% !important;
+    padding-right:30px !important;
+    font-size: 12px;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container {
+    position: relative;
+    margin: 0;
+    padding: 0.1em;
+    display: inline-block;
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+    position: absolute !important;
+    right: -30px !important;
+}
+
+.ui-chkbox-box {
+    background: white !important;
+}
+
+.ui-inputfield {
+    height: 14px !important;
+}
+
+.ui-accordion .ui-accordion-header .ui-icon {
+    margin-top: -8px;
+    position: absolute;
+    right: 0.5em;
+    top: 50%;
+}
+
+.ui-splitbutton-menubutton {
+    right: 8px !important;
+    width: 16px !important;
+}
+
+.confirmButton {
+    font-size: 12px !important;
+    margin: 2px !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    margin: 0 !important;
+    text-align: center !important;
+}
+
+.flagClass {
+    padding-top:-2px;
+}
+
+.typeLabel {
+    font-size: 10px;
+    margin-left: 10px;
+    color: #C16666;
+    font-style: italic;
+}
+
+.topToolbar {
+    height: 30px;
+    /*background: tomato linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2)) repeat scroll 0 0;*/
+}
+
+.topToolbarButton {
+    padding-top: 4px !important;
+    padding-left: 10px !important;
+    padding-right: 5px !important;
+    vertical-align: middle !important;
+}
+
+.accountMenuButton {
+    margin-left: 8px;
+}
+
+.managementNoteNull {
+    opacity: 0.33;
+}
+
+.managementNoteArea {
+    width: 96%;
+    height: 160px !important;
+}
+
+.accordionBackground .ui-accordion-content {
+    background: transparent none repeat scroll 0 0;
+    padding: 0 !important;
+    margin-top: 8px !important;
+}
+
+.accordionBackground .ui-accordion-header {
+    background: transparent none repeat scroll 0 0;
+}
+
+.accordionBackground .ui-state-active {
+    color: black !important;
+    font-weight: normal !important;
+}
+
+.ui-panelgrid .ui-panelgrid-cell {
+    vertical-align: top !important;
+    border-style: none !important;
+}
+
+.filterPanelGrid {
+    width: 100%;
+}
+
+.filterPanelGrid td {
+    background: #eeeeee;
+}
+
+.filterLabel {
+    font-size: 90% !important;
+    margin-right: 12px;
+}
+
+.filterField {
+    width: calc(100% - 14px) !important;
+    margin-bottom: 5px !important;
+}
+
+.filterField .ui-autocomplete-input {
+    width: 100% !important;
+}
+
+.queryGroup .ui-widget-content {
+    border: 1px solid #a8a8a8 !important;
+}
+
+/* for relational view */
+.ui-diagram-element {   
+    width:14em; 
+    height:4em;     
+    line-height:4em;
+    text-align: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    border: 1px solid #646D7E;
+    background-color: #646D7E;
+    color: #ffffff;
+}
+
+.ui-diagram-element:hover {
+    background-color: #828B9C;
+}
+
+.start-node {
+    width:4em;
+    border-radius: 6px;
+    background-color: #000000 !important;
+}
+
+.flow-label {
+    color: #464F60;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.lemmaInAttestationLabel {
+    margin-left: 5px; 
+    font-style: italic; 
+    font-weight: bold; 
+    color: #990000; 
+    font-size: 10px;
+}
+
+.formInAttestationLabel {
+    margin-left: 5px; 
+    font-style: italic; 
+    font-weight: bold; 
+    color: #004080; 
+    font-size: 10px;
+}
+
+.statisticsTitleLabel {
+    font-size:12px !important; 
+    font-style:italic !important;
+    font-weight: bold;
+    color: black;
+    padding-left: 8px;
+    padding-bottom: 5px;
+}
+
+.statisticsValueLabel {
+    font-size:12px !important; 
+    font-style:italic !important;
+    color: gray;
+    padding-left: 8px;
+    padding-bottom: 5px;
+}
+
+.statisticsTable {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    /*    background-color: lightgrey;*/
+}
+
+.languageDetailTable_1 {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: lightgray;
+}
+
+.languageDetailTable_2 {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: whitesmoke;
+}
+
+.ontologyFilterBox {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: #ecf9ec;
+    width: auto;
+}
+
+ontologyDetailView {
+    font-size: 12px !important;
+    margin: 2px !important;   
+    border:0 !important;
+    background-color: lightgray !important;
+    border-color: lightgrey !important;
+    margin-right: 340px !important;
+    margin-left: 30px !important;
+}
+
+.ontologyDetailBlock {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #646D7E;
+    font-size: 12px !important;
+    /*margin-left: 20px !important;*/
+    width: 500px;
+}
+
+.ui-accordion .ui-accordion-header {
+    border-radius: 5px !important;
+}
+
+.generalCNLIFilterBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 16px 16px 16px 16px;
+    background-color: whitesmoke;
+}
+
+/*.instancesAccordion .ui-accordion-header {
+    font-size: 11px;
+    background-color: #F5F5F5 !important;
+    margin-right: 500px !important;
+    margin-left: 20px !important;
+}
+
+.instanceDetails {
+    font-size: 10px;
+}
+
+.instancesAccordion .ui-accordion-content {
+    margin-left: 60px;
+    margin-top: 0px !important;
+}
+.instancesAccordion .ui-accordion {
+    margin-top: 0px !important;
+}*/
+
+.dictionaryEntry{
+    border: 1px solid darkgray !important;
+}
+
+.radiusBox {
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    margin-bottom:10px;
+}
+
+.gramGrpClass {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px !important; 
+}
+
+.lemmaClass {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px !important; 
+    font-weight: bold;
+    display: inline-flex;
+}
+
+.expClass {
+    font-family: "Times New Roman", Times, serif;
+    vertical-align: super;
+    font-size: small; 
+}
+
+.attestationClass {
+    color: #FF0000;
+}
+
+.lemmaCommentFrameClass {
+    background: #F8F8F8;
+    border: 1px solid gray !important;
+    border-radius: 5px;
+    margin-left: 5px;
+    padding: 0px !important;
+}
+
+.lemmaCommentClass {
+    font-style: italic;
+}
+
+.attestationList {
+    background: #EEEEEE;
+    padding: 5px;
+    list-style: none;
+}
+
+.variantClass {
+    padding-top: 5px;
+}
+
+.variantFormFrameClass {
+    padding-left: 28px;
+}
+.variantFormClass {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.variantAttestationsClass{
+    font-family: "Times New Roman", Times, serif;
+    color: darkblue;
+}
+
+.variantNoteClass {
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
+    background: #F8F8F8;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    width: -moz-fit-content;
+}
+
+.senseFrameClass {
+    background-color: #FFFFEE;
+    border: 1px solid #ffcc00!important;
+    margin-top: 10px;
+    padding: 0px !important;
+}
+
+.senseClass {
+    list-style: none;
+    padding-left: 2px;
+}
+
+.senseClass li {
+    padding: 5px;
+}
+
+.smallCapsClass {
+    font-variant: small-caps;
+}
+
+.senseListClass {
+    background: #EEEEEE;
+    padding: 5px;
+    list-style: none;
+}
+/*.attestationList li {
+    background: #ffe5e5;
+    padding: 5px;
+    margin-left: 35px;
+}*/
+
+.extAttestationClass {
+    background-color: #F7E8E8;
+    border: 1px solid #FFC7C7 !important; 
+    margin-top: 10px;
+    padding: 0px !important;
+}
+
+.seeAlsoClass {
+    padding: 0px!important;
+    margin-left: -10px;
+}
+
+.accountTypeColumn {
+    width: 160px;
+}
+
+.accountEnabledColumn {
+    width: 16px;
+}
+
+.accountInputField {
+    width: 98%;
+}
+
+.accountTypeEditor .ui-inplace-save {
+    display: none !important;
+}
+
+.accountUsernameColumn {
+    width: 14%;
+}
+
+.accountPasswordColumn {
+    width: 14%;
+}
+
+.accountEmailColumn {
+    width: 25%;
+}
+
+.accountToolbar {
+    overflow: hidden;
+}
+
+.accountToolbarButton {
+    font-size: 12px !important;
+    margin: 2px !important;
+    width: 110px;
+    height: 25px;
+}
+
+.accountToolbarButton .ui-button {
+    width: 110px;
+    height: 25px;
+}
+
+.referencePanel {
+    padding: 0 !important;
+    border: 0;
+}
+
+tr.rowHeight>td {
+    padding-bottom: 2em;
+}
+tr.rowHeight:last-child>td {
+    padding-bottom: 0em;
+}
+
+.tableTopAligned td > * {
+    vertical-align: top;
+}
+
+/*.ui-widget-content {
+    color: black;
+}*/
+
+/*.noBorder dl {    
+    margin-top: 0px;
+}*/
+
+/* rimuove la scrollbar verticale del tab dictionary*/
+#LU_LAA .ui-layout-unit-content{
+    overflow-y: hidden;
+}

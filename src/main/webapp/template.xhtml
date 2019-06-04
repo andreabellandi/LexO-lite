@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginController.checkLogin(true)}"/>
+    </f:metadata>
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="icon" type="image/png" href="resources/image/LexOIcon.png" sizes="26x26"/>
+        <h:outputStylesheet name="css/default.css"/>
+
+        <h:outputScript name="js/lexojs.js"/>
+        <title>LexO-lite</title>
+    </h:head>
+
+    <h:body >
+
+        <p:growl id="systemMessage" showDetail="true" />
+
+        <ui:include src="/templateConfirmDialog.xhtml"/>
+
+        <ui:include src="/templateLoadingDialog.xhtml"/>
+
+        <div id="top">
+            <h:form>         
+                <p:toolbar styleClass="topToolbar">
+                    <f:facet name="left">
+                        <p:commandLink title="#{label['template.home']}" action="#{templateController.homeAction()}">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_home.png" width="20" height="20"/>
+                        </p:commandLink>
+
+                        <p:commandLink title="#{label['template.account']}" action="#{templateController.accountAction()}" 
+                                       rendered="#{templateController.enableAccount}" onstart="PF('loadingDialog').show()">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_account.png" width="20" height="20"/>
+                        </p:commandLink>
+
+                        <p:commandLink title="#{label['template.lexiconEditor']}" action="#{templateController.lexiconEditorAction()}" 
+                                       rendered="#{templateController.enableLexiconEditor}" onstart="PF('loadingDialog').show()">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_lexiconEditor.png" width="20" height="20"/>
+                        </p:commandLink>
+
+                        <p:commandLink title="#{label['template.lexiconView']}" action="#{templateController.lexiconStatAction()}"
+                                       rendered="false" onstart="PF('loadingDialog').show()">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_lexiconStat.png" width="20" height="20"/>
+                        </p:commandLink>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:menuButton styleClass="topToolbarButton accountMenuButton" value="#{loginController.account.name}">
+                            <p:menuitem styleClass="lexiconTabView" icon="ui-icon-power" value="#{label['template.exit']}" action="#{loginController.exitAction()}" ajax="false"/>
+                        </p:menuButton>
+                        <h:outputLink title="#{label['template.userGuide']}" 
+                                      value="https://docs.google.com/document/d/1_JJanxMHsRlf3Izg417Ln-83bwZHnyBtIZToFxTGa3Y/edit?usp=sharing" 
+                                      target="_blank">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_information.png" width="20" height="20"/>
+                        </h:outputLink>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+        </div>
+
+        <div id="content">
+            <ui:insert name="content"/>
+        </div>
+    </h:body>
+
+</html>

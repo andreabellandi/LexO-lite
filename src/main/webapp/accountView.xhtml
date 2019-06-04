@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="content">
+
+            <p:layout id="accountLayout" styleClass="layout">
+
+                <p:layoutUnit styleClass="layoutUnit" position="center">
+                    <p:layout styleClass="layout">
+
+                        <p:layoutUnit styleClass="layoutUnit" position="center">
+                            <ui:include src="/accountViewTable.xhtml"/>
+                        </p:layoutUnit>
+
+                        <p:layoutUnit styleClass="layoutUnit" position="south" size="34">
+                            <ui:include src="/accountViewToolbar.xhtml"/>
+                        </p:layoutUnit>
+
+                    </p:layout>
+                </p:layoutUnit>
+
+<!--                <p:layoutUnit styleClass="layoutUnit" position="east" size="30%" resizable="true">
+                    <ui:include src="/accountViewResource.xhtml"/>
+                </p:layoutUnit>-->
+
+            </p:layout>
+
+        </ui:define>
+    </ui:composition>
+
+</html>
+

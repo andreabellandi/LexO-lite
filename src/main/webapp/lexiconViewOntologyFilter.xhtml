@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:panelGroup id="ontoFilterPanel">
+        <h:panelGrid columns="2" rendered="#{lexiconControllerTabViewList.enabledFilter}">
+
+            <h:panelGrid styleClass="ontologyFilterBox" columns="1">
+                <h:panelGrid styleClass="filterLabel" columns="1">
+                    <h:panelGroup>
+                        <h:outputText style="font-weight: bold;" value="Ontology ID: "/>
+                        <h:outputText value="#{lexiconControllerOntologyFilter.ontologyID}" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <h:outputText style="font-weight: bold;" value="Ontology classes: "/>
+                        <h:outputText value="#{lexiconControllerOntologyFilter.ontologyClassesNumber}"/>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <h:outputText style="font-weight: bold;" value="Object properties: "/>
+                        <h:outputText value="#{lexiconControllerOntologyFilter.ontologyObjectPropertiesNumber}"/>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <h:outputText style="font-weight: bold;" value="Datatype properties: "/>
+                        <h:outputText value="#{lexiconControllerOntologyFilter.ontologyDatatypePropertiesNumber}" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <h:outputText style="font-weight: bold;" value="Individuals: "/>
+                        <h:outputText value="#{lexiconControllerOntologyFilter.ontologyIndividualsNumber}" />
+                    </h:panelGroup>
+                </h:panelGrid>
+            </h:panelGrid>
+
+
+            <h:panelGrid columns="1">
+                <p:commandButton icon="fa fa-expand" actionListener="#{lexiconControllerTabViewList.expandOnto()}" 
+                                 title="Expand the ontology classes"
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":lexiconTabViewForm:tabView:ontoTree"/>
+                <p:commandButton icon="fa fa-compress" actionListener="#{lexiconControllerTabViewList.collapseOnto()}"
+                                 title="Collapse the ontology classes"
+                                 onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                 update=":lexiconTabViewForm:tabView:ontoTree"/>
+            </h:panelGrid>
+
+        </h:panelGrid>
+    </h:panelGroup>
+
+</ui:composition>

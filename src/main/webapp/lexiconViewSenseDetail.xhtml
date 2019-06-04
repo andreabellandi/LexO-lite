@@ -1,0 +1,251 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:form id="lexiconSenseDetailForm">
+        <p:dataList id="SenseDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
+                    value="#{lexiconControllerSenseDetail.senses}" emptyMessage="" rendered="#{lexiconControllerSenseDetail.senseRendered}">
+            <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">
+                <h:outputLabel styleClass="titleStyle" value="Name:" />
+                <h:panelGrid columns="3">
+                    <p:inputText id="Name" styleClass="inputTextStyleTranslationForm" readonly="true" size="#{sense.filedMaxLenght}"/>
+                    <p:watermark id="senseNameWatermark" class="filterLabel" for="Name" value="#{sense.name}"/>   
+                    <h:panelGrid id="senseNote" columns="1" columnClasses="column" cellpadding="0">
+                        <p:commandLink id="senseNoteLink" title="Comment to sense" action="#{lexiconControllerSenseDetail.openNote(sense.name)}"
+                                       update="senseNotePanel senseNote" disabled="#{lexiconControllerSenseDetail.newAction}"
+                                       oncomplete="PF('senseNotePanel').show('#{component.clientId}')">
+                            <span class="#{lexiconControllerSenseDetail.getCommentIcon(sense)}"></span>
+                        </p:commandLink>
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <h:outputLabel styleClass="titleStyle" value="Definition:"/>
+                <h:panelGrid columns="1">
+                    <p:inputText id="definition" styleClass="inputTextStyle" value="#{sense.definition}" readonly="#{lexiconControllerSenseDetail.locked}">
+                        <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
+                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
+                        <f:attribute name="sense" value="#{sense}" />
+                    </p:inputText>
+                </h:panelGrid>
+
+                <h:outputLabel styleClass="titleStyle" value="Synonym:" rendered="#{sense.synonym.size() > 0}"/>
+                <ui:repeat value="#{sense.synonym}" var="syn"  rendered="#{sense.synonym.size() > 0}">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="Synonym" maxResults="10" value="#{syn.name}" forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, syn)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons Synonym" />
+                            <f:attribute name="Relation" value="synonym"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="Synonym" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the synonym" icon="fa fa-eye"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{syn.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(syn,'synonym', sense)}"
+                                         update=":editViewTab"/> 
+                        <p:commandButton title="Delete synonym relation" icon="fa fa-trash-o" disabled="#{syn.deleteButtonDisabled}" 
+                                         rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, syn, 'synonym')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:outputLabel styleClass="titleStyle" value="Approximate synonym:" rendered="#{sense.approximateSynonym.size() > 0}"/>
+                <ui:repeat value="#{sense.approximateSynonym}" var="asyn" rendered="#{sense.approximateSynonym.size() > 0}">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="ApproximateSynonym" maxResults="10" value="#{asyn.name}" 
+                                        forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, asyn)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons ApproximateSynonym" />
+                            <f:attribute name="Relation" value="approximateSynonym"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="ApproximateSynonym" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the approximate synonym" icon="fa fa-eye"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{asyn.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(asyn,'approximateSynonym', sense)}"
+                                         update=":editViewTab"/> 
+                        <p:commandButton title="Delete approximate synonym relation" icon="fa fa-trash-o" disabled="#{asyn.deleteButtonDisabled}" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, asyn, 'approximateSynonym')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:outputLabel styleClass="titleStyle" value="Antonym:" rendered="#{sense.antonym.size() > 0}"/>
+                <ui:repeat value="#{sense.antonym}" var="ant" rendered="#{sense.antonym.size() > 0}">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="Antonym" maxResults="10" value="#{ant.name}" 
+                                        forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, ant)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons Antonym" />
+                            <f:attribute name="Relation" value="antonym"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="Antonym" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the antonym" icon="fa fa-eye"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{ant.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(ant,'antonym', sense)}"
+                                         update=":editViewTab"/> 
+                        <p:commandButton title="Delete antonym relation" icon="fa fa-trash-o" disabled="#{ant.deleteButtonDisabled}" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, ant, 'antonym')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:outputLabel styleClass="titleStyle" value="Hypernym:" rendered="#{sense.hypernym.size() > 0}"/>
+                <ui:repeat value="#{sense.hypernym}" var="hype" rendered="#{sense.hypernym.size() > 0}">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="Hypernym" maxResults="10" value="#{hype.name}" 
+                                        forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, hype)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons Hypernym" />
+                            <f:attribute name="Relation" value="hypernym"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="Hypernym" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the hypernym" icon="fa fa-eye"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{hype.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(hype,'hypernym', sense)}"
+                                         update=":editViewTab"/> 
+                        <p:commandButton title="Delete hypernym relation" icon="fa fa-trash-o" disabled="#{hype.deleteButtonDisabled}" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, hype, 'hypernym')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:outputLabel styleClass="titleStyle" value="Hyponym:" rendered="#{sense.hyponym.size() > 0}"/>
+                <ui:repeat value="#{sense.hyponym}" var="hypo" rendered="#{sense.hyponym.size() > 0}">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="Hyponym" maxResults="10" value="#{hypo.name}" 
+                                        forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, hypo)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons Hyponym" />
+                            <f:attribute name="Relation" value="hyponym"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="Hyponym" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the hyponym" icon="fa fa-eye"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{hypo.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(hypo,'hyponym', sense)}"
+                                         update=":editViewTab"/> 
+                        <p:commandButton title="Delete hyponym relation" icon="fa fa-trash-o" disabled="#{hypo.deleteButtonDisabled}" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, hypo, 'hyponym')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:outputLabel styleClass="titleStyle" value="Translation:" rendered="#{sense.translation.size() > 0 }"/>
+                <ui:repeat id="transList" value="#{sense.translation}" var="trans" rendered="#{sense.translation.size() > 0 }">
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="Translation" maxResults="10" value="#{trans.name}" forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}"
+                                        completeMethod="#{lexiconControllerSenseDetail.completeText}" size="#{sense.filedMaxLenght}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onRelationTargetSelect(sense, trans)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons Translation" />
+                            <f:attribute name="Relation" value="translation"/>
+                            <f:attribute name="currentSense" value="#{sense.name}"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="Translation" value="Type a sense"/>
+                        <p:commandButton title="View the lexical entry related to the translation" icon="fa fa-eye" 
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         disabled="#{trans.viewButtonDisabled}" 
+                                         action="#{lexiconControllerSenseDetail.addEntryOfSenseRelation(trans,'translation', sense)}"
+                                         update=":editViewTab"/>
+                        <p:commandButton title="Delete translation relation" icon="fa fa-trash-o" disabled="#{trans.deleteButtonDisabled}" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, trans, 'translation')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList :editViewTab:lexiconRelationDetailForm"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+
+
+                <h:outputLabel styleClass="titleStyle" value="Reference:" rendered="#{sense.OWLClass.viewButtonDisabled}"/>
+                <h:panelGrid columns="3" rendered="#{sense.OWLClass.viewButtonDisabled}">
+                    <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" maxResults="10" value="#{sense.OWLClass.name}" forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}"
+                                    completeMethod="#{lexiconControllerSenseDetail.completeText}">
+                        <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onOntologyReferenceSelect(sense)}" 
+                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons OntoRef" />
+                        <f:attribute name="Relation" value="ontoRef"/>
+                        <f:attribute name="currentSense" value="#{sense.name}"/>
+                    </p:autoComplete>
+                    <p:watermark class="filterLabel" for="OntoRef" value="Type a semantic description"/>
+                    <p:commandButton title="Delete ontology reference relation" icon="fa fa-trash-o"
+                                     rendered="#{!lexiconControllerSenseDetail.locked}"
+                                     actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.OWLClass, 'reference')}" 
+                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
+                </h:panelGrid>
+
+                <h:panelGrid id = "senseButtons" columns="4" columnClasses="column" cellpadding="0" 
+                             rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                         or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+                    <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexico-semantic relations"/>
+                    <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                        <p:menuitem styleClass="lexiconTabView" value="Add synonym" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'synonym')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                        <p:menuitem styleClass="lexiconTabView" value="Add approximateSynonym" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'approximateSynonym')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+
+                        <p:menuitem styleClass="lexiconTabView" value="Add antonym" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'antonym')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+
+                        <p:menuitem styleClass="lexiconTabView" value="Add hypernym" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'hypernym')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                        <p:menuitem styleClass="lexiconTabView" value="Add hyponym" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'hyponym')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                        <p:menuitem styleClass="lexiconTabView" value="Add translation" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'translation')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                    </p:menu>
+                    <p:commandButton title="Save sense" icon="fa fa-save" id="saveSense"
+                                     update="SenseDataList
+                                     :searchViewTab:lexiconViewAdavancedFilterForm:advancedFilterMorpho
+                                     :systemMessage :editViewTab:lexiconViewDictionaryForm" 
+                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                     action="#{lexiconControllerSenseDetail.saveSenseRelation(sense)}"
+                                     disabled="#{sense.saveButtonDisabled}">
+                    </p:commandButton>
+                    <p:commandButton title="Delete sense" icon="fa fa-trash" 
+                                     update="SenseDataList :editViewTab:lexiconRelationDetailForm :systemMessage" 
+                                     action="#{lexiconControllerSenseDetail.removeSense(sense)}" 
+                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                     disabled="#{sense.deleteButtonDisabled}">   
+                        <p:confirm message="#{label['lexicon.creation.confirm.deleteSenseRelation']}" icon="ui-icon-alert" />                        
+                    </p:commandButton>
+                </h:panelGrid>
+            </h:panelGrid>
+            <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>
+
+            <p:overlayPanel id="senseNotePanel" widgetVar="senseNotePanel" dismissable="false" showCloseIcon="true" style="width: 300px; height: 200px" my="right top">
+                <p:inplace effectSpeed="fast" editor="#{!lexiconControllerSenseDetail.locked}">
+                    <f:facet name="output">
+                        <h:outputText value="#{lexiconControllerSenseDetail.emptyMessage(sense.note, '...')}"/>
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputTextarea readonly="#{lexiconControllerSenseDetail.locked}" styleClass="managementNoteArea" value="#{sense.note}" converter="simpleTextConverter"/>
+                    </f:facet>
+                    <p:ajax event="save" listener="#{lexiconControllerSenseDetail.saveNote(sense)}" onstart="PF('loadingDialog').show()" 
+                            oncomplete="setHeight();PF('loadingDialog').hide()"
+                            update="senseNote :editViewTab:lexiconViewDictionaryForm :systemMessage"/>
+                    <p:ajax event="cancel" listener="#{lexiconControllerSenseDetail.closeNote(sense.name)}"/>
+                </p:inplace>
+            </p:overlayPanel>
+
+        </p:dataList>
+
+    </h:form>
+</ui:composition>
