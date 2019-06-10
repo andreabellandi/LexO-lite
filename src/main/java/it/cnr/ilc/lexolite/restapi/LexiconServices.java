@@ -18,6 +18,7 @@ import static it.cnr.ilc.lexolite.manager.LexiconQuery.pattern;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -88,26 +89,24 @@ public class LexiconServices {
         JsonObject lemmas = new JsonObject();
         List<Map<String, String>> lemmaList = lexiconManager.lemmasList(lang);
         Collections.sort(lemmaList, new LexiconComparator("writtenRep"));
-        if (limit == 0) {
-            limit = lemmaList.size();
-        }
-        for (int i = 0; i <= (limit >= lemmaList.size() ? lemmaList.size() - 1 : limit - 1); i++) {
-            Iterator it = lemmaList.get(i).entrySet().iterator();
-            JsonObject lemma = new JsonObject();
-            String writtenRep = "";
-            while (it.hasNext()) {
-                Map.Entry entry = (Map.Entry) it.next();
-                if (entry.getKey().toString().equals("writtenRep")) {
-                    writtenRep = entry.getValue().toString();
-                }
-                lemma.addProperty(entry.getKey().toString().replace("individual", "id"), entry.getValue().toString());
-            }
+        int remaining = limit == 0 ? lemmaList.size() : limit;
+        for (Map<String, String> m : lemmaList) {
             if (sw != null) {
-                if (writtenRep.startsWith(sw)) {
-                    lemmas.add(writtenRep, lemma);
+                if (m.get("writtenRep").startsWith(sw)) {
+                    if (remaining > 0) {
+                        lemmas.add(m.get("writtenRep"), setLemma(m));
+                        remaining--;
+                    } else {
+                        break;
+                    }
                 }
             } else {
-                lemmas.add(writtenRep, lemma);
+                if (remaining > 0) {
+                    lemmas.add(m.get("writtenRep"), setLemma(m));
+                    remaining--;
+                } else {
+                    break;
+                }
             }
         }
         entries.add("entries", lemmas);
@@ -117,6 +116,16 @@ public class LexiconServices {
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS")
                 .build();
+    }
+
+    private JsonObject setLemma(Map<String, String> m) {
+        JsonObject lemma = new JsonObject();
+        Iterator it = m.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            lemma.addProperty(entry.getKey().toString().replace("individual", "id"), entry.getValue().toString());
+        }
+        return lemma;
     }
 
     @GET
