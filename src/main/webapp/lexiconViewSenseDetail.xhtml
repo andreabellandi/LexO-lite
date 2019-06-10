@@ -24,7 +24,7 @@
 
                 <h:outputLabel styleClass="titleStyle" value="Definition:"/>
                 <h:panelGrid columns="1">
-                    <p:inputText id="definition" styleClass="inputTextStyle" value="#{sense.definition}" readonly="#{lexiconControllerSenseDetail.locked}">
+                    <p:inputText id="definition" size="#{sense.filedMaxLenght}" styleClass="inputTextStyle" value="#{sense.definition}" readonly="#{lexiconControllerSenseDetail.locked}">
                         <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
                                 update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
                         <f:attribute name="sense" value="#{sense}" />
@@ -209,6 +209,9 @@
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                         <p:menuitem styleClass="lexiconTabView" value="Add translation" icon="fa fa-plus"  
                                     actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'translation')}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                         <p:menuitem styleClass="lexiconTabView" value="Add reference" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'reference')}"
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                     </p:menu>
                     <p:commandButton title="Save sense" icon="fa fa-save" id="saveSense"

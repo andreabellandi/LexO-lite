@@ -227,8 +227,11 @@ public class LexicalQuery {
     public static final String FORM_NOTE = "SELECT ?note WHERE {"
             + " PropertyValue(lexicon:_FORM_, rdfs:comment, ?note) } ";
 
+    public static final String LEXICALIZATIONS = "SELECT ?r WHERE {"
+            + " PropertyValue(lexicon:_ENTRY_, ontolex:sense, ?s),"
+            + " PropertyValue(?s, ontolex:reference, ?r) }";
+
     // query for filter panel
-    // DA RIVEDERE !!!!!!!!!!!!!!!!!!!!!!!
     public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
             + " PropertyValue(?le, dct:valid, ?verified), "

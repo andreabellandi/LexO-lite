@@ -69,21 +69,10 @@ public class StatisticsController extends BaseController implements Serializable
         FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Item selected",
                 "Item Index: " + event.getItemIndex() + ", Series Index:" + event.getSeriesIndex());
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        
         System.out.println("AAAAAAAHHHHHHHH");
     }
-    
-    public ArrayList<User> getUsers() {
-        ArrayList<User> alu = new ArrayList();
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        alu.add(new User("?????????", "******", "users", "23", "-", "3,4%"));
-        return alu;
-    }
+
     
     
     public static class User {

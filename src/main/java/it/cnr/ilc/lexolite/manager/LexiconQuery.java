@@ -198,6 +198,10 @@ public class LexiconQuery extends BaseController {
         return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGES));
     }
 
+    public ArrayList<String> getLexicalizations(String entry) {
+        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
+    }
+
     // invoked in order to get lemma attributes of a specific lemma
     public LemmaData getLemmaAttributes(String lemma) {
         LemmaData ld = new LemmaData();
@@ -409,6 +413,7 @@ public class LexiconQuery extends BaseController {
         sd.setHyponym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "hyponym")));
         sd.setApproximateSynonym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "approximateSynonym")));
         sd.setOWLClass(getOntoClass(sense));
+        setFieldMaxLenght(sd.getName(), sd);
         setFieldMaxLenght(sd.getSynonym(), sd);
         setFieldMaxLenght(sd.getTranslation(), sd);
         setFieldMaxLenght(sd.getOWLClass(), sd);
@@ -430,6 +435,12 @@ public class LexiconQuery extends BaseController {
     private void setFieldMaxLenght(Openable op, SenseData sd) {
         if (op.getName().length() > sd.getFiledMaxLenght()) {
             sd.setFiledMaxLenght(op.getName().length());
+        }
+    }
+
+    private void setFieldMaxLenght(String s, SenseData sd) {
+        if (s.length() > sd.getFiledMaxLenght()) {
+            sd.setFiledMaxLenght(s.length());
         }
     }
 

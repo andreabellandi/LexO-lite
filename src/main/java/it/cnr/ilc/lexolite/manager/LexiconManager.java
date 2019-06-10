@@ -245,6 +245,10 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getLexicaLanguages();
     }
 
+    public synchronized ArrayList<String> lexicalizazions(String entry) {
+        return lexiconQuery.getLexicalizations(entry);
+    }
+
     // invoked in order to get lemma attributes of a specific lemma
     public synchronized LemmaData getLemmaAttributes(String lemma) {
         return lexiconQuery.getLemmaAttributes(lemma);

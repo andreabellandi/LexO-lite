@@ -269,6 +269,9 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             case "approximateSynonym":
                 sd.getApproximateSynonym().add(sdo);
                 break;
+            case "reference":
+                sd.setOWLClass(sdo);
+                break;
             default:
         }
     }
