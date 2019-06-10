@@ -57,6 +57,7 @@ public class LexiconServices {
     @Produces(MediaType.APPLICATION_JSON)
     // params: none
     // invocation: lexicon/languages
+    // return: the list of the lexicon languages
     public Response getLanguages() {
         JsonObject languages = new JsonObject();
         for (String lang : lexiconManager.lexicaLanguagesList()) {
