@@ -21,6 +21,23 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 </li>
   </ul>
 <li>
+    <a href="#how-to-use">How to use</a>
+</li>
+<ul>
+  <li>
+    <a href="#create-users">Create users</a>
+</li>
+    <li>
+    <a href="#create-lexicon">Create your own lexicon</a>
+</li>
+  <li>
+    <a href="#export">Export the resource</a>
+</li>
+  </ul>
+<li>
+    <a href="#restapi">LexO's REST API</a>
+</li>
+<li>
     <a href="#ack">Acknowledgemt</a>
 </li>
   <!--<li>
@@ -106,6 +123,26 @@ However, LexO comes with a little example of lexicon
   
   </p>
 
+<a name="how-to-use"><h3>How to use</h3></a>
+<p>
+<a name="create-users"><h4>Create users</h4></a>
+  <p>
+TODO
+</p>
+<a name="create-lexicon"><h4>Create your own lexicon</h4></a>
+  <p>
+TODO
+</p>
+<a name="export"><h4>Export</h4></a>
+  <p>
+TODO
+</p>
+</p>
+
+<a name="restapi"><h3>LexO's REST API</h3></a>
+<p>
+    TODO
+  </p>
 <a name="ack"><h3>Acknowledgemt</h3></a>
 <p>
     This research has been conducted in the context of the cooperation agreement between Guido Mensching, director of the DiTMAO project at the Seminar für Romanische Philologie of the Georg-August-Universität Göttingen, and the Istituto di Linguistica Computazionale “A. Zampolli” of the Italian National Research Council (29 August 2016).
