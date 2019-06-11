@@ -16,6 +16,8 @@ import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import static it.cnr.ilc.lexolite.manager.LexiconQuery.pattern;
 import it.cnr.ilc.lexolite.manager.SenseData;
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,13 +36,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.formats.RDFJsonLDDocumentFormat;
+import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
+import org.semanticweb.owlapi.io.OWLOntologyDocumentTarget;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.PrefixManager;
+import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 /**
  *
@@ -85,7 +98,6 @@ public class LexiconServices {
     //      limit (optional): results set size
     // invocation: lexicon/lemmas?lang=string&class=string&limit=n
     public Response list(@QueryParam("lang") String lang, @QueryParam("startswith") String sw, @QueryParam("class") String clazz, @QueryParam("limit") int limit) {
-        JsonObject entries = new JsonObject();
         JsonObject lemmas = new JsonObject();
         List<Map<String, String>> lemmaList = lexiconManager.lemmasList(lang);
         Collections.sort(lemmaList, new LexiconComparator("writtenRep"));
@@ -109,9 +121,8 @@ public class LexiconServices {
                 }
             }
         }
-        entries.add("entries", lemmas);
         return Response.ok()
-                .entity(entries.toString())
+                .entity(lemmas.toString())
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS")
@@ -132,9 +143,8 @@ public class LexiconServices {
     @Path("/lemma")
     @Produces(MediaType.APPLICATION_JSON)
     // params: none
-    // invocation: lexicon/languages
-    public Response getEntryById(@QueryParam("id") String id) {
-        JsonObject entry = new JsonObject();
+    // invocation: lexicon/id=lemma-id
+    public Response getLemma(@QueryParam("id") String id) {
         LemmaData ld = lexiconManager.getLemmaAttributes(id);
         ArrayList<FormData> fds;
         ArrayList<SenseData> sds;
@@ -146,33 +156,102 @@ public class LexiconServices {
             fds = null;
             sds = null;
         }
-        createEntry(ld, fds, sds);
         return Response.ok()
-                .entity(entry.toString())
+                .entity(createEntry(ld, fds, sds))
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS")
                 .build();
     }
 
-    private void createEntry(LemmaData ld, ArrayList<FormData> fds, ArrayList<SenseData> sds) {
+    private String createEntry(LemmaData ld, ArrayList<FormData> fds, ArrayList<SenseData> sds) {
         OWLOntologyManager manager;
         OWLOntology ontology;
         OWLDataFactory factory;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             manager = OWLManager.createOWLOntologyManager();
             ontology = manager.createOntology();
             factory = manager.getOWLDataFactory();
-            OWLObjectProperty p = factory.getOWLObjectProperty("ns", "puppa");
-            OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(p, factory.getOWLNamedIndividual("sss"), factory.getOWLNamedIndividual("ttt"));
-            manager.addAxiom(ontology, propertyAssertion);
-            manager.saveOntology(ontology, new TurtleOntologyFormat());
-            ontology.axioms().forEach(System.out::println);
-        } catch (OWLOntologyCreationException ex) {
-            Logger.getLogger(LexiconServices.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (OWLOntologyStorageException ex) {
+            PrefixManager pm = getPrefixs();
+            OWLClass lexicalEntryClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.Class.LEXICALENTRY.getLabel());
+            OWLClass lexicalFormClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.Class.FORM.getLabel());
+            OWLClass lexicalSenseClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.Class.LEXICALSENSE.getLabel());
+            OWLNamedIndividual lexicalEntry = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), ld.getIndividual().replace("_lemma", "_entry"));
+            addIndividualAxiom(manager, ontology, factory, lexicalEntryClass, lexicalEntry);
+            createLemma(manager, ontology, factory, pm, ld, lexicalFormClass);
+            createForms(manager, ontology, factory, pm, fds, ld, lexicalFormClass);
+            createSenses(manager, ontology, factory, pm, sds, ld, lexicalSenseClass);
+            OWLDocumentFormat ontologyFormat = new RDFJsonLDDocumentFormat();
+            manager.saveOntology(ontology, ontologyFormat, baos);
+        } catch (OWLOntologyCreationException | OWLOntologyStorageException ex) {
             Logger.getLogger(LexiconServices.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return baos.toString();
+    }
+
+    private PrefixManager getPrefixs() {
+        PrefixManager pm = new DefaultPrefixManager();
+        pm.setPrefix("lexicon", Namespace.LEXICON);
+        pm.setPrefix("lemon", Namespace.LEMON);
+        pm.setPrefix("lexinfo", Namespace.LEXINFO);
+        pm.setPrefix("rdfs", Namespace.RDFS);
+        pm.setPrefix("skos", Namespace.SKOS);
+        pm.setPrefix("ontolex", Namespace.ONTOLEX);
+        pm.setPrefix("lime", Namespace.LIME);
+        pm.setPrefix("dct", Namespace.DCT);
+        pm.setPrefix("decomp", Namespace.DECOMP);
+        pm.setPrefix("rdf", Namespace.RDF);
+        return pm;
+    }
+
+    private void createLemma(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, PrefixManager pm, LemmaData ld, OWLClass lexicalFormClass) {
+        addIndividualAxiom(manager, ontology, factory, lexicalFormClass, getIndividual(factory, pm, "lexicon", ld.getIndividual()));
+        addObjectPropertyAxiom(manager, ontology, factory, pm, OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel(),
+                getIndividual(factory, pm, "lexicon", ld.getIndividual().replace("_lemma", "_entry")),
+                getIndividual(factory, pm, "lexicon", ld.getIndividual()),
+                "ontolex");
+    }
+
+    private void createForms(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, PrefixManager pm, ArrayList<FormData> fds, LemmaData ld, OWLClass lexicalFormClass) {
+        for (FormData fd : fds) {
+            addIndividualAxiom(manager, ontology, factory, lexicalFormClass, getIndividual(factory, pm, "lexicon", fd.getIndividual()));
+            addObjectPropertyAxiom(manager, ontology, factory, pm, OntoLexEntity.ObjectProperty.OTHERFORM.getLabel(),
+                    getIndividual(factory, pm, "lexicon", ld.getIndividual().replace("_lemma", "_entry")),
+                    getIndividual(factory, pm, "lexicon", fd.getIndividual()),
+                    "ontolex");
+        }
+    }
+
+    private void createSenses(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, PrefixManager pm, ArrayList<SenseData> sds, LemmaData ld, OWLClass lexicalSenseClass) {
+        for (SenseData sd : sds) {
+            addIndividualAxiom(manager, ontology, factory, lexicalSenseClass, getIndividual(factory, pm, "lexicon", sd.getName()));
+            addObjectPropertyAxiom(manager, ontology, factory, pm, OntoLexEntity.ObjectProperty.SENSE.getLabel(),
+                    getIndividual(factory, pm, "lexicon", ld.getIndividual().replace("_lemma", "_entry")),
+                    getIndividual(factory, pm, "lexicon", sd.getName()),
+                    "ontolex");
+        }
+    }
+
+    private OWLNamedIndividual getIndividual(OWLDataFactory factory, PrefixManager pm, String ns, String ind) {
+        return factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get(ns + ":"), ind);
+    }
+
+    private void addIndividualAxiom(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, OWLClass c, OWLNamedIndividual i) {
+        OWLClassAssertionAxiom classAssertion = factory.getOWLClassAssertionAxiom(c, i);
+        manager.addAxiom(ontology, classAssertion);
+    }
+
+    private void addObjectPropertyAxiom(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, PrefixManager pm, String objProp, OWLNamedIndividual src, OWLNamedIndividual trg, String ns) {
+        OWLObjectProperty p = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get(ns + ":"), objProp);
+        OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(p, src, trg);
+        manager.addAxiom(ontology, propertyAssertion);
+    }
+
+    private void addDataPropertyAxiom(OWLOntologyManager manager, OWLOntology ontology, OWLDataFactory factory, String dataProp, OWLNamedIndividual src, String trg, String ns) {
+        OWLDataProperty p = factory.getOWLDataProperty(ns, dataProp);
+        OWLDataPropertyAssertionAxiom dataPropertyAssertion = factory.getOWLDataPropertyAssertionAxiom(p, src, trg);
+        manager.addAxiom(ontology, dataPropertyAssertion);
 
     }
 
@@ -293,7 +372,7 @@ public class LexiconServices {
         entries.add("word", words);
         entries.add("multiword", multiwords);
         languages.add("entries", entries);
-        languages.addProperty("lexicalization", lexicalization);
+        languages.addProperty("lexicalizations", lexicalization);
         return Response.ok()
                 .entity(languages.toString())
                 .header("Access-Control-Allow-Origin", "*")
@@ -307,7 +386,7 @@ public class LexiconServices {
         lemma.addProperty("lang", l.getLanguage());
         lemma.addProperty("type", l.getType());
         lemma.addProperty("verified", l.getValid());
-        lemma.addProperty("uri", Namespace.LEXICON + l.getIndividual());
+        lemma.addProperty("id", l.getIndividual());
         lemma.addProperty("partOfSpeech", l.getPoS());
         return lemma;
     }
