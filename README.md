@@ -140,14 +140,16 @@ TODO
 
 <a name="restapi"><h3>LexO's REST API</h3></a>
 <p>
-    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services:
+    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services (let assume that http://localhotst:8080/LexO-lite preceeds each of them):
   </p>
 
-| Description | Invocation |
-| --- | --- |
-| List all the *lexicon languages* | `http://localhotst:8080/LexO-lite/lexicon/languages` |
-| `git status` | List all *new or modified* files |
-| `git diff` | Show file differences that **haven't been** staged |
+| Description | Example of invocation |
+| :--- | :--- |
+| List all the *lexicon languages* | `/lexicon/languages` |
+| List all the *lexicon lemmas* | `/lexicon/lemmas?lang=l&startswith=a&limit=10` |
+| List all the *lemma metadata* | `/lexicon/lemma?id=lemma_id` |
+| List all the *lemmas* involved in a specific lexico-semantic relation with a specific lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
+
 
 <a name="ack"><h3>Acknowledgemt</h3></a>
 <p>
