@@ -141,17 +141,19 @@ TODO
 <a name="restapi"><h3>LexO's REST API</h3></a>
 <p>
     LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services:
-
-    
   </p>
+
+| Description | Invocation |
+| --- | --- |
+| List all the *lexicon languages* | `http://localhotst:8080/LexO-lite/lexicon/languages` |
+| `git status` | List all *new or modified* files |
+| `git diff` | Show file differences that **haven't been** staged |
+
 <a name="ack"><h3>Acknowledgemt</h3></a>
 <p>
     This research has been conducted in the context of the cooperation agreement between Guido Mensching, director of the DiTMAO project at the Seminar für Romanische Philologie of the Georg-August-Universität Göttingen, and the Istituto di Linguistica Computazionale “A. Zampolli” of the Italian National Research Council (29 August 2016).
   </p>
 
 
-| Command | Description |
-| --- | --- |
-| `git status` | List all *new or modified* files |
-| `git diff` | Show file differences that **haven't been** staged |
+
   
