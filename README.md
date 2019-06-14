@@ -134,8 +134,10 @@ password = admin
   ```
 
 By clicking on the user icon placed at the top of the interface, you can manage your users team by means of the panel shown in the following image.
-
 </p>
+
+<img src="images/LexO-lite_userPanel.png" width=100/>
+
 <a name="create-lexicon"><h4>Create your own lexicon</h4></a>
   <p>
 TODO
