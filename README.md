@@ -138,6 +138,15 @@ By clicking on the user icon placed at the top of the interface, you can manage 
 
 <img src="images/LexO-lite_userPanel.png"/>
 
+<p>
+Then you can modify user and password of the administrator account and create some users on the basis of the following three profiles:
+<ul>
+<li>Administrator: this profile is related to the team leader; it can add or remove users to the team, and assign them their profiles. It can create, modify, delete, validate lexical entries, and import the domain ontology.</li>
+<li>User: this profile is related to the editor role. It can create, modify, delete lexical entries, and link senses to ontological entities.</li>
+<li>Viewer: this profile can only access the dictionary view of lexical entries.</li>
+</ul>
+</p>
+
 <a name="create-lexicon"><h4>Create your own lexicon</h4></a>
   <p>
 TODO
