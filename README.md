@@ -151,6 +151,9 @@ Then you can modify user and password of the administrator account and create so
   <p>
 TODO
 </p>
+
+<img src="images/LexO-lite_editPanel.png"/>
+
 <a name="export"><h4>Export</h4></a>
   <p>
 TODO
