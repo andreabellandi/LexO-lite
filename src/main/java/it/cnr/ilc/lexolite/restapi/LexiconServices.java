@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexolite.restapi;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.Namespace;
@@ -14,13 +13,10 @@ import it.cnr.ilc.lexolite.controller.LexiconComparator;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
-import static it.cnr.ilc.lexolite.manager.LexiconQuery.pattern;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +30,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.RDFJsonLDDocumentFormat;
-import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
-import org.semanticweb.owlapi.io.OWLOntologyDocumentTarget;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;

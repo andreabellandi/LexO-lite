@@ -1,5 +1,23 @@
 # LexO-lite v1.0
 
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+
 This is the first version of LexO, a collaborative web editor for easily building and managing lexical and terminological resources in the context of the Semantic Web, based on the OntoLex-Lemon model.
 
 <b><h2>Table of content</h2></b>
@@ -65,8 +83,6 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   <li>Java 1.8</li>
   </ul>
   
-  Ensure to have the above installed on your machine.
-  
   LexO is a Maven project and uses:
 <ul>
   <li>OWL-API v5.0</li>
@@ -76,7 +92,8 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   <li>Jersey RESTful Web Services framework v2.23.2</li>
 </ul>
   
-  The related jar files are included by means of the POM file. Download LexO-lite source code and compile it.
+<br/>  
+ Download LexO-lite source code and compile it.
   </p>
   <a name="configuration-file"><h4>Initialization and configuration file</h4></a>
   <p>
@@ -107,7 +124,7 @@ However, LexO comes with a little example of lexicon
     You can access to the home of LexO by the following url:
   
   ```
-  http://localhost:8080/Lexo-lite
+  http://localhost:8080/LexO-lite
   ```  
   There are two servlets for creating and populating the database with one administrator user.
   
@@ -141,7 +158,47 @@ TODO
 
 <a name="restapi"><h3>LexO's REST API</h3></a>
 <p>
-    TODO
+    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services:
+
+    <table>
+  <tr>
+    <th>Company</th>
+    <th>Contact</th>
+    <th>Country</th>
+  </tr>
+  <tr>
+    <td>Alfreds Futterkiste</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+  <tr>
+    <td>Ernst Handel</td>
+    <td>Roland Mendel</td>
+    <td>Austria</td>
+  </tr>
+  <tr>
+    <td>Island Trading</td>
+    <td>Helen Bennett</td>
+    <td>UK</td>
+  </tr>
+  <tr>
+    <td>Laughing Bacchus Winecellars</td>
+    <td>Yoshi Tannamuri</td>
+    <td>Canada</td>
+  </tr>
+  <tr>
+    <td>Magazzini Alimentari Riuniti</td>
+    <td>Giovanni Rovelli</td>
+    <td>Italy</td>
+  </tr>
+</table>
+
+    
   </p>
 <a name="ack"><h3>Acknowledgemt</h3></a>
 <p>
