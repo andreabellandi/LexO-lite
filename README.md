@@ -126,7 +126,15 @@ However, LexO comes with a little example of lexicon
 <p>
 <a name="create-users"><h4>Create users</h4></a>
   <p>
-TODO
+    Once you created an administrator user, you can use the following credentials to login to LexO:
+
+ ```
+user = admin
+password = admin
+  ```
+
+By clicking on the user icon placed at the top of the interface, you can manage your users team by means of the panel shown in the following image.
+
 </p>
 <a name="create-lexicon"><h4>Create your own lexicon</h4></a>
   <p>
@@ -148,8 +156,8 @@ TODO
 | List all the *lexicon languages* | `/lexicon/languages` |
 | List all the *lexicon lemmas* | `/lexicon/lemmas?lang=l&startswith=a&limit=10` |
 | List all the *lemma metadata* | `/lexicon/lemma?id=lemma_id` |
-| List all the *lemmas* involved in a specific lexico-semantic relation with a specific lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
-
+| List all the lemmas involved in a specific *lexico-semantic relation* with a given lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
+| Get some lexicon *statistics* | `/lexicon/statistics?lang=l` |
 
 <a name="ack"><h3>Acknowledgemt</h3></a>
 <p>
