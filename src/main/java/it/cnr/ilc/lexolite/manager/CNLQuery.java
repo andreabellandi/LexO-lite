@@ -16,20 +16,19 @@ import java.util.Map;
 public class CNLQuery extends LexiconQuery {
 
     private String TEMPLATE_CONCEPT_GROUP_1_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?type ?ontoClass ?verified WHERE {"
-            + " PropertyValue(?le, ditmaolemon:verified, ?verified), "
-            + " PropertyValue(?le, lemon:canonicalForm, ?individual), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
+            + " PropertyValue(?le, dct:valid, ?verified), "
+            + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
+            + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
             + " DirectType(?le, ?type), "
-            + " PropertyValue(?le, lemon:sense, ?sense), "
-            + " PropertyValue(?sense, lemon:reference, ?ontoClass) } ";
+            + " PropertyValue(?le, ontolex:sense, ?sense), "
+            + " PropertyValue(?sense, ontolex:reference, ?ontoClass) } ";
 
     private String TEMPLATE_CONCEPT_GROUP_1_FORM = "SELECT ?le ?individual ?writtenRep ?ontoClass ?verified WHERE {"
-            + " PropertyValue(?le, ditmaolemon:verified, ?verified), "
-            + " PropertyValue(?le, lemon:otherForm, ?individual), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
-            + " PropertyValue(?le, lemon:sense, ?sense), "
-            + " PropertyValue(?sense, lemon:reference, ?ontoClass), "
-            + " PropertyValue(?individual, ditmaolemon:hasAlphabet, ?a) } ";
+            + " PropertyValue(?le, dct:valid, ?verified), "
+            + " PropertyValue(?le, ontolex:otherForm, ?individual), "
+            + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
+            + " PropertyValue(?le, ontolex:sense, ?sense), "
+            + " PropertyValue(?sense, ontolex:reference, ?ontoClass) } ";
 
     public CNLQuery(LexiconModel lm) {
         super(lm);

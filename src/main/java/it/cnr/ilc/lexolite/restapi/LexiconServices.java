@@ -186,7 +186,6 @@ public class LexiconServices {
     private PrefixManager getPrefixs() {
         PrefixManager pm = new DefaultPrefixManager();
         pm.setPrefix("lexicon", Namespace.LEXICON);
-        pm.setPrefix("lemon", Namespace.LEMON);
         pm.setPrefix("lexinfo", Namespace.LEXINFO);
         pm.setPrefix("rdfs", Namespace.RDFS);
         pm.setPrefix("skos", Namespace.SKOS);

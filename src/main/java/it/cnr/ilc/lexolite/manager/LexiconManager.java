@@ -309,11 +309,6 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.advancedFilter_lemmas();
     }
 
-    // invoked by advanced filter
-    public synchronized List<Map<String, String>> advancedFilter_forms() {
-        return lexiconQuery.advancedFilter_forms();
-    }
-
     // CNL panel queries //
     public synchronized List<Map<String, String>> ontoQueryGroup_1_lemmas(String ontoClass) {
         return cnlq.ontoQueryGroup_1_lemmas(ontoClass);

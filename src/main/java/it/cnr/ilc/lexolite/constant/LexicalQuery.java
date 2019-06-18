@@ -16,7 +16,6 @@ public class LexicalQuery {
             = "PREFIX lexinfo: <" + Namespace.LEXINFO + ">\n"
             + "PREFIX rdfs: <" + Namespace.RDFS + ">\n"
             + "PREFIX skos: <" + Namespace.SKOS + ">\n"
-            + "PREFIX ditmaolemon: <" + Namespace.DITMAO_LEMON_NS + ">\n"
             + "PREFIX lexicon: <" + Namespace.LEXICON + ">\n"
             + "PREFIX ontolex: <" + Namespace.ONTOLEX + ">\n"
             + "PREFIX decomp: <" + Namespace.DECOMP + ">\n"
@@ -123,12 +122,6 @@ public class LexicalQuery {
 
     public static final String SENSE_DEFINITION = "SELECT ?def WHERE {"
             + " PropertyValue(lexicon:_SENSE_, skos:definition, ?def) }";
-
-    public static final String SENSE_TRANSLATION = "SELECT ?tr WHERE {"
-            + " PropertyValue(lexicon:_SENSE_, ditmaolemon:frenchTranslation, ?tr) }";
-
-    public static final String SENSE_TRANSLATION_OF = "SELECT ?tr WHERE {"
-            + " PropertyValue(lexicon:_SENSE_, ditmaolemon:frenchTranslationOf, ?tr) }";
 
     public static final String SENSE_RELATION = "SELECT ?s WHERE {"
             + " PropertyValue(lexicon:_SENSE_, lexinfo:_RELATION_, ?s) }";
@@ -239,33 +232,4 @@ public class LexicalQuery {
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, ontolex:sense, ?sense) }";
-
-    public static final String ADVANCED_FILTER_FORM = "SELECT ?le ?individual ?writtenRep ?verified ?type ?pos ?a ?sn WHERE {"
-            + " PropertyValue(?le, lemon:otherForm, ?individual), "
-            + " PropertyValue(?le, dct:valid, ?verified), "
-            + " DirectType(?le, ?type), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
-            + " PropertyValue(?le, lemon:sense, ?sense) }"
-            + " OR WHERE { "
-            + " PropertyValue(?le, lemon:otherForm, ?individual), "
-            + " PropertyValue(?le, dct:valid, ?verified), "
-            + " DirectType(?le, ?type), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
-            + " PropertyValue(?le, lemon:sense, ?sense), "
-            + " PropertyValue(?sense, ditmaolemon:scientificName, ?sn) }"
-            + " OR WHERE { "
-            + " PropertyValue(?le, lemon:otherForm, ?individual), "
-            + " PropertyValue(?le, dct:valid, ?verified), "
-            + " DirectType(?le, ?type), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
-            + " PropertyValue(?individual, lexinfo:partOfSpeech, ?pos), "
-            + " PropertyValue(?le, lemon:sense, ?sense) }"
-            + " OR WHERE { "
-            + " PropertyValue(?le, lemon:otherForm, ?individual), "
-            + " PropertyValue(?le, dct:valid, ?verified), "
-            + " DirectType(?le, ?type), "
-            + " PropertyValue(?individual, lemon:writtenRep, ?writtenRep), "
-            + " PropertyValue(?individual, ditmaolemon:hasAlphabet, ?a), "
-            + " PropertyValue(?le, lemon:sense, ?sense) }";
-
 }

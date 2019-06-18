@@ -325,23 +325,7 @@ public class LexiconControllerAdvancedFilter extends BaseController implements S
                 }
             }
         }
-        for (Map<String, String> m : lexiconManager.advancedFilter_forms()) {
-            Map<String, String> _mF = new HashMap<String, String>();
-            if (type.equals("all")) {
-                filterEntry(m, _mF, f, check);
-            } else {
-                if (type.equals(OntoLexEntity.Class.WORD.getLabel())) {
-                    filterEntry(m, _mF, f, check);
-                } else {
-                    if (type.equals(OntoLexEntity.Class.MULTIWORD.getLabel())) {
-                        filterEntry(m, _mF, f, check);
-                    }
-                }
-            }
-        }
         lexiconCreationControllerTabViewList.cnlqFilterLemmaTabView(getDistinctList(l));
-        lexiconCreationControllerTabViewList.cnlqFilterSenseTabView(getDistinctList(s));
-        lexiconCreationControllerTabViewList.cnlqFilterFormTabView(getDistinctList(f));
 
     }
 

@@ -176,10 +176,6 @@ public class LexiconQuery extends BaseController {
         return processQuery(LexicalQuery.PREFIXES + LexicalQuery.ADVANCED_FILTER_LEMMA);
     }
 
-    public List<Map<String, String>> advancedFilter_forms() {
-        return processQuery(LexicalQuery.PREFIXES + LexicalQuery.ADVANCED_FILTER_FORM);
-    }
-
     public List<SelectItem> getSensesByLanguage(String lang) {
         List<SelectItem> groupedSenseList = new ArrayList<>();
         ArrayList<String> senses = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSES_BY_LANGUAGE.replace("_LANG_", lang)));

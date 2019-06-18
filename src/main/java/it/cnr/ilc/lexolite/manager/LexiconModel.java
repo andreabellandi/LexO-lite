@@ -108,11 +108,9 @@ public class LexiconModel extends BaseController {
     private void setPrefixes() {
         pm = new DefaultPrefixManager();
         pm.setPrefix("lexicon", Namespace.LEXICON);
-        pm.setPrefix("lemon", Namespace.LEMON);
         pm.setPrefix("lexinfo", Namespace.LEXINFO);
         pm.setPrefix("rdfs", Namespace.RDFS);
         pm.setPrefix("skos", Namespace.SKOS);
-        pm.setPrefix("ditmaolemon", Namespace.DITMAO_LEMON_NS);
         pm.setPrefix("ontolex", Namespace.ONTOLEX);
         pm.setPrefix("lime", Namespace.LIME);
         pm.setPrefix("dct", Namespace.DCT);
@@ -315,10 +313,6 @@ public class LexiconModel extends BaseController {
             }
         }
         return false;
-    }
-
-    public void addLexicalRelation(String ns, OWLNamedIndividual sbj, String rel, String obj) {
-        addObjectPropertyAxiom(rel, sbj, getIndividual(obj), pm.getPrefixName2PrefixMap().get("ditmaolemon:"));
     }
 
     // NEW LEMMA MULTIWORD ACTION: write all the triples about the new lemma entry
