@@ -98,8 +98,11 @@ domainOntologyFolder, is the relative path w.r.t. your home (default value is .L
 domainOntologyNamespace, is the namespace of your domain ontology followed by '#' (default value is http://ontologies/myontology#)
 domainOntologyFileName, is the file name of your domain ontology (default name is domainOntology.owl)
 ```  
-When you specified these values and your lexicon file (even empty) and, eventually, your domain ontology are placed in their correct path, you can run LexO over tomcat.
-However, LexO comes with a little example of lexicon
+LexO comes with an empty lexicon having the namespace equals to the init value of the above lexiconNamespace parameter (you can find it in the lexicon folder of the project).
+If you place it beneath your home inside the LexO-lite/ folder you can run LexO over tomcat, and you are ready for starting to construct your multilingual lexicon.
+<br/>
+It is important to note that currently LexO have not an ontology import button, so if you have an ontology you have to manually change its namespace to the value stated in the domainOntologyNamespace parameter, and place it into domainOntologyFolder.
+Then you have to restart tomcat.
 
 <a name="run-lexo"><h4>Run LexO</h4></a>
   <p>
