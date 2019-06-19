@@ -170,21 +170,21 @@ It is also possible to list the concepts belonging to a reference ontology
 By means of the new button at the bottom of the interface, you can create new lexicon languages. The form to fill is the following:
 </p>
 <center>
-<img src="images/LexO-lite_newLanguage.png" width=100/>
+<img src="images/LexO-lite_newLanguage.png" width=400/>
 </center>
 <p>
 <ul>
-<li>Language name (manadatory): the language tag (e.g., "en");
-<li>Language code uri (optional): it is recommended to use the Dublin Core language property 
+<li><i>Language name (manadatory)</i>: the language tag (e.g., "en");
+<li><i>Language code uri (optional)</i>: it is recommended to use the Dublin Core language property 
 with reference to either <a href="http://www.lexvo.org/"> Lexvo.org</a> or <a href="http://id.loc.gov/vocabulary/iso639-1.html"> The Library of Congress Vocabulary</a>:
 <ul>
 <li> Lexvo.org codes should be of the form <i>http://www.lexvo.org/id/iso639-3/xxx</i> where <i>xxx</i> is the 3-Letter ISO 639-3 code</li>
 <li> Library of Congress codes should be of the form <i>http://id.loc.gov/vocabulary/iso639-1/xx</i> where <i>xx</i> is the 2-Letter ISO 639-1 code</li>
 </ul>
 </li>
-<li>Linguistic catalogue (manadatory): the value is automatically set to LexInfo, an ontology that provides data categories for the OntoLex-Lemon model;</li>
-<li>Description (optional): a textual description;</li>
-<li>Creator (optional): some reference to the creator of the lexicon language;</li>
+<li><i>Linguistic catalogue (manadatory)</i>: the value is automatically set to LexInfo, an ontology that provides data categories for the OntoLex-Lemon model;</li>
+<li><i>Description (optional)</i>: a textual description;</li>
+<li><i>Creator (optional)</i>: some reference to the creator of the lexicon language;</li>
 </ul>
 </p>
 
