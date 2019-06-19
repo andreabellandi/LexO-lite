@@ -188,11 +188,26 @@ with reference to either <a href="http://www.lexvo.org/"> Lexvo.org</a> or <a hr
 </ul>
 </p>
 
-<img src="images/LexO-lite_newEntry.png"/>
-
+<p>
+By means of the new button at the bottom of the interface, you can create new lexical entries (word or multiword). 
+</p>
+<img src="images/LexO-lite_newEntry.png" width=600/>
+<p>
+LexO asks the user to fill a form referring to the canonical form of the lexical entry, which is the form that primarily 
+identifies the entry and which may be used as an index term in the lexicon. For each lemma you can add forms and senses. 
+Each entry can refers to eachother by means of the <i>seeAlso</i> property (see the part (a) of the above figure).
+For each sense, a user can specify a definition in natural language, 
+a set of lexical relations (defined by lexinfo), and the reference property linking it to an ontological concept. 
+Differently from synonymy, antonymy, hyponymy and hypernonymy relations, translation links senses of different languages.
+(see the part (b) of the above figure). 
+</p>
 <a name="export"><h4>Export</h4></a>
   <p>
-TODO
+Finally, you can export your lexicon in the OntoLex-Lemon model.
+It can be done by means of the Export button at the bottom of the toolbar. 
+It is possible to serialize the data as XML/RDF or TURTLE as well. 
+In this way, the resource is ready for its publication according to the linked data politics.
+
 </p>
 </p>
 
