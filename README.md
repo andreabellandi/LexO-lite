@@ -169,9 +169,9 @@ It is also possible to list the concepts belonging to a reference ontology
   <p>
 By means of the new button at the bottom of the interface, you can create new lexicon languages. The form to fill is the following:
 </p>
-<center>
+
 <img src="images/LexO-lite_newLanguage.png" width=400/>
-</center>
+
 <p>
 <ul>
 <li><i>Language name (manadatory)</i>: the language tag (e.g., "en");
@@ -187,6 +187,8 @@ with reference to either <a href="http://www.lexvo.org/"> Lexvo.org</a> or <a hr
 <li><i>Creator (optional)</i>: some reference to the creator of the lexicon language;</li>
 </ul>
 </p>
+
+<img src="images/LexO-lite_newEntry.png"/>
 
 <a name="export"><h4>Export</h4></a>
   <p>
