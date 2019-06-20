@@ -30,6 +30,9 @@ This is the first version of LexO, a collaborative web editor for easily buildin
     <li>
     <a href="#create-lexicon">Create your own lexicon</a>
 </li>
+ <li>
+    <a href="#statistics">Access to the lexicon statistics</a>
+</li>
   <li>
     <a href="#export">Export the resource</a>
 </li>
@@ -201,6 +204,17 @@ a set of lexical relations (defined by lexinfo), and the reference property link
 Differently from synonymy, antonymy, hyponymy and hypernonymy relations, translation links senses of different languages.
 (see the part (b) of the above figure). 
 </p>
+
+<a name="statistics"><h4>Access to the lexicon statistics</h4></a>
+
+<p>
+By means of the suitable button at the top of the interface, you can access to some basic lexicon statistics. 
+</p>
+<img src="images/LexO-lite_statisticsPanel.png"/>
+<p>
+TODO
+</p>
+
 <a name="export"><h4>Export</h4></a>
   <p>
 Finally, you can export your lexicon in the OntoLex-Lemon model.

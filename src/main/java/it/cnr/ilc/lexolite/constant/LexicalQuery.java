@@ -224,6 +224,14 @@ public class LexicalQuery {
             + " PropertyValue(lexicon:_ENTRY_, ontolex:sense, ?s),"
             + " PropertyValue(?s, ontolex:reference, ?r) }";
 
+    public static final String LANGUAGE_DESCRIPTION = "SELECT ?desc WHERE {"
+            + " PropertyValue(?lex, lime:language, \"_LANG_\"), "
+            + " PropertyValue(?lex, dct:description, ?desc) }";
+
+    public static final String LANGUAGE_CREATOR = "SELECT ?creator WHERE {"
+            + " PropertyValue(?lex, lime:language, \"_LANG_\"), "
+            + " PropertyValue(?lex, dct:creator, ?creator) }";
+
     // query for filter panel
     public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "

@@ -13,42 +13,53 @@
         </h:panelGrid>
 
         <h:panelGrid id="StatisticsDataGrid" styleClass="statisticsTable" columns="2" columnClasses="column" cellpadding="5" style="margin-left: auto; margin-right: auto; padding-top: 10px;">
-            <p:chart type="pie" model="#{statisticsController.pieModel1}" style="width:450px;height:350px;">
-                <p:ajax event="itemSelect" listener="#{statisticsController.itemSelect}"/>
-            </p:chart>
-            <h:panelGrid columns="1">
+            <p:donutChart model="#{statisticsController.pieModel1}" style="width:450px;height:350px;">
+                <p:ajax event="itemSelect" listener="#{statisticsController.itemSelect}" 
+                        update="lexiconStatisticsDataForm:lexiconStatisticsDataForm2:StatisticsDataDetailHeaderGrid 
+                        lexiconStatisticsDataForm:lexiconStatisticsDataForm2:StatisticsDataDetailGrid
+                        selectedLanguageData"/>
+            </p:donutChart>
+            <h:panelGrid id="selectedLanguageData" columns="1">
                 <h:panelGrid  styleClass="languageDetailTable_1" columns="2">
                     <h:outputLabel styleClass="statisticsTitleLabel" value="Language: "/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="Ancient Occitan"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.languageName}"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Number of lexical entries: "/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="1861"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.numberOfEntries}"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Linguistic catalog:"/>
                     <h:outputLabel styleClass="statisticsValueLabel" value="http://www.lexinfo.net/ontologies/2.0/lexinfo"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Description:"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="Old Occitan medico-botanical terminology."/>
-                    <h:outputLabel styleClass="statisticsTitleLabel"  value="Creator(s):"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="https://www.uni-goettingen.de/de/mensching-guido-prof-dr/426835.html"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.languageDescription}"/>
+                    <h:outputLabel styleClass="statisticsTitleLabel"  value="Creator:"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.languageCreator}"/>
                 </h:panelGrid>
                 <p:spacer height="15" width="15"/>
                 <h:panelGrid  styleClass="languageDetailTable_2" columns="2">
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Reference dataset:"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="http://www.example.com/ontology"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.referenceDataset}"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Lexicon dataset:"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="http://www.example.com/lexicon"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.lexiconDataset}"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Lexicalization model:"/>
                     <h:outputLabel styleClass="statisticsValueLabel" value="http://www.w3.org/ns/lemon/all"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Lexicalisations: "/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="xxxx"/>
-                    <h:outputLabel styleClass="statisticsTitleLabel"  value="Ontology entities:"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="xxxx"/>
-                    <h:outputLabel styleClass="statisticsTitleLabel"  value="Average number of lexicalizations: "/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="xxxx"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.lexicalizations}"/>
                     <h:outputLabel styleClass="statisticsTitleLabel"  value="Conceptualizations:"/>
-                    <h:outputLabel styleClass="statisticsValueLabel" value="xxxx"/>
+                    <h:outputLabel styleClass="statisticsValueLabel" value="#{statisticsController.conceptualizations}"/>
                 </h:panelGrid>
             </h:panelGrid>
         </h:panelGrid>
 
+        <h:form id="lexiconStatisticsDataForm2">
+            <h:panelGrid id="StatisticsDataDetailHeaderGrid" columns="1" columnClasses="colCentered" cellpadding="5" 
+                         style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
+                <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['statistics.detail.title']}"/>
+            </h:panelGrid>
+
+            <h:panelGrid id="StatisticsDataDetailGrid" styleClass="statisticsTable" columns="2" 
+                         columnClasses="column" cellpadding="5" style="margin-left: auto; margin-right: auto; padding-top: 10px;">
+                <p:barChart model="#{statisticsController.barModel}" style="width: 100%; height: 300px;"/>
+            </h:panelGrid>
+        </h:form>
+        
     </h:form>
 
 </ui:composition>

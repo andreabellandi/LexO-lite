@@ -5,6 +5,9 @@
  */
 package it.cnr.ilc.lexolite.util;
 
+import java.awt.Color;
+import java.util.Random;
+
 /**
  *
  * @author andrea
@@ -57,6 +60,14 @@ public class LexiconUtil {
         instance = instance.replaceAll(" ", " ");
         instance = instance.replaceAll(" +(\\d)", "$1");
         return instance;
+    }
+
+    public static Color getRandomColor() {
+        Random rand = new Random();
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();
+        return new Color(r, g, b);
     }
 
 }

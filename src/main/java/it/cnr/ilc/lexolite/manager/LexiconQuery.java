@@ -198,6 +198,14 @@ public class LexiconQuery extends BaseController {
         return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
     }
 
+    public ArrayList<String> getLanguageDescription(String lang) {
+        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGE_DESCRIPTION.replaceAll("_LANG_", lang)));
+    }
+
+    public ArrayList<String> getLanguageCreator(String lang) {
+        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGE_CREATOR.replaceAll("_LANG_", lang)));
+    }
+
     // invoked in order to get lemma attributes of a specific lemma
     public LemmaData getLemmaAttributes(String lemma) {
         LemmaData ld = new LemmaData();
