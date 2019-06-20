@@ -73,7 +73,7 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   <li>OWL-API v5.0</li>
   <li>SPARQL-DL v3.0.0</li>
   <li>Hibernate v4.3.7</li>
-  <li>Primefaces 6.0</li>
+  <li>Primefaces 7.0</li>
   <li>Jersey RESTful Web Services framework v2.23.2</li>
 </ul>
   
