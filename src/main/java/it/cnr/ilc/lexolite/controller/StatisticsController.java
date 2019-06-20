@@ -192,6 +192,7 @@ public class StatisticsController extends BaseController implements Serializable
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         CartesianLinearTicks ticks = new CartesianLinearTicks();
         ticks.setBeginAtZero(true);
+        ticks.setStepSize(1);
         linearAxes.setTicks(ticks);
         cScales.addYAxesData(linearAxes);
         options.setScales(cScales);

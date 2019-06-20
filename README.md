@@ -212,7 +212,9 @@ By means of the suitable button at the top of the interface, you can access to s
 </p>
 <img src="images/LexO-lite_statisticsPanel.png"/>
 <p>
-TODO
+The panel shows the lexicon languages, the number of lexical entries, and some metadata. 
+If you select a language by clicking on the pie chart, LexO provides specific statistics for that language, including the distribution
+of the lexical entries per part of speech.
 </p>
 
 <a name="export"><h4>Export</h4></a>
