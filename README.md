@@ -69,6 +69,7 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   </ul>
   <br/>
   LexO is a Maven project and uses:
+  <br/>
 <ul>
   <li>OWL-API v5.0</li>
   <li>SPARQL-DL v3.0.0</li>
