@@ -67,7 +67,7 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   <li>MySql v5.0 or later</li>
   <li>Java 1.8</li>
   </ul>
-  
+  <br/>
   LexO is a Maven project and uses:
 <ul>
   <li>OWL-API v5.0</li>
@@ -235,7 +235,7 @@ In this way, the resource is ready for its publication according to the linked d
 | Description | Example of invocation |
 | :--- | :--- |
 | List all the *lexicon languages* | `/lexicon/languages` |
-| List all the *lexicon lemmas* | `/lexicon/lemmas?lang=l&startswith=a&limit=10` |
+| List all the *lexicon lemmas* (only lang is mandatory)| `/lexicon/lemmas?lang=l&startswith=a&limit=10` |
 | List all the *lemma metadata* | `/lexicon/lemma?id=lemma_id` |
 | List all the lemmas involved in a specific *lexico-semantic relation* with a given lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
 | Get some lexicon *statistics* | `/lexicon/statistics?lang=l` |
