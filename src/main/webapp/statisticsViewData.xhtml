@@ -14,7 +14,8 @@
 
         <h:panelGrid id="StatisticsDataGrid" styleClass="statisticsTable" columns="2" columnClasses="column" cellpadding="5" style="margin-left: auto; margin-right: auto; padding-top: 10px;">
             <p:donutChart model="#{statisticsController.pieModel1}" style="width:450px;height:350px;">
-                <p:ajax event="itemSelect" listener="#{statisticsController.itemSelect}" 
+                <p:ajax event="itemSelect" listener="#{statisticsController.itemSelect}"
+                        onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                         update="lexiconStatisticsDataForm:lexiconStatisticsDataForm2:StatisticsDataDetailHeaderGrid 
                         lexiconStatisticsDataForm:lexiconStatisticsDataForm2:StatisticsDataDetailGrid
                         selectedLanguageData"/>
