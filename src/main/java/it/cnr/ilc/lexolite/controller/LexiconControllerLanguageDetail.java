@@ -105,11 +105,16 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
     }
 
     public void save() throws IOException, OWLOntologyStorageException {
-        lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
-        log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);
-        lexiconCreationControllerTabViewList.updateLexiconLanguagesList();
+        if (!langName.isEmpty()) {
+            lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
+            log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);
+            lexiconCreationControllerTabViewList.updateLexiconLanguagesList();
+        } else {
+            log(Level.INFO, loginController.getAccount(), "Negated creation of an empty language ");
+            warn("template.message.emptyLangCreation.summary", "template.message.emptyLangCreation.description");
+        }
     }
-    
+
     public void clear() {
         this.creator = "";
         this.description = "";
