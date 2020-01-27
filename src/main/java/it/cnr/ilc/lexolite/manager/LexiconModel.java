@@ -11,8 +11,13 @@ import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
+import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
+import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
+import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
+import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
+import it.cnr.ilc.lexolite.manager.SenseData.SenseRelation;
 import it.cnr.ilc.lexolite.util.LexiconUtil;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -56,6 +61,7 @@ import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
@@ -83,7 +89,7 @@ public class LexiconModel extends BaseController {
 
     public LexiconModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
-        try (InputStream inputStream = f.getFile().getInputstream()) {
+        try ( InputStream inputStream = f.getFile().getInputstream()) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             setPrefixes();
@@ -94,7 +100,7 @@ public class LexiconModel extends BaseController {
 
     public LexiconModel() {
         manager = OWLManager.createOWLOntologyManager();
-        try (InputStream inputStream = new FileInputStream(DEFAULT_ONTOLOGY)) {
+        try ( InputStream inputStream = new FileInputStream(DEFAULT_ONTOLOGY)) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             setPrefixes();
@@ -116,6 +122,9 @@ public class LexiconModel extends BaseController {
         pm.setPrefix("dct", Namespace.DCT);
         pm.setPrefix("decomp", Namespace.DECOMP);
         pm.setPrefix("rdf", Namespace.RDF);
+        pm.setPrefix("vartrans", Namespace.VARTRANS);
+        pm.setPrefix("trcat", Namespace.TRCAT);
+        pm.setPrefix("synsem", Namespace.SYNSEM);
     }
 
     // params: langName, uriLang, lingCat, descritpion, creator
@@ -197,6 +206,10 @@ public class LexiconModel extends BaseController {
     // returns the ontological individual of a given uri string
     private OWLNamedIndividual getIndividual(String uri) {
         return factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), uri);
+    }
+
+    private OWLObjectProperty getObjectProperty(String uri, String uriObj) {
+        return factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get(uriObj + ":"), uri);
     }
 
     // Save a new lemma note
@@ -313,6 +326,299 @@ public class LexiconModel extends BaseController {
             }
         }
         return false;
+    }
+
+    private boolean contains(ArrayList<LexicalRelation> alr, LexicalRelation lr) {
+        for (LexicalRelation _lr : alr) {
+            if (_lr.getOWLName().equals(lr.getOWLName()) && (_lr.getRelation().equals(lr.getRelation()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean contains(ArrayList<ReifiedLexicalRelation> alr, ReifiedLexicalRelation lr) {
+        for (ReifiedLexicalRelation _lr : alr) {
+            if (_lr.getSourceOWLName().equals(lr.getSourceOWLName()) && (_lr.getCategory().equals(lr.getCategory()))
+                    && (_lr.getTargetOWLName().equals(lr.getTargetOWLName()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateDirectLexicalRelation(String sbj, ArrayList<LexicalRelation> oldLexRels, ArrayList<LexicalRelation> newLexRels) {
+        // for each old lexical relation relation, if it is not in new lexical relation then remove old lexical relation
+        for (LexicalRelation lr : oldLexRels) {
+            if ((!contains(newLexRels, lr)) && (!lr.getWrittenRep().isEmpty()) && (!lr.getRelation().isEmpty())) {
+                if (lr.getRelation().equals(OntoLexEntity.ObjectProperty.LEXICALREL.getLabel())
+                        || lr.getRelation().equals(OntoLexEntity.ObjectProperty.TRANSLATABLEAS.getLabel())) {
+                    removeObjectPropertyAxiom("vartrans", getIndividual(sbj.replace("_lemma", "_entry")), lr.getRelation(), getIndividual(lr.getOWLName().replace("_lemma", "_entry")));
+                } else {
+                    removeObjectPropertyAxiom("lexinfo", getIndividual(sbj.replace("_lemma", "_entry")), lr.getRelation(), getIndividual(lr.getOWLName().replace("_lemma", "_entry")));
+                }
+            }
+        }
+        // for each new lexical relation, if it is not in old lexical relation then add new lexical relation
+        for (LexicalRelation lr : newLexRels) {
+            if ((!contains(oldLexRels, lr)) && (!lr.getWrittenRep().isEmpty()) && (!lr.getRelation().isEmpty())) {
+                if (lr.getRelation().equals(OntoLexEntity.ObjectProperty.LEXICALREL.getLabel())
+                        || lr.getRelation().equals(OntoLexEntity.ObjectProperty.TRANSLATABLEAS.getLabel())) {
+                    addObjectPropertyAxiom(lr.getRelation(), getIndividual(sbj.replace("_lemma", "_entry")), getIndividual(lr.getOWLName().replace("_lemma", "_entry")), pm.getPrefixName2PrefixMap().get("vartrans:"));
+                } else {
+                    addObjectPropertyAxiom(lr.getRelation(), getIndividual(sbj.replace("_lemma", "_entry")), getIndividual(lr.getOWLName().replace("_lemma", "_entry")), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+                    addObjectPropertyAxiom(getObjectProperty(lr.getRelation(), "lexinfo"), getObjectProperty(OntoLexEntity.ObjectProperty.LEXICALREL.getLabel(), "vartrans"));
+                }
+            }
+        }
+    }
+
+    private void updateIndirectLexicalRelation(ArrayList<LemmaData.ReifiedLexicalRelation> oldLexRels, ArrayList<ReifiedLexicalRelation> newLexRels) {
+        // for each old lexical relation relation, if it is not in new lexical relation then remove old lexical relation
+        for (ReifiedLexicalRelation lr : oldLexRels) {
+            if ((!contains(newLexRels, lr)) && (!lr.getTargetWrittenRep().isEmpty()) && (!lr.getCategory().isEmpty())) {
+                removeReifiedLexicalRelation(lr);
+            }
+        }
+        // for each new lexical relation, if it is not in old lexical relation then add new lexical relation
+        for (ReifiedLexicalRelation lr : newLexRels) {
+            if ((!contains(oldLexRels, lr)) && (!lr.getTargetWrittenRep().isEmpty()) && (!lr.getCategory().isEmpty())) {
+                addReifiedLexicalRelation(lr);
+            }
+        }
+    }
+
+    private void addReifiedLexicalRelation(ReifiedLexicalRelation rlr) {
+        OWLClass LexicalRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.LEXICALRELATION.getLabel());
+        OWLNamedIndividual lr = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rlr.getSourceOWLName() + "_" + rlr.getCategory() + "_" + rlr.getTargetOWLName());
+        OWLNamedIndividual src = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rlr.getSourceOWLName());
+        OWLNamedIndividual trg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rlr.getTargetOWLName());
+        OWLNamedIndividual cat = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexinfo:"), rlr.getCategory());
+        addIndividualAxiom(LexicalRelation, lr);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SOURCE.getLabel(), lr, src, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.TARGET.getLabel(), lr, trg, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.CATEGORY.getLabel(), lr, cat, pm.getPrefixName2PrefixMap().get("vartrans:"));
+    }
+
+    private void removeReifiedLexicalRelation(ReifiedLexicalRelation rlr) {
+        OWLClass LexicalRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.LEXICALRELATION.getLabel());
+        OWLNamedIndividual lr = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rlr.getSourceOWLName() + "_" + rlr.getCategory() + "_" + rlr.getTargetOWLName());
+        removeIndividualAxiom(LexicalRelation, lr);
+    }
+
+    private void addReifiedTranslationSenseRelation(ReifiedTranslationRelation rtr) {
+        OWLClass TranslationRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TRANSLATION.getLabel());
+        OWLNamedIndividual tr = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rtr.getSource() + "_" + rtr.getCategory() + "_" + rtr.getTarget());
+        OWLNamedIndividual src = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rtr.getSource());
+        OWLNamedIndividual trg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rtr.getTarget());
+        OWLNamedIndividual cat = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("trcat:"), rtr.getCategory());
+        addIndividualAxiom(TranslationRelation, tr);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SOURCE.getLabel(), tr, src, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.TARGET.getLabel(), tr, trg, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.CATEGORY.getLabel(), tr, cat, pm.getPrefixName2PrefixMap().get("vartrans:"));
+    }
+
+    private void removeReifiedTranslationSenseRelation(ReifiedTranslationRelation rtr) {
+        OWLClass TranslationRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TRANSLATION.getLabel());
+        OWLNamedIndividual tr = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rtr.getSource() + "_" + rtr.getCategory() + "_" + rtr.getTarget());
+        removeIndividualAxiom(TranslationRelation, tr);
+    }
+
+    private void addReifiedSenseRelation(ReifiedSenseRelation rsr) {
+        OWLClass SenseRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TERMINOLOGICALRELATION.getLabel());
+        OWLNamedIndividual termRel = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getSource() + "_" + rsr.getCategory() + "_" + rsr.getTarget());
+        OWLNamedIndividual src = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getSource());
+        OWLNamedIndividual trg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getTarget());
+        OWLNamedIndividual cat = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexinfo:"), rsr.getCategory());
+        addIndividualAxiom(SenseRelation, termRel);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SOURCE.getLabel(), termRel, src, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.TARGET.getLabel(), termRel, trg, pm.getPrefixName2PrefixMap().get("vartrans:"));
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.CATEGORY.getLabel(), termRel, cat, pm.getPrefixName2PrefixMap().get("vartrans:"));
+    }
+
+    private void removeReifiedSenseRelation(ReifiedSenseRelation rsr) {
+        OWLClass SenseRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TRANSLATION.getLabel());
+        OWLNamedIndividual termRel = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getSource() + "_" + rsr.getCategory() + "_" + rsr.getTarget());
+        removeIndividualAxiom(SenseRelation, termRel);
+    }
+
+    public void updateLemmaVarTrans(LemmaData oldLemma, LemmaData newLemma) {
+        updateDirectLexicalRelation(oldLemma.getIndividual(), oldLemma.getLexRels(), newLemma.getLexRels());
+        updateIndirectLexicalRelation(oldLemma.getReifiedLexRels(), newLemma.getReifiedLexRels());
+    }
+
+    public void updateSenseVarTrans(ArrayList<SenseData> oldSense, ArrayList<SenseData> newSense) {
+        for (int i = 0; i < oldSense.size(); i++) {
+            OWLNamedIndividual sbj = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldSense.get(i).getName()));
+            updateDirectSenseRelation(sbj, oldSense.get(i).getSenseRels(), newSense.get(i).getSenseRels());
+            updateTranslationlRelation(oldSense.get(i).getReifiedTranslationRels(), newSense.get(i).getReifiedTranslationRels());
+            updateTerminologicalRelation(oldSense.get(i).getReifiedSenseRels(), newSense.get(i).getReifiedSenseRels());
+        }
+    }
+
+    private void updateDirectSenseRelation(OWLNamedIndividual sbj, ArrayList<SenseRelation> oldSenseRels, ArrayList<SenseRelation> newSenseRels) {
+        // for each old sense relation relation, if it is not in new sense relation then remove old sense relation
+        for (SenseRelation lr : oldSenseRels) {
+            if ((!contains(newSenseRels, lr)) && (!lr.getWrittenRep().isEmpty()) && (!lr.getRelation().isEmpty())) {
+                if (lr.getRelation().equals(OntoLexEntity.ObjectProperty.SENSEREL.getLabel())
+                        || lr.getRelation().equals(OntoLexEntity.ObjectProperty.TRANSLATION.getLabel())) {
+                    removeObjectPropertyAxiom("vartrans", sbj, lr.getRelation(), getIndividual(lr.getWrittenRep()));
+                } else {
+                    removeObjectPropertyAxiom("lexinfo", sbj, lr.getRelation(), getIndividual(lr.getWrittenRep()));
+                }
+            }
+        }
+        // for each new sense relation, if it is not in old sense relation then add new sense relation
+        for (SenseRelation lr : newSenseRels) {
+            if ((!contains(oldSenseRels, lr)) && (!lr.getWrittenRep().isEmpty()) && (!lr.getRelation().isEmpty())) {
+                if (lr.getRelation().equals(OntoLexEntity.ObjectProperty.SENSEREL.getLabel())
+                        || lr.getRelation().equals(OntoLexEntity.ObjectProperty.TRANSLATION.getLabel())) {
+                    addObjectPropertyAxiom(lr.getRelation(), sbj, getIndividual(lr.getWrittenRep()), pm.getPrefixName2PrefixMap().get("vartrans:"));
+                } else {
+                    addObjectPropertyAxiom(lr.getRelation(), sbj, getIndividual(lr.getWrittenRep()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+                    addObjectPropertyAxiom(getObjectProperty(lr.getRelation(), "lexinfo"), getObjectProperty(OntoLexEntity.ObjectProperty.SENSEREL.getLabel(), "vartrans"));
+                }
+            }
+        }
+    }
+
+    private void updateTranslationlRelation(ArrayList<ReifiedTranslationRelation> oldReifTrans, ArrayList<ReifiedTranslationRelation> newReifTrans) {
+        // for each old sense relation relation, if it is not in new sense relation then remove old sense relation
+        for (ReifiedTranslationRelation rt : oldReifTrans) {
+            if ((!contains(newReifTrans, rt)) && (!rt.getTargetWrittenRep().isEmpty()) && (!rt.getCategory().isEmpty())) {
+                removeReifiedTranslationSenseRelation(rt);
+            }
+        }
+        // for each new sense relation, if it is not in old sense relation then add new sense relation
+        for (ReifiedTranslationRelation rt : newReifTrans) {
+            if ((!contains(oldReifTrans, rt)) && (!rt.getTargetWrittenRep().isEmpty()) && (!rt.getCategory().isEmpty())) {
+                addReifiedTranslationSenseRelation(rt);
+            }
+        }
+    }
+
+    private void updateTerminologicalRelation(ArrayList<ReifiedSenseRelation> oldReifRels, ArrayList<ReifiedSenseRelation> newReifRels) {
+        // for each old sense relation relation, if it is not in new sense relation then remove old sense relation
+        for (ReifiedSenseRelation rr : oldReifRels) {
+            if ((!contains(newReifRels, rr)) && (!rr.getTargetWrittenRep().isEmpty()) && (!rr.getCategory().isEmpty())) {
+                removeReifiedSenseRelation(rr);
+            }
+        }
+        // for each new sense relation, if it is not in old sense relation then add new sense relation
+        for (ReifiedSenseRelation rr : newReifRels) {
+            if ((!contains(oldReifRels, rr)) && (!rr.getTargetWrittenRep().isEmpty()) && (!rr.getCategory().isEmpty())) {
+                addReifiedSenseRelation(rr);
+            }
+        }
+    }
+
+    private boolean contains(ArrayList<SenseRelation> alr, SenseRelation lr) {
+        for (SenseRelation _lr : alr) {
+            if (_lr.getWrittenRep().equals(lr.getWrittenRep()) && (_lr.getRelation().equals(lr.getRelation()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean contains(ArrayList<ReifiedSenseRelation> alr, ReifiedSenseRelation lr) {
+        for (ReifiedSenseRelation _lr : alr) {
+            if (_lr.getSource().equals(lr.getSource()) && (_lr.getCategory().equals(lr.getCategory()))
+                    && (_lr.getTarget().equals(lr.getTarget()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean contains(ArrayList<ReifiedTranslationRelation> alr, ReifiedTranslationRelation lr) {
+        for (ReifiedTranslationRelation _lr : alr) {
+            if (_lr.getSource().equals(lr.getSource()) && (_lr.getCategory().equals(lr.getCategory()))
+                    && (_lr.getTarget().equals(lr.getTarget()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String createSyntacticFrame(String lemma, LemmaData.SynFrame synFrame) {
+        OWLClass SyntacticFrame = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.Class.SYNTACTICFRAME.getLabel());
+        OWLNamedIndividual le = getIndividual(lemma.replace("_lemma", "_entry"));
+        OWLObjectProperty synBehavior = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.ObjectProperty.SYNBEHAVIOR.getLabel());
+        int frameNumber = EntitySearcher.getObjectPropertyValues(le, synBehavior, ontology).collect(Collectors.toList()).size();
+        OWLNamedIndividual sf = getIndividual(lemma.replace("_lemma", "_frame") + ++frameNumber);
+        OWLClass sfType = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("lexinfo:"), synFrame.getType());
+        addIndividualAxiom(SyntacticFrame, sf);
+        addIndividualAxiom(sfType, sf);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SYNBEHAVIOR.getLabel(), le, sf, pm.getPrefixName2PrefixMap().get("synsem:"));
+        return sf.getIRI().getShortForm();
+    }
+
+    public void updateSyntacticFrame(LemmaData.SynFrame oldSynFrame, LemmaData.SynFrame newSynFrame) {
+        updateSynFrameType(oldSynFrame, newSynFrame);
+        updateSynFrameArgs(oldSynFrame, newSynFrame);
+    }
+
+    private void updateSynFrameType(LemmaData.SynFrame oldSynFrame, LemmaData.SynFrame newSynFrame) {
+        if (!newSynFrame.getType().isEmpty() && !newSynFrame.getType().equals(oldSynFrame.getType())) {
+            OWLClass sfOldType = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("lexinfo:"), oldSynFrame.getType());
+            OWLClass sfNewType = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("lexinfo:"), newSynFrame.getType());
+            OWLNamedIndividual sf = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), newSynFrame.getName());
+            removeIndividualAxiom(sfOldType, sf);
+            addIndividualAxiom(sfNewType, sf);
+        }
+    }
+
+    private void updateSynFrameArgs(LemmaData.SynFrame oldSynFrame, LemmaData.SynFrame newSynFrame) {
+        // assumption: since, it is not possible to remove args from the interface box, newSynFrame contains the number of args in oldSynFrame at least.
+        // -- args are sorted by number
+        for (LemmaData.SynArg sa : newSynFrame.getSynArgs()) {
+            int nArg = sa.getNumber();
+            if (oldSynFrame.getSynArgs().size() >= nArg) {
+                updateSynArg(newSynFrame.getName(), sa, oldSynFrame.getSynArgs().get(nArg - 1));
+            } else {
+                createSynArg(newSynFrame.getName(), sa);
+            }
+        }
+    }
+
+    private void updateSynArg(String frameName, LemmaData.SynArg newSA, LemmaData.SynArg oldSA) {
+        OWLNamedIndividual synFrame = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), frameName);
+        OWLNamedIndividual synArg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), frameName + "_arg_" + oldSA.getNumber());
+        if (!oldSA.getType().equals(newSA.getType())) {
+            String oldNS = oldSA.getType().equals(OntoLexEntity.ObjectProperty.SYNARG.getLabel()) ? "synsem" : "lexinfo";
+            String newNS = newSA.getType().equals(OntoLexEntity.ObjectProperty.SYNARG.getLabel()) ? pm.getPrefixName2PrefixMap().get("synsem:") : pm.getPrefixName2PrefixMap().get("lexinfo:");
+            removeObjectPropertyAxiom(oldNS, synFrame, oldSA.getType(), synArg);
+            addObjectPropertyAxiom(newSA.getType(), synFrame, synArg, newNS);
+        }
+        if (!oldSA.getMarker().equals(newSA.getMarker())) {
+            removeDataPropertyAxiom("synsem", synArg, OntoLexEntity.ObjectProperty.MARKER.getLabel(), oldSA.getMarker());
+            addDataPropertyAxiom(OntoLexEntity.ObjectProperty.MARKER.getLabel(), synArg, newSA.getMarker(), pm.getPrefixName2PrefixMap().get("synsem:"));
+        }
+        if (newSA.isOptional() ^ oldSA.isOptional()) {
+            removeDataPropertyAxiom("synsem", synArg, OntoLexEntity.DataProperty.OPTIONAL.getLabel(), oldSA.isOptional() ? "true" : "false");
+            addDataPropertyAxiom(OntoLexEntity.DataProperty.OPTIONAL.getLabel(), synArg, newSA.isOptional() ? "true" : "false", pm.getPrefixName2PrefixMap().get("synsem:"));
+        }
+    }
+
+    private void createSynArg(String frameName, LemmaData.SynArg sa) {
+        OWLNamedIndividual synFrame = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), frameName);
+        OWLNamedIndividual synArg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), frameName + "_arg_" + sa.getNumber());
+        OWLClass synArgClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.Class.SYNTACTICARGUMENT.getLabel());
+        String ns = sa.getType().equals(OntoLexEntity.ObjectProperty.SYNARG.getLabel()) ? pm.getPrefixName2PrefixMap().get("synsem:") : pm.getPrefixName2PrefixMap().get("lexinfo:");
+        addIndividualAxiom(synArgClass, synArg);
+        addObjectPropertyAxiom(sa.getType(), synFrame, synArg, ns);
+        if (!sa.getType().equals(OntoLexEntity.ObjectProperty.SYNARG.getLabel())) {
+            addObjectPropertyAxiom(factory.getOWLObjectProperty(sa.getType(), ns), factory.getOWLObjectProperty(OntoLexEntity.ObjectProperty.SYNARG.getLabel(), pm.getPrefixName2PrefixMap().get("rdf:")));
+        }
+        if (!sa.getMarker().isEmpty()) {
+            addDataPropertyAxiom(OntoLexEntity.ObjectProperty.MARKER.getLabel(), synArg, sa.getMarker(), pm.getPrefixName2PrefixMap().get("synsem:"));
+        }
+        if (sa.isOptional()) {
+            addDataPropertyAxiom(OntoLexEntity.DataProperty.OPTIONAL.getLabel(), synArg, "true", pm.getPrefixName2PrefixMap().get("synsem:"));
+        } else {
+            addDataPropertyAxiom(OntoLexEntity.DataProperty.OPTIONAL.getLabel(), synArg, "false", pm.getPrefixName2PrefixMap().get("synsem:"));
+        }
     }
 
     // NEW LEMMA MULTIWORD ACTION: write all the triples about the new lemma entry
@@ -699,7 +1005,7 @@ public class LexiconModel extends BaseController {
         if (!f.renameTo(bkp)) {
             throw new IOException("unable to rename " + bkp.getName());
         }
-        try (FileOutputStream fos = new FileOutputStream(DEFAULT_ONTOLOGY)) {
+        try ( FileOutputStream fos = new FileOutputStream(DEFAULT_ONTOLOGY)) {
             manager.saveOntology(ontology, fos);
             Runtime.getRuntime().exec("gzip " + bkp.getAbsolutePath());
         }
@@ -725,6 +1031,11 @@ public class LexiconModel extends BaseController {
     private void addObjectPropertyAxiom(String objProp, OWLNamedIndividual src, OWLNamedIndividual trg, String ns) {
         OWLObjectProperty p = factory.getOWLObjectProperty(ns, objProp);
         OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(p, src, trg);
+        manager.addAxiom(ontology, propertyAssertion);
+    }
+
+    private void addObjectPropertyAxiom(OWLObjectProperty srcObjProp, OWLObjectProperty trgObjProp) {
+        OWLSubObjectPropertyOfAxiom propertyAssertion = factory.getOWLSubObjectPropertyOfAxiom(srcObjProp, trgObjProp);
         manager.addAxiom(ontology, propertyAssertion);
     }
 

@@ -31,6 +31,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import org.primefaces.event.TabCloseEvent;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -147,7 +148,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
-
     public LexiconManager getLexiconManager() {
         return lexiconManager;
     }
@@ -500,8 +500,8 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         updateEntryValidity();
         lemma.setSaveButtonDisabled(false);
     }
-    
-     private void updateEntryValidity() {
+
+    private void updateEntryValidity() {
         if (lemma.isVerified()) {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
@@ -579,6 +579,11 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         return filteredList;
     }
 
+    public void onTabClose(TabCloseEvent event) {
+        lexiconManager.unlock(lemma.getIndividual());
+        System.out.println(lemma.getIndividual() + " unlocked.");
+    }
+    
     public void onReferenceSelect(LemmaData.Word reference) {
         log(Level.INFO, loginController.getAccount(), "ADD Reference (seeAlso) " + reference.getWrittenRep() + " to the Lemma " + lemma.getFormWrittenRepr());
         lemma.setSaveButtonDisabled(false);

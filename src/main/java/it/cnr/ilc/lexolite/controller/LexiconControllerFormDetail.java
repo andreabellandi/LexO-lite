@@ -9,6 +9,7 @@ import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
+import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
@@ -49,6 +50,9 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     @Inject
     private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
     @Inject
+    private LexiconControllerVarTransFormDetail lexiconControllerVarTransFormDetail;
+
+    @Inject
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
@@ -62,6 +66,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private final String LemmaOfMultiwordNotFound = "";
 
     private boolean lemmaRendered = false;
+
     private boolean newAction = false;
     private boolean lemmAlreadyExists = false;
     private boolean isAdmissibleLemma = true;
@@ -280,6 +285,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         this.lemmaCopy.setVerified(lemma.isVerified());
         this.lemmaCopy.setSeeAlso(copyWordData(lemma.getSeeAlso()));
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
+        this.lemmaCopy.setLexRels(copyLexicalRelationData(lemma.getLexRels()));
         this.lemmaCopy.setValid(lemma.getValid());
     }
 
@@ -292,6 +298,19 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             _w.setWrittenRep(w.getWrittenRep());
             _w.setOWLComp(w.getOWLComp());
             _w.setLabel(w.getLabel());
+            _alw.add(_w);
+        }
+        return _alw;
+    }
+
+    private ArrayList<LexicalRelation> copyLexicalRelationData(ArrayList<LexicalRelation> alw) {
+        ArrayList<LexicalRelation> _alw = new ArrayList();
+        for (LexicalRelation w : alw) {
+            LexicalRelation _w = new LexicalRelation();
+            _w.setOWLName(w.getOWLName());
+            _w.setLanguage(w.getLanguage());
+            _w.setWrittenRep(w.getWrittenRep());
+            _w.setRelation(w.getRelation());
             _alw.add(_w);
         }
         return _alw;
@@ -363,6 +382,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         forms.addAll(al);
         createLemmaCopy();
         addFormCopy(al);
+        
     }
 
     // invoked by the controller after an user selected a sense in the tabview
@@ -1078,13 +1098,14 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     public void addEntryOfMultiwordComponent(Word lemma, String relType) {
         log(Level.INFO, loginController.getAccount(), "VIEW Deatils of multiword component " + lemma.getOWLName() + " of " + lemma.getWrittenRep());
         setMultiwordComponentButtons(lemma);
-        lemma.setViewButtonDisabled(true);
         lexiconCreationControllerRelationDetail.resetRelationDetails();
         lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
         lexiconCreationControllerRelationDetail.setEntryOfLexicalRelation(lemma.getOWLName().replace("_entry", "_lemma"));
-        checkForLock(lemma.getOWLName());
+        checkForLock(lemma.getOWLName().replace("_entry", "_lemma"));
         lexiconManager.getLexiconLocker().print();
         lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
+        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(lemma.getOWLName().replace("_entry", "_lemma"));
+        lexiconCreationControllerRelationDetail.setActiveTab(2);
     }
 
     private void setMultiwordComponentButtons(Word comp) {
@@ -1132,7 +1153,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         relationPanelCheck(reference.getOWLName());
     }
 
-    private void relationPanelCheck(String OWLName) {
+    public void relationPanelCheck(String OWLName) {
         if (lexiconCreationControllerRelationDetail.getCurrentLexicalEntry().equals(OWLName)) {
             lexiconCreationControllerRelationDetail.resetRelationDetails();
             lexiconCreationControllerRelationDetail.setCurrentLexicalEntry("");
@@ -1163,7 +1184,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         return propertyValue.getVoice();
     }
 
-    private void checkForLock(String entry) {
+    public void checkForLock(String entry) {
         // check if the lexical entry is available and lock it
         boolean locked = lexiconManager.checkForLock(entry);
         if (locked) {

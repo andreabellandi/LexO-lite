@@ -148,6 +148,27 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
+    public synchronized void updateLemmaVarTrans(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
+        lexiconModel.updateLemmaVarTrans(oldLemma, newLemma);
+        lexiconModel.persist();
+    }
+
+    public synchronized void updateSenseVarTrans(ArrayList<SenseData> oldSense, ArrayList<SenseData> newSense) throws IOException, OWLOntologyStorageException {
+        lexiconModel.updateSenseVarTrans(oldSense, newSense);
+        lexiconModel.persist();
+    }
+
+    public synchronized String createSyntacticFrame(String lemma, LemmaData.SynFrame synFrame) throws IOException, OWLOntologyStorageException {
+        String sfName = lexiconModel.createSyntacticFrame(lemma, synFrame);
+        lexiconModel.persist();
+        return sfName;
+    }
+
+    public synchronized void updateSyntacticFrame(LemmaData.SynFrame oldSynFrame, LemmaData.SynFrame newSynFrame) throws IOException, OWLOntologyStorageException {
+        lexiconModel.updateSyntacticFrame(oldSynFrame, newSynFrame);
+        lexiconModel.persist();
+    }
+
     // invoked in order to retrieve the component of a multiword at a specific position
     public synchronized String getComponentAtPosition(String entry, String position) {
         return lexiconQuery.getComponentAtPosition(entry.replace("_lemma", "_entry"), position);
@@ -297,21 +318,6 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getSensesByLanguage(lang);
     }
 
-    // invoked by PropertyValue bean in order to get PoS values from lexinfo
-    public synchronized List<SelectItem> getPoS() {
-        return lexiconQuery.getPoS();
-    }
-
-    // invoked by PropertyValue bean in order to get gender values from lexinfo
-    public synchronized ArrayList<String> getGenders() {
-        return lexiconQuery.getGenders();
-    }
-
-    // invoked by PropertyValue bean in order to get number values from lexinfo
-    public synchronized ArrayList<String> getNumbers() {
-        return lexiconQuery.getNumbers();
-    }
-
     // invoked by advanced filter
     public synchronized List<Map<String, String>> advancedFilter_lemmas() {
         return lexiconQuery.advancedFilter_lemmas();
@@ -325,5 +331,22 @@ public class LexiconManager extends BaseController implements Serializable {
     public synchronized List<Map<String, String>> ontoQueryGroup_1_forms(String ontoClass) {
         return cnlq.ontoQueryGroup_1_forms(ontoClass);
     }
+
+    // query for varTrans module //
+    // invoked in order to add lemma varTrans attributes to a specific lemma
+    public synchronized LemmaData getVarTransAttributes(String lemma) {
+        return lexiconQuery.getVarTransAttributes(lemma.replace("_lemma", "_entry"));
+    }
+
+    public synchronized ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
+        return lexiconQuery.getSensesVarTransAttributesOfLemma(asd);
+    }
+    
+    // query for symSem module //
+    // invoked in order to add lemma synsem attributes to a specific lemma
+    public synchronized LemmaData getSynSemAttributes(String lemma) {
+        return lexiconQuery.getSynSemAttributes(lemma.replace("_lemma", "_entry"));
+    }
+
 
 }

@@ -41,6 +41,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     @Inject
     private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
     @Inject
+    private LexiconControllerLexicalAspect lexiconControllerLexicalAspect;
+    @Inject
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
@@ -58,6 +60,14 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerOntologyDetail lexiconCreationOntologyDetailController;
     @Inject
     private LexiconControllerTabViewToolbar lexiconCreationControllerTabViewToolbar;
+    @Inject
+    private LexiconControllerVarTransFormDetail lexiconControllerVarTransFormDetail;
+    @Inject
+    private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
+    @Inject
+    private LexiconControllerSynSemFormDetail lexiconControllerSynSemFormDetail;
+    @Inject
+    private LexiconControllerSynSemSenseDetail lexiconControllerSynSemSenseDetail;
 
     private String lemmaField;
     private String formField;
@@ -358,6 +368,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         String entry = ((DataTreeNode) event.getTreeNode().getData()).getOWLname();
         System.err.println("onSelect Entry: " + entry);
         String entryType = (String) component.getAttributes().get("LexicalEntryType");
+        lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
         lexiconCreationControllerFormDetail.setNewAction(false);
         lexiconCreationControllerFormDetail.setLemmaRendered(true);
         lexiconCreationControllerFormDetail.setAddFormButtonDisabled(false);
@@ -378,6 +389,10 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
         lexiconCreationControllerSenseDetail.setSenseToolbarRendered(true);
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
+        lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
         lexiconCreationControllerRelationDetail.setActiveTab(0);

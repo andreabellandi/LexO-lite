@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="lexiconSynSemFormDetailForm">
+
+        <h:panelGrid id="LemmaSynSemPanelGrid" styleClass="lemmaTextBlock" columns="2" columnClasses="column" cellpadding="5" 
+                     rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}">
+
+            <h:outputLabel id="lemmaSynSemLabel" styleClass="titleStyle" value="Lemma:"/>
+            <h:panelGrid columns="3" cellpadding="0" cellspacing="0">
+                <p:inputText id="lemmaSynSemName" styleClass="inputTextStyle" readonly="true"
+                             value="#{lexiconControllerFormDetail.lemma.formWrittenRepr}"/>
+                <h:panelGrid id="userLock" columns="1" columnClasses="column" cellpadding="0" rendered="#{lexiconControllerFormDetail.locked}">
+                    <p:graphicImage id="permission" value="/resources/image/permission.png" height="20px" width="20px"/>
+                    <p:tooltip for="permission" value="#{lexiconControllerFormDetail.locker}" position="top"/>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <h:panelGrid id="ComponentGroup_1" columns="1" cellpadding="0" 
+                         rendered="#{(lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.lemma.type.equals('Word')) or lexiconControllerFormDetail.lemma.multiword.size() > 0}">
+                <h:outputLabel id="componentLabel_1" styleClass="multiwordTitleStyle" value="Words:"/>
+            </h:panelGrid>
+            <h:panelGrid id="ComponentGroup_2" 
+                         rendered="#{(lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.lemma.type.equals('Word')) or lexiconControllerFormDetail.lemma.multiword.size() > 0}"
+                         styleClass="#{lexiconControllerFormDetail.lemma.multiword.size() > 0 ? 'typeLemmaTextBlock' : 'multiwordTitleStyle'}" columns="2">
+                <ui:repeat value="#{lexiconControllerFormDetail.lemma.multiword}" var="comp">
+                    <h:panelGrid columns="4">
+                        <p:graphicImage style="padding-right: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
+                                        height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
+                        <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true"
+                                        value="#{comp.label}" forceSelection="true" readonly="#{lexiconControllerFormDetail.locked}"
+                                        rendered="#{!comp.writtenRep.contains('not found')}"
+                                        completeMethod="#{lexiconControllerFormDetail.completeComponents}">
+                            <f:attribute name="currentComponent" value="#{comp}"/>
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
+                                    update="lexicalEntryViewButtons :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"/>
+                        </p:autoComplete>
+                        <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
+                                       rendered="#{comp.writtenRep.contains('not found')}"/>
+                        <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
+                                         onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
+                                         action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
+                                         update=":editViewTab"
+                                         disabled="#{comp.viewButtonDisabled}"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+            </h:panelGrid>
+
+            <h:panelGrid id="lemmaSynSemButtons" columns="4" columnClasses="column" cellpadding="0" 
+                         rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                     or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+                <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add syntactic frames"/>
+                <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                    <p:menuitem styleClass="lexiconTabView" value="#{label['synsem.lemmaButton.synFrame']}" icon="fa fa-plus" 
+                                disabled="#{lexiconControllerFormDetail.newAction}" 
+                                update="SynFrameDataList"  
+                                actionListener="#{lexiconControllerSynSemFormDetail.addSyntacticFrame()}"/>
+                </p:menu>
+            </h:panelGrid>
+
+        </h:panelGrid>
+
+        <!-- syntactic frames-->
+        <p:dataList id="SynFrameDataList" styleClass="noBorder" type="definition" var="synFrame" 
+                    value="#{lexiconControllerSynSemFormDetail.lemmaSynSem.synFrames}" emptyMessage=""
+                    rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}">
+            <h:panelGrid styleClass="synFrameBlock" columns="2" cellpadding="5">
+                <h:outputLabel styleClass="titleStyle" value="Frame type:"/>
+                <p:selectOneMenu id="synFrameType" styleClass="menu" 
+                                 panelStyleClass="panel" value="#{synFrame.type}" 
+                                 appendTo="synFrameType">
+                    <p:ajax event="valueChange" listener="#{lexiconControllerSynSemFormDetail.synFrameTypeChanged}" 
+                            update="synFrameButtons"/>
+                    <f:attribute name="frame" value="#{synFrame}"/>
+                    <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                    <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticFrames}" />
+                </p:selectOneMenu>
+
+                <h:outputLabel styleClass="titleStyle" value="Arguments:" rendered="#{synFrame.synArgs.size() > 0}"/>
+                <ui:repeat value="#{synFrame.synArgs}" var="synArg" rendered="#{synFrame.synArgs.size() > 0}">
+                    <h:outputLabel styleClass="titleStyle" value="#{' #'.concat(synArg.number)}"/>
+                    <h:panelGrid styleClass="synArgBlock" columns="2" cellpadding="5">
+                        <h:outputLabel styleClass="titleStyle" value="Type:"/>
+                        <p:selectOneMenu id="synArgType" styleClass="menu" 
+                                         panelStyleClass="panel" value="#{synArg.type}" 
+                                         appendTo="synArgType">
+                            <p:ajax event="valueChange" listener="#{lexiconControllerSynSemFormDetail.synArgTypeChanged}" 
+                                    update="editViewTab:lexiconSynSemFormDetailForm:SynFrameDataList"/>
+                            <f:attribute name="frame" value="#{synFrame}"/>
+                            <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                            <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticArgumentTypes}" />
+                        </p:selectOneMenu>
+                        <h:outputLabel styleClass="titleStyle" value="Marker:"/>
+                        <p:inputText styleClass="inputTextStyle" value="#{synArg.marker}">
+                            <p:ajax event="keyup" update="editViewTab:lexiconSynSemFormDetailForm:SynFrameDataList" listener="#{lexiconControllerSynSemFormDetail.synArgMarkerChanged}"/>
+                            <f:attribute name="frame" value="#{synFrame}"/>
+                        </p:inputText>
+                        <h:outputLabel styleClass="titleStyle" value="Optional:"/>
+                        <p:selectBooleanCheckbox value="#{synArg.optional}">
+                            <p:ajax update="editViewTab:lexiconSynSemFormDetailForm:SynFrameDataList" listener="#{lexiconControllerSynSemFormDetail.synArgOptChanged}" />
+                            <f:attribute name="frame" value="#{synFrame}"/>
+                        </p:selectBooleanCheckbox>
+                    </h:panelGrid>
+                </ui:repeat>
+
+                <h:panelGrid id="synFrameButtons" columns="4" columnClasses="column" cellpadding="0" 
+                             rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                         or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+                    <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add syntactic argument"/>
+                    <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                        <p:menuitem styleClass="lexiconTabView" value="#{label['synsem.lemmaButton.synArg']}" icon="fa fa-plus" 
+                                    disabled="#{synFrame.newFrame}" 
+                                    update="SynFrameDataList"  
+                                    actionListener="#{lexiconControllerSynSemFormDetail.addSyntacticArgument(synFrame)}"/>
+                    </p:menu>
+                    <p:commandButton title="Save" icon="fa fa-save" 
+                                     update="SynFrameDataList" 
+                                     action="#{lexiconControllerSynSemFormDetail.saveSynFrame(synFrame)}"
+                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                     disabled="#{synFrame.saveButtonDisabled}">
+                    </p:commandButton>
+                </h:panelGrid>
+
+            </h:panelGrid>
+
+            <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>
+
+        </p:dataList>
+
+    </h:form>
+
+</ui:composition>

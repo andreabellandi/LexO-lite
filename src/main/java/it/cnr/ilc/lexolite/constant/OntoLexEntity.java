@@ -13,14 +13,27 @@ public class OntoLexEntity {
 
     public enum Class {
 
+        // Core
         WORD("Word"),
         MULTIWORD("MultiwordExpression"),
         AFFIX("Affix"),
         FORM("Form"),
         LEXICALENTRY("LexicalEntry"),
         LEXICALSENSE("LexicalSense"),
-        LEXICALCONCEPT("LexicalConcept");
+        LEXICALCONCEPT("LexicalConcept"),
+        
+        // vartrans module
+        LEXICALRELATION("LexicalRelation"),
+        TRANSLATION("Translation"),
+        TERMINOLOGICALRELATION("TerminologicalRelation"),
+        SENSERELATION("SenseRelation"),
+        LEXICOSEMANTICRELATION("LexicoSemanticRelation"),
 
+        // synsem module
+        SYNTACTICFRAME("SyntacticFrame"),
+        SYNTACTICARGUMENT("SyntacticArgument"),
+        ONTOMAP("OntoMap");
+        
         private String label;
 
         public String getLabel() {
@@ -34,8 +47,12 @@ public class OntoLexEntity {
 
     public enum DataProperty {
 
-        WRITTENREP("writtenRep");
+        // Core
+        WRITTENREP("writtenRep"),
 
+        // synsem module
+        OPTIONAL("optional");
+        
         private String label;
 
         public String getLabel() {
@@ -49,12 +66,34 @@ public class OntoLexEntity {
 
     public enum ObjectProperty {
 
+        // Core
         CANONICALFORM("canonicalForm"),
         OTHERFORM("otherForm"),
         SENSE("sense"),
         ENTRY("entry"),
-        REFERENCE("reference");
-
+        REFERENCE("reference"),
+        
+        // vartrans module
+        LEXICALREL("lexicalRel"),
+        SENSEREL("senseRel"),
+        TRANSLATABLEAS("translatableAs"),
+        TRANSLATION("translation"),
+        RELATES("relates"),
+        SOURCE("source"),
+        TARGET("target"),
+        CATEGORY("category"),
+        
+        // synsem module
+        SYNBEHAVIOR("synBehavior"),
+        SYNARG("synArg"),
+        ONTOMAPPING("ontoMapping"),
+        ONTOCORRESPONDENCE("ontoCorrespondence"),
+        ISA("isA"),
+        SUBJOFPROP("subjOfProp"),
+        OBJOFPROP("objOfProp"),
+        MARKER("marker"),
+        SUBMAP("submap");
+        
         private String label;
 
         public String getLabel() {

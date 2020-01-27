@@ -2,10 +2,14 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui">
 
-    <p:panelGrid id="lexiconDetailTable" columns="2" >
-        <ui:include id="inclFormDetail" src="/lexiconViewFormDetail.xhtml"/>
-        <ui:include id="inclSenseDetail" src="/lexiconViewSenseDetail.xhtml"/>
-        <ui:include id="inclOntoDetail" src="/lexiconViewOntologyDetail.xhtml"/>
+    <p:panelGrid id="lexiconDetailTable" columns="2">
+        <ui:include id="inclFormDetail" src="/lexiconViewFormDetail.xhtml" rendered="#{lexiconControllerFormDetail.lemmaRendered}"/>
+        <ui:include id="inclSenseDetail" src="/lexiconViewSenseDetail.xhtml" rendered="#{lexiconControllerSenseDetail.senseRendered}"/>
+        <ui:include id="inclVarTransFormDetail" src="/lexiconViewVarTransFormDetail.xhtml" rendered="#{lexiconControllerVarTransFormDetail.varTransRendered}"/>
+        <ui:include id="inclVarTransSenseDetail" src="/lexiconViewVarTransSenseDetail.xhtml" rendered="#{lexiconControllerVarTransSenseDetail.senseVarTransRendered}"/>
+        <ui:include id="inclSynSemFormDetail" src="/lexiconViewSynSemFormDetail.xhtml" rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}"/>
+        <ui:include id="inclSynSemSenseDetail" src="/lexiconViewSynSemSenseDetail.xhtml" rendered="#{lexiconControllerSynSemSenseDetail.senseSynSemRendered}"/>
+        <ui:include id="inclOntoDetail" src="/lexiconViewOntologyDetail.xhtml" rendered="#{lexiconControllerOntologyDetail.ontologyClassRendered}"/>
     </p:panelGrid>
 
 </ui:composition>

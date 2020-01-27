@@ -265,6 +265,30 @@ html, body {
     background-color: lightgrey;
 }
 
+.lemmaLexRelTextBlock {
+    background-color: #ecc6c6;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #696969;
+    margin-top: 12px;
+}
+
+.lemmaReifLexRelTextBlock {
+    background-color: #ecc6c6;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #A9A9A9;
+    margin-top: 12px;
+}
+
 .lemmaTextBlock {
     background-color: #ecc6c6;
     border-radius: 5px;
@@ -285,16 +309,6 @@ html, body {
         background-position: center;*/
 }
 
-.attTextBlock {
-    background-color: lightskyblue;
-    border-radius: 5px;
-    padding-top: 5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    padding-left: 3px;
-    line-height: 1.5;
-    border: 2px solid #7286ad;
-}
 
 .formTextBlock {
     background-color: ghostwhite;
@@ -355,19 +369,19 @@ html, body {
 }
 
 
-.docTextBlock {
-    background-color: #ebfaeb;
+.synArgBlock {
+    background-color: #f4fdf2;
     border-radius: 5px;
     padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 5px;
     padding-left: 3px;
     line-height: 1.5;
-    border: 2px solid #248f24;
-    float: right;
+    border: 2px solid #034222;
+    margin-bottom: 10px;
 }
 
-.manTextBlock {
+.synFrameBlock {
     background-color: #ebfaeb;
     border-radius: 5px;
     padding-top: 5px;
@@ -376,7 +390,6 @@ html, body {
     padding-left: 3px;
     line-height: 1.5;
     border: 2px solid #248f24;
-    float: right;
 }
 
 .senseTextBlock {
@@ -388,6 +401,30 @@ html, body {
     padding-left: 3px;
     line-height: 1.5;
     border: 2px solid #ffcc00;
+}
+
+.senseSenseRelTextBlock {
+    background-color: lemonchiffon;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #CCCC00;
+    margin-top: 12px;
+}
+
+.senseReifSenseRelTextBlock {
+    background-color: lemonchiffon;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #808000;
+    margin-top: 12px;
 }
 
 .noBorder > div {
@@ -967,4 +1004,14 @@ tr.rowHeight:last-child>td {
 /* rimuove la scrollbar verticale del tab dictionary*/
 #LU_LAA .ui-layout-unit-content{
     overflow-y: hidden;
+}
+
+.lexEntryAspects {
+    padding-top: 20px !important;
+    padding-bottom: 30px !important;
+}
+
+.senseDefinition {
+    width: 200px;
+    height: 100px !important;
 }

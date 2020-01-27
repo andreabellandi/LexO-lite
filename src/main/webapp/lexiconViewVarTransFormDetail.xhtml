@@ -1,0 +1,160 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:form id="lexiconVarTransFormDetailForm">
+
+        <h:panelGrid id="LemmaVarTransPanelGrid" styleClass="lemmaTextBlock" columns="2" columnClasses="column" cellpadding="5" 
+                     rendered="#{lexiconControllerVarTransFormDetail.varTransRendered}">
+
+            <h:outputLabel id="lemmaVarTransLabel" styleClass="titleStyle" value="Lemma:"/>
+            <h:panelGrid columns="3" cellpadding="0" cellspacing="0">
+                <p:inputText id="lemmaVarTransName" styleClass="inputTextStyle" readonly="true"
+                             value="#{lexiconControllerFormDetail.lemma.formWrittenRepr}"/>
+                <h:panelGrid id="userLock" columns="1" columnClasses="column" cellpadding="0" rendered="#{lexiconControllerFormDetail.locked}">
+                    <p:graphicImage id="permission" value="/resources/image/permission.png" height="20px" width="20px"/>
+                    <p:tooltip for="permission" value="#{lexiconControllerFormDetail.locker}" position="top"/>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <h:panelGrid id="ComponentGroup_1" columns="1" cellpadding="0" 
+                         rendered="#{(lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.lemma.type.equals('Word')) or lexiconControllerFormDetail.lemma.multiword.size() > 0}">
+                <h:outputLabel id="componentLabel_1" styleClass="multiwordTitleStyle" value="Words:"/>
+            </h:panelGrid>
+            <h:panelGrid id="ComponentGroup_2" 
+                         rendered="#{(lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.lemma.type.equals('Word')) or lexiconControllerFormDetail.lemma.multiword.size() > 0}"
+                         styleClass="#{lexiconControllerFormDetail.lemma.multiword.size() > 0 ? 'typeLemmaTextBlock' : 'multiwordTitleStyle'}" columns="2">
+                <ui:repeat value="#{lexiconControllerFormDetail.lemma.multiword}" var="comp">
+                    <h:panelGrid columns="4">
+                        <p:graphicImage style="padding-right: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
+                                        height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
+                        <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true"
+                                        value="#{comp.label}" forceSelection="true" readonly="#{lexiconControllerFormDetail.locked}"
+                                        rendered="#{!comp.writtenRep.contains('not found')}"
+                                        completeMethod="#{lexiconControllerFormDetail.completeComponents}">
+                            <f:attribute name="currentComponent" value="#{comp}"/>
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
+                                    update="lexicalEntryViewButtons :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"/>
+                        </p:autoComplete>
+                        <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
+                                       rendered="#{comp.writtenRep.contains('not found')}"/>
+                        <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
+                                         onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
+                                         action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
+                                         update=":editViewTab"
+                                         disabled="#{comp.viewButtonDisabled}"/> 
+                    </h:panelGrid>
+                </ui:repeat>
+            </h:panelGrid>
+
+            <h:outputLabel styleClass="titleStyle" value="Direct relation:" rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels.size() > 0}"/>
+            <ui:repeat value="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels}" var="lexRel" 
+                       rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels.size() > 0}">
+                <h:panelGrid id="LexicalRelation" columns="1" styleClass="lemmaLexRelTextBlock">
+
+                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" 
+                                     panelStyleClass="panel" value="#{lexRel.relation}" 
+                                     appendTo="lemmaLexRel">
+                        <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalRelationTypes}" />
+                    </p:selectOneMenu>
+
+                    <h:panelGrid id="lexRelInput" columns="4">
+                        <p:autoComplete  maxResults="10" value="#{lexRel.writtenRep}" forceSelection="true"
+                                         readonly="#{lexiconControllerFormDetail.locked}" 
+                                         completeMethod="#{lexiconControllerFormDetail.completeText}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransFormDetail.onLexRelSelect(lexRel)}" 
+                                    update="lexRelInput :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="lexRelInput" value="Type a lemma"/>   
+
+                        <p:commandButton id="lexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{lexRel.viewButtonDisabled}"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         update=":editViewTab"
+                                         action="#{lexiconControllerVarTransFormDetail.addEntryOfLexicalRelation(lexRel)}"/> 
+
+                        <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                         disabled="#{lexRel.deleteButtonDisabled}"
+                                         update=":editViewTab:lexiconVarTransFormDetailForm:LemmaVarTransPanelGrid 
+                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons
+                                         :editViewTab:lexiconRelationDetailForm"
+                                         actionListener="#{lexiconControllerVarTransFormDetail.removeLexicalRelation(lexRel)}"/> 
+                    </h:panelGrid>
+
+                </h:panelGrid>
+                <p:separator style="border: 0;"/>
+            </ui:repeat>
+
+            <h:outputLabel styleClass="titleStyle" value="Indirect relation:" rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.reifiedLexRels.size() > 0}"/>
+            <ui:repeat value="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.reifiedLexRels}" var="reifLexRel" 
+                       rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.reifiedLexRels.size() > 0}">
+                <h:panelGrid id="ReifiedLexicalRelation" columns="2" styleClass="lemmaReifLexRelTextBlock">
+
+                    <h:outputLabel styleClass="titleStyle" value="Category:"/>
+                    <p:selectOneMenu id="lexRelCategory" styleClass="menu" 
+                                     panelStyleClass="panel" value="#{reifLexRel.category}" 
+                                     appendTo="lexRelCategory">
+                        <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalCategories}" />
+                    </p:selectOneMenu>
+
+                    <h:outputLabel styleClass="titleStyle" value="Source:"/>
+                    <p:inputText styleClass="titleStyle" value="#{lexiconControllerFormDetail.lemma.formWrittenRepr}" readonly="true"/>
+
+                    <h:outputLabel styleClass="titleStyle" value="Target:"/>
+                    <h:panelGrid columns="4">
+                        <p:autoComplete id="ReifLexRelInput" maxResults="10" value="#{reifLexRel.targetWrittenRep}" forceSelection="true"
+                                        readonly="#{lexiconControllerFormDetail.locked}" 
+                                        completeMethod="#{lexiconControllerFormDetail.completeText}">
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransFormDetail.onReifLexRelSelect(reifLexRel)}" 
+                                    update="ReifLexRelInput :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"/>
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="ReifLexRelInput" value="Type a lemma"/>   
+
+                        <p:commandButton id="reifLexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{reifLexRel.viewButtonDisabled}"
+                                         onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                         update=":editViewTab"
+                                         action="#{lexiconControllerVarTransFormDetail.addEntryOfReifLexicalRelation(reifLexRel)}"/> 
+
+                        <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                         disabled="#{reifLexRel.deleteButtonDisabled}"
+                                         update=":editViewTab:lexiconVarTransFormDetailForm:LemmaVarTransPanelGrid 
+                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons
+                                         :editViewTab:lexiconRelationDetailForm"
+                                         actionListener="#{lexiconControllerVarTransFormDetail.removeReifLexicalRelation(reifLexRel)}"/> 
+                    </h:panelGrid>
+
+                </h:panelGrid>
+                <p:separator style="border: 0;"/>
+            </ui:repeat>
+
+            <h:panelGrid id="lemmaVarTransButtons" columns="4" columnClasses="column" cellpadding="0" 
+                         rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                     or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+                <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical relations"/>
+                <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                    <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.lemmaButton.directLexicalRelation']}" icon="fa fa-plus" 
+                                disabled="#{lexiconControllerFormDetail.newAction}" 
+                                update="LemmaVarTransPanelGrid"  
+                                actionListener="#{lexiconControllerVarTransFormDetail.addDirectLexicalRelation()}"/>
+                    <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.lemmaButton.indirectLexicalRelation']}" icon="fa fa-plus"
+                                disabled="#{lexiconControllerFormDetail.newAction}" 
+                                update="LemmaVarTransPanelGrid"  
+                                actionListener="#{lexiconControllerVarTransFormDetail.addIndirectLexicalRelation()}"/>
+                </p:menu>
+                <p:commandButton title="Save" icon="fa fa-save" 
+                                 update="LemmaVarTransPanelGrid :systemMessage :editViewTab:lexiconViewDictionaryForm" 
+                                 action="#{lexiconControllerVarTransFormDetail.saveLemma()}"
+                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                 disabled="#{lexiconControllerVarTransFormDetail.saveButtonDisabled}">
+                </p:commandButton>
+            </h:panelGrid>
+
+        </h:panelGrid>
+
+    </h:form>
+
+</ui:composition>

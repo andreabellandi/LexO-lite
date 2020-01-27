@@ -24,16 +24,20 @@ public class SenseData implements Serializable {
     private String definition;
     // translation refers to french translations
     private ArrayList<Openable> translation;
-//    private ArrayList<Openable> englishTranslation;
-//    private ArrayList<Openable> englishTranslationOf;
     private ArrayList<Openable> synonym;
     private ArrayList<Openable> approximateSynonym;
     private ArrayList<Openable> antonym;
     private ArrayList<Openable> hypernym;
     private ArrayList<Openable> hyponym;
-//    private ArrayList<Openable> correspondence;
-//    private ArrayList<Triple> invalidRelations;
     private int filedMaxLenght;
+
+    // modulo vartrans
+    private ArrayList<SenseData.SenseRelation> senseRels;
+    private ArrayList<SenseData.ReifiedSenseRelation> reifiedSenseRels;
+    private ArrayList<SenseData.ReifiedTranslationRelation> reifiedTranslationRels;
+
+    // modulo vartrans
+    private ArrayList<SenseData.OntoMap> ontoMaps;
 
     public SenseData() {
         this.saveButtonDisabled = true;
@@ -45,14 +49,47 @@ public class SenseData implements Serializable {
         this.definition = "";
         this.synonym = new ArrayList();
         this.translation = new ArrayList();
-//        this.englishTranslation = new ArrayList();
-//        this.correspondence = new ArrayList();
-//        this.englishTranslationOf = new ArrayList();
         this.approximateSynonym = new ArrayList();
         this.synonym = new ArrayList();
         this.antonym = new ArrayList();
         this.hypernym = new ArrayList();
         this.hyponym = new ArrayList();
+        this.senseRels = new ArrayList();
+        this.reifiedSenseRels = new ArrayList();
+        this.reifiedTranslationRels = new ArrayList();
+        this.ontoMaps = new ArrayList();
+    }
+
+    public ArrayList<OntoMap> getOntoMaps() {
+        return ontoMaps;
+    }
+
+    public void setOntoMaps(ArrayList<OntoMap> ontoMaps) {
+        this.ontoMaps = ontoMaps;
+    }
+
+    public ArrayList<ReifiedTranslationRelation> getReifiedTranslationRels() {
+        return reifiedTranslationRels;
+    }
+
+    public void setReifiedTranslationRels(ArrayList<ReifiedTranslationRelation> reifiedTranslationRels) {
+        this.reifiedTranslationRels = reifiedTranslationRels;
+    }
+
+    public ArrayList<SenseRelation> getSenseRels() {
+        return senseRels;
+    }
+
+    public void setSenseRels(ArrayList<SenseRelation> senseRels) {
+        this.senseRels = senseRels;
+    }
+
+    public ArrayList<ReifiedSenseRelation> getReifiedSenseRels() {
+        return reifiedSenseRels;
+    }
+
+    public void setReifiedSenseRels(ArrayList<ReifiedSenseRelation> reifiedSenseRels) {
+        this.reifiedSenseRels = reifiedSenseRels;
     }
 
     public String getDefinition() {
@@ -135,29 +172,6 @@ public class SenseData implements Serializable {
         this.approximateSynonym = approximateSynonym;
     }
 
-//    public ArrayList<Openable> getEnglishTranslationOf() {
-//        return englishTranslationOf;
-//    }
-//
-//    public void setEnglishTranslationOf(ArrayList<Openable> englishTranslationOf) {
-//        this.englishTranslationOf = englishTranslationOf;
-//    }
-//
-//    public ArrayList<Openable> getEnglishTranslation() {
-//        return englishTranslation;
-//    }
-//
-//    public void setEnglishTranslation(ArrayList<Openable> englishTranslation) {
-//        this.englishTranslation = englishTranslation;
-//    }
-//
-//    public ArrayList<Openable> getScientificName() {
-//        return scientificName;
-//    }
-//
-//    public void setScientificName(ArrayList<Openable> scientificName) {
-//        this.scientificName = scientificName;
-//    }
     public ArrayList<Openable> getTranslation() {
         return translation;
     }
@@ -174,13 +188,6 @@ public class SenseData implements Serializable {
         this.synonym = synonym;
     }
 
-//    public ArrayList<Openable> getCorrespondence() {
-//        return correspondence;
-//    }
-//
-//    public void setCorrespondence(ArrayList<Openable> correspondence) {
-//        this.correspondence = correspondence;
-//    }
     public int getFiledMaxLenght() {
         return filedMaxLenght;
     }
@@ -228,6 +235,318 @@ public class SenseData implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+    }
+
+    public static class SenseRelation {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String writtenRep;
+        private String language;
+        private String relation;
+
+        public SenseRelation() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.writtenRep = "";
+            this.language = "";
+            this.relation = "";
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getWrittenRep() {
+            return writtenRep;
+        }
+
+        public void setWrittenRep(String writtenRep) {
+            this.writtenRep = writtenRep;
+        }
+
+        public String getLanguage() {
+            return language;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        public String getRelation() {
+            return relation;
+        }
+
+        public void setRelation(String relation) {
+            this.relation = relation;
+        }
+
+    }
+
+    public static class ReifiedSenseRelation {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String source;
+        private String target;
+        private String sourceWrittenRep;
+        private String sourceLanguage;
+        private String targetWrittenRep;
+        private String targetLanguage;
+        private String category;
+
+        public ReifiedSenseRelation() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.source = "";
+            this.target = "";
+            this.category = "";
+            this.sourceLanguage = "";
+            this.sourceWrittenRep = "";
+            this.targetLanguage = "";
+            this.targetWrittenRep = "";
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getSourceWrittenRep() {
+            return sourceWrittenRep;
+        }
+
+        public void setSourceWrittenRep(String sourceWrittenRep) {
+            this.sourceWrittenRep = sourceWrittenRep;
+        }
+
+        public String getSourceLanguage() {
+            return sourceLanguage;
+        }
+
+        public void setSourceLanguage(String sourceLanguage) {
+            this.sourceLanguage = sourceLanguage;
+        }
+
+        public String getTargetWrittenRep() {
+            return targetWrittenRep;
+        }
+
+        public void setTargetWrittenRep(String targetWrittenRep) {
+            this.targetWrittenRep = targetWrittenRep;
+        }
+
+        public String getTargetLanguage() {
+            return targetLanguage;
+        }
+
+        public void setTargetLanguage(String targetLanguage) {
+            this.targetLanguage = targetLanguage;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+    }
+
+    public static class ReifiedTranslationRelation {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String source;
+        private String target;
+        private String sourceWrittenRep;
+        private String sourceLanguage;
+        private String targetWrittenRep;
+        private String targetLanguage;
+        private String category;
+
+        public ReifiedTranslationRelation() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.source = "";
+            this.target = "";
+            this.category = "";
+            this.sourceLanguage = "";
+            this.sourceWrittenRep = "";
+            this.targetLanguage = "";
+            this.targetWrittenRep = "";
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getSourceWrittenRep() {
+            return sourceWrittenRep;
+        }
+
+        public void setSourceWrittenRep(String sourceWrittenRep) {
+            this.sourceWrittenRep = sourceWrittenRep;
+        }
+
+        public String getSourceLanguage() {
+            return sourceLanguage;
+        }
+
+        public void setSourceLanguage(String sourceLanguage) {
+            this.sourceLanguage = sourceLanguage;
+        }
+
+        public String getTargetWrittenRep() {
+            return targetWrittenRep;
+        }
+
+        public void setTargetWrittenRep(String targetWrittenRep) {
+            this.targetWrittenRep = targetWrittenRep;
+        }
+
+        public String getTargetLanguage() {
+            return targetLanguage;
+        }
+
+        public void setTargetLanguage(String targetLanguage) {
+            this.targetLanguage = targetLanguage;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+    }
+
+    public static class OntoMap {
+
+        private String sense;
+        private String reference;
+        private String isA;
+        private String subjOfProp;
+        private String objOfProp;
+
+        public OntoMap() {
+            this.sense = "";
+            this.reference = "";
+            this.isA = "";
+            this.subjOfProp = "";
+            this.objOfProp = "";
+        }
+
+        public String getSense() {
+            return sense;
+        }
+
+        public void setSense(String sense) {
+            this.sense = sense;
+        }
+
+        public String getReference() {
+            return reference;
+        }
+
+        public void setReference(String reference) {
+            this.reference = reference;
+        }
+
+        public String getIsA() {
+            return isA;
+        }
+
+        public void setIsA(String isA) {
+            this.isA = isA;
+        }
+
+        public String getSubjOfProp() {
+            return subjOfProp;
+        }
+
+        public void setSubjOfProp(String subjOfProp) {
+            this.subjOfProp = subjOfProp;
+        }
+
+        public String getObjOfProp() {
+            return objOfProp;
+        }
+
+        public void setObjOfProp(String objOfProp) {
+            this.objOfProp = objOfProp;
         }
 
     }

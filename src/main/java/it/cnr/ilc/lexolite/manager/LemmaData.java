@@ -32,6 +32,13 @@ public class LemmaData implements Serializable {
     private ArrayList<Word> seeAlso = new ArrayList();
     private ArrayList<Word> multiword = new ArrayList();
 
+    // modulo vartrans
+    private ArrayList<LexicalRelation> lexRels = new ArrayList();
+    private ArrayList<ReifiedLexicalRelation> reifiedLexRels = new ArrayList();
+
+    // modulo synsem
+    private ArrayList<SynFrame> synFrames = new ArrayList();
+
     public LemmaData() {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
@@ -174,6 +181,30 @@ public class LemmaData implements Serializable {
         this.language = language;
     }
 
+    public ArrayList<LexicalRelation> getLexRels() {
+        return lexRels;
+    }
+
+    public void setLexRels(ArrayList<LexicalRelation> lexRels) {
+        this.lexRels = lexRels;
+    }
+
+    public ArrayList<ReifiedLexicalRelation> getReifiedLexRels() {
+        return reifiedLexRels;
+    }
+
+    public void setReifiedLexRels(ArrayList<ReifiedLexicalRelation> reifiedLexRels) {
+        this.reifiedLexRels = reifiedLexRels;
+    }
+
+    public ArrayList<SynFrame> getSynFrames() {
+        return synFrames;
+    }
+
+    public void setSynFrames(ArrayList<SynFrame> synFrames) {
+        this.synFrames = synFrames;
+    }
+
     public void clear() {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
@@ -192,6 +223,9 @@ public class LemmaData implements Serializable {
         this.valid = "false";
         this.multiword.clear();
         this.seeAlso.clear();
+        this.lexRels.clear();
+        this.reifiedLexRels.clear();
+        this.synFrames.clear();
     }
 
     public static class Word {
@@ -316,5 +350,295 @@ public class LemmaData implements Serializable {
         public void setLanguage(String language) {
             this.language = language;
         }
+    }
+
+    public static class LexicalRelation {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String writtenRep;
+        private String language;
+        private String relation;
+        private String OWLName;
+
+        public LexicalRelation() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.writtenRep = "";
+            this.language = "";
+            this.relation = "";
+            this.OWLName = "";
+        }
+
+        public String getOWLName() {
+            return OWLName;
+        }
+
+        public void setOWLName(String OWLName) {
+            this.OWLName = OWLName;
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getWrittenRep() {
+            return writtenRep;
+        }
+
+        public void setWrittenRep(String writtenRep) {
+            this.writtenRep = writtenRep;
+        }
+
+        public String getLanguage() {
+            return language;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        public String getRelation() {
+            return relation;
+        }
+
+        public void setRelation(String relation) {
+            this.relation = relation;
+        }
+
+    }
+
+    public static class ReifiedLexicalRelation {
+
+        private boolean deleteButtonDisabled;
+        private boolean viewButtonDisabled;
+        private String source;
+        private String target;
+        private String sourceWrittenRep;
+        private String sourceLanguage;
+        private String targetWrittenRep;
+        private String targetLanguage;
+        private String category;
+        private String sourceOWLName;
+        private String targetOWLName;
+
+        public ReifiedLexicalRelation() {
+            this.deleteButtonDisabled = false;
+            this.viewButtonDisabled = false;
+            this.source = "";
+            this.target = "";
+            this.category = "";
+            this.sourceLanguage = "";
+            this.sourceWrittenRep = "";
+            this.targetLanguage = "";
+            this.targetWrittenRep = "";
+            this.sourceOWLName = "";
+            this.targetOWLName = "";
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public String getSourceOWLName() {
+            return sourceOWLName;
+        }
+
+        public void setSourceOWLName(String sourceOWLName) {
+            this.sourceOWLName = sourceOWLName;
+        }
+
+        public String getTargetOWLName() {
+            return targetOWLName;
+        }
+
+        public void setTargetOWLName(String targetOWLName) {
+            this.targetOWLName = targetOWLName;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getSourceWrittenRep() {
+            return sourceWrittenRep;
+        }
+
+        public void setSourceWrittenRep(String sourceWrittenRep) {
+            this.sourceWrittenRep = sourceWrittenRep;
+        }
+
+        public String getSourceLanguage() {
+            return sourceLanguage;
+        }
+
+        public void setSourceLanguage(String sourceLanguage) {
+            this.sourceLanguage = sourceLanguage;
+        }
+
+        public String getTargetWrittenRep() {
+            return targetWrittenRep;
+        }
+
+        public void setTargetWrittenRep(String targetWrittenRep) {
+            this.targetWrittenRep = targetWrittenRep;
+        }
+
+        public String getTargetLanguage() {
+            return targetLanguage;
+        }
+
+        public void setTargetLanguage(String targetLanguage) {
+            this.targetLanguage = targetLanguage;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+    }
+
+    public static class SynFrame {
+
+        private String type;
+        private String name;
+        private ArrayList<SynArg> synArgs = new ArrayList();
+        private boolean saveButtonDisabled = true;
+        private boolean newFrame = true;
+
+        public SynFrame() {
+            this.type = "";
+            this.name = "";
+            this.synArgs.clear();
+        }
+
+        public boolean isNewFrame() {
+            return newFrame;
+        }
+
+        public void setNewFrame(boolean newFrame) {
+            this.newFrame = newFrame;
+        }
+
+        public boolean isSaveButtonDisabled() {
+            return saveButtonDisabled;
+        }
+
+        public void setSaveButtonDisabled(boolean saveButtonDisabled) {
+            this.saveButtonDisabled = saveButtonDisabled;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public ArrayList<SynArg> getSynArgs() {
+            return synArgs;
+        }
+
+        public void setSynArgs(ArrayList<SynArg> synArgs) {
+            this.synArgs = synArgs;
+        }
+
+    }
+
+    public static class SynArg {
+
+        private int number;
+        private String type;
+        private String marker;
+        private boolean optional;
+
+        public SynArg() {
+            this.number = 0;
+            this.type = "";
+            this.marker = "";
+            this.optional = false;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public void setNumber(int number) {
+            this.number = number;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getMarker() {
+            return marker;
+        }
+
+        public void setMarker(String marker) {
+            this.marker = marker;
+        }
+
+        public boolean isOptional() {
+            return optional;
+        }
+
+        public void setOptional(boolean optional) {
+            this.optional = optional;
+        }
+
     }
 }

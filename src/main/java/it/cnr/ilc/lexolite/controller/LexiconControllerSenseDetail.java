@@ -44,6 +44,8 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     @Inject
     private LexiconControllerTabViewList lexiconControllerTabViewList;
     @Inject
+    private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
+    @Inject
     private OntologyManager ontologyManager;
     @Inject
     private PropertyValue propertyValue;
@@ -324,6 +326,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         String relType = (String) component.getAttributes().get("Relation");
         String currentSense = (String) component.getAttributes().get("currentSense");
         List<Map<String, String>> al = null;
+
         if (relType.equals("synonym") || relType.equals("antonym") || relType.equals("hypernym")
                 || relType.equals("hyponym") || relType.equals("approximateSynonym")) {
             al = lexiconManager.sensesList("All languages");
@@ -338,6 +341,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
                 }
             }
         }
+
         return null;
     }
 
@@ -379,6 +383,16 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             }
         }
         return filteredList;
+    }
+
+    public void saveSenseRelation(SenseData sd) throws IOException, OWLOntologyStorageException {
+        log(Level.INFO, loginController.getAccount(), "SAVE Sense " + sd.getName());
+        int order = senses.indexOf(sd);
+        lexiconManager.saveSenseRelation(sensesCopy.get(order), sd);
+        updateSenseCopy(sd, order);
+        sd.setSaveButtonDisabled(true);
+        setSenseToolbarRendered(true);
+        info("template.message.saveSenseRelation.summary", "template.message.saveSenseRelation.description", sd.getName());
     }
 
     public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
@@ -440,17 +454,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         senses.add(sd);
         addSenseCopy(sd);
         info("template.message.saveSense.summary", "template.message.saveSense.description", sd.getName());
-    }
-
-    // invoked by sense box
-    public void saveSenseRelation(SenseData sd) throws IOException, OWLOntologyStorageException {
-        log(Level.INFO, loginController.getAccount(), "SAVE Sense " + sd.getName());
-        int order = senses.indexOf(sd);
-        lexiconManager.saveSenseRelation(sensesCopy.get(order), sd);
-        updateSenseCopy(sd, order);
-        sd.setSaveButtonDisabled(true);
-        setSenseToolbarRendered(true);
-        info("template.message.saveSenseRelation.summary", "template.message.saveSenseRelation.description", sd.getName());
     }
 
     // invoked by new lemma

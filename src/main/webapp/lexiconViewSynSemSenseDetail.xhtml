@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <h:form id="lexiconSynSemSenseDetailForm">
+        <p:dataList id="SenseSynSemDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
+                    value="#{lexiconControllerSynSemSenseDetail.sensesSynSem}" emptyMessage="" 
+                    rendered="#{lexiconControllerSynSemSenseDetail.senseSynSemRendered}">
+            <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">
+                <h:outputLabel styleClass="titleStyle" value="Name:" />
+                <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" size="#{sense.filedMaxLenght}"/>
+
+                <h:outputLabel styleClass="titleStyle" value="Definition:"/>
+                <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" readonly="true"/>
+
+                <h:outputLabel styleClass="titleStyle" value="Reference:" rendered="#{sense.OWLClass.viewButtonDisabled}"/>
+                <p:inputTextarea id="ontoRefernce" styleClass="inputTextStyleTranslationForm" value="#{sense.OWLClass.name}" readonly="true"
+                                 rendered="#{sense.OWLClass.viewButtonDisabled}"/>
+            </h:panelGrid>
+            <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>
+        </p:dataList>
+
+    </h:form>
+</ui:composition>

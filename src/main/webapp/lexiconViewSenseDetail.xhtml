@@ -24,11 +24,12 @@
 
                 <h:outputLabel styleClass="titleStyle" value="Definition:"/>
                 <h:panelGrid columns="1">
-                    <p:inputText id="definition" size="#{sense.filedMaxLenght}" styleClass="inputTextStyle" value="#{sense.definition}" readonly="#{lexiconControllerSenseDetail.locked}">
+                    <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" 
+                                 readonly="#{lexiconControllerSenseDetail.locked}">
                         <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
                                 update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
                         <f:attribute name="sense" value="#{sense}" />
-                    </p:inputText>
+                    </p:inputTextarea>
                 </h:panelGrid>
 
                 <h:outputLabel styleClass="titleStyle" value="Synonym:" rendered="#{sense.synonym.size() > 0}"/>

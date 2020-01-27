@@ -18,25 +18,17 @@ public class LexicalQuery {
             + "PREFIX skos: <" + Namespace.SKOS + ">\n"
             + "PREFIX lexicon: <" + Namespace.LEXICON + ">\n"
             + "PREFIX ontolex: <" + Namespace.ONTOLEX + ">\n"
+            + "PREFIX lemon: <" + Namespace.LEMON + ">\n"
             + "PREFIX decomp: <" + Namespace.DECOMP + ">\n"
             + "PREFIX rdf: <" + Namespace.RDF + ">\n"
             + "PREFIX lime: <" + Namespace.LIME + ">\n"
             + "PREFIX dct: <" + Namespace.DCT + ">\n"
+            + "PREFIX vartrans: <" + Namespace.VARTRANS + ">\n"
+            + "PREFIX synsem: <" + Namespace.SYNSEM + ">\n"
+            + "PREFIX trcat: <" + Namespace.TRCAT + ">\n"
             + "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
 
-    // queries to lexifon for setting properties values
-    public static final String PoS_CLASS = "SELECT ?posClass WHERE {"
-            + " DirectSubClassOf(?posClass, lexinfo:PartOfSpeech) }";
-
-    public static final String PoS = "SELECT ?pos WHERE {"
-            + " DirectType(?pos, lexinfo:POS_CLASS) }";
-
-    public static final String GENDER = "SELECT ?g WHERE {"
-            + " Type(?g, lexinfo:Gender) }";
-
-    public static final String NUMBER = "SELECT ?n WHERE {"
-            + " Type(?n, lexinfo:Number) }";
-
+    // queries to lexinfo for setting properties values
     // query for getting lexicon values
     public static final String LEXICON = "SELECT ?lexicon WHERE {"
             + " PropertyValue(?lexicon, lime:language, \"_LANG_\") }";
@@ -231,6 +223,60 @@ public class LexicalQuery {
     public static final String LANGUAGE_CREATOR = "SELECT ?creator WHERE {"
             + " PropertyValue(?lex, lime:language, \"_LANG_\"), "
             + " PropertyValue(?lex, dct:creator, ?creator) }";
+
+    // query for varTrans module
+    public static final String DIRECT_LEXICAL_RELATION = "SELECT ?individual ?rel ?writtenRep ?lang WHERE {"
+            + " PropertyValue(lexicon:_ENTRY_, ?rel, ?individual), "
+            + " PropertyValue(?individual, ontolex:canonicalForm, ?cf), "
+            + " PropertyValue(?cf, ontolex:writtenRep, ?writtenRep), "
+            + " PropertyValue(?lex, lime:entry, ?individual), "
+            + " PropertyValue(?lex, lime:language, ?lang) }";
+
+    public static final String INDIRECT_LEXICAL_RELATION = "SELECT ?cat ?trgwr ?trglang ?trgind WHERE {"
+            + " PropertyValue(?lexRel, vartrans:source, lexicon:_ENTRY_), "
+            + " PropertyValue(?lexRel, vartrans:target, ?trgind), "
+            + " PropertyValue(?lexRel, vartrans:category, ?cat), "
+            + " PropertyValue(?trgind, ontolex:canonicalForm, ?cf), "
+            + " PropertyValue(?cf, ontolex:writtenRep, ?trgwr), "
+            + " PropertyValue(?lex, lime:entry, ?trgind), "
+            + " PropertyValue(?lex, lime:language, ?trglang) }";
+
+    public static final String DIRECT_SENSE_RELATION = "SELECT ?sense ?rel ?lang WHERE {"
+            + " PropertyValue(lexicon:_SENSE_, ?rel, ?sense), "
+            + " PropertyValue(?entry, ontolex:sense, ?sense), "
+            + " PropertyValue(?lex, lime:entry, ?entry), "
+            + " PropertyValue(?lex, lime:language, ?lang) }";
+
+    public static final String TERMINOLOGICAL_SENSE_RELATION = "SELECT ?cat ?trglang ?entry WHERE {"
+            + " DirectType(?senseRel, vartrans:" + OntoLexEntity.Class.TERMINOLOGICALRELATION.getLabel() + "), "
+            + " PropertyValue(?senseRel, vartrans:source, lexicon:_SENSE_), "
+            + " PropertyValue(?senseRel, vartrans:target, ?trgind), "
+            + " PropertyValue(?senseRel, vartrans:category, ?cat), "
+            + " PropertyValue(?entry, ontolex:sense, ?trgind), "
+            + " PropertyValue(?lex, lime:entry, ?entry), "
+            + " PropertyValue(?lex, lime:language, ?trglang) }";
+
+    public static final String TRANSLATION_SENSE_RELATION = "SELECT ?cat ?trglang ?entry WHERE {"
+            + " DirectType(?senseRel, vartrans:" + OntoLexEntity.Class.TRANSLATION.getLabel() + "), "
+            + " PropertyValue(?senseRel, vartrans:source, lexicon:_SENSE_), "
+            + " PropertyValue(?senseRel, vartrans:target, ?trgind), "
+            + " PropertyValue(?senseRel, vartrans:category, ?cat), "
+            + " PropertyValue(?entry, ontolex:sense, ?trgind), "
+            + " PropertyValue(?lex, lime:entry, ?entry), "
+            + " PropertyValue(?lex, lime:language, ?trglang) }";
+
+    // query for synsem module
+    public static final String SYNTACTIC_FRAME = "SELECT ?frameName WHERE {"
+            + " PropertyValue(lexicon:_ENTRY_, synsem:synBehavior, ?frameName) }";
+
+    public static final String SYNTACTIC_FRAME_TYPE = "SELECT ?type WHERE {"
+            + " Type(lexicon:_FRAME_, ?type) }";
+
+    public static final String SYNTACTIC_FRAME_ARGS = "SELECT ?type ?synArg WHERE {"
+            + " PropertyValue(lexicon:_FRAME_, ?type, ?synArg) }";
+
+    public static final String SYNTACTIC_ARG_PROPS = "SELECT ?rel ?value WHERE {"
+            + " PropertyValue(lexicon:_ARG_, ?rel, ?value) }";
 
     // query for filter panel
     public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"

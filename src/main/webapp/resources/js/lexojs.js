@@ -9,9 +9,9 @@ function setHeight() {
 
     var height = $(document.getElementById('content')).height();
 
-    $(document.getElementById('editViewTab:editTabScroll')).css('height', height - 150);
-    $(document.getElementById('editViewTab:dictViewTabScroll')).css('height', height - 150);
-    $(document.getElementById('editViewTab:scrollPaneldetailViewTab')).css('height', height - 150);
+    $(document.getElementById('editViewTab:editTabScroll')).css('height', height - 250);
+    $(document.getElementById('editViewTab:dictViewTabScroll')).css('height', height - 250);
+    $(document.getElementById('editViewTab:scrollPaneldetailViewTab')).css('height', height - 250);
     $(document.getElementById('lexiconTabViewForm:tabView:scrollPanelLemmaTree')).css('height', height - 270);
     $(document.getElementById('lexiconTabViewForm:tabView:scrollPanelFormTree')).css('height', height - 270);
     $(document.getElementById('lexiconTabViewForm:tabView:scrollPanelOntologyTree')).css('height', height - 300);

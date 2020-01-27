@@ -12,7 +12,7 @@
                  widgetVar="languageHeader" style="margin-bottom:20px; overflow: hidden; min-width: 460px;">
 
             <p:tabView id="tabView" widgetVar="EditDictionaryTabView" activeIndex="#{lexiconControllerTabViewList.activeTab}" styleClass="lexiconTabView">
-                <p:tab title="Lemma" id="tabViewLemma" >
+                <p:tab title="#{label['lexicon.tabviewlist.header.lexicalentry']}" id="tabViewLemma" >
                     <h:panelGrid id="lemmaGrid" columns="4" style="padding-top: 10px;" rendered="#{lexiconControllerTabViewList.enabledFilter}">
                         <p:inputText id="lemmaFilter" value="#{lexiconControllerTabViewList.lemmaField}">
                             <p:ajax event="keyup" listener="#{lexiconControllerTabViewList.lemmaKeyupFilterEvent}" 
@@ -46,7 +46,7 @@
                         </p:tree>
                     </p:scrollPanel>
                 </p:tab>
-                <p:tab title="Other Form" id="tabViewVariant" >
+                <p:tab title="#{label['lexicon.tabviewlist.header.form']}" id="tabViewVariant" >
                     <h:panelGrid id="formGrid" columns="4" style="padding-top: 10px;" 
                                  rendered="#{lexiconControllerTabViewList.enabledFilter}">
                         <p:inputText id="formFilter" value="#{lexiconControllerTabViewList.formField}">
@@ -80,7 +80,7 @@
                     </p:scrollPanel>
                 </p:tab>
 
-                <p:tab title="Ontology" id="tabViewOntology" disabled="#{!lexiconControllerOntologyDetail.ontologyTabEnabled}">
+                <p:tab title="#{label['lexicon.tabviewlist.header.ontology']}" id="tabViewOntology" disabled="#{!lexiconControllerOntologyDetail.ontologyTabEnabled}">
                     <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
                     <ui:include src="/lexiconViewOntologyFilter.xhtml"/>
                     <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>

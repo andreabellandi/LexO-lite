@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:form id="domainOntologyDetailForm">
-        <h:panelGrid rendered="#{lexiconControllerOntologyDetail.ontologyClassRendered}" columns="2">
+        <h:panelGrid columns="2" rendered="#{lexiconControllerOntologyDetail.ontologyClassRendered}">
             <h:panelGrid id="OntologyPanelGrid" styleClass="ontologyDetailBlock" columns="2" cellpadding="5">
                 <ui:repeat value="#{lexiconControllerOntologyDetail.ontologyClassDetail.metadata}" var="metadata">
                     <h:panelGrid columns="2" rendered="#{metadata != null}">

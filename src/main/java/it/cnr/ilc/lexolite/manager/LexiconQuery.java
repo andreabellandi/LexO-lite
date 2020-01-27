@@ -18,6 +18,8 @@ import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LexiconComparator;
+import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
+import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.util.ArrayList;
@@ -109,36 +111,6 @@ public class LexiconQuery extends BaseController {
         return al;
     }
 
-    public List<SelectItem> getPoS() {
-        List<SelectItem> groupedPosList = new ArrayList<>();
-        ArrayList<String> posClasses = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.PoS_CLASS));
-        posClasses.sort(String::compareToIgnoreCase);
-        for (String posClass : posClasses) {
-            groupedPosList.add(getGroupedPoS(posClass));
-        }
-        return groupedPosList;
-    }
-
-    private SelectItemGroup getGroupedPoS(String posClass) {
-        SelectItemGroup g = new SelectItemGroup(posClass);
-        ArrayList<String> PoS = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.PoS.replace("POS_CLASS", posClass)));
-        PoS.sort(String::compareToIgnoreCase);
-        SelectItem[] selPoS = new SelectItem[PoS.size()];
-        for (int i = 0; i < PoS.size(); i++) {
-            selPoS[i] = new SelectItem(PoS.get(i), PoS.get(i));
-        }
-        g.setSelectItems(selPoS);
-        return g;
-    }
-
-    public ArrayList<String> getGenders() {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.GENDER));
-    }
-
-    public ArrayList<String> getNumbers() {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.NUMBER));
-    }
-
     public List<Map<String, String>> getLemmas(String lang) {
         if (lang.equals("All languages")) {
             return (processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_BASIC));
@@ -213,6 +185,20 @@ public class LexiconQuery extends BaseController {
         return ld;
     }
 
+    // invoked in order to add synsem lemma attributes to a specific lemma
+    public LemmaData getSynSemAttributes(String entry) {
+        LemmaData ld = new LemmaData();
+        addSynSemAttributesData(entry, ld);
+        return ld;
+    }
+
+    // invoked in order to add varTrans lemma attributes to a specific lemma
+    public LemmaData getVarTransAttributes(String entry) {
+        LemmaData ld = new LemmaData();
+        addVarTransAttributesData(entry, ld);
+        return ld;
+    }
+
     // invoked in order to get a lemma attributes of a specific sense
     public LemmaData getLemmaOfSense(String sense) {
         LemmaData ld = new LemmaData();
@@ -229,6 +215,103 @@ public class LexiconQuery extends BaseController {
         String lemma = results.get(0);
         setLemmaData(lemma, ld);
         return ld;
+    }
+
+    private void addSynSemAttributesData(String entry, LemmaData ld) {
+        ld.getSynFrames().clear();
+        ld.setSynFrames(getSynatcticRelation(entry));
+    }
+
+    private void addVarTransAttributesData(String entry, LemmaData ld) {
+        ld.getLexRels().clear();
+        ld.setLexRels(getDirectLexicalRelation(entry));
+        ld.setReifiedLexRels(getIndirectLexicalRelation(entry));
+    }
+
+    private ArrayList<LemmaData.LexicalRelation> getDirectLexicalRelation(String entry) {
+        return getEntryDirectLexicalRelationList(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
+    }
+
+    private ArrayList<LemmaData.SynFrame> getSynatcticRelation(String entry) {
+        ArrayList<LemmaData.SynFrame> alr = new ArrayList();
+        List<Map<String, String>> lrl = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME).replace("_ENTRY_", entry));
+        for (Map<String, String> m : lrl) {
+            LemmaData.SynFrame synFrame = new LemmaData.SynFrame();
+            synFrame.setName(m.get("frameName"));
+            synFrame.setNewFrame(false);
+            List<Map<String, String>> frameType = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME_TYPE).replace("_FRAME_", m.get("frameName")));
+            for (Map<String, String> ft : frameType) {
+                if (!ft.get("type").equals(OntoLexEntity.Class.SYNTACTICFRAME.getLabel())) {
+                    synFrame.setType(ft.get("type"));
+                }
+            }
+            List<Map<String, String>> frameArgs = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME_ARGS).replace("_FRAME_", m.get("frameName")));
+            for (Map<String, String> fa : frameArgs) {
+                LemmaData.SynArg synArg = new LemmaData.SynArg();
+                synArg.setType(fa.get("type"));
+                synArg.setNumber(Integer.parseInt(fa.get("synArg").split("_arg_")[1]));
+                synArg.setOptional(false);
+                List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
+                for (Map<String, String> ap : argProps) {
+                    if (ap.get("rel").equals(OntoLexEntity.DataProperty.OPTIONAL.getLabel())) {
+                        if (ap.get("value").equals("true")) {
+                            synArg.setOptional(true);
+                        }
+                    }
+                    if (ap.get("rel").equals(OntoLexEntity.ObjectProperty.MARKER.getLabel())) {
+                        synArg.setMarker(ap.get("value"));
+                    }
+                }
+                synFrame.getSynArgs().add(synArg);
+            }
+            alr.add(synFrame);
+        }
+        return alr;
+    }
+
+    private ArrayList<LemmaData.ReifiedLexicalRelation> getIndirectLexicalRelation(String entry) {
+        return getEntryIndirectLexicalRelationList(LexicalQuery.PREFIXES + LexicalQuery.INDIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
+    }
+
+    private ArrayList<ReifiedLexicalRelation> getEntryIndirectLexicalRelationList(String q, String t, String e) {
+        ArrayList<ReifiedLexicalRelation> alr = new ArrayList();
+        List<Map<String, String>> lrl = processQuery(q.replace(t, e));
+        for (Map<String, String> m : lrl) {
+            getReifiedLexicalRelation(alr, m);
+        }
+        return alr;
+    }
+
+    private void getReifiedLexicalRelation(ArrayList<ReifiedLexicalRelation> alr, Map<String, String> m) {
+        ReifiedLexicalRelation rlr = new ReifiedLexicalRelation();
+        rlr.setCategory(m.get("cat"));
+        rlr.setTargetLanguage(m.get("trglang"));
+        rlr.setTargetOWLName(m.get("trgind"));
+        rlr.setTargetWrittenRep(m.get("trgwr"));
+        alr.add(rlr);
+    }
+
+    private ArrayList<LexicalRelation> getEntryDirectLexicalRelationList(String q, String t, String e) {
+        ArrayList<LexicalRelation> alr = new ArrayList();
+        List<Map<String, String>> lrl = processQuery(q.replace(t, e));
+        for (Map<String, String> m : lrl) {
+            getLexicalRelation(alr, m);
+        }
+        return alr;
+    }
+
+    private void getLexicalRelation(ArrayList<LexicalRelation> alr, Map<String, String> m) {
+        if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel())
+                && !m.get("rel").equals(OntoLexEntity.ObjectProperty.OTHERFORM.getLabel())
+                && !m.get("rel").equals(OntoLexEntity.ObjectProperty.SENSE.getLabel())
+                && !m.get("rel").equals("valid")) {
+            LexicalRelation lr = new LexicalRelation();
+            lr.setRelation(m.get("rel"));
+            lr.setOWLName(m.get("individual"));
+            lr.setLanguage(m.get("lang"));
+            lr.setWrittenRep(m.get("writtenRep"));
+            alr.add(lr);
+        }
     }
 
     private void setLemmaData(String lemma, LemmaData ld) {
@@ -385,6 +468,54 @@ public class LexiconQuery extends BaseController {
             }
         }
         return sdList;
+    }
+
+    public ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
+        ArrayList<SenseData> alsd = new ArrayList<SenseData>();
+        for (SenseData sd : asd) {
+            SenseData senseCopy = new SenseData();
+            senseCopy.setName(sd.getName());
+            senseCopy.setOWLClass(sd.getOWLClass());
+            senseCopy.setDefinition(sd.getDefinition());
+            getSenseRelation(sd, senseCopy);
+            getSenseReifiedRelation(sd, senseCopy);
+            getSenseTranslationRelation(sd, senseCopy);
+            alsd.add(senseCopy);
+        }
+        return alsd;
+    }
+
+    private void getSenseRelation(SenseData sd, SenseData senseCopy) {
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        for (Map<String, String> m : results) {
+            SenseData.SenseRelation sr = new SenseData.SenseRelation();
+            sr.setWrittenRep(m.get("sense"));
+            sr.setRelation(m.get("rel"));
+            sr.setLanguage(m.get("lang"));
+            senseCopy.getSenseRels().add(sr);
+        }
+    }
+
+    private void getSenseReifiedRelation(SenseData sd, SenseData senseCopy) {
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.TERMINOLOGICAL_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        for (Map<String, String> m : results) {
+            SenseData.ReifiedSenseRelation sr = new SenseData.ReifiedSenseRelation();
+            sr.setTarget(m.get("entry"));
+            sr.setCategory(m.get("cat"));
+            sr.setTargetLanguage(m.get("trglang"));
+            senseCopy.getReifiedSenseRels().add(sr);
+        }
+    }
+
+    private void getSenseTranslationRelation(SenseData sd, SenseData senseCopy) {
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.TRANSLATION_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        for (Map<String, String> m : results) {
+            SenseData.ReifiedTranslationRelation sr = new SenseData.ReifiedTranslationRelation();
+            sr.setTarget(m.get("entry"));
+            sr.setCategory(m.get("cat"));
+            sr.setTargetLanguage(m.get("trglang"));
+            senseCopy.getReifiedTranslationRels().add(sr);
+        }
     }
 
     public ArrayList<SenseData> getSensesOfForm(String form) {
