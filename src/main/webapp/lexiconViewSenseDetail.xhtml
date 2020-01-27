@@ -25,7 +25,7 @@
                 <h:outputLabel styleClass="titleStyle" value="Definition:"/>
                 <h:panelGrid columns="1">
                     <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" 
-                                 readonly="#{lexiconControllerSenseDetail.locked}">
+                                     readonly="#{lexiconControllerSenseDetail.locked}">
                         <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
                                 update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
                         <f:attribute name="sense" value="#{sense}" />
@@ -191,27 +191,7 @@
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                     <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexico-semantic relations"/>
                     <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
-                        <p:menuitem styleClass="lexiconTabView" value="Add synonym" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'synonym')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                        <p:menuitem styleClass="lexiconTabView" value="Add approximateSynonym" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'approximateSynonym')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-
-                        <p:menuitem styleClass="lexiconTabView" value="Add antonym" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'antonym')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-
-                        <p:menuitem styleClass="lexiconTabView" value="Add hypernym" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'hypernym')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                        <p:menuitem styleClass="lexiconTabView" value="Add hyponym" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'hyponym')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                        <p:menuitem styleClass="lexiconTabView" value="Add translation" icon="fa fa-plus"  
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'translation')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                         <p:menuitem styleClass="lexiconTabView" value="Add reference" icon="fa fa-plus"  
+                        <p:menuitem styleClass="lexiconTabView" value="Add reference" icon="fa fa-plus"  
                                     actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'reference')}"
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                     </p:menu>

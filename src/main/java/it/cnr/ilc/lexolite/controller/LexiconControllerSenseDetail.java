@@ -5,7 +5,6 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
-import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
@@ -173,55 +172,14 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
 
     private SenseData copySenseData(SenseData sd) {
         SenseData _sd = new SenseData();
-        ArrayList<Openable> syns = new ArrayList();
-        ArrayList<Openable> appSyns = new ArrayList();
-        ArrayList<Openable> hypes = new ArrayList();
-        ArrayList<Openable> hypos = new ArrayList();
-        ArrayList<Openable> ants = new ArrayList();
-        ArrayList<Openable> translations = new ArrayList();
         Openable _OWLClass = new Openable();
         _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
         _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
         _OWLClass.setName(sd.getOWLClass().getName());
         _sd.setOWLClass(_OWLClass);
+        _sd.setDefinition(sd.getDefinition());
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
-        for (Openable syn : sd.getSynonym()) {
-            Openable _syn = new Openable();
-            _syn.setName(syn.getName());
-            syns.add(_syn);
-        }
-        for (Openable trans : sd.getTranslation()) {
-            Openable _trans = new Openable();
-            _trans.setName(trans.getName());
-            translations.add(_trans);
-        }
-        for (Openable ant : sd.getAntonym()) {
-            Openable _ant = new Openable();
-            _ant.setName(ant.getName());
-            ants.add(_ant);
-        }
-        for (Openable hypo : sd.getHyponym()) {
-            Openable _hypo = new Openable();
-            _hypo.setName(hypo.getName());
-            hypos.add(_hypo);
-        }
-        for (Openable hype : sd.getHypernym()) {
-            Openable _hype = new Openable();
-            _hype.setName(hype.getName());
-            hypes.add(_hype);
-        }
-        for (Openable appSyn : sd.getApproximateSynonym()) {
-            Openable _appSyn = new Openable();
-            _appSyn.setName(appSyn.getName());
-            appSyns.add(_appSyn);
-        }
-        _sd.setSynonym(syns);
-        _sd.setAntonym(ants);
-        _sd.setApproximateSynonym(appSyns);
-        _sd.setHypernym(hypes);
-        _sd.setHyponym(hypos);
-        _sd.setTranslation(translations);
         return _sd;
     }
 
@@ -253,24 +211,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         SenseData.Openable sdo = new SenseData.Openable();
         sdo.setViewButtonDisabled(true);
         switch (relType) {
-            case "synonym":
-                sd.getSynonym().add(sdo);
-                break;
-            case "translation":
-                sd.getTranslation().add(sdo);
-                break;
-            case "antonym":
-                sd.getAntonym().add(sdo);
-                break;
-            case "hypernym":
-                sd.getHypernym().add(sdo);
-                break;
-            case "hyponym":
-                sd.getHyponym().add(sdo);
-                break;
-            case "approximateSynonym":
-                sd.getApproximateSynonym().add(sdo);
-                break;
             case "reference":
                 sd.setOWLClass(sdo);
                 break;
@@ -327,51 +267,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         String currentSense = (String) component.getAttributes().get("currentSense");
         List<Map<String, String>> al = null;
 
-        if (relType.equals("synonym") || relType.equals("antonym") || relType.equals("hypernym")
-                || relType.equals("hyponym") || relType.equals("approximateSynonym")) {
-            al = lexiconManager.sensesList("All languages");
-            return getFilteredList(al, sense, currentSense, relType);
+        if (relType.equals("ontoRef")) {
+            return getFilteredClasses(ontologyManager.classesList(), sense);
         } else {
-            if (relType.equals("translation")) {
-                al = lexiconManager.sensesList("All languages");
-                return getFilteredList(al, sense, currentSense, relType);
-            } else {
-                if (relType.equals("ontoRef")) {
-                    return getFilteredClasses(ontologyManager.classesList(), sense);
-                }
-            }
+            return null;
         }
-
-        return null;
-    }
-
-    public void onRelationTargetSelect(SenseData sd, SenseData.Openable sdo) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        String relType = (String) component.getAttributes().get("Relation");
-        log(Level.INFO, loginController.getAccount(), "ADD Sense " + sdo.getName() + " as " + relType + " of the sense " + sd.getName());
-        sd.setSaveButtonDisabled(false);
-        sdo.setDeleteButtonDisabled(false);
-        sdo.setViewButtonDisabled(false);
-    }
-
-    private List<String> getFilteredList(List<Map<String, String>> list, String keyFilter, String currentSense, String relType) {
-        List<String> filteredList = new ArrayList();
-        Collections.sort(list, new LexiconComparator("writtenRep"));
-        for (Map<String, String> m : list) {
-            String wr = m.get("writtenRep");
-            if ((wr.startsWith(keyFilter)) && (!wr.isEmpty())) {
-                if (relType.equals("translation")) {
-                    if (!wr.equals(currentSense) && (!lexiconControllerTabViewList.getLexiconLanguage().equals(m.get("lang")))) {
-                        filteredList.add(wr + "@" + m.get("lang"));
-                    }
-                } else {
-                    if (!wr.equals(currentSense)) {
-                        filteredList.add(wr + "@" + m.get("lang"));
-                    }
-                }
-            }
-        }
-        return filteredList;
     }
 
     private List<String> getFilteredClasses(List<String> list, String keyFilter) {
@@ -397,30 +297,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
 
     public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
         switch (relType) {
-            case "synonym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty synonym" : sdo.getName()) + " (synonym of " + sd.getName() + ")");
-                sd.getSynonym().remove(sdo);
-                break;
-            case "translation":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty translation" : sdo.getName()) + " (translation of " + sd.getName() + ")");
-                sd.getTranslation().remove(sdo);
-                break;
-            case "antonym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty antonym" : sdo.getName()) + " (antonym of " + sd.getName() + ")");
-                sd.getAntonym().remove(sdo);
-                break;
-            case "hypernym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty hypernym" : sdo.getName()) + " (hypernym of " + sd.getName() + ")");
-                sd.getHypernym().remove(sdo);
-                break;
-            case "hyponym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty hyponym" : sdo.getName()) + " (hyponym of " + sd.getName() + ")");
-                sd.getHyponym().remove(sdo);
-                break;
-            case "approximateSynonym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty approximateSynonym" : sdo.getName()) + " (approximateSynonym of " + sd.getName() + ")");
-                sd.getApproximateSynonym().remove(sdo);
-                break;
             case "reference":
                 log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty reference" : sdo.getName()) + " (reference of " + sd.getName() + ")");
                 sd.getOWLClass().setName("");
@@ -477,26 +353,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         sense.setSaveButtonDisabled(false);
     }
 
-    public void addEntryOfSenseRelation(SenseData.Openable sdo, String relType, SenseData sd) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of the " + sdo.getName() + " " + relType + " of " + sd.getName());
-        String relationValue = sdo.getName().split("@")[0];
-        senseOpenedInRelation = relationValue;
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
-        lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
-        lexiconCreationControllerRelationDetail.setEntryOfSenseRelation(relationValue);
-        checkForLock(getEntryLock(sdo.getName()));
-        lexiconManager.getLexiconLocker().print();
-        lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
-        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(sdo.getName());
-        lexiconCreationControllerFormDetail.setLexicalRelationButtons(false);
-        lexiconCreationControllerRelationDetail.setActiveTab(2);
-    }
-
-    private String getEntryLock(String sense) {
-        String s = sense.split("_sense")[0];
-        return s + "_lemma";
-    }
-
     public void resetSenseDetails() {
         senses.clear();
         senseRendered = false;
@@ -518,20 +374,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
 
     public ArrayList<Ontology> getTaxonomy() {
         return propertyValue.getTaxonomy();
-    }
-
-    private void checkForLock(String entry) {
-        // check if the lexical entry is available and lock it
-        boolean locked = lexiconManager.checkForLock(entry);
-        if (locked) {
-            lexiconCreationControllerRelationDetail.setLocked(true);
-            lexiconCreationControllerRelationDetail.setLocker(lexiconManager.getLockingUser(entry) + " is working ... ");
-            log(Level.INFO, loginController.getAccount(), "ACCESS TO THE LOCKED lexical entry related to " + entry);
-        } else {
-            lexiconCreationControllerRelationDetail.setLocked(false);
-            lexiconCreationControllerRelationDetail.setLocker("");
-            log(Level.INFO, loginController.getAccount(), "LOCK the lexical entry related to " + entry);
-        }
     }
 
 }
