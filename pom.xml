@@ -16,6 +16,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>it.cnr.ilc.lc</groupId>
+            <artifactId>LexO-lite-Importer</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
@@ -25,7 +35,7 @@
             <artifactId>jena-osgi</artifactId>
             <version>3.0.0</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.11.1</version>

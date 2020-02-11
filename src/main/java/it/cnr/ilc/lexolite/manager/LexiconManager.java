@@ -169,6 +169,11 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
+    public synchronized void updateSenseSynSem(SenseData oldSense, SenseData newSense) throws IOException, OWLOntologyStorageException {
+        lexiconModel.updateSenseSynSem(oldSense, newSense);
+        lexiconModel.persist();
+    }
+
     // invoked in order to retrieve the component of a multiword at a specific position
     public synchronized String getComponentAtPosition(String entry, String position) {
         return lexiconQuery.getComponentAtPosition(entry.replace("_lemma", "_entry"), position);
@@ -341,12 +346,15 @@ public class LexiconManager extends BaseController implements Serializable {
     public synchronized ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
         return lexiconQuery.getSensesVarTransAttributesOfLemma(asd);
     }
-    
+
     // query for symSem module //
     // invoked in order to add lemma synsem attributes to a specific lemma
     public synchronized LemmaData getSynSemAttributes(String lemma) {
         return lexiconQuery.getSynSemAttributes(lemma.replace("_lemma", "_entry"));
     }
 
+    public synchronized ArrayList<SenseData> getSensesSynSemAttributesOfSense(ArrayList<SenseData> asd) {
+        return lexiconQuery.getSensesSynSemAttributesOfSense(asd);
+    }
 
 }

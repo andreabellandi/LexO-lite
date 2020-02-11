@@ -14,6 +14,7 @@ import it.cnr.ilc.lexolite.controller.LoginController;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
+import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
@@ -147,6 +148,7 @@ public class LexiconModel extends BaseController {
         OWLNamedIndividual lexicon = getIndividual(lex);
         OWLNamedIndividual le = getEntry(entryInstance, ld.getType());
         OWLNamedIndividual cf = getForm(lemmaInstance);
+        
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.ENTRY.getLabel(), lexicon, le, pm.getPrefixName2PrefixMap().get("lime:"));
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel(), le, cf, pm.getPrefixName2PrefixMap().get("ontolex:"));
         setMoprhology(le, cf, ld);
@@ -197,7 +199,7 @@ public class LexiconModel extends BaseController {
 
     // write the sense as individual of the related class and returns it 
     private OWLNamedIndividual getSense(String senseName, int n) {
-        OWLClass lexicalSenseClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("lemon:"), "LexicalSense");
+        OWLClass lexicalSenseClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("ontolex:"), "LexicalSense");
         OWLNamedIndividual sense = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), senseName + n);
         addIndividualAxiom(lexicalSenseClass, sense);
         return sense;
@@ -621,6 +623,51 @@ public class LexiconModel extends BaseController {
         }
     }
 
+    public void updateSenseSynSem(SenseData oldSense, SenseData newSense) {
+        if (oldSense.getOntoMap() != null) {
+            if (!oldSense.getOntoMap().getFrame().isEmpty()) {
+                removeOntoMap(oldSense);
+            }
+        }
+        if (newSense.getOntoMap() != null) {
+            if (!newSense.getOntoMap().getFrame().isEmpty()) {
+                addOntoMap(newSense);
+            }
+        }
+    }
+
+    private void removeOntoMap(SenseData oldSense) {
+        OWLNamedIndividual sense = getIndividual(oldSense.getName());
+        OWLClass ontoMapClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.Class.ONTOMAP.getLabel());
+        removeIndividualAxiom(ontoMapClass, sense);
+        removeObjectPropertyAxiom(pm.getPrefixName2PrefixMap().get("synsem:"), sense, OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel(), sense);
+        if (!oldSense.getOntoMap().getIsA().isEmpty()) {
+            removeObjectPropertyAxiom(pm.getPrefixName2PrefixMap().get("synsem:"), sense, OntoLexEntity.ObjectProperty.ISA.getLabel(), getIndividual(oldSense.getOntoMap().getIsA()));
+        } else {
+            removeObjectPropertyAxiom(pm.getPrefixName2PrefixMap().get("synsem:"), sense, OntoLexEntity.ObjectProperty.SUBJOFPROP.getLabel(), getIndividual(oldSense.getOntoMap().getSubjOfProp()));
+            removeObjectPropertyAxiom(pm.getPrefixName2PrefixMap().get("synsem:"), sense, OntoLexEntity.ObjectProperty.OBJOFPROP.getLabel(), getIndividual(oldSense.getOntoMap().getObjOfProp()));
+        }
+    }
+
+    private void addOntoMap(SenseData newSense) {
+        OWLNamedIndividual sense = getIndividual(newSense.getName());
+        OWLClass ontoMapClass = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.Class.ONTOMAP.getLabel());
+        addIndividualAxiom(ontoMapClass, sense);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel(), sense, sense, pm.getPrefixName2PrefixMap().get("synsem:"));
+        if (!newSense.getOntoMap().getIsA().isEmpty()) {
+            addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.ISA.getLabel(), sense,
+                    getIndividual(newSense.getOntoMap().getIsA()),
+                    pm.getPrefixName2PrefixMap().get("synsem:"));
+        } else {
+            addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SUBJOFPROP.getLabel(), sense,
+                    getIndividual(newSense.getOntoMap().getSubjOfProp()),
+                    pm.getPrefixName2PrefixMap().get("synsem:"));
+            addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.OBJOFPROP.getLabel(), sense,
+                    getIndividual(newSense.getOntoMap().getObjOfProp()),
+                    pm.getPrefixName2PrefixMap().get("synsem:"));
+        }
+    }
+
     // NEW LEMMA MULTIWORD ACTION: write all the triples about the new lemma entry
     public void addMultiwordLemma(LemmaData ld, String lex) {
         addLemma(ld, lex);
@@ -878,12 +925,6 @@ public class LexiconModel extends BaseController {
                 addDataPropertyAxiom("definition", sbj, newSense.getDefinition(), pm.getPrefixName2PrefixMap().get("skos:"));
             }
         }
-        saveRelations(sbj, oldSense.getSynonym(), newSense.getSynonym(), "synonym", "lexinfo");
-        saveRelations(sbj, oldSense.getApproximateSynonym(), newSense.getApproximateSynonym(), "approximateSynonym", "lexinfo");
-        saveRelations(sbj, oldSense.getAntonym(), newSense.getAntonym(), "antonym", "lexinfo");
-        saveRelations(sbj, oldSense.getHypernym(), newSense.getHypernym(), "hypernym", "lexinfo");
-        saveRelations(sbj, oldSense.getHyponym(), newSense.getHyponym(), "hyponym", "lexinfo");
-        saveRelations(sbj, oldSense.getTranslation(), newSense.getTranslation(), "translation", "lexinfo");
         saveOntologyReference(sbj, oldSense.getOWLClass(), newSense.getOWLClass());
     }
 

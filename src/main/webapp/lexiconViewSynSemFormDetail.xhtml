@@ -81,8 +81,10 @@
 
                 <h:outputLabel styleClass="titleStyle" value="Arguments:" rendered="#{synFrame.synArgs.size() > 0}"/>
                 <ui:repeat value="#{synFrame.synArgs}" var="synArg" rendered="#{synFrame.synArgs.size() > 0}">
-                    <h:outputLabel styleClass="titleStyle" value="#{' #'.concat(synArg.number)}"/>
+                    <!--<h:outputLabel styleClass="titleStyle" value="{' #'.concat(synArg.number)}"/>-->
                     <h:panelGrid styleClass="synArgBlock" columns="2" cellpadding="5">
+                        <h:outputLabel styleClass="titleStyle" value="Number: "/>
+                        <h:outputLabel styleClass="titleStyle" value="#{' #'.concat(synArg.number)}"/>
                         <h:outputLabel styleClass="titleStyle" value="Type:"/>
                         <p:selectOneMenu id="synArgType" styleClass="menu" 
                                          panelStyleClass="panel" value="#{synArg.type}" 
@@ -117,7 +119,7 @@
                                     actionListener="#{lexiconControllerSynSemFormDetail.addSyntacticArgument(synFrame)}"/>
                     </p:menu>
                     <p:commandButton title="Save" icon="fa fa-save" 
-                                     update="SynFrameDataList" 
+                                     update="SynFrameDataList editViewTab:lexiconSynSemSenseDetailForm" 
                                      action="#{lexiconControllerSynSemFormDetail.saveSynFrame(synFrame)}"
                                      onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                      disabled="#{synFrame.saveButtonDisabled}">

@@ -21,6 +21,7 @@ import it.cnr.ilc.lexolite.controller.LexiconComparator;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
+import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -188,6 +189,7 @@ public class LexiconQuery extends BaseController {
     // invoked in order to add synsem lemma attributes to a specific lemma
     public LemmaData getSynSemAttributes(String entry) {
         LemmaData ld = new LemmaData();
+        ld.setIndividual(entry);
         addSynSemAttributesData(entry, ld);
         return ld;
     }
@@ -249,6 +251,7 @@ public class LexiconQuery extends BaseController {
             for (Map<String, String> fa : frameArgs) {
                 LemmaData.SynArg synArg = new LemmaData.SynArg();
                 synArg.setType(fa.get("type"));
+                synArg.setName(fa.get("synArg"));
                 synArg.setNumber(Integer.parseInt(fa.get("synArg").split("_arg_")[1]));
                 synArg.setOptional(false);
                 List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
@@ -470,6 +473,38 @@ public class LexiconQuery extends BaseController {
         return sdList;
     }
 
+    public ArrayList<SenseData> getSensesSynSemAttributesOfSense(ArrayList<SenseData> asd) {
+        ArrayList<SenseData> alsd = new ArrayList<SenseData>();
+        for (SenseData sd : asd) {
+            SenseData senseCopy = new SenseData();
+            senseCopy.setName(sd.getName());
+            senseCopy.setOWLClass(sd.getOWLClass());
+            senseCopy.setDefinition(sd.getDefinition());
+            getOntoMapping(sd, senseCopy);
+            alsd.add(senseCopy);
+        }
+        return alsd;
+    }
+
+    private void getOntoMapping(SenseData sd, SenseData senseCopy) {
+//        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+//        for (Map<String, String> m : results) {
+//            SenseData.SenseRelation sr = new SenseData.SenseRelation();
+//            sr.setWrittenRep(m.get("sense"));
+//            sr.setRelation(m.get("rel"));
+//            sr.setLanguage(m.get("lang"));
+//            senseCopy.getSenseRels().add(sr);
+//        }
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
+        OntoMap om = new SenseData.OntoMap();
+        om.setFrame("puppa");
+        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
+        om.setReference(sd.getOWLClass().getName());
+        senseCopy.setOntoMap(om);
+        senseCopy.setOntoMap(null);
+        
+    }
+
     public ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
         ArrayList<SenseData> alsd = new ArrayList<SenseData>();
         for (SenseData sd : asd) {
@@ -541,21 +576,9 @@ public class LexiconQuery extends BaseController {
         sd.setName(sense);
         sd.setDefinition(getDefinition(sense));
         sd.setNote(getSenseNote(sense));
-        sd.setTranslation(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "translation")));
-        sd.setSynonym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "synonym")));
-        sd.setAntonym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "antonym")));
-        sd.setHypernym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "hypernym")));
-        sd.setHyponym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "hyponym")));
-        sd.setApproximateSynonym(getSenseRelation(sense, LexicalQuery.SENSE_RELATION.replace("_RELATION_", "approximateSynonym")));
         sd.setOWLClass(getOntoClass(sense));
         setFieldMaxLenght(sd.getName(), sd);
-        setFieldMaxLenght(sd.getSynonym(), sd);
-        setFieldMaxLenght(sd.getTranslation(), sd);
         setFieldMaxLenght(sd.getOWLClass(), sd);
-        setFieldMaxLenght(sd.getAntonym(), sd);
-        setFieldMaxLenght(sd.getApproximateSynonym(), sd);
-        setFieldMaxLenght(sd.getHypernym(), sd);
-        setFieldMaxLenght(sd.getHyponym(), sd);
         sd.setFiledMaxLenght((sd.getFiledMaxLenght() > FIELD_MAX_LENGHT) ? FIELD_MAX_LENGHT : sd.getFiledMaxLenght());
     }
 

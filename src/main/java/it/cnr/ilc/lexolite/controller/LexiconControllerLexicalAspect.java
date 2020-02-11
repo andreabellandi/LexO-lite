@@ -64,8 +64,6 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                 lexiconControllerSynSemFormDetail.setSynSemRendered(false);
                 lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
                 lexiconControllerOntologyDetail.setOntologyClassRendered(false);
-                lexiconControllerSynSemFormDetail.getLemmaSynSem().clear();
-                lexiconControllerSynSemFormDetail.getLemmaSynSemCopy().clear();
                 break;
             case "Variation and Translation":
                 lexiconControllerFormDetail.setLemmaRendered(false);
@@ -78,8 +76,6 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                 setVarTransEntryAndCopy();
                 lexiconControllerVarTransFormDetail.addLexicalRelations();
                 lexiconControllerVarTransSenseDetail.addSenseRelations();
-                lexiconControllerSynSemFormDetail.getLemmaSynSem().clear();
-                lexiconControllerSynSemFormDetail.getLemmaSynSemCopy().clear();
                 break;
             case "Syntax and Semantics":
                 lexiconControllerFormDetail.setLemmaRendered(false);
@@ -91,6 +87,7 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                 lexiconControllerOntologyDetail.setOntologyClassRendered(false);
                 setSynSemEntryAndCopy();
                 lexiconControllerSynSemFormDetail.addSyntax();
+                lexiconControllerSynSemSenseDetail.addSemantics();
                 break;
             default:
                 break;
@@ -104,8 +101,8 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
         lexiconControllerVarTransSenseDetail.getSensesVarTrans().clear();
         lexiconControllerVarTransSenseDetail.getSensesVarTransCopy().clear();
         for (SenseData sd : lexiconControllerSenseDetail.getSenses()) {
-            lexiconControllerVarTransSenseDetail.getSensesVarTrans().add(getSenseCopy(sd.getName()));
-            lexiconControllerVarTransSenseDetail.getSensesVarTransCopy().add(getSenseCopy(sd.getName()));
+            lexiconControllerVarTransSenseDetail.getSensesVarTrans().add(getSenseCopy(sd));
+            lexiconControllerVarTransSenseDetail.getSensesVarTransCopy().add(getSenseCopy(sd));
         }
     }
 
@@ -113,15 +110,20 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
         lexiconControllerSynSemFormDetail.getLemmaSynSem().setIndividual(lexiconControllerFormDetail.getLemma().getIndividual());
         lexiconControllerSynSemFormDetail.getLemmaSynSemCopy().setIndividual(lexiconControllerFormDetail.getLemma().getIndividual());
         lexiconControllerSynSemSenseDetail.getSensesSynSem().clear();
+        lexiconControllerSynSemSenseDetail.getSensesSynSemCopy().clear();
         for (SenseData sd : lexiconControllerSenseDetail.getSenses()) {
-            lexiconControllerSynSemSenseDetail.getSensesSynSem().add(getSenseCopy(sd.getName()));
+            lexiconControllerSynSemSenseDetail.getSensesSynSem().add(getSenseCopy(sd));
+            lexiconControllerSynSemSenseDetail.getSensesSynSemCopy().add(getSenseCopy(sd));
         }
     }
 
-    private SenseData getSenseCopy(String name) {
-        SenseData sd = new SenseData();
-        sd.setName(name);
-        return sd;
+    private SenseData getSenseCopy(SenseData sd) {
+        SenseData _sd = new SenseData();
+        _sd.setName(sd.getName());
+        SenseData.Openable ref = new SenseData.Openable();
+        ref.setName(sd.getOWLClass().getName());
+        _sd.setOWLClass(ref);
+        return _sd;
     }
 
     public ArrayList<String> getLexicalAspects() {

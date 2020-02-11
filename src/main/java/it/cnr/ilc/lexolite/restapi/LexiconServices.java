@@ -261,36 +261,36 @@ public class LexiconServices {
         for (SenseData sense : senses) {
             JsonObject lemmas = new JsonObject();
             switch (rel) {
-                case "synonym":
-                    for (SenseData.Openable sRel : sense.getSynonym()) {
-                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-                    }
-                    break;
-                case "antonym":
-                    for (SenseData.Openable sRel : sense.getAntonym()) {
-                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-                    }
-                    break;
-                case "hypernym":
-                    for (SenseData.Openable sRel : sense.getHypernym()) {
-                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-                    }
-                    break;
-                case "hyponym":
-                    for (SenseData.Openable sRel : sense.getHyponym()) {
-                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-                    }
-                    break;
-                case "translation":
-                    for (SenseData.Openable sRel : sense.getTranslation()) {
-                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-                    }
-                    break;
+//                case "synonym":
+//                    for (SenseData.Openable sRel : sense.getSynonym()) {
+//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
+//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
+//                    }
+//                    break;
+//                case "antonym":
+//                    for (SenseData.Openable sRel : sense.getAntonym()) {
+//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
+//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
+//                    }
+//                    break;
+//                case "hypernym":
+//                    for (SenseData.Openable sRel : sense.getHypernym()) {
+//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
+//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
+//                    }
+//                    break;
+//                case "hyponym":
+//                    for (SenseData.Openable sRel : sense.getHyponym()) {
+//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
+//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
+//                    }
+//                    break;
+//                case "translation":
+//                    for (SenseData.Openable sRel : sense.getTranslation()) {
+//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
+//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
+//                    }
+//                    break;
             }
             if (lemmas.size() > 0) {
                 senseNumber.add(sense.getName(), lemmas);

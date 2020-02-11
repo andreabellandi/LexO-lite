@@ -19,9 +19,79 @@
                 <h:outputLabel styleClass="titleStyle" value="Reference:" rendered="#{sense.OWLClass.viewButtonDisabled}"/>
                 <p:inputTextarea id="ontoRefernce" styleClass="inputTextStyleTranslationForm" value="#{sense.OWLClass.name}" readonly="true"
                                  rendered="#{sense.OWLClass.viewButtonDisabled}"/>
+
+                <h:outputLabel styleClass="titleStyle" value="Ontology mapping:" rendered="#{sense.ontoMap != null}"/>
+                <h:panelGrid id="SenseOntoMapping" columns="2" styleClass="senseSenseRelTextBlock" rendered="#{sense.ontoMap != null}">
+
+                    <h:outputLabel styleClass="titleStyle" value="Frame:"/>
+                    <p:selectOneMenu id="senseFrameType" styleClass="menu" 
+                                     panelStyleClass="panel" value="#{sense.ontoMap.frame}" 
+                                     appendTo="senseFrameType">
+                        <p:ajax event="valueChange" listener="#{lexiconControllerSynSemSenseDetail.setSelectedFrame(sense)}" update="senseSynSemButtons senseIsA senseSubjPropType senseObjType"/>
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemSenseDetail.frames}" />
+                    </p:selectOneMenu>
+
+                    <h:outputLabel styleClass="titleStyle" value="Is a:"/>
+                    <p:selectOneMenu id="senseIsA" styleClass="menu" disabled="#{lexiconControllerSynSemSenseDetail.ontoMapArgDisabled}"
+                                     panelStyleClass="panel" value="#{sense.ontoMap.isA}" 
+                                     appendTo="senseIsA">
+                        <p:ajax event="valueChange" listener="#{lexiconControllerSynSemSenseDetail.isAChanged}" update="SenseOntoMapping senseSynSemButtons"/>
+                        <f:attribute name="sense" value="#{sense}" />
+                        <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="Select an argument" itemValue="" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemSenseDetail.getSynArgs(sense)}" />
+                    </p:selectOneMenu>
+
+                    <h:outputLabel styleClass="titleStyle" value="Subj of property:"/>
+                    <p:selectOneMenu id="senseSubjPropType" styleClass="menu"
+                                     panelStyleClass="panel" value="#{sense.ontoMap.subjOfProp}" appendTo="senseSubjPropType">
+                        <p:ajax event="valueChange" listener="#{lexiconControllerSynSemSenseDetail.subjPropChanged}" update="SenseOntoMapping senseSynSemButtons"/>
+                        <f:attribute name="sense" value="#{sense}" />
+                        <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="Select an argument" itemValue="" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemSenseDetail.getSynArgs(sense)}" />
+                    </p:selectOneMenu>
+
+                    <h:outputLabel styleClass="titleStyle" value="Obj of property:"/>
+                    <p:selectOneMenu id="senseObjType" styleClass="menu" 
+                                     panelStyleClass="panel" value="#{sense.ontoMap.objOfProp}" 
+                                     appendTo="senseObjType">
+                        <p:ajax event="valueChange" listener="#{lexiconControllerSynSemSenseDetail.objPropChanged}" update="SenseOntoMapping senseSynSemButtons"/>
+                        <f:attribute name="sense" value="#{sense}" />
+                        <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="Select an argument" itemValue="" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemSenseDetail.getSynArgs(sense)}" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+
+                <h:panelGrid id = "senseSynSemButtons" columns="4" columnClasses="column" cellpadding="0" 
+                             rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                         or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+                    <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add ontology mapping"/>
+                    <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                        <p:menuitem styleClass="lexiconTabView" value="#{label['synsem.lemmaButton.ontoMap']}" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerSynSemSenseDetail.addOntoMapping(sense)}"
+                                    update=":editViewTab:lexiconSynSemSenseDetailForm"
+                                    disabled="#{lexiconControllerSynSemSenseDetail.ontoMappingDisabled(sense)}"/>
+                        <p:menuitem styleClass="lexiconTabView" value="#{label['synsem.lemmaButton.subMap']}" icon="fa fa-plus"  
+                                    actionListener="#{lexiconControllerVarTransSenseDetail.addIndirectTranslation(sense)}"
+                                    update=":editViewTab:lexiconSynSemSenseDetailForm"
+                                    disabled="#{lexiconControllerSynSemSenseDetail.ontoSubMappingDisabled(sense)}"/>
+                    </p:menu>
+                    <p:commandButton title="Save" icon="fa fa-save" id="saveSense"
+                                     update="SenseSynSemDataList
+                                     :systemMessage :editViewTab:lexiconViewDictionaryForm" 
+                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                     action="#{lexiconControllerSynSemSenseDetail.saveOntologyMapping(sense)}"
+                                     disabled="#{sense.saveButtonDisabled}">
+                    </p:commandButton>
+                </h:panelGrid>
             </h:panelGrid>
             <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>
         </p:dataList>
+
+
+
+
+
+
 
     </h:form>
 </ui:composition>

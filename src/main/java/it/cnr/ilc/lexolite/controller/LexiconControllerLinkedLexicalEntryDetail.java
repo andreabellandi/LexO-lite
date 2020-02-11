@@ -240,8 +240,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         _sdo.setViewButtonDisabled(true);
         _sdo.setName(Label.NO_ENTRY_FOUND);
         sdo.add(_sdo);
-        sd.setSynonym(sdo);
-        sd.setTranslation(sdo);
         senses.add(sd);
     }
 
@@ -329,18 +327,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         _sd.setOWLClass(_OWLClass);
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
-        for (SenseData.Openable syn : sd.getSynonym()) {
-            SenseData.Openable _syn = new SenseData.Openable();
-            _syn.setName(syn.getName());
-            syns.add(_syn);
-        }
-        for (SenseData.Openable trans : sd.getTranslation()) {
-            SenseData.Openable _trans = new SenseData.Openable();
-            _trans.setName(trans.getName());
-            translations.add(_trans);
-        }
-        _sd.setSynonym(syns);
-        _sd.setTranslation(translations);
         return _sd;
     }
 
@@ -780,18 +766,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
 
     public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
         switch (relType) {
-            case "synonym":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty synonym" : sdo.getName()) + " (synonym of " + sd.getName() + ")");
-                sd.getSynonym().remove(sdo);
-                break;
-            case "translation":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty translation" : sdo.getName()) + " (translation of " + sd.getName() + ")");
-                sd.getTranslation().remove(sdo);
-                break;
-            case "translationOf":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + sdo.getName() + " (translationOf of " + sd.getName() + ")");
-                sd.getTranslation().remove(sdo);
-                break;
             case "reference":
                 log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty reference" : sdo.getName()) + " (reference of " + sd.getName() + ")");
                 sd.getOWLClass().setName("");
@@ -809,21 +783,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         sd.setSaveButtonDisabled(false);
     }
 
-    public void addSenseRelation(SenseData sd, String relType) {
-        log(Level.INFO, loginController.getAccount(), "ADD empty " + relType + " relation to " + sd.getName());
-        SenseData.Openable sdo = new SenseData.Openable();
-        sdo.setViewButtonDisabled(true);
-        switch (relType) {
-            case "synonym":
-                sd.getSynonym().add(sdo);
-                break;
-            case "translation":
-                sd.getTranslation().add(sdo);
-                break;
-            default:
-        }
-    }
-
     public void addOntoReference(SenseData sd) {
         log(Level.INFO, loginController.getAccount(), "ADD empty ontological reference to " + sd.getName());
         sd.getOWLClass().setViewButtonDisabled(true);
@@ -832,36 +791,12 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
     // invoked by sense box
     public void saveSenseRelation(SenseData sd) throws IOException, OWLOntologyStorageException {
         log(Level.INFO, loginController.getAccount(), "SAVE Sense " + sd.getName());
-        removeEmptyRelations(sd);
         int order = senses.indexOf(sd);
         lexiconManager.saveSenseRelation(sensesCopy.get(order), sd);
         updateSenseCopy(sd, order);
         sd.setSaveButtonDisabled(true);
         setSenseToolbarRendered(true);
         info("template.message.saveSenseRelation.summary", "template.message.saveSenseRelation.description", sd.getName());
-    }
-
-    private void removeEmptyRelations(SenseData sd) {
-        ArrayList<SenseData.Openable> syns = new ArrayList();
-        ArrayList<SenseData.Openable> trans = new ArrayList();
-        ArrayList<SenseData.Openable> corrs = new ArrayList();
-        ArrayList<SenseData.Openable> sns = new ArrayList();
-        for (int i = 0; i < sd.getSynonym().size(); i++) {
-            if (!sd.getSynonym().get(i).getName().isEmpty()) {
-                SenseData.Openable syn = new SenseData.Openable();
-                syn.setName(sd.getSynonym().get(i).getName());
-                syns.add(syn);
-            }
-        }
-        for (int i = 0; i < sd.getTranslation().size(); i++) {
-            if (!sd.getTranslation().get(i).getName().isEmpty()) {
-                SenseData.Openable t = new SenseData.Openable();
-                t.setName(sd.getTranslation().get(i).getName());
-                trans.add(t);
-            }
-        }
-        sd.setSynonym(syns);
-        sd.setTranslation(trans);
     }
 
 }

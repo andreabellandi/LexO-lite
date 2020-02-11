@@ -278,6 +278,21 @@ public class LexicalQuery {
     public static final String SYNTACTIC_ARG_PROPS = "SELECT ?rel ?value WHERE {"
             + " PropertyValue(lexicon:_ARG_, ?rel, ?value) }";
 
+    public static final String SYNTACTIC_ONTO_MAPPINGS = "SELECT ?rel ?value WHERE {"
+            + " PropertyValue(lexicon:_ARG_, ?rel, ?value) }";
+
+    public static final String ONTO_MAPPING_ISA = "SELECT ?frame ?isA WHERE {"
+            + " PropertyValue(lexicon:_SENSE_, synsem:isA, ?isA), "
+            + " PropertyValue(?le, ontolex:sense, lexicon:_SENSE_), "
+            + " PropertyValue(?le, synsem:synBehavior, ?frame), "
+            + " PropertyValue(lexicon:_SENSE_, synsem:isA, ?isA) }";
+
+    public static final String ONTO_MAPPING_SUBOBJ = "SELECT ?frame ?isA WHERE {"
+            + " PropertyValue(?le, ontolex:sense, lexicon:_SENSE_), "
+            + " PropertyValue(?le, synsem:synBehavior, ?frame), "
+            + " PropertyValue(lexicon:_SENSE_, synsem:subjOfProp, ?subjOfProp), "
+            + " PropertyValue(lexicon:_SENSE_, synsem:objOfProp, ?objOfProp)  }";
+
     // query for filter panel
     public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "

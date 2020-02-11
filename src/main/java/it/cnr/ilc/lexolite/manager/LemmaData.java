@@ -600,12 +600,22 @@ public class LemmaData implements Serializable {
         private String type;
         private String marker;
         private boolean optional;
+        private String name;
 
         public SynArg() {
             this.number = 0;
             this.type = "";
             this.marker = "";
             this.optional = false;
+            this.name = "";
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public int getNumber() {

@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 @ViewScoped
 @Named
 public class LexiconControllerSynSemFormDetail extends BaseController implements Serializable {
-
+    
     @Inject
     private LexiconControllerFormDetail lexiconControllerFormDetail;
     @Inject
@@ -39,37 +39,37 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
     private LoginController loginController;
     @Inject
     private PropertyValue propertyValue;
-
+    
     private boolean synSemRendered = false;
-
+    
     private LemmaData lemmaSynSem = new LemmaData();
     private LemmaData lemmaSynSemCopy = new LemmaData();
-
+    
     public LemmaData getLemmaSynSem() {
         return lemmaSynSem;
     }
-
+    
     public void setLemmaSynSem(LemmaData lemmaSynSem) {
         this.lemmaSynSem = lemmaSynSem;
     }
-
+    
     public LemmaData getLemmaSynSemCopy() {
         return lemmaSynSemCopy;
     }
-
+    
     public void setLemmaSynSemCopy(LemmaData lemmaSynSemCopy) {
         this.lemmaSynSemCopy = lemmaSynSemCopy;
     }
-
+    
     public boolean isSynSemRendered() {
         return synSemRendered;
     }
-
+    
     public void setSynSemRendered(boolean synSemRendered) {
         this.synSemRendered = synSemRendered;
     }
 
-    // invoked by the controller after an user selected the varTrans tab
+    // invoked by the controller after an user selected the synsem tab
     public void addSyntax() {
         this.lemmaSynSem = lexiconManager.getSynSemAttributes(lemmaSynSem.getIndividual());
         createLemmaCopy();
@@ -77,9 +77,10 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
 
     // for keeping track of modifies
     private void createLemmaCopy() {
+        this.lemmaSynSemCopy.setIndividual(this.lemmaSynSem.getIndividual());
         this.lemmaSynSemCopy.setSynFrames(copySyntacticData(lemmaSynSem.getSynFrames()));
     }
-
+    
     private ArrayList<SynFrame> copySyntacticData(ArrayList<SynFrame> alw) {
         ArrayList<SynFrame> _alw = new ArrayList();
         for (SynFrame w : alw) {
@@ -87,18 +88,19 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
             _w.setName(w.getName());
             _w.setNewFrame(w.isNewFrame());
             _w.setSaveButtonDisabled(w.isSaveButtonDisabled());
-            _w.setType(_w.getType());
+            _w.setType(w.getType());
             _w.setSynArgs(copyOfArgs(w.getSynArgs()));
             _alw.add(_w);
         }
         return _alw;
     }
-
+    
     private ArrayList<SynArg> copyOfArgs(ArrayList<SynArg> alw) {
         ArrayList<SynArg> _alw = new ArrayList();
         for (SynArg w : alw) {
             SynArg _w = new SynArg();
             _w.setMarker(w.getMarker());
+            _w.setName(w.getName());
             _w.setNumber(w.getNumber());
             _w.setOptional(w.isOptional());
             _w.setType(w.getType());
@@ -106,21 +108,21 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         }
         return _alw;
     }
-
+    
     public void addSyntacticFrame() {
         log(Level.INFO, loginController.getAccount(), "ADD empty Syntactic frame box");
         SynFrame sf = new LemmaData.SynFrame();
         lemmaSynSem.getSynFrames().add(0, sf);
         updateLemmaSynSemCopy();
     }
-
+    
     public void addSyntacticArgument(SynFrame sf) {
         SynArg sa = new SynArg();
-        sf.setSaveButtonDisabled(false);
+        sf.setSaveButtonDisabled(true);
         sa.setNumber(sf.getSynArgs().size() + 1);
         sf.getSynArgs().add(sa);
     }
-
+    
     public void saveSynFrame(SynFrame sf) throws IOException, OWLOntologyStorageException {
         int order = lemmaSynSem.getSynFrames().indexOf(sf);
         sf.setSaveButtonDisabled(true);
@@ -130,14 +132,16 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         } else {
             lexiconManager.updateSyntacticFrame(lemmaSynSemCopy.getSynFrames().get(order), sf);
         }
+        this.lemmaSynSem = lexiconManager.getSynSemAttributes(lemmaSynSem.getIndividual());
         sf.setNewFrame(false);
         updateLemmaSynSemCopy();
     }
-
+    
     private void updateLemmaSynSemCopy() {
+        lemmaSynSemCopy.setIndividual(lemmaSynSem.getIndividual());
         lemmaSynSemCopy.setSynFrames(copySynFrames());
     }
-
+    
     private ArrayList<SynFrame> copySynFrames() {
         ArrayList<SynFrame> sfl = new ArrayList<SynFrame>();
         for (SynFrame sf : lemmaSynSem.getSynFrames()) {
@@ -150,12 +154,13 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         }
         return sfl;
     }
-
+    
     private ArrayList<SynArg> copySynArgs(ArrayList<SynArg> alsa) {
         ArrayList<SynArg> _alsa = new ArrayList<SynArg>();
         for (SynArg sa : alsa) {
             SynArg _sa = new SynArg();
             _sa.setMarker(sa.getMarker());
+            _sa.setName(sa.getName());
             _sa.setNumber(sa.getNumber());
             _sa.setOptional(sa.isOptional());
             _sa.setType(sa.getType());
@@ -163,7 +168,7 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         }
         return _alsa;
     }
-
+    
     public void synFrameTypeChanged(AjaxBehaviorEvent e) {
         String type = (String) e.getComponent().getAttributes().get("value");
         log(Level.INFO, loginController.getAccount(), "UPDATE SynFrame type of " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr() + " to " + type);
@@ -171,15 +176,19 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         SynFrame sf = (SynFrame) component.getAttributes().get("frame");
         sf.setSaveButtonDisabled(false);
     }
-
+    
     public void synArgTypeChanged(AjaxBehaviorEvent e) {
         String type = (String) e.getComponent().getAttributes().get("value");
         log(Level.INFO, loginController.getAccount(), "UPDATE SynArg type of " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr() + " to " + type);
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         SynFrame sf = (SynFrame) component.getAttributes().get("frame");
-        sf.setSaveButtonDisabled(false);
+        if (type.isEmpty()) {
+            sf.setSaveButtonDisabled(true);
+        } else {
+            sf.setSaveButtonDisabled(false);
+        }
     }
-
+    
     public void synArgMarkerChanged(AjaxBehaviorEvent e) {
         String type = (String) e.getComponent().getAttributes().get("value");
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
@@ -187,7 +196,7 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         sf.setSaveButtonDisabled(false);
         log(Level.INFO, loginController.getAccount(), "UPDATE marker in hte frame " + sf.getName() + " to " + type);
     }
-
+    
     public void synArgOptChanged(AjaxBehaviorEvent e) {
         boolean type = (boolean) e.getComponent().getAttributes().get("value");
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
@@ -195,13 +204,13 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         sf.setSaveButtonDisabled(false);
         log(Level.INFO, loginController.getAccount(), "UPDATE optionality argument in the frame " + sf.getName() + " set to " + type);
     }
-
+    
     public ArrayList<String> getSyntacticFrames() {
         return propertyValue.getSynFrameType();
     }
-
+    
     public ArrayList<String> getSyntacticArgumentTypes() {
         return propertyValue.getSynArgType();
     }
-
+    
 }

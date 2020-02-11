@@ -221,105 +221,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             } else {
                 row.add(null);
             }
-            if (!sd.getTranslation().isEmpty()) { //translations 2
-                String tr;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getTranslation().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    tr = next.getName();
-                    Matcher m = patternSense.matcher(tr);
-                    if (m.find()) {
-                        String grp = m.group(1);
-                        tr = grp.replaceAll("_", " ");
-                    }
-                    sb.append(tr).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-            if (!sd.getSynonym().isEmpty()) { //synonyms 3
-                String str;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getSynonym().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    str = LexiconUtil.sanitize(next.getName());
-                    Matcher m = patternSense.matcher(str);
-                    if (m.find()) {
-                        str = m.group(1).replaceAll("_", " ");
-                    }
-                    sb.append(str).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-            if (!sd.getApproximateSynonym().isEmpty()) { //approximateSynonyms 4
-                String str;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getApproximateSynonym().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    str = LexiconUtil.sanitize(next.getName());
-                    Matcher m = patternSense.matcher(str);
-                    if (m.find()) {
-                        str = m.group(1).replaceAll("_", " ");
-                    }
-                    sb.append(str).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-            if (!sd.getAntonym().isEmpty()) { //antonyms 5
-                String str;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getAntonym().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    str = LexiconUtil.sanitize(next.getName());
-                    Matcher m = patternSense.matcher(str);
-                    if (m.find()) {
-                        str = m.group(1).replaceAll("_", " ");
-                    }
-                    sb.append(str).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-            if (!sd.getHypernym().isEmpty()) { //hypernyms 6
-                String str;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getHypernym().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    str = LexiconUtil.sanitize(next.getName());
-                    Matcher m = patternSense.matcher(str);
-                    if (m.find()) {
-                        str = m.group(1).replaceAll("_", " ");
-                    }
-                    sb.append(str).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-            if (!sd.getHyponym().isEmpty()) { //hyponyms 7
-                String str;
-                sb = new StringBuilder();
-                for (Iterator<SenseData.Openable> it = sd.getHyponym().iterator(); it.hasNext();) {
-                    SenseData.Openable next = it.next();
-                    str = LexiconUtil.sanitize(next.getName());
-                    Matcher m = patternSense.matcher(str);
-                    if (m.find()) {
-                        str = m.group(1).replaceAll("_", " ");
-                    }
-                    sb.append(str).append(it.hasNext() ? "; " : "");
-                }
-                row.add(sb.toString());
-            } else {
-                row.add(null);
-            }
-
-            row.add(sd.getOWLClass().getName()); //ontology class 8
+            row.add(sd.getOWLClass().getName()); //ontology class 2
             results.add(row);
         }
 
@@ -329,37 +231,13 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     public String getSense(List<String> sense, String id, String className, String smallCapsClass) {
         String name = sense.get(0);
         String def = sense.get(1);
-        String tr = sense.get(2);
-        String synonym = sense.get(3);
-        String appSynonym = sense.get(4);
-        String antonym = sense.get(5);
-        String hypernym = sense.get(6);
-        String hyponym = sense.get(7);
-        String onto = sense.get(8);
+        String onto = sense.get(2);
         ContainerTag mainDiv = div().withClass(className);
         if (null != name) {
             mainDiv.with(div(span(name)));
         }
         if (null != def) {
             mainDiv.with(div(span(join(i("Definition: "), def))));
-        }
-        if (null != tr) {
-            mainDiv.with(div(span(join(i("Translation: "), tr))));
-        }
-        if (null != synonym) {
-            mainDiv.with(div(span(join(i("Synonym: "), synonym))));
-        }
-        if (null != appSynonym) {
-            mainDiv.with(div(span(join(i("Approximate synonym: "), appSynonym))));
-        }
-        if (null != antonym) {
-            mainDiv.with(div(span(join(i("Antonym: "), antonym))));
-        }
-        if (null != hypernym) {
-            mainDiv.with(div(span(join(i("Hypernym: "), hypernym))));
-        }
-        if (null != hyponym) {
-            mainDiv.with(div(span(join(i("Hyponym: "), hyponym))));
         }
         if (onto.length() > 0) {
             mainDiv.with(div(span("Onto: " + onto)).withClass(smallCapsClass));

@@ -20,15 +20,8 @@ public class SenseData implements Serializable {
     private String note;
     // if view button is true a reference has been specified, else it is false
     private Openable OWLClass;
-//    private ArrayList<Openable> scientificName;
+    // private ArrayList<Openable> scientificName;
     private String definition;
-    // translation refers to french translations
-    private ArrayList<Openable> translation;
-    private ArrayList<Openable> synonym;
-    private ArrayList<Openable> approximateSynonym;
-    private ArrayList<Openable> antonym;
-    private ArrayList<Openable> hypernym;
-    private ArrayList<Openable> hyponym;
     private int filedMaxLenght;
 
     // modulo vartrans
@@ -36,8 +29,9 @@ public class SenseData implements Serializable {
     private ArrayList<SenseData.ReifiedSenseRelation> reifiedSenseRels;
     private ArrayList<SenseData.ReifiedTranslationRelation> reifiedTranslationRels;
 
-    // modulo vartrans
-    private ArrayList<SenseData.OntoMap> ontoMaps;
+    // modulo synsem
+    private SenseData.OntoMap ontoMap;
+    private ArrayList<SenseData.OntoMap> subOntoMap;
 
     public SenseData() {
         this.saveButtonDisabled = true;
@@ -47,25 +41,27 @@ public class SenseData implements Serializable {
         this.filedMaxLenght = 0;
         this.OWLClass = new Openable();
         this.definition = "";
-        this.synonym = new ArrayList();
-        this.translation = new ArrayList();
-        this.approximateSynonym = new ArrayList();
-        this.synonym = new ArrayList();
-        this.antonym = new ArrayList();
-        this.hypernym = new ArrayList();
-        this.hyponym = new ArrayList();
         this.senseRels = new ArrayList();
         this.reifiedSenseRels = new ArrayList();
         this.reifiedTranslationRels = new ArrayList();
-        this.ontoMaps = new ArrayList();
+        this.ontoMap = null;
+        this.subOntoMap = new ArrayList();
     }
 
-    public ArrayList<OntoMap> getOntoMaps() {
-        return ontoMaps;
+    public ArrayList<OntoMap> getSubOntoMap() {
+        return subOntoMap;
     }
 
-    public void setOntoMaps(ArrayList<OntoMap> ontoMaps) {
-        this.ontoMaps = ontoMaps;
+    public void setSubOntoMap(ArrayList<OntoMap> subOntoMap) {
+        this.subOntoMap = subOntoMap;
+    }
+
+    public OntoMap getOntoMap() {
+        return ontoMap;
+    }
+
+    public void setOntoMap(OntoMap ontoMap) {
+        this.ontoMap = ontoMap;
     }
 
     public ArrayList<ReifiedTranslationRelation> getReifiedTranslationRels() {
@@ -98,30 +94,6 @@ public class SenseData implements Serializable {
 
     public void setDefinition(String definition) {
         this.definition = definition;
-    }
-
-    public ArrayList<Openable> getAntonym() {
-        return antonym;
-    }
-
-    public void setAntonym(ArrayList<Openable> antonym) {
-        this.antonym = antonym;
-    }
-
-    public ArrayList<Openable> getHypernym() {
-        return hypernym;
-    }
-
-    public void setHypernym(ArrayList<Openable> hypernym) {
-        this.hypernym = hypernym;
-    }
-
-    public ArrayList<Openable> getHyponym() {
-        return hyponym;
-    }
-
-    public void setHyponym(ArrayList<Openable> hyponym) {
-        this.hyponym = hyponym;
     }
 
     public boolean isSaveButtonDisabled() {
@@ -162,30 +134,6 @@ public class SenseData implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public ArrayList<Openable> getApproximateSynonym() {
-        return approximateSynonym;
-    }
-
-    public void setApproximateSynonym(ArrayList<Openable> approximateSynonym) {
-        this.approximateSynonym = approximateSynonym;
-    }
-
-    public ArrayList<Openable> getTranslation() {
-        return translation;
-    }
-
-    public void setTranslation(ArrayList<Openable> translation) {
-        this.translation = translation;
-    }
-
-    public ArrayList<Openable> getSynonym() {
-        return synonym;
-    }
-
-    public void setSynonym(ArrayList<Openable> synonym) {
-        this.synonym = synonym;
     }
 
     public int getFiledMaxLenght() {
@@ -495,26 +443,26 @@ public class SenseData implements Serializable {
 
     public static class OntoMap {
 
-        private String sense;
+        private String frame;
         private String reference;
         private String isA;
         private String subjOfProp;
         private String objOfProp;
 
         public OntoMap() {
-            this.sense = "";
+            this.frame = "";
             this.reference = "";
             this.isA = "";
             this.subjOfProp = "";
             this.objOfProp = "";
         }
 
-        public String getSense() {
-            return sense;
+        public String getFrame() {
+            return frame;
         }
 
-        public void setSense(String sense) {
-            this.sense = sense;
+        public void setFrame(String frame) {
+            this.frame = frame;
         }
 
         public String getReference() {
