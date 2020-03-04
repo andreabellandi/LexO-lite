@@ -6,7 +6,7 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 
 <ul><li>
   <a href="#what-is-LexO-for">What is LexO for?</a>
-</li>li>
+</li><li>
   <a href="#who-is-LexO-for">Who is LexO for?</a>
 </li><li>
     <a href="#how-to-deploy">How to deploy</a>
@@ -60,9 +60,15 @@ This is the first version of LexO, a collaborative web editor for easily buildin
   
   LexO's primary objective is to enable lexicographers, scholars and humanists to create a resource ex novo where information can be easily manually curated by humans, that is fundamental for collecting reliable, fine-grained, and explicit information. LexO attempts to make the <a href="https://www.w3.org/community/ontolex/wiki/Final_Model_Specification">OntoLex-Lemon</a> model accessible to all those do not have technical skills, allowing the adoption of new technological advances in the Semantic Web by Digital Humanities.
 
-  The first version of LexO deals with the core (lexical entry, form, lexical sense, ontology entity) and uses the <a href="https://www.w3.org/community/ontolex/wiki/Final_Model_Specification#Decomposition_.28decomp.29">decomp</a> module for representing multiwords, and the <a href="https://www.w3.org/community/ontolex/wiki/Final_Model_Specification#Metadata_.28lime.29">lime</a> module for metadata.  
+  The first version of LexO deals with: i) the model <a href="https://www.w3.org/2016/05/ontolex/#core">core</a> (lexical entry, form, lexical sense, ontology entity) and uses the <a href="https://www.w3.org/community/ontolex/wiki/Final_Model_Specification#Decomposition_.28decomp.29">decomp</a> module for representing mmulti-wordsultiwords, andii) the <a href="https://www.w3.org/2016/05/ontolex/#variation-translation-vartrans">variation and translation</a> module, iii) the <a href="https://www.w3.org/2016/05/ontolex/#syntax-and-semantics-synsem">syntax and semantics</a> module, iv) part of the <a href="https://www.w3.org/community/ontolex/wiki/Final_Model_Specification#Metadata_.28lime.29">lime</a> module for metadata.
 
 </p>
+
+<a name="who-is-LexO-for"><h3>Who is LexO for? </h3></a>
+<p>
+The tool allows information to be easily manually curated by humans. LexO's primary objective is to enable lexicographers, scholars and humanists to create a resource ex novo where information can be easily manually curated by humans, that is fundamental for collecting reliable, fine-grained, and explicit information. 
+</p>
+
 
 <a name="how-to-deploy"><h3>How to deploy</h3></a>
 <p>
