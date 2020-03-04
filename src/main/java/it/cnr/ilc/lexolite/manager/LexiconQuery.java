@@ -495,14 +495,7 @@ public class LexiconQuery extends BaseController {
 //            sr.setLanguage(m.get("lang"));
 //            senseCopy.getSenseRels().add(sr);
 //        }
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
-        OntoMap om = new SenseData.OntoMap();
-        om.setFrame("puppa");
-        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
-        om.setReference(sd.getOWLClass().getName());
-        senseCopy.setOntoMap(om);
-        senseCopy.setOntoMap(null);
-        
+
     }
 
     public ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
@@ -523,11 +516,13 @@ public class LexiconQuery extends BaseController {
     private void getSenseRelation(SenseData sd, SenseData senseCopy) {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
-            SenseData.SenseRelation sr = new SenseData.SenseRelation();
-            sr.setWrittenRep(m.get("sense"));
-            sr.setRelation(m.get("rel"));
-            sr.setLanguage(m.get("lang"));
-            senseCopy.getSenseRels().add(sr);
+            if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel())) {
+                SenseData.SenseRelation sr = new SenseData.SenseRelation();
+                sr.setWrittenRep(m.get("sense"));
+                sr.setRelation(m.get("rel"));
+                sr.setLanguage(m.get("lang"));
+                senseCopy.getSenseRels().add(sr);
+            }
         }
     }
 

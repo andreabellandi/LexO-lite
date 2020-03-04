@@ -255,7 +255,8 @@
         </p:overlayPanel>
 
         <p:dataList id="FormDataList" styleClass="noBorder" type="definition" var="form" 
-                    value="#{lexiconControllerFormDetail.forms}" emptyMessage="">
+                    value="#{lexiconControllerFormDetail.forms}" emptyMessage="" 
+                    rendered="#{lexiconControllerFormDetail.lemmaRendered}">
             <h:panelGrid styleClass="formTextBlock" columns="2" cellpadding="5">
                 <h:outputLabel styleClass="titleStyle" value="Variant (*):" />
                 <h:panelGrid columns="2" cellpadding="0" cellspacing="0">

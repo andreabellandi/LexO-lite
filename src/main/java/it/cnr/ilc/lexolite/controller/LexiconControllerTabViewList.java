@@ -613,7 +613,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             case "fr":
                 return "color: #5858FA;";
             case "it":
-                return "color: #2EFE9A;";
+                return "color: #AC58FA;";
             case "ru":
                 return "color: #2E2EFE;";
             case "pl":
@@ -623,7 +623,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             case "la":
                 return "color: #F6CECE;";
             case "he":
-                return "color: #58FAF4;";
+                return "color: #5858FA;";
             case "ar":
                 return "color: #9AFE2E;";
             case "de":
