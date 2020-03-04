@@ -6,6 +6,8 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 
 <ul><li>
   <a href="#what-is-LexO-for">What is LexO for?</a>
+</li>li>
+  <a href="#who-is-LexO-for">Who is LexO for?</a>
 </li><li>
     <a href="#how-to-deploy">How to deploy</a>
 </li>
@@ -29,6 +31,10 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 </li>
     <li>
     <a href="#create-lexicon">Create your own lexicon</a>
+        <li><a href="#the-core-module">The core module</a></li>
+        <li><a href="#the-vartrans-module">The variation and translation module
+</a></li>
+        <li><a href="#the-synsem-module">The syntax and semantics module</a></li>
 </li>
  <li>
     <a href="#statistics">Access to the lexicon statistics</a>
@@ -41,11 +47,12 @@ This is the first version of LexO, a collaborative web editor for easily buildin
     <a href="#restapi">LexO's REST API</a>
 </li>
 <li>
-    <a href="#ack">Acknowledgemt</a>
+    <a href="#ref">References</a>
 </li>
-  <!--<li>
-    <a href="#reference">Reference</a>
-</ul>-->
+  <li>
+    <a href="#relpub">Related Publication</a>
+</li>
+</ul>
 
 <a name="what-is-LexO-for"><h3>What is LexO for? </h3></a>
 <p>
@@ -241,11 +248,31 @@ In this way, the resource is ready for its publication according to the linked d
 | List all the lemmas involved in a specific *lexico-semantic relation* with a given lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
 | Get some lexicon *statistics* | `/lexicon/statistics?lang=l` |
 
-<a name="ack"><h3>Acknowledgemt</h3></a>
+<a name="ref"><h3>References</h3></a>
+<ul>
+<li>
+<a href="http://linguistics.okfn.org"> Open Linguistics Working Group</a>
+</li>
+<li>
+<a href="https://linguistic-lod.org/"> Linguistic Linked Open Data Cloud</a>
+</li>
+<li>
+<a href="https://www.w3.org/2016/05/ontolex/"> Lexicon Model for Ontologies</a>: Community Report, 10 May 2016
+</li>
+<li>
+<a href="https://www.w3.org/2019/09/lexicog/"> The OntoLex Lemon Lexicographic Module</a>
+</li>
+  </ul>
+
+<a name="relpub"><h3>Related Publications</h3></a>
 <p>
-    This research has been conducted in the context of the cooperation agreement between Guido Mensching, director of the DiTMAO project at the Seminar für Romanische Philologie of the Georg-August-Universität Göttingen, and the Istituto di Linguistica Computazionale “A. Zampolli” of the Italian National Research Council (29 August 2016).
-  </p>
-
-
+Bellandi, Andrea, and Fahad Khan. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
+</p>
+<p>
+Bellandi, Andrea, Fahad Khan, and Monica Monachini. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
+</p>
+<p>
+Bellandi, Andrea, Emiliano Giovannetti, and Anja Weingart. Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
+</p>
 
   
