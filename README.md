@@ -204,7 +204,7 @@ Finally, by selecting the “dictionary view” tab, a dictionary-like rendering
 <a name="the-vartrans-module"><h5>The variation and translation module</h5></a>
 <img src="images/LexO-lite_vartrans.png"/>
 <p>
-The translation variation module consists of two kinds of relations: 1) the semantic relations holding between senses (synonymy, hypernym, ...) and including terminological relations (dialectal, register, chronological, discursive, and dimensional variation) and the translation relation ; 2) the relations linking lexical entries and/or forms, which describe, for example, the morphological and orthographic variations of the word. The above figure presents an example of relation between lexical entries, i.e. “presidente” is the head of “presidente del tribunale”, and a relation between senses, i.e. the cultural italian translation (LexO also uses the <a href="translation vocabulary"> translation vocabulray</a>) with the original sense associated with the Hebrew term. By clicking on the plus buttons it is possible to add other lexical and senses relations, on the basis of the LexInfo vocabulary.
+The translation variation module consists of two kinds of relations: 1) the semantic relations holding between senses (synonymy, hypernym, ...) and including terminological relations (dialectal, register, chronological, discursive, and dimensional variation) and the translation relation ; 2) the relations linking lexical entries and/or forms, which describe, for example, the morphological and orthographic variations of the word. The above figure presents an example of relation between lexical entries, i.e. “presidente” is the head of “presidente del tribunale”, and a relation between senses, i.e. the cultural italian translation (LexO also uses the <a href="http://purl.org/net/translation-categories"> translation vocabulray</a>) with the original sense associated with the Hebrew term. By clicking on the plus buttons it is possible to add other lexical and senses relations, on the basis of the LexInfo vocabulary.
 </p>
 
 <a name="the-synsem-module"><h5>The syntax and semantics module</h5></a>
@@ -247,6 +247,17 @@ In this way, the resource is ready for its publication according to the linked d
 | List all the lemmas involved in a specific *lexico-semantic relation* with a given lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
 | Get some lexicon *statistics* | `/lexicon/statistics?lang=l` |
 
+<a name="relpub"><h3>Related Publications</h3></a>
+<p>
+Bellandi, Andrea, and Fahad Khan. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
+</p>
+<p>
+Bellandi, Andrea, Fahad Khan, and Monica Monachini. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
+</p>
+<p>
+Bellandi, Andrea, Emiliano Giovannetti, and Anja Weingart. Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
+</p>
+
 <a name="ref"><h3>References</h3></a>
 <ul>
 <li>
@@ -262,16 +273,4 @@ In this way, the resource is ready for its publication according to the linked d
 <a href="https://www.w3.org/2019/09/lexicog/"> The OntoLex Lemon Lexicographic Module</a>
 </li>
   </ul>
-
-<a name="relpub"><h3>Related Publications</h3></a>
-<p>
-Bellandi, Andrea, and Fahad Khan. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
-</p>
-<p>
-Bellandi, Andrea, Fahad Khan, and Monica Monachini. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
-</p>
-<p>
-Bellandi, Andrea, Emiliano Giovannetti, and Anja Weingart. Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
-</p>
-
   
