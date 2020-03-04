@@ -96,7 +96,7 @@ The tool allows information to be easily manually curated by humans. LexO's prim
   </p>
   <a name="configuration-file"><h4>Initialization and configuration file</h4></a>
   <p>
-  First of all, you have to create an empty schema in MySql called <b>LexO_users</b> for the users profiles management. Set the character encoding to UTF-8. You can use the following command:
+  First of all, you have to create an empty schema in MySql called <b>LexO_users</b> for the users' profiles management. Set the character encoding to UTF-8. You can use the following command:
   </p>
   
 ```
@@ -147,7 +147,7 @@ Then you have to restart tomcat.
 <p>
 <a name="create-users"><h4>Create users</h4></a>
   <p>
-    Once you created an administrator user, you can use the following credentials to login to LexO:
+    Once you created an administrator user, you can use the following credentials to log in to LexO:
 
  ```
 user = admin
@@ -170,28 +170,15 @@ Then you can modify user and password of the administrator account and create so
 
 <a name="create-lexicon"><h4>Create your own lexicon</h4></a>
 
-<img src="images/LexO-lite_editPanel.png"/>
-
-<p>
-The above figure shows how the LexO interface appears.  
-It is mainly composed of two parts. The leftmost column allows scholars to browse lemmas, 
-forms and senses, according to the OntoLex-Lemon core model. 
-If the resource is multilingual, then users have the possibility of filtering lemmas, 
-forms and senses by language. Information related to the selected entry is shown in 
-the central panel where the system shows the selected lexical entry alongside the 
-lemma (red box), its forms (blue boxes) and lexical senses (yellow boxes). 
-It is also possible to list the concepts belonging to a reference ontology
-</p>
-
   <p>
-By means of the new button at the bottom of the interface, you can create new lexicon languages. The form to fill is the following:
+By means of the new button at the bottom of the interface, you can create new lexicon languages. The form to fill in is the following:
 </p>
 
 <img src="images/LexO-lite_newLanguage.png" width=400/>
 
 <p>
 <ul>
-<li><i>Language name (manadatory)</i>: the language tag (e.g., "en");
+<li><i>Language name (mandatory)</i>: the language tag (e.g., "en");
 <li><i>Language code uri (optional)</i>: it is recommended to use the Dublin Core language property 
 with reference to either <a href="http://www.lexvo.org/"> Lexvo.org</a> or <a href="http://id.loc.gov/vocabulary/iso639-1.html"> The Library of Congress Vocabulary</a>:
 <ul>
@@ -199,25 +186,31 @@ with reference to either <a href="http://www.lexvo.org/"> Lexvo.org</a> or <a hr
 <li> Library of Congress codes should be of the form <i>http://id.loc.gov/vocabulary/iso639-1/xx</i> where <i>xx</i> is the 2-Letter ISO 639-1 code</li>
 </ul>
 </li>
-<li><i>Linguistic catalogue (manadatory)</i>: the value is automatically set to LexInfo, an ontology that provides data categories for the OntoLex-Lemon model;</li>
+<li><i>Linguistic catalogue (mandatory)</i>: the value is automatically set to LexInfo, an ontology that provides data categories for the OntoLex-Lemon model;</li>
 <li><i>Description (optional)</i>: a textual description;</li>
 <li><i>Creator (optional)</i>: some reference to the creator of the lexicon language;</li>
 </ul>
 </p>
 
+<a name="the-core-module"><h5>The core module</h5></a>
+<img src="images/LexO-lite_editPanel.png"/>
+
 <p>
-By means of the new button at the bottom of the interface, you can create new lexical entries (word or multiword). 
+The above figure shows how the LexO interface appears. It is mainly composed of two parts. The leftmost column allows scholars to browse lemmas, forms and senses, according to the OntoLex-Lemon core model. If the resource is multilingual, then users have the possibility of filtering lemmas, forms and senses by language. Information related to the selected entry is shown in the central panel where the system shows the selected lexical entry alongside the lemma (red box), any its forms (blue boxes) and lexical senses (yellow boxes). It is also possible to list the concepts belonging to a reference ontology. When a user selects an entry, the core module is displayed by default. You can switch to the other modules by using the buttons at the top of the interface. In this case the multiword “presidente del tribunale” (“court president”) is shown. By using the suitable menu you can add other forms, new senses, and a see also relationship with an entry belonging to either the lexicon or an external dataset. Finally, the sense of the entry is bound to the object property <i>courtPresident</i> of the imported domain ontology.
+</p><p>
+Finally, by selecting the “dictionary view” tab, a dictionary-like rendering of all the information related to the selected entry is shown in the central panel of LexO.
 </p>
-<img src="images/LexO-lite_newEntry.png" width=600/>
+
+<a name="the-vartrans-module"><h5>The variation and translation module</h5></a>
+<img src="images/LexO-lite_vartrans.png"/>
 <p>
-LexO asks the user to fill a form referring to the canonical form of the lexical entry, which is the form that primarily 
-identifies the entry and which may be used as an index term in the lexicon. For each lemma you can add forms and senses. 
-Each entry can refers to eachother by means of the <i>seeAlso</i> property (see the part (a) of the above figure).
-For each sense, a user can specify a definition in natural language, 
-a set of lexical relations (defined by lexinfo), and the reference property linking it to an ontological concept. 
-Differently from synonymy, antonymy, hyponymy and hypernonymy relations, translation links senses of different languages.
-(see the part (b) of the above figure). 
+The translation variation module consists of two kinds of relations: 1) the semantic relations holding between senses (synonymy, hypernym, ...) and including terminological relations (dialectal, register, chronological, discursive, and dimensional variation) and the translation relation ; 2) the relations linking lexical entries and/or forms, which describe, for example, the morphological and orthographic variations of the word. The above figure presents an example of relation between lexical entries, i.e. “presidente” is the head of “presidente del tribunale”, and a relation between senses, i.e. the cultural italian translation (LexO also uses the <a href="translation vocabulary"> translation vocabulray</a>) with the original sense associated with the Hebrew term. By clicking on the plus buttons it is possible to add other lexical and senses relations, on the basis of the LexInfo vocabulary.
 </p>
+
+<a name="the-synsem-module"><h5>The syntax and semantics module</h5></a>
+<img src="images/LexO-lite_synsem.png"/>
+The syntactic and semantic module describes the syntactic behaviour of a word and its government pattern, namely the actants introduced by the word, their syntactic function and their morpho-syntactic realisation. These syntactic frames need also to be bound to the ontological structures representing their meaning. As a consequence, LexO makes it possible to map the argument of a predicate defined in an ontology and the syntactic argument introduced in a given syntactic frame. 
+The above figure depicts an example of noun frame of the term having a subject and an (optional) object that has the preposition “di” (of) as marker. Basically, the term verbalizes the property <i>courtPresident</i> where the subject corresponds to the first argument of the property (i.e., the property domain class), and the object corresponds to the second argument of the property (i.e., the property range class).
 
 <a name="statistics"><h4>Access to the lexicon statistics</h4></a>
 
@@ -243,7 +236,7 @@ In this way, the resource is ready for its publication according to the linked d
 
 <a name="restapi"><h3>LexO's REST API</h3></a>
 <p>
-    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services (let assume that http://localhotst:8080/LexO-lite preceeds each of them):
+    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services (let assume that http://localhotst:8080/LexO-lite precedes each of them):
   </p>
 
 | Description | Example of invocation |
