@@ -495,7 +495,13 @@ public class LexiconQuery extends BaseController {
 //            sr.setLanguage(m.get("lang"));
 //            senseCopy.getSenseRels().add(sr);
 //        }
-
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
+        OntoMap om = new SenseData.OntoMap();
+        om.setFrame("puppa");
+        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
+        om.setReference(sd.getOWLClass().getName());
+        senseCopy.setOntoMap(om);
+        senseCopy.setOntoMap(null);
     }
 
     public ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
