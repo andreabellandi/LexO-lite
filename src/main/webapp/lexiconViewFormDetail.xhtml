@@ -92,9 +92,9 @@
             <h:outputLabel id="lemmaGenderLabel" styleClass="titleStyle" value="Gender:" 
                            rendered="#{lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma')
                                        or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')
-                                       or lexiconControllerFormDetail.lemma.poS.equals('verb')}" />
+                                       or lexiconControllerFormDetail.lemma.poS.equals('verb') or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')}" />
             <p:selectOneMenu id="lemmaGender" appendTo="lemmaGender" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.gender}"
-                             rendered="#{!lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb')
+                             rendered="#{!lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase') or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb')
                                          or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective'))}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaGenderChanged}" update="lemmaButtons"/>
                 <f:selectItem  itemLabel="No entry specified" itemValue="" />
@@ -107,10 +107,10 @@
 
             <h:outputLabel id="lemmaNumberLabel" styleClass="titleStyle" value="Number:" 
                            rendered="#{lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb')
-                                       or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')}"/>
+                                       or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')}"/>
             <p:selectOneMenu id="lemmaNumber" appendTo="lemmaNumber" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.number}"
                              rendered="#{!lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb')
-                                         or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective'))}">
+                                          or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective'))}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaNumberChanged}" update="lemmaButtons"/>
                 <f:selectItem itemLabel="No entry specified" itemValue="" />
                 <f:selectItems value="#{lexiconControllerFormDetail.number}" />
@@ -279,10 +279,11 @@
                 <h:outputLabel styleClass="titleStyle" value="Gender:" 
                                rendered="#{lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('adjective') 
                                            or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb') 
-                                           or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')}"/>
+                                           or lexiconControllerFormDetail.lemma.poS.equals('preposition') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')}"/>
                 <p:selectOneMenu id="formGender" styleClass="menu" panelStyleClass="panel" value="#{form.gender}" rendered="#{!lexiconControllerFormDetail.locked 
                                                                                                     and (lexiconControllerFormDetail.lemma.poS.equals('noun') 
-                                                                                                    or lexiconControllerFormDetail.lemma.poS.equals('adjective') 
+                                                                                                    or lexiconControllerFormDetail.lemma.poS.equals('adjective')
+                                                                                                    or lexiconControllerFormDetail.lemma.poS.equals('preposition')
                                                                                                     or lexiconControllerFormDetail.lemma.poS.equals('syntagma') 
                                                                                                     or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective') 
                                                                                                     or lexiconControllerFormDetail.lemma.poS.equals('verb'))}">

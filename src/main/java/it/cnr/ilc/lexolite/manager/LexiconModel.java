@@ -89,7 +89,6 @@ public class LexiconModel extends BaseController {
     private static final String DEFAULT_ONTOLOGY = ONTOLOGY_FOLDER + LexOliteProperties.getProperty("lexiconFileName");
 
     public LexiconModel(FileUploadEvent f) {
-        manager = OWLManager.createOWLOntologyManager();
         try ( InputStream inputStream = f.getFile().getInputstream()) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
