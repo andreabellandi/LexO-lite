@@ -226,6 +226,11 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
         saveButtonDisabled = false;
         lexiconControllerFormDetail.relationPanelCheck(rlr.getTargetOWLName());
     }
+    
+    public void resetFormDetails() {
+        lemmaVarTrans.clear();
+        lemmaVarTransCopy.clear();
+    }
 
     public ArrayList<String> getLexicalRelationTypes() {
         return propertyValue.getLexicalRelType();

@@ -35,13 +35,22 @@ import org.primefaces.model.TreeNode;
 public class LexiconControllerTabViewList extends BaseController implements Serializable {
 
     @Inject
+    private LexiconControllerLexicalAspect lexiconControllerLexicalAspect;
+    @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
     @Inject
     private LexiconControllerSenseDetail lexiconCreationControllerSenseDetail;
+        @Inject
+    private LexiconControllerVarTransFormDetail lexiconCreationControllerVarTransFormDetail;
+            @Inject
+    private LexiconControllerVarTransSenseDetail lexiconCreationControllerVarTransSenseDetail;
+                @Inject
+    private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
+                    @Inject
+    private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
     @Inject
     private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
-    @Inject
-    private LexiconControllerLexicalAspect lexiconControllerLexicalAspect;
+
     @Inject
     private LexiconManager lexiconManager;
     @Inject
@@ -396,6 +405,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
         lexiconCreationControllerRelationDetail.setActiveTab(0);
+        lexiconControllerLexicalAspect.setRendered(true);
+
         long endTime = System.currentTimeMillis();
         System.out.println("DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
         log(org.apache.log4j.Level.INFO, null, "DURATA QUERY LEMMA: " + (endTime - startTime));
@@ -403,6 +414,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public void onOntoSelect(NodeSelectEvent event) {
+        lexiconControllerLexicalAspect.setRendered(false);
         resetPanels();
         String entry = ((DataTreeNode) event.getTreeNode().getData()).getName();
         log(Level.INFO, loginController.getAccount(), "SELECT Ontology class: " + entry);
@@ -482,6 +494,14 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerRelationDetail.resetRelationDetails();
         lexiconCreationControllerSenseDetail.setSenseRendered(false);
         lexiconCreationOntologyDetailController.setOntologyClassRendered(false);
+        lexiconCreationControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconCreationControllerVarTransFormDetail.resetFormDetails();
+        lexiconCreationControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconCreationControllerVarTransSenseDetail.resetSenseDetails();
+        lexiconCreationControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconCreationControllerSynSemFormDetail.resetFormDetails();
+        lexiconCreationControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        lexiconCreationControllerSynSemSenseDetail.resetSenseDetails();
     }
 
     public void searchReset(String entryType) {

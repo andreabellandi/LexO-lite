@@ -26,7 +26,18 @@ import org.primefaces.model.StreamedContent;
 @ViewScoped
 @Named
 public class LexiconControllerToolbar extends BaseController implements Serializable {
-
+        @Inject
+    private LexiconControllerOntologyDetail lexiconCreationOntologyDetailController;
+       @Inject
+    private LexiconControllerVarTransFormDetail lexiconCreationControllerVarTransFormDetail;
+            @Inject
+    private LexiconControllerVarTransSenseDetail lexiconCreationControllerVarTransSenseDetail;
+                @Inject
+    private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
+                    @Inject
+    private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
+    @Inject
+    private LexiconControllerLexicalAspect lexiconControllerLexicalAspect;
     @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
     @Inject
@@ -55,6 +66,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         log(Level.INFO, loginController.getAccount(), "NEW Lemma " + lemmaType);
         // check if the lexical entry has to be saved
         resetLexicalEntry();
+        lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
         if (lemmaType.equals("Multiword")) {
             lexiconCreationControllerFormDetail.getLemma().setType(OntoLexEntity.Class.MULTIWORD.getLabel());
         } else {
@@ -68,7 +80,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconCreationControllerSenseDetail.resetSenseDetails();
         lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
         lexiconCreationControllerSenseDetail.setSenseToolbarRendered(false);
-        lexiconCreationControllerSenseDetail.addSense();
+        //lexiconCreationControllerSenseDetail.addSense();
         lexiconCreationControllerFormDetail.resetFormDetails();
         lexiconCreationControllerFormDetail.setFormAlreadyExists(false);
         lexiconCreationControllerFormDetail.setLemmAlreadyExists(false);
@@ -79,6 +91,16 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconCreationControllerFormDetail.getLemmaCopy().clear();
         lexiconCreationControllerFormDetail.getLemma().setIndividual("");
         lexiconCreationControllerFormDetail.getLemmaCopy().setIndividual("");
+        
+        lexiconCreationOntologyDetailController.setOntologyClassRendered(false);
+        lexiconCreationControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconCreationControllerVarTransFormDetail.resetFormDetails();
+        lexiconCreationControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconCreationControllerVarTransSenseDetail.resetSenseDetails();
+        lexiconCreationControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconCreationControllerSynSemFormDetail.resetFormDetails();
+        lexiconCreationControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        lexiconCreationControllerSynSemSenseDetail.resetSenseDetails();
     }
 
     public void openLexicon(FileUploadEvent event) {

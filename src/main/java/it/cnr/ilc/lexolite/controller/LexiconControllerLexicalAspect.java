@@ -43,6 +43,17 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
 
     // Possible values: Core, VarTrans, SynSem
     private String lexicalAspectActive = "Core";
+    private boolean rendered = true;
+
+    public boolean isRendered() {
+        return rendered;
+    }
+
+    public void setRendered(boolean rendered) {
+        this.rendered = rendered;
+    }
+    
+    
 
     public String getLexicalAspectActive() {
         return lexicalAspectActive;

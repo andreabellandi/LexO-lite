@@ -205,6 +205,11 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         log(Level.INFO, loginController.getAccount(), "UPDATE optionality argument in the frame " + sf.getName() + " set to " + type);
     }
     
+    public void resetFormDetails() {
+        lemmaSynSem.clear();
+        lemmaSynSemCopy.clear();
+    }
+    
     public ArrayList<String> getSyntacticFrames() {
         return propertyValue.getSynFrameType();
     }

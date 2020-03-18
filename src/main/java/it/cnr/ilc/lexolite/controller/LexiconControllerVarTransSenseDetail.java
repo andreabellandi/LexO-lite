@@ -331,6 +331,11 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
     }
 
+    public void resetSenseDetails() {
+        sensesVarTrans.clear();
+        sensesVarTransCopy.clear();
+    }
+        
     public ArrayList<String> getSenseCategories() {
         return propertyValue.getSenseCategory();
     }

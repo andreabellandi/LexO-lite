@@ -235,5 +235,10 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         _sd.setOntoMap(om);
         return _sd;
     }
+    
+    public void resetSenseDetails() {
+        sensesSynSem.clear();
+        sensesSynSemCopy.clear();
+    }
 
 }

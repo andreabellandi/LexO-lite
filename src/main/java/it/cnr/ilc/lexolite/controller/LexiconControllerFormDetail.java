@@ -849,6 +849,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.clear();
         lemmaCopy.clear();
     }
+    
 
     public void saveLemma() throws IOException, OWLOntologyStorageException {
         lemma.setSaveButtonDisabled(true);

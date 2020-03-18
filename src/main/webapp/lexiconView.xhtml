@@ -39,10 +39,11 @@
                             <p:tabView id="editViewTab" activeIndex="#{lexiconControllerLinkedLexicalEntryDetail.activeTab}" styleClass="lexiconTabView" cache="false" >
                                 <p:ajax event="tabClose" listener="#{lexiconControllerLinkedLexicalEntryDetail.unlockRelationalEntry}"/>
                                 <p:tab id="editTab" title="Edit" rendered="#{lexiconControllerTabViewList.editTabRendered}">
-                                    <h:form id="lexEntryAspectForm">
+                                    <h:form id="lexEntryAspectForm" rendered="#{lexiconControllerLexicalAspect.rendered}">
                                         <div align="center">
-                                            <p:selectOneButton id="lexicalAspectsTab" styleClass="lexEntryAspects" value="#{lexiconControllerLexicalAspect.lexicalAspectActive}">
-                                                <f:selectItems value="#{lexiconControllerLexicalAspect.lexicalAspects}" />
+                                            <p:selectOneButton id="lexicalAspectsTab" styleClass="lexEntryAspects" disabled="#{lexiconControllerFormDetail.newAction}" 
+                                                               value="#{lexiconControllerLexicalAspect.lexicalAspectActive}">
+                                                <f:selectItems value="#{lexiconControllerLexicalAspect.lexicalAspects}"/>
                                                 <p:ajax event="change" listener="#{lexiconControllerLexicalAspect.lexicalAspectChangeEvent}" 
                                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                                                         update="editViewTab:lexiconDetailTable editViewTab:lexiconViewDictionaryForm"/>
