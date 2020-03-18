@@ -255,6 +255,9 @@ Bellandi, Andrea, and Fahad Khan. Lexicography and the Semantic Web: A Demo with
 Bellandi, Andrea, Fahad Khan, and Monica Monachini. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
 </p>
 <p>
+Bellandi, Andrea, Giovannetti, Emiliano, and Piccini, Silvia 2018. Collaborative Editing of Lexical and Termino-ontological Resources: a quick introduction to LexO. In <i>XVIII EURALEX International Congress Lexicography in Global Contexts</i> – Book of Abstracts, 17-21 July 2018, Ljubljana, Slovenia, pp. 23-27.
+</p>
+<p>
 Bellandi, Andrea, Emiliano Giovannetti, and Anja Weingart. Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
 </p>
 
