@@ -84,7 +84,7 @@ The tool allows information to be easily manually curated by humans. LexO's prim
   LexO is a Maven project and uses:
   <br/>
 <ul>
-  <li>OWL-API v5.0</li>
+  <li><a href="https://github.com/owlcs/owlapi">OWL-API</a> v5.0</li>
   <li><a href="https://github.com/protegeproject/sparql-dl-api">SPARQL-DL</a> v3.0.0</li>
   <li>Hibernate v4.3.7</li>
   <li>Primefaces 7.0</li>
