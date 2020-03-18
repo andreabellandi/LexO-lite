@@ -249,16 +249,16 @@ In this way, the resource is ready for its publication according to the linked d
 
 <a name="relpub"><h3>Related Publications</h3></a>
 <p>
-Bellandi, Andrea, and Fahad Khan. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
+<b>Bellandi Andrea</b>, and <b>Fahad Khan</b>. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
 </p>
 <p>
-Bellandi, Andrea, Fahad Khan, and Monica Monachini. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
+<b>Bellandi Andrea</b>, <b>Fahad Khan</b>, and <b>Monica Monachini</b>. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
 </p>
 <p>
-Bellandi, Andrea, Giovannetti, Emiliano, and Piccini, Silvia 2018. Collaborative Editing of Lexical and Termino-ontological Resources: a quick introduction to LexO. In <i>XVIII EURALEX International Congress Lexicography in Global Contexts</i> – Book of Abstracts, 17-21 July 2018, Ljubljana, Slovenia, pp. 23-27.
+<b>Bellandi Andrea</b>, <b>Giovannetti Emiliano</b>, and <b>Piccini Silvia</b> 2018. Collaborative Editing of Lexical and Termino-ontological Resources: a quick introduction to LexO. In <i>XVIII EURALEX International Congress Lexicography in Global Contexts</i> – Book of Abstracts, 17-21 July 2018, Ljubljana, Slovenia, pp. 23-27.
 </p>
 <p>
-Bellandi, Andrea, Emiliano Giovannetti, and Anja Weingart. Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
+<b>Bellandi Andrea</b>, <b>Emiliano Giovannetti</b>, and <b>Anja Weingart.</b> Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
 </p>
 
 <a name="ref"><h3>References</h3></a>
