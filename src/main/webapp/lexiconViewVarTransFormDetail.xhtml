@@ -55,11 +55,12 @@
                        rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels.size() > 0}">
                 <h:panelGrid id="LexicalRelation" columns="1" styleClass="lemmaLexRelTextBlock">
 
-                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" 
+                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" filter="true" filterMatchMode="contains"
                                      panelStyleClass="panel" value="#{lexRel.relation}" 
                                      appendTo="lemmaLexRel">
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
-                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalRelationTypes}" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalRelationTypes}"
+                                       var="lr" itemLabel="#{lr}" itemValue="#{lexiconControllerVarTransFormDetail.getPropertyName(lr)}"/>
                     </p:selectOneMenu>
 
                     <h:panelGrid id="lexRelInput" columns="4">
@@ -98,7 +99,7 @@
                                      panelStyleClass="panel" value="#{reifLexRel.category}" 
                                      appendTo="lexRelCategory">
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
-                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalCategories}" />
+                        <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalCategories}"/>
                     </p:selectOneMenu>
 
                     <h:outputLabel styleClass="titleStyle" value="Source:"/>

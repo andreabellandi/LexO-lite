@@ -76,7 +76,8 @@
                             update="synFrameButtons"/>
                     <f:attribute name="frame" value="#{synFrame}"/>
                     <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
-                    <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticFrames}" />
+                    <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticFrames}"
+                                   var="sf" itemLabel="#{sf}" itemValue="#{lexiconControllerSynSemFormDetail.getClassName(sf)}"/>
                 </p:selectOneMenu>
 
                 <h:outputLabel styleClass="titleStyle" value="Arguments:" rendered="#{synFrame.synArgs.size() > 0}"/>
@@ -93,7 +94,8 @@
                                     update="editViewTab:lexiconSynSemFormDetailForm:SynFrameDataList"/>
                             <f:attribute name="frame" value="#{synFrame}"/>
                             <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
-                            <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticArgumentTypes}" />
+                            <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticArgumentTypes}" 
+                                           var="sf" itemLabel="#{sa}" itemValue="#{lexiconControllerSynSemFormDetail.getPropertyName(a)}"/>
                         </p:selectOneMenu>
                         <h:outputLabel styleClass="titleStyle" value="Marker:"/>
                         <p:inputText styleClass="inputTextStyle" value="#{synArg.marker}">

@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.manager.LemmaData;
+import javax.faces.model.SelectItem;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
@@ -336,7 +337,7 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         sensesVarTransCopy.clear();
     }
         
-    public ArrayList<String> getSenseCategories() {
+    public ArrayList<SelectItem> getSenseCategories() {
         return propertyValue.getSenseCategory();
     }
 

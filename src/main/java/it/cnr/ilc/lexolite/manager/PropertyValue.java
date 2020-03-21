@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 /**
  *
@@ -32,8 +34,8 @@ public class PropertyValue {
 
     private ArrayList<String> lexicalRelType;
     private ArrayList<String> senselRelType;
-    private ArrayList<String> lexicalCategory;
-    private ArrayList<String> senseCategory;
+    private ArrayList<SelectItem> lexicalCategory;
+    private ArrayList<SelectItem> senseCategory;
     private ArrayList<String> translationCategory;
 
     private ArrayList<String> synFrameType;
@@ -44,6 +46,14 @@ public class PropertyValue {
     private ArrayList<Ontology> taxonomy;
 
     private ArrayList<String> lingCatList;
+
+    public ArrayList<SelectItem> getSenseCategory() {
+        return senseCategory;
+    }
+
+    public void setSenseCategory(ArrayList<SelectItem> senseCategory) {
+        this.senseCategory = senseCategory;
+    }
 
     public ArrayList<String> getTranslationCategory() {
         return translationCategory;
@@ -157,20 +167,12 @@ public class PropertyValue {
         this.senselRelType = senselRelType;
     }
 
-    public ArrayList<String> getLexicalCategory() {
+    public ArrayList<SelectItem> getLexicalCategory() {
         return lexicalCategory;
     }
 
-    public void setLexicalCategory(ArrayList<String> lexicalCategory) {
+    public void setLexicalCategory(ArrayList<SelectItem> lexicalCategory) {
         this.lexicalCategory = lexicalCategory;
-    }
-
-    public ArrayList<String> getSenseCategory() {
-        return senseCategory;
-    }
-
-    public void setSenseCategory(ArrayList<String> senseCategory) {
-        this.senseCategory = senseCategory;
     }
 
     public ArrayList<Ontology> getTaxonomy() {
@@ -245,157 +247,375 @@ public class PropertyValue {
         loadSynArgType();
 
         lingCatList = new ArrayList();
-        lingCatList.add("http://www.lexinfo.net/ontologies/2.0/lexinfo");
+        lingCatList.add("http://www.lexinfo.net/ontologies/3.0/lexinfo");
 
     }
 
     private void loadLexicalCategories() {
-        lexicalCategory = new ArrayList();
-        lexicalCategory.add("optionalElement");
-        lexicalCategory.add("infix");
-        lexicalCategory.add("wordElement");
-        lexicalCategory.add("affix");
-        lexicalCategory.add("prefix");
-        lexicalCategory.add("morphologicalElement");
-        lexicalCategory.add("syllable");
-        lexicalCategory.add("radical");
-        lexicalCategory.add("inflectionElement");
-        lexicalCategory.add("baseElement");
-        lexicalCategory.add("suffix");
-        lexicalCategory.add("initialism");
-        lexicalCategory.add("logicalExpression");
-        lexicalCategory.add("idiom");
-        lexicalCategory.add("entryTerm");
-        lexicalCategory.add("internationalism");
-        lexicalCategory.add("compound");
-        lexicalCategory.add("shortForm");
-        lexicalCategory.add("contraction");
-        lexicalCategory.add("equation");
-        lexicalCategory.add("acronym");
-        lexicalCategory.add("abbreviation");
-        lexicalCategory.add("internationalScientificTerm");
-        lexicalCategory.add("commonName");
-        lexicalCategory.add("symbol");
-        lexicalCategory.add("productName");
-        lexicalCategory.add("transcribedForm");
-        lexicalCategory.add("partNumber");
-        lexicalCategory.add("string");
-        lexicalCategory.add("phraseologicalUnit");
-        lexicalCategory.add("proverb");
-        lexicalCategory.add("fullForm");
-        lexicalCategory.add("appellation");
-        lexicalCategory.add("formula");
-        lexicalCategory.add("setPhrase");
-        lexicalCategory.add("standardText");
-        lexicalCategory.add("clippedTerm");
-        lexicalCategory.add("expression");
-        lexicalCategory.add("abbreviatedForm");
-        lexicalCategory.add("stringCategory");
-        lexicalCategory.add("nucleus");
-        lexicalCategory.add("initialism");
-        lexicalCategory.add("contraction");
-        lexicalCategory.add("acronym");
-        lexicalCategory.add("clippedTerm");
-        lexicalCategory.add("abbreviation");
-        lexicalCategory.add("abbreviatedForm");
+        lexicalCategory = new ArrayList<>();
+        SelectItemGroup g1 = new SelectItemGroup("Dating");
+        g1.setSelectItems(new SelectItem[]{new SelectItem("modern", "modern"),
+            new SelectItem("old", "old")});
+
+        SelectItemGroup g2 = new SelectItemGroup("Term element");
+        g2.setSelectItems(new SelectItem[]{new SelectItem("morphologicalElement", "morphological element"),
+            new SelectItem("affix", "affix"),
+            new SelectItem("baseElement", "base element"),
+            new SelectItem("infix", "infix"),
+            new SelectItem("inflectionElement", "inflection element"),
+            new SelectItem("optionalElement", "optional element"),
+            new SelectItem("prefix", "prefix"),
+            new SelectItem("radical", "radical"),
+            new SelectItem("suffix", "suffix"),
+            new SelectItem("syllable", "syllable"),
+            new SelectItem("wordElement", "word element")});
+
+        SelectItemGroup g3 = new SelectItemGroup("Term element");
+        g3.setSelectItems(new SelectItem[]{new SelectItem("abbreviatedForm", "abbreviated form"),
+            new SelectItem("clippedTerm", "clipped term"),
+            new SelectItem("commonName", "common name"),
+            new SelectItem("entryTerm", "entry term"),
+            new SelectItem("fullForm", "full form"),
+            new SelectItem("internationalScientificTerm", "international scientific term"),
+            new SelectItem("logicalExpression", "logical expression"),
+            new SelectItem("partNumber", "part number"),
+            new SelectItem("phraseologicalUnit", "phraseological unit"),
+            new SelectItem("setPhrase", "set phrase"),
+            new SelectItem("shortForm", "short form"),
+            new SelectItem("standardText", "standard text"),
+            new SelectItem("transcribedForm", "transcribed form"),
+            new SelectItem("abbreviation", "abbreviation"),
+            new SelectItem("acronym", "acronym"),
+            new SelectItem("appellation", "appellation"),
+            new SelectItem("compound", "compound"),
+            new SelectItem("contraction", "contraction"),
+            new SelectItem("equation", "equation"),
+            new SelectItem("expression", "expression"),
+            new SelectItem("formula", "formula"),
+            new SelectItem("idiom", "idiom"),
+            new SelectItem("initialism", "initialism"),
+            new SelectItem("internationalism", "internationalism"),
+            new SelectItem("nucleus", "nucleus"),
+            new SelectItem("productName", "product name"),
+            new SelectItem("proverb", "proverb"),
+            new SelectItem("sku", "sku"),
+            new SelectItem("string", "string"),
+            new SelectItem("stringCategory", "string category"),
+            new SelectItem("symbol", "symbol")});
+        
+        lexicalCategory.add(g1);
+        lexicalCategory.add(g2);
+        lexicalCategory.add(g3);
     }
 
     private void loadSenseCategories() {
-        senseCategory = new ArrayList();
-        senseCategory.add("commonlyUsed");
-        senseCategory.add("infrequentlyUsed");
-        senseCategory.add("rarelyUsed");
-        senseCategory.add("admittedTerm");
-        senseCategory.add("deprecatedTerm");
-        senseCategory.add("supersededTerm");
-        senseCategory.add("preferredTerm");
-        senseCategory.add("legalTerm");
-        senseCategory.add("standardizedTerm");
-        senseCategory.add("regulatedTerm");
-        senseCategory.add("tabooRegister");
-        senseCategory.add("technicalRegister");
-        senseCategory.add("bench-levelRegister");
-        senseCategory.add("vulgarRegister");
-        senseCategory.add("neutralRegister");
-        senseCategory.add("formalRegister");
-        senseCategory.add("facetiousRegister");
-        senseCategory.add("slangRegister");
-        senseCategory.add("dialectRegister");
-        senseCategory.add("ironicRegister");
-        senseCategory.add("inHouseRegister");
-        senseCategory.add("outdatedForm");
-        senseCategory.add("archaicForm");
-        senseCategory.add("obsoleteForm");
+        senseCategory = new ArrayList<>();
+        SelectItemGroup g1 = new SelectItemGroup("Frquency");
+        g1.setSelectItems(new SelectItem[]{new SelectItem("commonlyUsed", "commonly used"),
+            new SelectItem("rarelyUsed", "rarely used"),
+            new SelectItem("infrequentlyUsed", "infrequently used")});
+
+        SelectItemGroup g2 = new SelectItemGroup("Normative Authorization");
+        g2.setSelectItems(new SelectItem[]{
+            new SelectItem("admittedTerm", "admitted term"),
+            new SelectItem("deprecatedTerm", "deprecated term"),
+            new SelectItem("legalTerm", "legal term"),
+            new SelectItem("preferredTerm", "preferred term"),
+            new SelectItem("regulatedTerm", "regulated term"),
+            new SelectItem("standardizedTerm", "standardized term"),
+            new SelectItem("supersededTerm", "superseded term")});
+
+        SelectItemGroup g3 = new SelectItemGroup("Register");
+        g3.setSelectItems(new SelectItem[]{
+            new SelectItem("benchLeveLRegister", "bench-level"),
+            new SelectItem("inHouseRegister", "in house"),
+            new SelectItem("neutralRegister", "neutral"),
+            new SelectItem("slangRegister", "slang"),
+            new SelectItem("technicalRegister", "technical"),
+            new SelectItem("vulgarRegister", "vulgar"),
+            new SelectItem("dialectRegister", "dialect"),
+            new SelectItem("facetiousRegister", "facetious"),
+            new SelectItem("formalRegister", "formal"),
+            new SelectItem("ironicRegister", "ironic"),
+            new SelectItem("tabooRegister", "taboo")});
+
+        SelectItemGroup g4 = new SelectItemGroup("Temporal Qualifier");
+        g4.setSelectItems(new SelectItem[]{
+            new SelectItem("archaicForm", "archaic form"),
+            new SelectItem("obsoleteForm", "obsolete form"),
+            new SelectItem("outDatedForm", "outdated form")});
+
+        senseCategory.add(g1);
+        senseCategory.add(g2);
+        senseCategory.add(g3);
+        senseCategory.add(g4);
     }
 
+    // properties
     private void loadLexicalRelationTypes() {
         lexicalRelType = new ArrayList();
         lexicalRelType.add("lexicalRel");
-        lexicalRelType.add("translatableAs");
-        lexicalRelType.add("derivedForm");
-        lexicalRelType.add("clippedTermFor");
-        lexicalRelType.add("contractionFor");
-        lexicalRelType.add("abbreviationFor");
-        lexicalRelType.add("acronymFor");
-        lexicalRelType.add("initialismFor");
-        lexicalRelType.add("shortFormFor");
-        lexicalRelType.add("participleFormOf");
-        lexicalRelType.add("etymologicalRoot");
-        lexicalRelType.add("fullFormFor");
-        lexicalRelType.add("geographicalVariant");
-        lexicalRelType.add("head");
-        lexicalRelType.add("homograph");
-        lexicalRelType.add("homonym");
-        lexicalRelType.add("homophone");
-        lexicalRelType.add("root");
+        lexicalRelType.add("   derivedForm");
+        lexicalRelType.add("      clippedTermFor");
+        lexicalRelType.add("      contractionFor");
+        lexicalRelType.add("         abbreviationFor");
+        lexicalRelType.add("         acronymFor");
+        lexicalRelType.add("         initialismFor");
+        lexicalRelType.add("         shortFormFor");
+        lexicalRelType.add("   participleFormOf");
+        lexicalRelType.add("   etymologicalRoot");
+        lexicalRelType.add("   fullFormFor");
+        lexicalRelType.add("   geographicalVariant");
+        lexicalRelType.add("   head");
+        lexicalRelType.add("   homograph");
+        lexicalRelType.add("   homonym");
+        lexicalRelType.add("   homophone");
+        lexicalRelType.add("   root");
+        lexicalRelType.add("   translatableAs");
     }
 
+    // properties
     private void loadSenseRelationTypes() {
         senselRelType = new ArrayList();
         senselRelType.add("senseRelation");
-        senselRelType.add("translation");
-        senselRelType.add("approximate");
-        senselRelType.add("approximateSynonym");
-        senselRelType.add("hypernym");
-        senselRelType.add("causallyRelatedConcept");
-        senselRelType.add("collocation");
-        senselRelType.add("exact");
-        senselRelType.add("synonym");
-        senselRelType.add("antonym");
-        senselRelType.add("hyponym");
-        senselRelType.add("holonymTerm");
-        senselRelType.add("memberHolonym");
-        senselRelType.add("partHolonym");
-        senselRelType.add("substanceHolonym");
-        senselRelType.add("meronymTerm");
-        senselRelType.add("memberMeronym");
-        senselRelType.add("partMeronym");
-        senselRelType.add("substanceMeronym");
-        senselRelType.add("pertainsTo");
-        senselRelType.add("relatedTerm");
-        senselRelType.add("associativeRelation");
-        senselRelType.add("coordinateConcept");
+        senselRelType.add("   antonym");
+        senselRelType.add("   approximate");
+        senselRelType.add("   approximate synonym");
+        senselRelType.add("   hypernym");
+        senselRelType.add("   hyponym");
+        senselRelType.add("   causally related concept");
+        senselRelType.add("   collocation");
+        senselRelType.add("   exact");
+        senselRelType.add("   partitive relation");
+        senselRelType.add("      holonym term");
+        senselRelType.add("         member holonym");
+        senselRelType.add("         part holonym");
+        senselRelType.add("         substance holonym");
+        senselRelType.add("      meronym term");
+        senselRelType.add("         member meronym");
+        senselRelType.add("         part meronym");
+        senselRelType.add("         substance meronym");
+        senselRelType.add("   pertains to");
+        senselRelType.add("   related term");
+        senselRelType.add("      associativeRelation");
+        senselRelType.add("      coordinateConcept");
+        senselRelType.add("   quasi equivalent");
+        senselRelType.add("   synonym");
+        senselRelType.add("   translation");
     }
 
+    // classes
     private void loadSynFrameType() {
         synFrameType = new ArrayList();
-        synFrameType.add("AdjectiveFrame");
-        synFrameType.add("NounFrame");
-        synFrameType.add("PrepositionFrame");
-        synFrameType.add("PrepositionalFrame");
-        synFrameType.add("VerbFrame");
+        synFrameType.add("adjective frame");
+        synFrameType.add("   adjective attributive frame");
+        synFrameType.add("      adjective predicate frame");
+        synFrameType.add("   adjective comparative frame");
+        synFrameType.add("   adjective post positive frame");
+        synFrameType.add("      adjective accusative post positive frame");
+        synFrameType.add("      adjective dative post positive frame");
+        synFrameType.add("      adjective genitive post positive frame");
+        synFrameType.add("   adjective pp frame");
+        synFrameType.add("   adjective predicate frame");
+        synFrameType.add("   adjective predicative frame");
+        synFrameType.add("      adjective pp frame");
+        synFrameType.add("      adjective predicate frame");
+        synFrameType.add("   adjective scale frame");
+        synFrameType.add("   adjective superlative frame");
+        synFrameType.add("control");
+        synFrameType.add("   arbitrary control");
+        synFrameType.add("      gerund ac frame");
+        synFrameType.add("      intransitive infinitive ac frame");
+        synFrameType.add("      transitive infinitive ac frame");
+        synFrameType.add("   object control");
+        synFrameType.add("      gerund oc frame");
+        synFrameType.add("      transitive infinitive oc frame");
+        synFrameType.add("   raising subject");
+        synFrameType.add("      intransitive infinitive rs frame");
+        synFrameType.add("   subject control");
+        synFrameType.add("      gerund sc frame");
+        synFrameType.add("      intransitive infinitive sc frame");
+        synFrameType.add("      transitive infinitive sc frame");
+        synFrameType.add("noun frame");
+        synFrameType.add("   noun possessive frame");
+        synFrameType.add("   noun pp frame");
+        synFrameType.add("   noun predicate frame");
+        synFrameType.add("      noun pp frame");
+        synFrameType.add("preposition frame");
+        synFrameType.add("   prepositional phrase frame");
+        synFrameType.add("prepositional frame");
+        synFrameType.add("   adjective pp frame");
+        synFrameType.add("   impersonal intransitive pp frame");
+        synFrameType.add("   noun pp frame");
+        synFrameType.add("   pp frame");
+        synFrameType.add("      intransitive pp frame");
+        synFrameType.add("         intransitive pp declarative frame");
+        synFrameType.add("      subjectless intransitive pp frame");
+        synFrameType.add("      subjectless transitive pp frame");
+        synFrameType.add("      transitive pp frame");
+        synFrameType.add("         reflexive transitive pp frame");
+        synFrameType.add("verb frame");
+        synFrameType.add("   adjectival complement frame");
+        synFrameType.add("      transitive adjectival complement frame");
+        synFrameType.add("   adverbial complement frame");
+        synFrameType.add("      transitive adverbial complement frame");
+        synFrameType.add("   dative transitive frame");
+        synFrameType.add("      reflexive dative transitive frame");
+        synFrameType.add("   declarative frame");
+        synFrameType.add("      intransitive declarative frame");
+        synFrameType.add("      intransitive pp declarative frame");
+        synFrameType.add("      transitive declarative frame");
+        synFrameType.add("   ditransitive double accusative frame");
+        synFrameType.add("   ditransitive frame");
+        synFrameType.add("      ditransitive frame_ for");
+        synFrameType.add("      ditransitive frame_ to");
+        synFrameType.add("      reflexive ditransitive frame");
+        synFrameType.add("   genitive ditransitive frame");
+        synFrameType.add("   genitive transitive frame");
+        synFrameType.add("   gerund frame");
+        synFrameType.add("      gerund ac frame");
+        synFrameType.add("      gerund oc frame");
+        synFrameType.add("      gerund sc frame");
+        synFrameType.add("   impersonal frame");
+        synFrameType.add("      impersonal intransitive frame");
+        synFrameType.add("         impersonal intransitive pp frame");
+        synFrameType.add("      impersonal transitive frame");
+        synFrameType.add("   infinitive frame");
+        synFrameType.add("      intransitive infinitive ac frame");
+        synFrameType.add("      intransitive infinitive rs frame");
+        synFrameType.add("      intransitive infinitive sc frame");
+        synFrameType.add("      transitive infinitive ac frame");
+        synFrameType.add("      transitive infinitive oc frame");
+        synFrameType.add("      transitive infinitive sc frame");
+        synFrameType.add("   interrogative frame");
+        synFrameType.add("      intransitive interrogative frame");
+        synFrameType.add("      transitive interrogative frame");
+        synFrameType.add("   interrogative infinitive frame");
+        synFrameType.add("      intransitive interrogative infinitive frame");
+        synFrameType.add("      transitive interrogative infinitive frame");
+        synFrameType.add("   intransitive frame");
+        synFrameType.add("      intransitive adjectival complement frame");
+        synFrameType.add("      intransitive adverbial complement frame");
+        synFrameType.add("      intransitive declarative frame");
+        synFrameType.add("      intransitive infinitive ac frame");
+        synFrameType.add("      intransitive infinitive rs frame");
+        synFrameType.add("      intransitive infinitive sc frame");
+        synFrameType.add("      intransitive interrogative frame");
+        synFrameType.add("      intransitive interrogative infinitive frame");
+        synFrameType.add("      intransitive nominal complement frame");
+        synFrameType.add("      intransitive pp frame");
+        synFrameType.add("         intransitive pp declarative frame");
+        synFrameType.add("      intransitive sentential frame");
+        synFrameType.add("   nominal complement frame");
+        synFrameType.add("      transitive nominal complement frame");
+        synFrameType.add("   pp frame");
+        synFrameType.add("   intransitive pp frame");
+        synFrameType.add("      intransitive pp declarative frame");
+        synFrameType.add("   subjectless intransitive pp frame");
+        synFrameType.add("   subjectless transitive pp frame");
+        synFrameType.add("   transitive pp frame");
+        synFrameType.add("   reflexive transitive pp frame");
+        synFrameType.add("   prepositional interrogative frame");
+        synFrameType.add("   reciprocal frame");
+        synFrameType.add("      reflexive reciprocal frame");
+        synFrameType.add("   reflexive frame");
+        synFrameType.add("      reflexive dative transitive frame");
+        synFrameType.add("      reflexive ditransitive frame");
+        synFrameType.add("      reflexive reciprocal frame");
+        synFrameType.add("      reflexive transitive frame");
+        synFrameType.add("      reflexive transitive pp frame");
+        synFrameType.add("   sentential frame");
+        synFrameType.add("      intransitive sentential frame");
+        synFrameType.add("      transitive sentential frame");
+        synFrameType.add("   subjectless frame");
+        synFrameType.add("      subjectless intransitive frame");
+        synFrameType.add("         subjectless intransitive pp frame");
+        synFrameType.add("      subjectless transitive frame");
+        synFrameType.add("         subjectless transitive pp frame");
+        synFrameType.add("   transitive frame");
+        synFrameType.add("      reflexive transitive frame");
+        synFrameType.add("      transitive adjectival complement frame");
+        synFrameType.add("      transitive adverbial complement frame");
+        synFrameType.add("      transitive declarative frame");
+        synFrameType.add("      transitive infinitive ac frame");
+        synFrameType.add("      transitive infinitive oc frame");
+        synFrameType.add("      transitive infinitive sc frame");
+        synFrameType.add("      transitive interrogative frame");
+        synFrameType.add("      transitive nominal complement frame");
+        synFrameType.add("      transitive pp frame");
+        synFrameType.add("         reflexive transitive pp frame");
+        synFrameType.add("      transitive sentential frame");
     }
 
+    // properties
     private void loadSynArgType() {
         synArgType = new ArrayList();
-        synArgType.add("adjunct");
-        synArgType.add("attributiveArgument");
-        synArgType.add("clausalArgument");
-        synArgType.add("complement");
-        synArgType.add("object");
-        synArgType.add("postPositiveArgument ");
-        synArgType.add("subject");
-        synArgType.add("synArg");
+        synArgType.add("syn arg");
+        synArgType.add("   adjunct");
+        synArgType.add("      possessive adjunct");
+        synArgType.add("      predicative adjunct");
+        synArgType.add("         comparative adjunct");
+        synArgType.add("         superlative adjunct");
+        synArgType.add("      prepositional adjunct");
+        synArgType.add("   adpositional object");
+        synArgType.add("      prepositional object");
+        synArgType.add("   adverbial complement");
+        synArgType.add("   attributive arg");
+        synArgType.add("   clausal arg");
+        synArgType.add("      declarative clause");
+        synArgType.add("      gerund clause");
+        synArgType.add("      infinitive clause");
+        synArgType.add("      interrogative clause");
+        synArgType.add("      interrogative infinitive clause");
+        synArgType.add("      possessive infinitive clause");
+        synArgType.add("      prepositional gerund clause");
+        synArgType.add("      prepositional interrogative clause");
+        synArgType.add("      sentential clause");
+        synArgType.add("      subjunctive clause");
+        synArgType.add("   comparative adjunct");
+        synArgType.add("   complement");
+        synArgType.add("      adverbial complement");
+        synArgType.add("      object complement");
+        synArgType.add("      predicative adjective");
+        synArgType.add("      predicative adverb");
+        synArgType.add("      predicative nominative");
+        synArgType.add("   copulative arg");
+        synArgType.add("      copulative subject");
+        synArgType.add("   copulative subject");
+        synArgType.add("   declarative clause");
+        synArgType.add("   direct object");
+        synArgType.add("   genitive object");
+        synArgType.add("   gerund object");
+        synArgType.add("   indirect object");
+        synArgType.add("   infinitive clause");
+        synArgType.add("   interrogative infinitive clause");
+        synArgType.add("   object");
+        synArgType.add("      adpositional object");
+        synArgType.add("         prepositional object");
+        synArgType.add("      direct object");
+        synArgType.add("      genitive object");
+        synArgType.add("      indirect object");
+        synArgType.add("      reflexive object");
+        synArgType.add("   object complement");
+        synArgType.add("   possessive adjunct");
+        synArgType.add("   possessive infinitve clause");
+        synArgType.add("   post positive arg");
+        synArgType.add("   predicative adjective");
+        synArgType.add("   predicative adjunct");
+        synArgType.add("      comparative adjunct");
+        synArgType.add("      superlative adjunct");
+        synArgType.add("   predicative adverb");
+        synArgType.add("   predicative nominative");
+        synArgType.add("   prepositional adjunct");
+        synArgType.add("   prepositional gerund clause");
+        synArgType.add("   prepositional interrogative clause");
+        synArgType.add("   prepositional objectt");
+        synArgType.add("   reflexive object");
+        synArgType.add("   sentential clause");
+        synArgType.add("   subject");
+        synArgType.add("      copulative subject");
+        synArgType.add("   subjunctive clause");
+        synArgType.add("   superlative adjunct");
     }
 
     public static class Ontology {

@@ -17,6 +17,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import javax.faces.model.SelectItem;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -236,8 +237,43 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
         return propertyValue.getLexicalRelType();
     }
 
-    public ArrayList<String> getLexicalCategories() {
+    public ArrayList<SelectItem> getLexicalCategories() {
         return propertyValue.getLexicalCategory();
+    }
+    
+    public String getPropertyName(String s) {
+        String ret = s.trim();
+        if (ret.contains(" ")) {
+            String[] _ret = ret.split(" ");
+            ret = "";
+            for (int i = 0; i < _ret.length; i++ ) {
+                String upper = "";
+                if (i != 0) {
+                   upper = _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
+                }
+                ret = ret + upper;
+            }
+        }
+        return ret;
+    }
+    
+       public String getClassName(String s) {
+        String ret = s.trim();
+        if (ret.contains(" ")) {
+            String[] _ret = ret.split(" ");
+            ret = "";
+            for (int i = 0; i < _ret.length; i++ ) {
+                if (_ret[i].equals("ac") || _ret[i].equals("to") || _ret[i].equals("for") || _ret[i].equals("rs") || _ret[i].equals("sc") ||
+                        _ret[i].equals("oc") || _ret[i].equals("pp")) {
+                   ret = ret + _ret[i].toUpperCase();
+                } else {
+                    ret = ret + _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
+                }
+            }
+        } else {
+            ret = ret.substring(0, 1).toUpperCase() + ret.substring(1);
+        }
+        return ret;
     }
 
 }

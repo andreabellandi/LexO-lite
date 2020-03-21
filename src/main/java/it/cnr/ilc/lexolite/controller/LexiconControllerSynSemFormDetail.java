@@ -218,4 +218,39 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
         return propertyValue.getSynArgType();
     }
     
+    public String getClassName(String s) {
+        String ret = s.trim();
+        if (ret.contains(" ")) {
+            String[] _ret = ret.split(" ");
+            ret = "";
+            for (int i = 0; i < _ret.length; i++ ) {
+                if (_ret[i].equals("ac") || _ret[i].equals("to") || _ret[i].equals("for") || _ret[i].equals("rs") || _ret[i].equals("sc") ||
+                        _ret[i].equals("oc") || _ret[i].equals("pp")) {
+                   ret = ret + _ret[i].toUpperCase();
+                } else {
+                    ret = ret + _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
+                }
+            }
+        } else {
+            ret = ret.substring(0, 1).toUpperCase() + ret.substring(1);
+        }
+        return ret;
+    }
+    
+        public String getPropertyName(String s) {
+        String ret = s.trim();
+        if (ret.contains(" ")) {
+            String[] _ret = ret.split(" ");
+            ret = "";
+            for (int i = 0; i < _ret.length; i++ ) {
+                String upper = "";
+                if (i != 0) {
+                   upper = _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
+                }
+                ret = ret + upper;
+            }
+        }
+        return ret;
+    }
+    
 }
