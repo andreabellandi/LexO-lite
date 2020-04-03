@@ -138,6 +138,17 @@ html, body {
     font-weight:bold;
 }
 
+.ontologyImportTitleStyle {
+    font-size:10px; 
+    font-weight:bold;
+}
+
+.ontologyImportFieldStyle {
+    font-size:12px; 
+    padding-right: 40px;
+    padding-left: 12px;
+}
+
 .newLangFieldStyle {
     font-size:10px; 
 }
@@ -227,6 +238,12 @@ html, body {
 
 .filterBox {
     border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+}
+
+.advertiseRoundedBox {
+    border: 2px solid gainsboro !important;
     border-radius: 5px;
     padding: 2px 2px 2px 2px;
 }

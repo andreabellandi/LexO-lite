@@ -51,4 +51,8 @@ public class LexOliteProperties {
             throw new RuntimeException(ex);
         }
     }
+    
+    public static void setProperty(String key, String value) {
+        PROPERTIES.setProperty(key, value);
+    }
 }

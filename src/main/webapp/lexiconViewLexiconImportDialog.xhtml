@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="lexiconUploadPanel" widgetVar="dlgLexiconUpload" header="#{label['lexiconImport.header']}" resizable="true" closable="true"
+              modal="true">
+        <h:form>
+            <h:panelGrid columns="2" columnClasses="column" styleClass="advertiseRoundedBox">
+                <p:graphicImage value="/resources/image/infoIcon.png" height="30px" width="30px"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['lexiconImport.advertise']}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
+                <p:outputLabel styleClass="lexiconImportFieldStyle" value="#{label['lexiconImport.label']}"/>
+                <p:fileUpload fileUploadListener="#{lexiconControllerToolbar.handleLexiconUpload}"
+                              oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgLexiconUpload').hide();PF('loadingDialog').show();"
+                              mode="advanced" dragDropSupport="false"
+                              sizeLimit="50000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"
+                              update=":lexiconTabViewForm:tabView:lemmaGrid :lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:lemmaFilterPanel 
+                              :lexiconTabViewForm:tabView:formGrid :lexiconTabViewForm:tabView:formTree :lexiconTabViewForm:tabView:formFilterPanel 
+                              :editViewTab :systemMessage"/>    
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

@@ -20,6 +20,7 @@ public class SenseData implements Serializable {
     private String note;
     // if view button is true a reference has been specified, else it is false
     private Openable OWLClass;
+    private ReferenceMenuTheme themeOWLClass;
     // private ArrayList<Openable> scientificName;
     private String definition;
     private int filedMaxLenght;
@@ -40,12 +41,21 @@ public class SenseData implements Serializable {
         this.note = "";
         this.filedMaxLenght = 0;
         this.OWLClass = new Openable();
+        this.themeOWLClass = new ReferenceMenuTheme();
         this.definition = "";
         this.senseRels = new ArrayList();
         this.reifiedSenseRels = new ArrayList();
         this.reifiedTranslationRels = new ArrayList();
         this.ontoMap = null;
         this.subOntoMap = new ArrayList();
+    }
+
+    public ReferenceMenuTheme getThemeOWLClass() {
+        return themeOWLClass;
+    }
+
+    public void setThemeOWLClass(ReferenceMenuTheme themeOWLClass) {
+        this.themeOWLClass = themeOWLClass;
     }
 
     public ArrayList<OntoMap> getSubOntoMap() {

@@ -5,11 +5,14 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.LexOliteProperty;
+import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.PropertyValue.Ontology;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -181,6 +185,12 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
         return _sd;
+    }
+
+    public List<ReferenceMenuTheme> completeTheme(String query) {
+        String queryLowerCase = query.toLowerCase();
+        List<ReferenceMenuTheme> allThemes = ontologyManager.ontologyEntities();
+        return allThemes.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
     }
 
     public void senseDefinitionKeyupEvent(AjaxBehaviorEvent e) {
@@ -374,6 +384,10 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
 
     public ArrayList<Ontology> getTaxonomy() {
         return propertyValue.getTaxonomy();
+    }
+    
+    public boolean isOntologyEnabled() {
+        return LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY) != null;
     }
 
 }

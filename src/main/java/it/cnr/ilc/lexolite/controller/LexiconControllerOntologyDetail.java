@@ -61,5 +61,10 @@ public class LexiconControllerOntologyDetail extends BaseController implements S
         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
     
+    public boolean isOntologyImported() {
+        return ontologyManager.getOntologyModel() != null;
+    }
+    
+    
 }
 

@@ -5,7 +5,10 @@
  */
 package it.cnr.ilc.lexolite.manager;
 
+import it.cnr.ilc.lexolite.LexOliteProperty;
+import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.LexicalQuery;
+import it.cnr.ilc.lexolite.constant.Namespace;
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +38,15 @@ public class CNLQuery extends LexiconQuery {
     }
 
     public List<Map<String, String>> ontoQueryGroup_1_lemmas(String ontoClass) {
-        return processQuery(LexicalQuery.PREFIXES + TEMPLATE_CONCEPT_GROUP_1_LEMMA);
+        return processQuery(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + TEMPLATE_CONCEPT_GROUP_1_LEMMA);
     }
 
     public List<Map<String, String>> ontoQueryGroup_1_forms(String ontoClass) {
-        return processQuery(LexicalQuery.PREFIXES + TEMPLATE_CONCEPT_GROUP_1_FORM);
+        return processQuery(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n" 
+                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + TEMPLATE_CONCEPT_GROUP_1_FORM);
     }
 
 }

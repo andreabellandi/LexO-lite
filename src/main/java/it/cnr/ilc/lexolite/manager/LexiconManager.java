@@ -22,7 +22,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
+import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.rdf.rdfxml.renderer.OWLOntologyXMLNamespaceManager;
 
 /**
  *
@@ -52,6 +55,11 @@ public class LexiconManager extends BaseController implements Serializable {
     public void loadLexicon(FileUploadEvent f) {
         lexiconModel = new LexiconModel(f);
         lexiconQuery = new LexiconQuery(lexiconModel);
+        if (lexiconQuery == null) {
+            throw new NullPointerException("lexiconQuery is null!!");
+        }
+        cnlq = new CNLQuery(lexiconModel);
+        lexiconLocker = new LexiconLocker();
     }
 
     public void deafult_loadLexicon() {
@@ -64,6 +72,20 @@ public class LexiconManager extends BaseController implements Serializable {
             cnlq = new CNLQuery(lexiconModel);
             lexiconLocker = new LexiconLocker();
         } else {
+        }
+    }
+
+    public String getLexiconNamespace() {
+        if (lexiconModel != null) {
+            //if (!lexiconModel.getOntology().getOntologyID().getOntologyIRI().isEmpty()) {
+             //   return lexiconModel.getOntology().getOntologyID().getOntologyIRI().get().toURI().toString();
+           // } else {
+                OWLDocumentFormat format = lexiconModel.getManager().getOntologyFormat(lexiconModel.getOntology());
+                OWLOntologyXMLNamespaceManager nsManager = new OWLOntologyXMLNamespaceManager(lexiconModel.getOntology(), format);
+                return nsManager.getDefaultNamespace();
+            //}
+        } else {
+            return "";
         }
     }
 
@@ -237,6 +259,11 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
+    public synchronized void deleteOntologyRefernces() throws IOException, OWLOntologyStorageException {
+        lexiconModel.deleteOntologyreferences();
+        lexiconModel.persist();
+    }
+
     public synchronized void deleteForm(FormData fd) throws IOException, OWLOntologyStorageException {
         lexiconModel.deleteForm(fd);
         lexiconModel.persist();
@@ -321,6 +348,12 @@ public class LexiconManager extends BaseController implements Serializable {
 
     public synchronized List<SelectItem> getSensesByLanguage(String sense, String lang) {
         return lexiconQuery.getSensesByLanguage(lang);
+    }
+
+    public synchronized void persist() throws IOException, OWLOntologyStorageException {
+        if (lexiconModel != null) {
+            lexiconModel.persist();
+        }
     }
 
     // invoked by advanced filter

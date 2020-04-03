@@ -21,7 +21,22 @@
                                     update=":editViewTab"/>
                         <p:menuitem value="Multiword" icon="fa fa-plus" styleClass="lexiconTabView" action="#{lexiconControllerToolbar.newLemma('Multiword')}"
                                     update=":editViewTab"/>
-                    </p:submenu>     
+                    </p:submenu> 
+                </p:tieredMenu>
+                
+                <p:commandButton id="importButton" icon="ui-icon-triangle-1-s" value="Import" type="button" styleClass="lexiconToolbarButton" 
+                                 disabled="#{!lexiconControllerToolbar.toolbarEnabled}"/>
+                <p:tieredMenu overlay="true" styleClass="lexiconTabView" trigger="importButton" my="left top" at="left top" style="width:120px">
+                    <p:menuitem value="Lexicon" styleClass="lexiconTabView"
+                                actionListener="#{lexiconControllerToolbar.lexiconImport()}"
+                                onstart="PF('loadingDialog').show();"
+                                oncomplete="PF('dlgLexiconUpload').show();PF('loadingDialog').hide();"
+                                update=":lexiconUploadPanel"/>
+                    <p:menuitem value="Ontology" 
+                                actionListener="#{lexiconControllerToolbar.ontologyImport()}"
+                                onstart="PF('loadingDialog').show();"
+                                oncomplete="PF('dlgOntologyUpload').show();PF('loadingDialog').hide();"
+                                update="ontologyUploadPanel"/>
                 </p:tieredMenu>
 
             </f:facet>

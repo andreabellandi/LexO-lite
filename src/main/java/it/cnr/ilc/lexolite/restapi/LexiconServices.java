@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexolite.restapi;
 
 import com.google.gson.JsonObject;
+import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
@@ -185,7 +186,7 @@ public class LexiconServices {
 
     private PrefixManager getPrefixs() {
         PrefixManager pm = new DefaultPrefixManager();
-        pm.setPrefix("lexicon", Namespace.LEXICON);
+        pm.setPrefix("lexicon", LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY));
         pm.setPrefix("lexinfo", Namespace.LEXINFO);
         pm.setPrefix("rdfs", Namespace.RDFS);
         pm.setPrefix("skos", Namespace.SKOS);

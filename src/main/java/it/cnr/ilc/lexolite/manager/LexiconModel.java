@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexolite.manager;
 
-import it.cnr.ilc.lexolite.LexOliteProperties;
+import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
@@ -14,7 +14,6 @@ import it.cnr.ilc.lexolite.controller.LoginController;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
-import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
@@ -35,7 +34,6 @@ import java.util.Collections;
 import static java.util.Collections.singleton;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -46,14 +44,15 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
@@ -64,7 +63,9 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
+import org.semanticweb.owlapi.rdf.rdfxml.renderer.OWLOntologyXMLNamespaceManager;
 import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.search.Searcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.OWLEntityRenamer;
@@ -85,10 +86,8 @@ public class LexiconModel extends BaseController {
     private OWLDataFactory factory;
     private PrefixManager pm;
 
-    private static final String ONTOLOGY_FOLDER = System.getProperty("user.home") + LexOliteProperties.getProperty("lexiconFolder");
-    private static final String DEFAULT_ONTOLOGY = ONTOLOGY_FOLDER + LexOliteProperties.getProperty("lexiconFileName");
-
     public LexiconModel(FileUploadEvent f) {
+        manager = OWLManager.createOWLOntologyManager();
         try ( InputStream inputStream = f.getFile().getInputstream()) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
@@ -99,8 +98,10 @@ public class LexiconModel extends BaseController {
     }
 
     public LexiconModel() {
+        LexOliteProperty.load();
         manager = OWLManager.createOWLOntologyManager();
-        try ( InputStream inputStream = new FileInputStream(DEFAULT_ONTOLOGY)) {
+        try ( InputStream inputStream = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
+                + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY))) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             setPrefixes();
@@ -113,7 +114,7 @@ public class LexiconModel extends BaseController {
 
     private void setPrefixes() {
         pm = new DefaultPrefixManager();
-        pm.setPrefix("lexicon", Namespace.LEXICON);
+        pm.setPrefix("lexicon", getLexiconNamespace());
         pm.setPrefix("lexinfo", Namespace.LEXINFO);
         pm.setPrefix("rdfs", Namespace.RDFS);
         pm.setPrefix("skos", Namespace.SKOS);
@@ -125,6 +126,18 @@ public class LexiconModel extends BaseController {
         pm.setPrefix("vartrans", Namespace.VARTRANS);
         pm.setPrefix("trcat", Namespace.TRCAT);
         pm.setPrefix("synsem", Namespace.SYNSEM);
+    }
+
+    private String getLexiconNamespace() {
+        String ret = "";
+      //  if (!ontology.getOntologyID().getOntologyIRI().isEmpty()) {
+        //    ret = ontology.getOntologyID().getOntologyIRI().get().toURI().toString();
+       // } else {
+            OWLDocumentFormat format = manager.getOntologyFormat(ontology);
+            OWLOntologyXMLNamespaceManager nsManager = new OWLOntologyXMLNamespaceManager(ontology, format);
+            ret =  nsManager.getDefaultNamespace();
+        //}
+        return ret.contains("#") ? ret : ret + "#";
     }
 
     // params: langName, uriLang, lingCat, descritpion, creator
@@ -147,7 +160,7 @@ public class LexiconModel extends BaseController {
         OWLNamedIndividual lexicon = getIndividual(lex);
         OWLNamedIndividual le = getEntry(entryInstance, ld.getType());
         OWLNamedIndividual cf = getForm(lemmaInstance);
-        
+
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.ENTRY.getLabel(), lexicon, le, pm.getPrefixName2PrefixMap().get("lime:"));
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel(), le, cf, pm.getPrefixName2PrefixMap().get("ontolex:"));
         setMoprhology(le, cf, ld);
@@ -908,6 +921,15 @@ public class LexiconModel extends BaseController {
         manager.applyChanges(remover.getChanges());
     }
 
+    public void deleteOntologyreferences() {
+        OWLObjectProperty reference = factory.getOWLObjectProperty(IRI.create(pm.getPrefixName2PrefixMap().get("ontolex:")) + OntoLexEntity.ObjectProperty.REFERENCE.getLabel());
+        OWLEntityRemover remover = new OWLEntityRemover(Collections.singleton(ontology));
+        for (Object o : Searcher.values(ontology.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION), reference).toArray()) {
+            remover.visit((OWLNamedIndividual) o);
+            manager.applyChanges(remover.getChanges());
+        }
+    }
+
     public void deleteForm(FormData fd) {
         OWLNamedIndividual i = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + fd.getIndividual()));
         OWLEntityRemover remover = new OWLEntityRemover(Collections.singleton(ontology));
@@ -931,15 +953,19 @@ public class LexiconModel extends BaseController {
         if (newR.isViewButtonDisabled()) {
             if (oldR.isViewButtonDisabled()) {
                 if (!oldR.getName().equals(newR.getName())) {
-                    removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), factory.getOWLNamedIndividual(Namespace.DOMAIN_ONTOLOGY, oldR.getName()));
-                    addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj, factory.getOWLNamedIndividual(Namespace.DOMAIN_ONTOLOGY, newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+                    removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
+                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+                    addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
+                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
                 }
             } else {
-                addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj, factory.getOWLNamedIndividual(Namespace.DOMAIN_ONTOLOGY, newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+                addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
+                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
             }
         } else {
             if (oldR.isViewButtonDisabled()) {
-                removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), factory.getOWLNamedIndividual(Namespace.DOMAIN_ONTOLOGY, oldR.getName()));
+                removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
+                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
             }
         }
     }
@@ -1017,7 +1043,7 @@ public class LexiconModel extends BaseController {
 
     public StreamedContent export(String format) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        String fileName = LexOliteProperties.getProperty("lexiconFileName") == null ? "lexicon" : LexOliteProperties.getProperty("lexiconFileName");
+        String fileName = LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY) == null ? "lexicon" : LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY);
         try {
             if (format.equals("rdf")) {
                 manager.saveOntology(ontology, baos);
@@ -1040,12 +1066,15 @@ public class LexiconModel extends BaseController {
 
     public synchronized void persist() throws IOException, OWLOntologyStorageException {
         System.out.println("[" + getTimestamp() + "] LexO-lite : persist start");
-        File f = new File(DEFAULT_ONTOLOGY);
-        File bkp = new File(DEFAULT_ONTOLOGY + "." + getTimestamp());
+        File f = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
+                + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY));
+        File bkp = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
+                + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY) + "." + getTimestamp());
         if (!f.renameTo(bkp)) {
             throw new IOException("unable to rename " + bkp.getName());
         }
-        try ( FileOutputStream fos = new FileOutputStream(DEFAULT_ONTOLOGY)) {
+        try ( FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
+                + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY))) {
             manager.saveOntology(ontology, fos);
             Runtime.getRuntime().exec("gzip " + bkp.getAbsolutePath());
         }

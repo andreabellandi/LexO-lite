@@ -20,7 +20,7 @@ import javax.faces.model.SelectItemGroup;
 @ApplicationScoped
 public class PropertyValue {
 
-    private LexiconManager lexiconManager = LexiconManager.getInstance();
+    //private LexiconManager lexiconManager = LexiconManager.getInstance();
 
     private ArrayList<String> lemmaInfo;
     private ArrayList<String> alphabet;
@@ -143,13 +143,13 @@ public class PropertyValue {
         }
     }
 
-    public LexiconManager getLexiconManager() {
-        return lexiconManager;
-    }
-
-    public void setLexiconManager(LexiconManager lexiconManager) {
-        this.lexiconManager = lexiconManager;
-    }
+//    public LexiconManager getLexiconManager() {
+//        return lexiconManager;
+//    }
+//
+//    public void setLexiconManager(LexiconManager lexiconManager) {
+//        this.lexiconManager = lexiconManager;
+//    }
 
     public ArrayList<String> getLexicalRelType() {
         return lexicalRelType;

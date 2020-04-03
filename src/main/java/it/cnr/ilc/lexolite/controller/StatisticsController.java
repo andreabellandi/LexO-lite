@@ -5,7 +5,7 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
-import it.cnr.ilc.lexolite.LexOliteProperties;
+import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
@@ -192,7 +192,7 @@ public class StatisticsController extends BaseController implements Serializable
         CartesianLinearAxes linearAxes = new CartesianLinearAxes();
         CartesianLinearTicks ticks = new CartesianLinearTicks();
         ticks.setBeginAtZero(true);
-        ticks.setStepSize(1);
+        ticks.setStepSize(((numberOfEntries / 50) == 0) ? 1 : (numberOfEntries / 50));
         linearAxes.setTicks(ticks);
         cScales.addYAxesData(linearAxes);
         options.setScales(cScales);
@@ -232,8 +232,8 @@ public class StatisticsController extends BaseController implements Serializable
         setLexicalizations(lexicalizations);
         setNumberOfEntries(totalNumberOfEntries);
         setConceptualizations(ontologyManager.getOntologyClasses().size());
-        setReferenceDataset(LexOliteProperties.getProperty("domainOntologyNamespace"));
-        setLexiconDataset(LexOliteProperties.getProperty("lexiconNamespace"));
+        setReferenceDataset(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY));
+        setLexiconDataset(LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY));
         dataSet.setData(values);
         dataSet.setBackgroundColor(bgColors);
         data.addChartDataSet(dataSet);
@@ -246,8 +246,8 @@ public class StatisticsController extends BaseController implements Serializable
         String selectedLang = lexiconCreationControllerTabViewList.getDynamicLexicaMenuItems().get(event.getItemIndex() + 1);
         setLanguageName(selectedLang);
         setNumberOfEntries(lexiconManager.lemmasList(selectedLang).size());
-        setReferenceDataset(LexOliteProperties.getProperty("domainOntologyNamespace"));
-        setLexiconDataset(LexOliteProperties.getProperty("lexiconNamespace"));
+        setReferenceDataset(LexOliteProperty.getProperty("domainOntologyNamespace"));
+        setLexiconDataset(LexOliteProperty.getProperty("lexiconNamespace"));
         String creator = lexiconManager.languageCreator(selectedLang).get(0);
         String description = lexiconManager.languageDescription(selectedLang).get(0);
         setLanguageCreator(creator.equals(Label.NO_ENTRY_FOUND) ? "ND" : creator);

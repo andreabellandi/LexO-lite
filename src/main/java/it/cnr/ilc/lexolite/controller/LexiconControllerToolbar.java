@@ -5,11 +5,15 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.domain.AccountType;
 import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
+import it.cnr.ilc.lexolite.manager.OntologyManager;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -18,6 +22,8 @@ import javax.inject.Named;
 import org.apache.log4j.Level;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
+import it.cnr.ilc.lexolite.constant.Label;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
  *
@@ -26,15 +32,16 @@ import org.primefaces.model.StreamedContent;
 @ViewScoped
 @Named
 public class LexiconControllerToolbar extends BaseController implements Serializable {
-        @Inject
+
+    @Inject
     private LexiconControllerOntologyDetail lexiconCreationOntologyDetailController;
-       @Inject
+    @Inject
     private LexiconControllerVarTransFormDetail lexiconCreationControllerVarTransFormDetail;
-            @Inject
+    @Inject
     private LexiconControllerVarTransSenseDetail lexiconCreationControllerVarTransSenseDetail;
-                @Inject
+    @Inject
     private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
-                    @Inject
+    @Inject
     private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
     @Inject
     private LexiconControllerLexicalAspect lexiconControllerLexicalAspect;
@@ -53,11 +60,23 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     @Inject
     private LexiconManager lexiconManager;
     @Inject
+    private OntologyManager ontologyManager;
+    @Inject
     private LoginController loginController;
 
     public void newLanguage() {
         lexiconControllerLanguageDetail.clear();
         log(Level.INFO, loginController.getAccount(), "NEW Language panel opened ");
+    }
+
+    public void ontologyImport() {
+        //lexiconControllerLanguageDetail.clear();
+        log(Level.INFO, loginController.getAccount(), "IMPORT Ontology request ");
+    }
+
+    public void lexiconImport() {
+        //lexiconControllerLanguageDetail.clear();
+        log(Level.INFO, loginController.getAccount(), "IMPORT Lexicon request ");
     }
 
     public void newLemma(String lemmaType) {
@@ -91,7 +110,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconCreationControllerFormDetail.getLemmaCopy().clear();
         lexiconCreationControllerFormDetail.getLemma().setIndividual("");
         lexiconCreationControllerFormDetail.getLemmaCopy().setIndividual("");
-        
+
         lexiconCreationOntologyDetailController.setOntologyClassRendered(false);
         lexiconCreationControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconCreationControllerVarTransFormDetail.resetFormDetails();
@@ -121,6 +140,50 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
 
     public boolean isToolbarEnabled() {
         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
+    }
+
+    public void handleOntologyUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
+        String previousNamespace = LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY);
+        ontologyManager.loadDomainOntology(event);
+        LexOliteProperty.setProperty(Label.ONTOLOGY_NAMESPACE_KEY, ontologyManager.getOntologyID() + "#");
+        LexOliteProperty.setProperty(Label.ONTOLOGY_FILE_NAME_KEY, event.getFile().getFileName());
+        String currentNamespace = ontologyManager.getOntologyID() + "#";
+        try {
+            LexOliteProperty.save();
+        } catch (IOException ex) {
+            Logger.getLogger(LexiconControllerToolbar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        lexiconCreationControllerTabViewList.initDomainOntologyTabView();
+        if (previousNamespace != null) {
+            if (!previousNamespace.equals(currentNamespace)) {
+                lexiconManager.deleteOntologyRefernces();
+            }
+        }
+        LexOliteProperty.load();
+        FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void handleLexiconUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
+        lexiconManager.persist();
+        lexiconManager.loadLexicon(event);
+        LexOliteProperty.setProperty(Label.LEXICON_NAMESPACE_KEY, lexiconManager.getLexiconNamespace().contains("#") ? lexiconManager.getLexiconNamespace() : lexiconManager.getLexiconNamespace() + "#");
+        LexOliteProperty.setProperty(Label.LEXICON_FILE_NAME_KEY, event.getFile().getFileName());
+        try {
+            LexOliteProperty.save();
+            LexOliteProperty.load();
+        } catch (IOException ex) {
+            Logger.getLogger(LexiconControllerToolbar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
+        lexiconCreationControllerTabViewList.initLexicaMenu();
+        lexiconCreationControllerTabViewList.setLexiconLanguage("All languages");
+        lexiconCreationControllerTabViewList.initLemmaTabView("All languages");
+        lexiconCreationControllerTabViewList.initFormTabView("All languages");
+        lexiconCreationControllerTabViewList.setEnabledFilter(true);
+
+        FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
 }

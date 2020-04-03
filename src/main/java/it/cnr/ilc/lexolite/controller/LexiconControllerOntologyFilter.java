@@ -30,20 +30,31 @@ public class LexiconControllerOntologyFilter extends BaseController implements S
     }
 
     public String getOntologyID() {
-        return ontologyManager.getOntologyID();
+        if (ontologyManager != null) {
+            return ontologyManager.getOntologyID();
+        }
+        return "";
     }
 
     public int getOntologyIndividualsNumber() {
-        return ontologyManager.getIndividualsNumber();
+        if (ontologyManager != null) {
+            return ontologyManager.getIndividualsNumber();
+        }
+        return 0;
     }
 
     public int getOntologyDatatypePropertiesNumber() {
-        return ontologyManager.getOntologyDatatypePropertiesNumber();
+        if (ontologyManager != null) {
+            return ontologyManager.getOntologyDatatypePropertiesNumber();
+        }
+        return 0;
     }
 
     public int getOntologyObjectPropertiesNumber() {
-        return ontologyManager.getOntologyObjectPropertiesNumber();
+        if (ontologyManager != null) {
+            return ontologyManager.getOntologyObjectPropertiesNumber();
+        }
+        return 0;
     }
 
 }
-

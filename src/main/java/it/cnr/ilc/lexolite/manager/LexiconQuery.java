@@ -12,12 +12,14 @@ import de.derivo.sparqldlapi.QueryEngine;
 import de.derivo.sparqldlapi.QueryResult;
 import de.derivo.sparqldlapi.exceptions.QueryEngineException;
 import de.derivo.sparqldlapi.exceptions.QueryParserException;
+import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.LexicalQuery;
 import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LexiconComparator;
+import it.cnr.ilc.lexolite.controller.LexiconControllerTabViewList;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -34,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
+import javax.inject.Inject;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -48,6 +51,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class LexiconQuery extends BaseController {
 
+    
     private static final Logger LOG = LogManager.getLogger(LexiconQuery.class);
 
     private OWLOntologyManager ontologyManager;
@@ -114,30 +118,30 @@ public class LexiconQuery extends BaseController {
 
     public List<Map<String, String>> getLemmas(String lang) {
         if (lang.equals("All languages")) {
-            return (processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_BASIC));
+            return (processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_BASIC));
         } else {
-            return processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
+            return processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
         }
     }
 
     public List<Map<String, String>> getForms(String lang) {
         if (lang.equals("All languages")) {
-            return (processQuery(LexicalQuery.PREFIXES + LexicalQuery.FORM_BASIC));
+            return (processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_BASIC));
         } else {
-            return processQuery(LexicalQuery.PREFIXES + LexicalQuery.FORM_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
+            return processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
         }
     }
 
     public List<Map<String, String>> getSenses(String lang) {
         if (lang.equals("All languages")) {
-            return (processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSE_BASIC));
+            return (processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_BASIC));
         } else {
-            return processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSE_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
+            return processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_BASIC_BY_LANGUAGE.replace("_LANG_", lang));
         }
     }
 
     public String getLexicon(String lang) {
-        List<Map<String, String>> lexicon = processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEXICON.replace("_LANG_", lang));
+        List<Map<String, String>> lexicon = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICON.replace("_LANG_", lang));
         if (!lexicon.isEmpty()) {
             return lexicon.get(0).get("lexicon");
         } else {
@@ -146,12 +150,12 @@ public class LexiconQuery extends BaseController {
     }
 
     public List<Map<String, String>> advancedFilter_lemmas() {
-        return processQuery(LexicalQuery.PREFIXES + LexicalQuery.ADVANCED_FILTER_LEMMA);
+        return processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ADVANCED_FILTER_LEMMA);
     }
 
     public List<SelectItem> getSensesByLanguage(String lang) {
         List<SelectItem> groupedSenseList = new ArrayList<>();
-        ArrayList<String> senses = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSES_BY_LANGUAGE.replace("_LANG_", lang)));
+        ArrayList<String> senses = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_BY_LANGUAGE.replace("_LANG_", lang)));
         senses.sort(String::compareToIgnoreCase);
         SelectItemGroup g = new SelectItemGroup(lang);
         SelectItem[] selSenses = new SelectItem[senses.size()];
@@ -164,19 +168,20 @@ public class LexiconQuery extends BaseController {
     }
 
     public ArrayList<String> getLexicaLanguages() {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGES));
+        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LANGUAGES));
     }
 
     public ArrayList<String> getLexicalizations(String entry) {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
+        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n" + 
+                "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
     }
 
     public ArrayList<String> getLanguageDescription(String lang) {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGE_DESCRIPTION.replaceAll("_LANG_", lang)));
+        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LANGUAGE_DESCRIPTION.replaceAll("_LANG_", lang)));
     }
 
     public ArrayList<String> getLanguageCreator(String lang) {
-        return getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LANGUAGE_CREATOR.replaceAll("_LANG_", lang)));
+        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LANGUAGE_CREATOR.replaceAll("_LANG_", lang)));
     }
 
     // invoked in order to get lemma attributes of a specific lemma
@@ -204,7 +209,7 @@ public class LexiconQuery extends BaseController {
     // invoked in order to get a lemma attributes of a specific sense
     public LemmaData getLemmaOfSense(String sense) {
         LemmaData ld = new LemmaData();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_INSTANCE_OF_SENSE.replace("_SENSE_", sense)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_SENSE.replace("_SENSE_", sense)));
         String lemma = results.get(0);
         setLemmaData(lemma, ld);
         return ld;
@@ -213,7 +218,7 @@ public class LexiconQuery extends BaseController {
     // invoked in order to get a lemma attributes of a specific form
     public LemmaData getLemmaEntry(String form) {
         LemmaData ld = new LemmaData();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_INSTANCE_OF_FORM.replace("_FORM_", form)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_FORM.replace("_FORM_", form)));
         String lemma = results.get(0);
         setLemmaData(lemma, ld);
         return ld;
@@ -231,30 +236,30 @@ public class LexiconQuery extends BaseController {
     }
 
     private ArrayList<LemmaData.LexicalRelation> getDirectLexicalRelation(String entry) {
-        return getEntryDirectLexicalRelationList(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
+        return getEntryDirectLexicalRelationList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.DIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
     }
 
     private ArrayList<LemmaData.SynFrame> getSynatcticRelation(String entry) {
         ArrayList<LemmaData.SynFrame> alr = new ArrayList();
-        List<Map<String, String>> lrl = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME).replace("_ENTRY_", entry));
+        List<Map<String, String>> lrl = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_FRAME).replace("_ENTRY_", entry));
         for (Map<String, String> m : lrl) {
             LemmaData.SynFrame synFrame = new LemmaData.SynFrame();
             synFrame.setName(m.get("frameName"));
             synFrame.setNewFrame(false);
-            List<Map<String, String>> frameType = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME_TYPE).replace("_FRAME_", m.get("frameName")));
+            List<Map<String, String>> frameType = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_FRAME_TYPE).replace("_FRAME_", m.get("frameName")));
             for (Map<String, String> ft : frameType) {
                 if (!ft.get("type").equals(OntoLexEntity.Class.SYNTACTICFRAME.getLabel())) {
                     synFrame.setType(ft.get("type"));
                 }
             }
-            List<Map<String, String>> frameArgs = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_FRAME_ARGS).replace("_FRAME_", m.get("frameName")));
+            List<Map<String, String>> frameArgs = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_FRAME_ARGS).replace("_FRAME_", m.get("frameName")));
             for (Map<String, String> fa : frameArgs) {
                 LemmaData.SynArg synArg = new LemmaData.SynArg();
                 synArg.setType(fa.get("type"));
                 synArg.setName(fa.get("synArg"));
                 synArg.setNumber(Integer.parseInt(fa.get("synArg").split("_arg_")[1]));
                 synArg.setOptional(false);
-                List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
+                List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
                 for (Map<String, String> ap : argProps) {
                     if (ap.get("rel").equals(OntoLexEntity.DataProperty.OPTIONAL.getLabel())) {
                         if (ap.get("value").equals("true")) {
@@ -273,7 +278,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private ArrayList<LemmaData.ReifiedLexicalRelation> getIndirectLexicalRelation(String entry) {
-        return getEntryIndirectLexicalRelationList(LexicalQuery.PREFIXES + LexicalQuery.INDIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
+        return getEntryIndirectLexicalRelationList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.INDIRECT_LEXICAL_RELATION, "_ENTRY_", entry);
     }
 
     private ArrayList<ReifiedLexicalRelation> getEntryIndirectLexicalRelationList(String q, String t, String e) {
@@ -349,20 +354,20 @@ public class LexiconQuery extends BaseController {
     }
 
     private String getLemmaNote(String lemma) {
-        String note = getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_NOTE, "_LEMMA_", lemma);
+        String note = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_NOTE, "_LEMMA_", lemma);
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
     private ArrayList<Word> getLemmaReference(String lemma) {
-        return getEntryAttributeWordList(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_SEEALSO, "_LEMMA_", lemma);
+        return getEntryAttributeWordList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_SEEALSO, "_LEMMA_", lemma);
     }
 
     private String getLemmaType(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_TYPE, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_TYPE, "_LEMMA_", lemma);
     }
 
     public String getComponentAtPosition(String entry, String position) {
-        String constituentAtPositionQuery = LexicalQuery.PREFIXES + LexicalQuery.CONSTITUENT_AT_POSITION.replace("_ENTRY_", entry).replace("_POSITION_", position);
+        String constituentAtPositionQuery = LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.CONSTITUENT_AT_POSITION.replace("_ENTRY_", entry).replace("_POSITION_", position);
         List<Map<String, String>> comp = processQuery(constituentAtPositionQuery);
         return comp.get(0).get("constituent");
     }
@@ -370,11 +375,11 @@ public class LexiconQuery extends BaseController {
     private ArrayList<Word> getLemmaMultiword(String lemma, String wr) {
         ArrayList<Word> alw = new ArrayList();
         String entry = lemma.replace("_lemma", "_entry");
-        String constituentsQuery = LexicalQuery.PREFIXES + LexicalQuery.CONSTITUENTS.replace("_ENTRY_", entry);
+        String constituentsQuery = LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.CONSTITUENTS.replace("_ENTRY_", entry);
         List<Map<String, String>> constituents = processQuery(constituentsQuery);
         Collections.sort(constituents, new LexiconComparator("position"));
         for (Map<String, String> m : constituents) {
-            String wordQuery = LexicalQuery.PREFIXES + LexicalQuery.WORDS_OF_MULTIWORD.replace("_CONST_", m.get("constituent"));
+            String wordQuery = LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.WORDS_OF_MULTIWORD.replace("_CONST_", m.get("constituent"));
             List<Map<String, String>> word = processQuery(wordQuery);
             alw.add(getWord(word, m.get("constituent"), m.get("position"), wr));
         }
@@ -430,7 +435,7 @@ public class LexiconQuery extends BaseController {
 
     public ArrayList<FormData> getFormsOfLemma(String lemma, String lang) {
         ArrayList<FormData> fdList = new ArrayList<>();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.FORM_INSTANCES_OF_LEMMA.replace("_LEMMA_", lemma)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_INSTANCES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String form : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
@@ -455,13 +460,13 @@ public class LexiconQuery extends BaseController {
     }
 
     private String getFormNote(String form) {
-        String note = getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_NOTE, "_FORM_", form);
+        String note = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_NOTE, "_FORM_", form);
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
     public ArrayList<SenseData> getSensesOfLemma(String lemma) {
         ArrayList<SenseData> sdList = new ArrayList<>();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSES_OF_LEMMA.replace("_LEMMA_", lemma)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
@@ -495,10 +500,10 @@ public class LexiconQuery extends BaseController {
 //            sr.setLanguage(m.get("lang"));
 //            senseCopy.getSenseRels().add(sr);
 //        }
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
         OntoMap om = new SenseData.OntoMap();
         om.setFrame("puppa");
-        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
         om.setReference(sd.getOWLClass().getName());
         senseCopy.setOntoMap(om);
         senseCopy.setOntoMap(null);
@@ -520,7 +525,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private void getSenseRelation(SenseData sd, SenseData senseCopy) {
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
             if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel())) {
                 SenseData.SenseRelation sr = new SenseData.SenseRelation();
@@ -533,7 +538,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private void getSenseReifiedRelation(SenseData sd, SenseData senseCopy) {
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.TERMINOLOGICAL_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.TERMINOLOGICAL_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
             SenseData.ReifiedSenseRelation sr = new SenseData.ReifiedSenseRelation();
             sr.setTarget(m.get("entry"));
@@ -544,7 +549,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private void getSenseTranslationRelation(SenseData sd, SenseData senseCopy) {
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.TRANSLATION_SENSE_RELATION.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.TRANSLATION_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
             SenseData.ReifiedTranslationRelation sr = new SenseData.ReifiedTranslationRelation();
             sr.setTarget(m.get("entry"));
@@ -556,7 +561,7 @@ public class LexiconQuery extends BaseController {
 
     public ArrayList<SenseData> getSensesOfForm(String form) {
         ArrayList<SenseData> sdList = new ArrayList<>();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.SENSES_OF_FORM.replace("_FORM_", form)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_FORM.replace("_FORM_", form)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
@@ -569,7 +574,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private String getSenseNote(String sense) {
-        String note = getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.SENSE_NOTE, "_SENSE_", sense);
+        String note = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_NOTE, "_SENSE_", sense);
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
@@ -605,7 +610,7 @@ public class LexiconQuery extends BaseController {
 
     public ArrayList<SenseData> getOtherSenses(String sense) {
         ArrayList<SenseData> sdList = new ArrayList<>();
-        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.OTHER_INSTANCES_OF_SENSES.replace("_SENSE_", sense)));
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.OTHER_INSTANCES_OF_SENSES.replace("_SENSE_", sense)));
         Collections.sort(results);
         for (String s : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
@@ -619,7 +624,7 @@ public class LexiconQuery extends BaseController {
 
     // invoked in order to retrieve the data of the lemma involved in sublemma or collocation relation
     public Word getLemma(String lemma, String lang) {
-        ArrayList<String> word = getList(processQuery(LexicalQuery.PREFIXES + LexicalQuery.LEXICAL_RELATION_WORD.replace("_LANG_", lang).replace("_LEMMA_", lemma)));
+        ArrayList<String> word = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICAL_RELATION_WORD.replace("_LANG_", lang).replace("_LEMMA_", lemma)));
         Word w = new Word();
         w.setOWLName(word.get(0));
         w.setLanguage(lang);
@@ -628,43 +633,43 @@ public class LexiconQuery extends BaseController {
     }
 
     private String getLemmaWrittenRep(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_REPRESENTATION, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_REPRESENTATION, "_LEMMA_", lemma);
     }
 
     private String getLemmaPoS(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_POS, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_POS, "_LEMMA_", lemma);
     }
 
     private String getEntryVerified(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.ENTRY_VALID, "_ENTRY_", lemma.replace("_lemma", "_entry"));
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ENTRY_VALID, "_ENTRY_", lemma.replace("_lemma", "_entry"));
     }
 
     private String getFormWrittenRep(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_REPRESENTATION, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_REPRESENTATION, "_FORM_", form);
     }
 
     private String getFormGender(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_GENDER, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_GENDER, "_FORM_", form);
     }
 
     private String getFormPerson(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_PERSON, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_PERSON, "_FORM_", form);
     }
 
     private String getFormMood(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_MOOD, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_MOOD, "_FORM_", form);
     }
 
     private String getFormVoice(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_VOICE, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_VOICE, "_FORM_", form);
     }
 
     private String getFormNumber(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.FORM_NUMBER, "_FORM_", form);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_NUMBER, "_FORM_", form);
     }
 
     public String getDefinition(String sense) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.SENSE_DEFINITION, "_SENSE_", sense);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_DEFINITION, "_SENSE_", sense);
     }
 
 //    public ArrayList<Openable> getSynonym(String sense) {
@@ -683,7 +688,7 @@ public class LexiconQuery extends BaseController {
 //    }
     public ArrayList<Openable> getSenseRelation(String sense, String query) {
         ArrayList<Openable> sdoList = new ArrayList();
-        ArrayList<String> s = getEntryAttributeList(LexicalQuery.PREFIXES + query, "_SENSE_", sense);
+        ArrayList<String> s = getEntryAttributeList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + query, "_SENSE_", sense);
         for (String _s : s) {
             SenseData.Openable sdo = new SenseData.Openable();
             if (!_s.equals(Label.NO_ENTRY_FOUND)) {
@@ -712,30 +717,31 @@ public class LexiconQuery extends BaseController {
 //    }
     private Openable getOntoClass(String sense) {
         Openable ref = new Openable();
-        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
+        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n" + 
+                "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
         ref.setName(ontoClass.equals(Label.NO_ENTRY_FOUND) ? "" : ontoClass);
         ref.setViewButtonDisabled(!ontoClass.equals(Label.NO_ENTRY_FOUND));
         return ref;
     }
 
     private String getLemmaGender(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_GENDER, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_GENDER, "_LEMMA_", lemma);
     }
 
     private String getLemmaPerson(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_PERSON, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_PERSON, "_LEMMA_", lemma);
     }
 
     private String getLemmaMood(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_MOOD, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_MOOD, "_LEMMA_", lemma);
     }
 
     private String getLemmaVoice(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_VOICE, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_VOICE, "_LEMMA_", lemma);
     }
 
     private String getLemmaNumber(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + LexicalQuery.LEMMA_NUMBER, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_NUMBER, "_LEMMA_", lemma);
     }
 
     private String getEntryAttribute(String q, String t, String e) {

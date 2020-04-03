@@ -25,6 +25,8 @@ import org.apache.log4j.Level;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import it.cnr.ilc.lexolite.LexOliteProperty;
+import it.cnr.ilc.lexolite.constant.Label;
 
 /**
  *
@@ -40,13 +42,13 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
     @Inject
     private LexiconControllerSenseDetail lexiconCreationControllerSenseDetail;
-        @Inject
+    @Inject
     private LexiconControllerVarTransFormDetail lexiconCreationControllerVarTransFormDetail;
-            @Inject
+    @Inject
     private LexiconControllerVarTransSenseDetail lexiconCreationControllerVarTransSenseDetail;
-                @Inject
+    @Inject
     private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
-                    @Inject
+    @Inject
     private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
     @Inject
     private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
@@ -90,7 +92,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private final TreeNode formRoot = new DefaultTreeNode("Root", null);
     private final TreeNode senseRoot = new DefaultTreeNode("Root", null);
     private final TreeNode ontoRoot = new DefaultTreeNode("Root", null);
-
     private TreeNode selection;
 
     private ArrayList<String> dynamicLexicaMenuItems = new ArrayList<>();
@@ -212,14 +213,19 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 
     @PostConstruct
     public void INIT() {
-        lexiconManager.deafult_loadLexicon();
-        ontologyManager.deafult_loadOntology();
-        initLexicaMenu();
-        setLexiconLanguage("All languages");
-        initLemmaTabView("All languages");
-        initFormTabView("All languages");
-        initDomainOntologyTabView();
-        setEnabledFilter(true);
+        LexOliteProperty.load();
+        if (LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY) != null) {
+            lexiconManager.deafult_loadLexicon();
+            initLexicaMenu();
+            setLexiconLanguage("All languages");
+            initLemmaTabView("All languages");
+            initFormTabView("All languages");
+            initDomainOntologyTabView();
+            setEnabledFilter(true);
+        }
+        if (LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY) != null) {
+            ontologyManager.deafult_loadOntology();
+        }
     }
 
     public void loadLexicon(String lang) {
@@ -243,8 +249,11 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public void initDomainOntologyTabView() {
-        ontoRoot.getChildren().clear();
-        ontoCounter = ontologyManager.getOntologyHierarchy(ontoRoot);
+        if (ontologyManager.getOntologyModel() != null) {
+            ontoRoot.getChildren().clear();
+            ontoCounter = ontologyManager.getOntologyHierarchy(ontoRoot);
+            ontologyManager.getPropertyHierarchy(ontoRoot);
+        }
     }
 
     public void initDomainOntologyTabView(String nameToSelect) {

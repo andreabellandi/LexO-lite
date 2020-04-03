@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="ontologyUploadPanel" widgetVar="dlgOntologyUpload" header="#{label['ontologyImport.header']}" resizable="true" closable="true"
+              modal="true">
+        <h:form>
+            <h:panelGrid columns="2" columnClasses="column" styleClass="advertiseRoundedBox">
+                <p:graphicImage value="/resources/image/alertIcon.png" height="30px" width="30px"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['ontologyImport.advertise']}"/>
+            </h:panelGrid>
+            <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
+                <p:outputLabel styleClass="ontologyImportFieldStyle" value="#{label['ontologyImport.label']}"/>
+                <p:fileUpload fileUploadListener="#{lexiconControllerToolbar.handleOntologyUpload}"
+                              oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgOntologyUpload').hide();PF('loadingDialog').show();"
+                              mode="advanced" dragDropSupport="false"
+                              sizeLimit="5000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"
+                              update=":lexiconTabViewForm:tabView:ontoFilterPanel :lexiconTabViewForm:tabView:ontoTree 
+                              editViewTab:lexiconSenseDetailForm :editViewTab :systemMessage"/>    
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

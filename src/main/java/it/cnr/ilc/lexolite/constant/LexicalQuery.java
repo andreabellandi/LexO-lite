@@ -16,7 +16,7 @@ public class LexicalQuery {
             = "PREFIX lexinfo: <" + Namespace.LEXINFO + ">\n"
             + "PREFIX rdfs: <" + Namespace.RDFS + ">\n"
             + "PREFIX skos: <" + Namespace.SKOS + ">\n"
-            + "PREFIX lexicon: <" + Namespace.LEXICON + ">\n"
+            //+ "PREFIX lexicon: <" + Namespace.LEXICON + ">\n"
             + "PREFIX ontolex: <" + Namespace.ONTOLEX + ">\n"
             + "PREFIX lemon: <" + Namespace.LEMON + ">\n"
             + "PREFIX decomp: <" + Namespace.DECOMP + ">\n"
@@ -25,8 +25,8 @@ public class LexicalQuery {
             + "PREFIX dct: <" + Namespace.DCT + ">\n"
             + "PREFIX vartrans: <" + Namespace.VARTRANS + ">\n"
             + "PREFIX synsem: <" + Namespace.SYNSEM + ">\n"
-            + "PREFIX trcat: <" + Namespace.TRCAT + ">\n"
-            + "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
+            + "PREFIX trcat: <" + Namespace.TRCAT + ">\n";
+            //+ "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
 
     // queries to lexinfo for setting properties values
     // query for getting lexicon values
