@@ -5,7 +5,10 @@
  */
 package it.cnr.ilc.lexolite.manager;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -46,6 +49,12 @@ public class PropertyValue {
     private ArrayList<Ontology> taxonomy;
 
     private ArrayList<String> lingCatList;
+    
+    private Multimap<String, String> morphoTraitList;
+
+    public ArrayList<String> getMorphoTrait(String s) {
+        return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class))); 
+    }
 
     public ArrayList<SelectItem> getSenseCategory() {
         return senseCategory;
@@ -198,6 +207,11 @@ public class PropertyValue {
         lexicalAspects.add("Variation and Translation");
         lexicalAspects.add("Syntax and Semantics");
 
+        morphoTraitList = HashMultimap.create();
+        morphoTraitList.put("puppa", "value1");
+        morphoTraitList.put("puppa", "value2");
+        morphoTraitList.put("puppa", "value3");
+        
         // properties and values are loaded "by hands", but they should be retrieved from lexinfo ontology !
         PoS = new ArrayList<String>();
         PoS.add("adjective");
@@ -270,7 +284,7 @@ public class PropertyValue {
             new SelectItem("syllable", "syllable"),
             new SelectItem("wordElement", "word element")});
 
-        SelectItemGroup g3 = new SelectItemGroup("Term element");
+        SelectItemGroup g3 = new SelectItemGroup("Term type");
         g3.setSelectItems(new SelectItem[]{new SelectItem("abbreviatedForm", "abbreviated form"),
             new SelectItem("clippedTerm", "clipped term"),
             new SelectItem("commonName", "common name"),
@@ -609,7 +623,7 @@ public class PropertyValue {
         synArgType.add("   prepositional adjunct");
         synArgType.add("   prepositional gerund clause");
         synArgType.add("   prepositional interrogative clause");
-        synArgType.add("   prepositional objectt");
+        synArgType.add("   prepositional object");
         synArgType.add("   reflexive object");
         synArgType.add("   sentential clause");
         synArgType.add("   subject");

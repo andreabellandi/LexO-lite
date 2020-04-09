@@ -11,6 +11,7 @@ import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
+import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.SenseRelation;
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import org.primefaces.event.SlideEndEvent;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -332,11 +334,27 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
     }
 
+    public String getPropertyName(String s) {
+        String ret = s.trim();
+        if (ret.contains(" ")) {
+            String[] _ret = ret.split(" ");
+            ret = "";
+            for (int i = 0; i < _ret.length; i++) {
+                String upper = "";
+                if (i != 0) {
+                    upper = _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
+                }
+                ret = ret + upper;
+            }
+        }
+        return ret;
+    }
+
     public void resetSenseDetails() {
         sensesVarTrans.clear();
         sensesVarTransCopy.clear();
     }
-        
+
     public ArrayList<SelectItem> getSenseCategories() {
         return propertyValue.getSenseCategory();
     }

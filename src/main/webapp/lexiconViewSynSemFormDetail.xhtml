@@ -95,7 +95,7 @@
                             <f:attribute name="frame" value="#{synFrame}"/>
                             <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
                             <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerSynSemFormDetail.syntacticArgumentTypes}" 
-                                           var="sf" itemLabel="#{sa}" itemValue="#{lexiconControllerSynSemFormDetail.getPropertyName(a)}"/>
+                                           var="sa" itemLabel="#{sa}" itemValue="#{lexiconControllerSynSemFormDetail.getPropertyName(sa)}"/>
                         </p:selectOneMenu>
                         <h:outputLabel styleClass="titleStyle" value="Marker:"/>
                         <p:inputText styleClass="inputTextStyle" value="#{synArg.marker}">

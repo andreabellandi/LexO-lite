@@ -129,10 +129,10 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
                 frames.add(frame.getType() + " - " + frame.getName());
             }
         }
-        if (selectedFrame == null) {
+        if ((selectedFrame == null) && frames.size() > 0) {
             selectedFrame = frames.get(0).split(" - ")[1];
         }
-        return frames;
+        return frames.isEmpty() ? null : frames;
     }
 
     private void setSenseSaveButton(SenseData sd) {

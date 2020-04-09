@@ -51,7 +51,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class LexiconQuery extends BaseController {
 
-    
     private static final Logger LOG = LogManager.getLogger(LexiconQuery.class);
 
     private OWLOntologyManager ontologyManager;
@@ -172,8 +171,8 @@ public class LexiconQuery extends BaseController {
     }
 
     public ArrayList<String> getLexicalizations(String entry) {
-        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n" + 
-                "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
+        return getList(processQuery(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICALIZATIONS.replaceAll("_ENTRY_", entry)));
     }
 
     public ArrayList<String> getLanguageDescription(String lang) {
@@ -492,21 +491,27 @@ public class LexiconQuery extends BaseController {
     }
 
     private void getOntoMapping(SenseData sd, SenseData senseCopy) {
-//        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
-//        for (Map<String, String> m : results) {
-//            SenseData.SenseRelation sr = new SenseData.SenseRelation();
-//            sr.setWrittenRep(m.get("sense"));
-//            sr.setRelation(m.get("rel"));
-//            sr.setLanguage(m.get("lang"));
-//            senseCopy.getSenseRels().add(sr);
-//        }
-        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
         OntoMap om = new SenseData.OntoMap();
-        om.setFrame("puppa");
-        List<Map<String, String>> results2 = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_ISA.replace("_SENSE_", sd.getName()));
+        if (results.size() > 0) {
+            for (Map<String, String> m : results) {
+                om.setFrame(m.get("frame"));
+                om.setIsA(m.get("isA"));
+            }
+        } else {
+            results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ONTO_MAPPING_SUBOBJ.replace("_SENSE_", sd.getName()));
+            for (Map<String, String> m : results) {
+                om.setFrame(m.get("frame"));
+                om.setSubjOfProp(m.get("subjOfProp"));
+                om.setObjOfProp(m.get("objOfProp"));
+            }
+        }
         om.setReference(sd.getOWLClass().getName());
-        senseCopy.setOntoMap(om);
-        senseCopy.setOntoMap(null);
+        if (om.getFrame().isEmpty()) {
+            senseCopy.setOntoMap(null);
+        } else {
+            senseCopy.setOntoMap(om);
+        }
     }
 
     public ArrayList<SenseData> getSensesVarTransAttributesOfLemma(ArrayList<SenseData> asd) {
@@ -555,6 +560,7 @@ public class LexiconQuery extends BaseController {
             sr.setTarget(m.get("entry"));
             sr.setCategory(m.get("cat"));
             sr.setTargetLanguage(m.get("trglang"));
+            sr.setConfidence(Double.valueOf(m.get("conf")));
             senseCopy.getReifiedTranslationRels().add(sr);
         }
     }
@@ -717,8 +723,8 @@ public class LexiconQuery extends BaseController {
 //    }
     private Openable getOntoClass(String sense) {
         Openable ref = new Openable();
-        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n" + 
-                "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
+        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
         ref.setName(ontoClass.equals(Label.NO_ENTRY_FOUND) ? "" : ontoClass);
         ref.setViewButtonDisabled(!ontoClass.equals(Label.NO_ENTRY_FOUND));
         return ref;

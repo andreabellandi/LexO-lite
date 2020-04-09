@@ -60,6 +60,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private LemmaData lemma = new LemmaData();
     private LemmaData lemmaCopy = new LemmaData();
 
+    private List<Map<String, String>> lemmaListCached = new ArrayList();
+
     private final ArrayList<FormData> forms = new ArrayList();
     private final ArrayList<FormData> formsCopy = new ArrayList();
 
@@ -382,7 +384,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         forms.addAll(al);
         createLemmaCopy();
         addFormCopy(al);
-        
+
     }
 
     // invoked by the controller after an user selected a sense in the tabview
@@ -455,7 +457,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         String formPart = ((String) e.getComponent().getAttributes().get("value"));
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         List<Map<String, String>> formList = lexiconManager.formsList(currentLanguage);
-        if (contains(formList, formPart, fd.getLanguage())
+        if (contains(formList, formPart, fd.getLanguage(), lemma.getPoS())
                 && (isSameLemma(formList, formPart))
                 && (!isSameForm(fd, formPart))) {
             formAlreadyExists = true;
@@ -483,7 +485,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public void lemmaNameKeyupEvent(String lemmaPart, List<Map<String, String>> lemmaList) {
-        if (contains(lemmaList, lemmaPart, lemma.getLanguage()) && (!lemmaPart.equals(lemmaCopy.getFormWrittenRepr()))) {
+        if (contains(lemmaList, lemmaPart, lemma.getLanguage(), lemma.getPoS()) && (!lemmaPart.equals(lemmaCopy.getFormWrittenRepr()))) {
             lemmAlreadyExists = true;
             /**/ isAdmissibleLemma = true;
             lemma.setSaveButtonDisabled(true);
@@ -590,6 +592,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         String lemmaPart = (String) e.getComponent().getAttributes().get("value");
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         List<Map<String, String>> lemmaList = lexiconManager.lemmasList(currentLanguage);
+        lemmaListCached = lemmaList;
         if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             lemmaNameKeyupEvent(lemmaPart, lemmaList);
         } else {
@@ -612,18 +615,36 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     // returns true if the lemma (or form) already exists in a specific lexicon
-    private boolean contains(List<Map<String, String>> l, String form, String lang) {
+    private boolean contains(List<Map<String, String>> l, String form, String lang, String pos) {
         boolean contains = false;
         for (Map<String, String> m : l) {
-            if (!lang.isEmpty()) {
-                if (m.get("writtenRep").equals(form.trim()) && (m.get("lang").equals(lang))) {
+            if (lang.isEmpty() && pos.isEmpty()) {
+                if (m.get("writtenRep").equals(form.trim())) {
                     contains = true;
                     break;
                 }
             } else {
-                if (m.get("writtenRep").equals(form.trim())) {
-                    contains = true;
-                    break;
+                if (lang.isEmpty() && !pos.isEmpty()) {
+                    if (m.get("writtenRep").equals(form.trim())
+                            && (m.get("pos").equals(pos))) {
+                        contains = true;
+                        break;
+                    }
+                } else {
+                    if (!lang.isEmpty() && pos.isEmpty()) {
+                        if (m.get("writtenRep").equals(form.trim())
+                                && (m.get("lang").equals(lang))) {
+                            contains = true;
+                            break;
+                        }
+                    } else {
+                        if (m.get("writtenRep").equals(form.trim())
+                                && (m.get("lang").equals(lang))
+                                && (m.get("pos").equals(pos))) {
+                            contains = true;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -641,26 +662,26 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         return same;
     }
 
-    private void lemmaNameKeyupEvent() {
-        String lemmaPart = lemma.getFormWrittenRepr();
-        String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
-        List<Map<String, String>> lemmaList = lexiconManager.lemmasList(currentLanguage);
-        if (contains(lemmaList, lemmaPart, lemma.getLanguage()) && (!lemmaPart.equals(lemmaCopy.getFormWrittenRepr()))) {
-            lemmAlreadyExists = true;
-            lemma.setSaveButtonDisabled(true);
-        } else {
-            /**/ if (isAdmissibleLemma(lemmaPart, lemma.getType())) {
-                lemmAlreadyExists = false;
-                /**/ isAdmissibleLemma = true;
-                lemma.setSaveButtonDisabled(false);
-                /**/            } else {
-                /**/ isAdmissibleLemma = false;
-                /**/ lemma.setSaveButtonDisabled(true);
-                /**/            }
-        }
-        lemma.setSaveButtonDisabled(isSavableLemma() || (lemma.getFormWrittenRepr().contains(" ")));
-        lemma.setFormWrittenRepr(lemmaPart);
-    }
+//    private void lemmaNameKeyupEvent() {
+//        String lemmaPart = lemma.getFormWrittenRepr();
+//        String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
+//        List<Map<String, String>> lemmaList = lexiconManager.lemmasList(currentLanguage);
+//        if (contains(lemmaList, lemmaPart, lemma.getLanguage()) && (!lemmaPart.equals(lemmaCopy.getFormWrittenRepr()))) {
+//            lemmAlreadyExists = true;
+//            lemma.setSaveButtonDisabled(true);
+//        } else {
+//            /**/ if (isAdmissibleLemma(lemmaPart, lemma.getType())) {
+//                lemmAlreadyExists = false;
+//                /**/ isAdmissibleLemma = true;
+//                lemma.setSaveButtonDisabled(false);
+//                /**/            } else {
+//                /**/ isAdmissibleLemma = false;
+//                /**/ lemma.setSaveButtonDisabled(true);
+//                /**/            }
+//        }
+//        lemma.setSaveButtonDisabled(isSavableLemma() || (lemma.getFormWrittenRepr().contains(" ")));
+//        lemma.setFormWrittenRepr(lemmaPart);
+//    }
 
     private void ckeckLemmaSavability() {
         if (!lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
@@ -683,7 +704,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "UPDATE Lemma language of " + lemma.getFormWrittenRepr() + " to " + lang);
         lemma.setLanguage(lang);
         // check again if the lemma already exists in the new language
-        lemmaNameKeyupEvent();
+        //lemmaNameKeyupEvent();
+        lemmaNameKeyupEvent(lemma.getFormWrittenRepr(), lemmaListCached);
         ckeckLemmaSavability();
     }
 
@@ -749,6 +771,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "UPDATE Lemma Part-of-Speech of " + lemma.getFormWrittenRepr() + " to " + pos);
         lemma.setPoS(pos);
         addFormButtonDisabled = true;
+        lemmaNameKeyupEvent(lemma.getFormWrittenRepr(), lemmaListCached);
         ckeckLemmaSavability();
     }
 
@@ -849,7 +872,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.clear();
         lemmaCopy.clear();
     }
-    
 
     public void saveLemma() throws IOException, OWLOntologyStorageException {
         lemma.setSaveButtonDisabled(true);
@@ -858,7 +880,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         if (lemmaCopy.getFormWrittenRepr().isEmpty()) {
             // saving due to a new lemma action
             saveLemma(false, true);
-            String entry = LexiconUtil.getIRI(lemma.getFormWrittenRepr(), lemma.getLanguage(), "lemma");
+            String entry = LexiconUtil.getIRI(lemma.getFormWrittenRepr(), lemma.getPoS().toLowerCase(), lemma.getLanguage(), "lemma");
             // check if the lexical entry is available and lock it
             lexiconManager.lock(entry);
             setLocked(false);
@@ -997,7 +1019,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
                                 filteredList.add(wr + "@aoc");
                             }
                         } else {
-                            filteredList.add(wr + "@" + m.get("lang"));
+                            filteredList.add(wr + " (" + m.get("pos") + ") @" + m.get("lang"));
                         }
                     }
                 }
@@ -1036,7 +1058,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         for (Map<String, String> m : list) {
             String wr = m.get("writtenRep");
             if ((wr.matches(splitted[0] + MULTIWORD_COMPONENT_REGEXP)) && (!wr.isEmpty())) {
-                filteredList.add(wr + "@" + m.get("lang"));
+                filteredList.add(wr + " (" + m.get("pos") + ")@" + m.get("lang"));
             }
         }
         return filteredList;
@@ -1062,10 +1084,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         reference.setViewButtonDisabled(false);
     }
 
-    // it queries the lexicon in order to get the name of the individual
+    // w.getWrittenRep() has the following form: 'writtenrep (pos) @lang' 
     private void setLexicalRelationEntry(Word w) {
         String splitted[] = w.getWrittenRep().split("@");
-        String lemma = splitted[0];
+        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
         String lang = splitted[1];
         Word wd = lexiconManager.getLemma(lemma, lang);
         w.setWrittenRep(wd.getWrittenRep());
@@ -1085,7 +1107,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // it queries the lexicon in order to get the name of the individual
     private void setWordOfMultiword(Word w) {
         String splitted[] = w.getLabel().split("@");
-        String lemma = splitted[0];
+        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
         String lang = splitted[1];
         Word wd = lexiconManager.getLemma(lemma, lang);
         w.setWrittenRep(wd.getWrittenRep());
@@ -1159,6 +1181,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             lexiconCreationControllerRelationDetail.resetRelationDetails();
             lexiconCreationControllerRelationDetail.setCurrentLexicalEntry("");
         }
+    }
+
+    public ArrayList<String> getPuppa(String s) {
+        return propertyValue.getMorphoTrait(s);
     }
 
     public ArrayList<String> getPoS() {

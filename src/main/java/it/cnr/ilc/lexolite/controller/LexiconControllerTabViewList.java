@@ -220,11 +220,11 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             setLexiconLanguage("All languages");
             initLemmaTabView("All languages");
             initFormTabView("All languages");
-            initDomainOntologyTabView();
             setEnabledFilter(true);
         }
         if (LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY) != null) {
             ontologyManager.deafult_loadOntology();
+            initDomainOntologyTabView();
         }
     }
 
@@ -665,6 +665,11 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         return "color: #9E9E9E";
     }
 
+    public String getPosFromIndividual(String individual, String lang) {
+        String[] ret = individual.split("_" + lang + "_")[0].split("_");
+        return ret[ret.length - 1];
+    }
+    
     public static class DataTreeNode {
 
         private int hierarchyLevel;

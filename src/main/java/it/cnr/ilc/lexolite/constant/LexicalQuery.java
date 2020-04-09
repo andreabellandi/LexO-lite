@@ -26,7 +26,7 @@ public class LexicalQuery {
             + "PREFIX vartrans: <" + Namespace.VARTRANS + ">\n"
             + "PREFIX synsem: <" + Namespace.SYNSEM + ">\n"
             + "PREFIX trcat: <" + Namespace.TRCAT + ">\n";
-            //+ "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
+    //+ "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
 
     // queries to lexinfo for setting properties values
     // query for getting lexicon values
@@ -256,11 +256,12 @@ public class LexicalQuery {
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?trglang) }";
 
-    public static final String TRANSLATION_SENSE_RELATION = "SELECT ?cat ?trglang ?entry WHERE {"
+    public static final String TRANSLATION_SENSE_RELATION = "SELECT ?cat ?trglang ?entry ?conf WHERE {"
             + " DirectType(?senseRel, vartrans:" + OntoLexEntity.Class.TRANSLATION.getLabel() + "), "
             + " PropertyValue(?senseRel, vartrans:source, lexicon:_SENSE_), "
             + " PropertyValue(?senseRel, vartrans:target, ?trgind), "
             + " PropertyValue(?senseRel, vartrans:category, ?cat), "
+            + " PropertyValue(?senseRel, lexinfo:translationConfidence, ?conf), "
             + " PropertyValue(?entry, ontolex:sense, ?trgind), "
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?trglang) }";
@@ -287,7 +288,7 @@ public class LexicalQuery {
             + " PropertyValue(?le, synsem:synBehavior, ?frame), "
             + " PropertyValue(lexicon:_SENSE_, synsem:isA, ?isA) }";
 
-    public static final String ONTO_MAPPING_SUBOBJ = "SELECT ?frame ?isA WHERE {"
+    public static final String ONTO_MAPPING_SUBOBJ = "SELECT ?frame ?subjOfProp ?objOfProp WHERE {"
             + " PropertyValue(?le, ontolex:sense, lexicon:_SENSE_), "
             + " PropertyValue(?le, synsem:synBehavior, ?frame), "
             + " PropertyValue(lexicon:_SENSE_, synsem:subjOfProp, ?subjOfProp), "

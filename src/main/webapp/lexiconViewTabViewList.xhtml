@@ -22,7 +22,7 @@
                         <p:commandButton icon="ui-icon-refresh" actionListener="#{lexiconControllerTabViewList.searchReset('Lemma')}"   
                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" title="Refresh lemmas list"
                                          update="lexiconTabViewForm:tabView:lemmaTree lexiconTabViewForm:tabView:lemmaGrid"/>
-                        <p:outputLabel id="lemmaFilterLabel" value="#{lexiconControllerTabViewList.lemmaCounter}"                 styleClass="filterLabel" for="lemmaFilter"/>
+                        <p:outputLabel id="lemmaFilterLabel" value="#{lexiconControllerTabViewList.lemmaCounter}" styleClass="filterLabel" for="lemmaFilter"/>
                     </h:panelGrid>
                     <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
 
@@ -40,7 +40,10 @@
                                 <span class="colorCircle" style="background-color:#990000;"/>
                                 <h:outputText styleClass="#{!lemma.verified.equals('false') ? 'colorCircleTextLemmaVerified' : 'colorCircleText'}" value="#{lemma.name}"/>
                                 <span>
-                                    <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(lemma.language)}" value="@#{lemma.language}"/>
+                                    <h:outputText style="vertical-align: sub; font-style: italic; font-size: 9px; padding-right: 3px;" 
+                                                  value="(#{lexiconControllerTabViewList.getPosFromIndividual(lemma.OWLname, lemma.language)})"/>
+                                    <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(lemma.language)}" 
+                                                  value="@#{lemma.language}"/>
                                 </span>
                             </p:treeNode>
                         </p:tree>
@@ -73,6 +76,8 @@
                                 
                                 <h:outputText styleClass="#{!form.verified.equals('false') ? 'colorCircleTextVariantVerified' : 'colorCircleText'}" value="#{form.name}"/>
                                 <span>
+                                    <h:outputText style="vertical-align: sub; font-style: italic; font-size: 9px; padding-right: 3px;" 
+                                                  value="(#{lexiconControllerTabViewList.getPosFromIndividual(form.OWLname, form.language)})"/>
                                     <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(form.language)}" value="@#{form.language}"/>
                                 </span>
                             </p:treeNode>

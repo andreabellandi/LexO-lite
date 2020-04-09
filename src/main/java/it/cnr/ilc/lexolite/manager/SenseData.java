@@ -364,6 +364,7 @@ public class SenseData implements Serializable {
         private String targetWrittenRep;
         private String targetLanguage;
         private String category;
+        private double confidence;
 
         public ReifiedTranslationRelation() {
             this.viewButtonDisabled = false;
@@ -375,6 +376,15 @@ public class SenseData implements Serializable {
             this.sourceWrittenRep = "";
             this.targetLanguage = "";
             this.targetWrittenRep = "";
+            this.confidence = 1;
+        }
+
+        public double getConfidence() {
+            return confidence;
+        }
+
+        public void setConfidence(double confidence) {
+            this.confidence = confidence;
         }
 
         public boolean isViewButtonDisabled() {

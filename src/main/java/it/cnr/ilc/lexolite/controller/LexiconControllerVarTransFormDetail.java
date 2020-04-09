@@ -133,7 +133,7 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
     // it queries the lexicon in order to get the name of the individual
     private void setLexicalRelationEntry(LemmaData.LexicalRelation w) {
         String splitted[] = w.getWrittenRep().split("@");
-        String lemma = splitted[0];
+        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
         String lang = splitted[1];
         LemmaData.Word wd = lexiconManager.getLemma(lemma, lang);
         w.setWrittenRep(wd.getWrittenRep());
@@ -143,12 +143,13 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
 
     private void setLexicalRelationEntry(LemmaData.ReifiedLexicalRelation w) {
         String splitted[] = w.getTargetWrittenRep().split("@");
-        String lemma = splitted[0];
+        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
         String lang = splitted[1];
         LemmaData.Word wd = lexiconManager.getLemma(lemma, lang);
         w.setTargetWrittenRep(wd.getWrittenRep());
         w.setTargetLanguage(wd.getLanguage());
-        w.setTargetOWLName(LexiconUtil.getIRI(w.getTargetWrittenRep(), w.getTargetLanguage(), "entry"));
+        //w.setTargetOWLName(LexiconUtil.getIRI(w.getTargetWrittenRep(), w.getTargetLanguage(), "entry"));
+        w.setTargetOWLName(wd.getOWLName().replace("_lemma", "_entry"));
         w.setSourceWrittenRep(lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
         w.setSourceLanguage(lexiconControllerFormDetail.getLemma().getLanguage());
         w.setSourceOWLName(lexiconControllerFormDetail.getLemma().getIndividual().replace("_lemma", "_entry"));

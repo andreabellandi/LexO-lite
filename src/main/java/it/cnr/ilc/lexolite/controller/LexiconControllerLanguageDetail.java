@@ -10,6 +10,8 @@ import it.cnr.ilc.lexolite.manager.PropertyValue;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -109,9 +111,13 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
             lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
             log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);
             lexiconCreationControllerTabViewList.updateLexiconLanguagesList();
+            FacesMessage message = new FacesMessage("Successful", "language " + langName + " was created.");
+            FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
             log(Level.INFO, loginController.getAccount(), "Negated creation of an empty language ");
             warn("template.message.emptyLangCreation.summary", "template.message.emptyLangCreation.description");
+            FacesMessage message = new FacesMessage("Successful", "Negated creation of an empty language");
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
 

@@ -120,6 +120,17 @@
                          readonly="true"
                          rendered="#{lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma'))}"/>
 
+            
+            
+<!--            <h:outputLabel styleClass="titleStyle" value="Prova:" />
+            <p:selectOneMenu value="{lexiconControllerFormDetail.lemma.person}">
+                <f:selectItem  itemLabel="No entry specified" itemValue="" />
+                <f:selectItems value="{lexiconControllerFormDetail.getPuppa('puppa')}" />
+            </p:selectOneMenu>-->
+            
+            
+            
+            
             <h:outputLabel id="lemmaPersonLabel" styleClass="titleStyle" value="Person:" 
                            rendered="#{lexiconControllerFormDetail.lemma.poS.equals('verb')}" />
             <p:selectOneMenu id="lemmaPerson" appendTo="lemmaPerson" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.person}"

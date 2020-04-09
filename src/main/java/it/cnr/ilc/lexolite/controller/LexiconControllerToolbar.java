@@ -142,7 +142,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
 
-    public void handleOntologyUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
+    public synchronized void handleOntologyUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
         String previousNamespace = LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY);
         ontologyManager.loadDomainOntology(event);
         LexOliteProperty.setProperty(Label.ONTOLOGY_NAMESPACE_KEY, ontologyManager.getOntologyID() + "#");
@@ -164,7 +164,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void handleLexiconUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
+    public synchronized void handleLexiconUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
         lexiconManager.persist();
         lexiconManager.loadLexicon(event);
         LexOliteProperty.setProperty(Label.LEXICON_NAMESPACE_KEY, lexiconManager.getLexiconNamespace().contains("#") ? lexiconManager.getLexiconNamespace() : lexiconManager.getLexiconNamespace() + "#");

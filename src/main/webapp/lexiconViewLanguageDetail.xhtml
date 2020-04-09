@@ -7,47 +7,58 @@
     <p:dialog id="newLanguagePanel" widgetVar="newLanguageDialog" header="#{label['newLanguage.header']}" resizable="false" closable="true"
               modal="true">
         <h:form>
-            <h:panelGrid columns="3" columnClasses="column">
-                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.name']}"/>
+            <h:panelGrid columns="5" columnClasses="newLangCols, newLangCols, newLangCols, newLangCols, newLangCols">
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.name']}(*)"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.langName}">
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.langName}">
                     <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langNameKeyupEvent}"
                             update="newLangButtons"/>
                 </p:inputText>
+                <p:graphicImage id="name" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="name" value="#{label['tooltip.dialog.newLang.name']}" position="right"/>
 
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.uri']}"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.uriCode}">
+                <p:inputText id="uriLang" styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.uriCode}">
                     <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langUriKeyupEvent}"
                             update="newLangButtons"/>
+                    <p:watermark for="uriLang" value="e.g., http://lexvo.org/id/iso639-1/en"/>
                 </p:inputText>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
 
-                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.catalog']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.catalog']}(*)"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
                 <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerLanguageDetail.linguisticCatalog}">
                     <f:selectItems value="#{lexiconControllerLanguageDetail.lingCatList}" />
                 </p:selectOneMenu>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
 
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.description']}"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.description}">
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.description}">
                     <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langDescriptionKeyupEvent}"
                             update="newLangButtons"/>
                 </p:inputText>
+                <p:graphicImage id="description" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="description" value="#{label['tooltip.dialog.newLang.description']}" position="right"/>
 
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.creator']}"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:inputText styleClass="inputTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.creator}">
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerLanguageDetail.creator}">
                     <p:ajax event="keyup" listener="#{lexiconControllerLanguageDetail.langCreatorKeyupEvent}"
                             update="newLangButtons"/>
                 </p:inputText>
+                <p:graphicImage id="creator" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="creator" value="#{label['tooltip.dialog.newLang.creator']}" position="right"/>
 
                 <h:panelGrid id="newLangButtons" columns="3" style="padding-top: 10px;">
                     <p:commandButton icon="fa fa-save" 
                                      actionListener="#{lexiconControllerLanguageDetail.save()}"
                                      onstart="PF('loadingDialog').show();"
                                      oncomplete="PF('newLanguageDialog').hide(); PF('loadingDialog').hide();"
-                                     update=":lexiconTabViewForm:tabView:tabViewOntology :systemMessage"/>
+                                     update=":lexiconTabViewToolbarForm :systemMessage"/>
                 </h:panelGrid>
 
             </h:panelGrid>
