@@ -13,6 +13,7 @@ import it.cnr.ilc.lexolite.manager.OntologyManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.PropertyValue.Ontology;
 import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme.itemType;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.io.IOException;
@@ -39,7 +40,7 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 @ViewScoped
 @Named
 public class LexiconControllerSenseDetail extends BaseController implements Serializable {
-
+    
     @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
     @Inject
@@ -56,83 +57,83 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
-
+    
     private final List<SenseData> senses = new ArrayList<>();
     private final List<SenseData> sensesCopy = new ArrayList<>();
     private String senseOpenedInRelation;
     private boolean addSenseButtonDisabled = true;
     private boolean senseToolbarRendered = false;
     private boolean undeletableSense = true;
-
+    
     private boolean verified = false;
-
+    
     public boolean isVerified() {
         return verified;
     }
-
+    
     public void setVerified(boolean verified) {
         this.verified = verified;
     }
-
+    
     private boolean senseRendered = false;
     private boolean locked = false;
-
+    
     public boolean isSenseRendered() {
         return senseRendered;
     }
-
+    
     public void setSenseRendered(boolean senseRendered) {
         this.senseRendered = senseRendered;
     }
-
+    
     public List<SenseData> getSenses() {
         return senses;
     }
-
+    
     public boolean isAddSenseButtonDisabled() {
         return addSenseButtonDisabled;
     }
-
+    
     public void setAddSenseButtonDisabled(boolean addSenseButtonDisabled) {
         this.addSenseButtonDisabled = addSenseButtonDisabled;
     }
-
+    
     public boolean isSenseToolbarRendered() {
         return senseToolbarRendered;
     }
-
+    
     public void setSenseToolbarRendered(boolean senseToolbarRendered) {
         this.senseToolbarRendered = senseToolbarRendered;
     }
-
+    
     public boolean isUndeletableSense() {
         return undeletableSense;
     }
-
+    
     public boolean isLocked() {
         return locked;
     }
-
+    
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
-
+    
     public boolean isNewAction() {
         return lexiconCreationControllerFormDetail.isNewAction();
     }
-
+    
     public String emptyMessage(String text, String emptyMessage) {
         return emptyMessage(text, text, emptyMessage);
     }
-
+    
     public String emptyMessage(String test, String text, String emptyMessage) {
         return test == null || test.equals("") ? emptyMessage : text;
     }
-
+    
     public void openNote(String senseName) {
         log(Level.INFO, loginController.getAccount(), "OPEN note of Sense " + senseName);
     }
-
+    
     public void saveNote(SenseData sd) throws IOException, OWLOntologyStorageException {
         log(Level.INFO, loginController.getAccount(), "EDIT note of Sense " + sd.getName() + " in " + sd.getNote());
         int order = senses.indexOf(sd);
@@ -140,11 +141,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         sensesCopy.get(order).setNote(sd.getNote());
         info("template.message.saveSenseNote.summary", "template.message.saveSenseNote.description");
     }
-
+    
     public void closeNote(String senseName) {
         log(Level.INFO, loginController.getAccount(), "CLOSE note of Sense " + senseName);
     }
-
+    
     public String getCommentIcon(SenseData sd) {
         if (sd.getNote().length() > 0) {
             return "fa fa-comment";
@@ -152,47 +153,53 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             return "fa fa-comment-o";
         }
     }
-
+    
     public List<SenseData> getSensesCopy() {
         return sensesCopy;
     }
-
+    
     private void addSenseCopy(SenseData sd) {
         sensesCopy.add(copySenseData(sd));
     }
-
+    
     private void updateSenseCopy(SenseData sd, int order) {
         SenseData updatedSense = copySenseData(sd);
         sensesCopy.remove(order);
         sensesCopy.add(order, updatedSense);
     }
-
+    
     private void addSenseCopy(ArrayList<SenseData> sdList) {
         sensesCopy.clear();
         for (SenseData sd : sdList) {
             sensesCopy.add(copySenseData(sd));
         }
     }
-
+    
     private SenseData copySenseData(SenseData sd) {
         SenseData _sd = new SenseData();
-        Openable _OWLClass = new Openable();
-        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
-        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
-        _OWLClass.setName(sd.getOWLClass().getName());
-        _sd.setOWLClass(_OWLClass);
+//        Openable _OWLClass = new Openable();
+//        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
+//        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
+//        _OWLClass.setName(sd.getOWLClass().getName());
+//        _sd.setOWLClass(_OWLClass);
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+        rmt.setId(sd.getThemeOWLClass().getId());
+        rmt.setName(sd.getThemeOWLClass().getName());
+        rmt.setType(itemType.valueOf(sd.getThemeOWLClass().getType()));
+        _sd.setThemeOWLClass(rmt);
         _sd.setDefinition(sd.getDefinition());
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
         return _sd;
     }
-
+    
     public List<ReferenceMenuTheme> completeTheme(String query) {
         String queryLowerCase = query.toLowerCase();
         List<ReferenceMenuTheme> allThemes = ontologyManager.ontologyEntities();
+        List<ReferenceMenuTheme> n = allThemes.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
         return allThemes.stream().filter(t -> t.getName().toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());
     }
-
+    
     public void senseDefinitionKeyupEvent(AjaxBehaviorEvent e) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         SenseData sd = (SenseData) component.getAttributes().get("sense");
@@ -202,52 +209,55 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             sd.setSaveButtonDisabled(false);
         }
     }
-
+    
     public void removeDefinition(SenseData sd) {
         log(Level.INFO, loginController.getAccount(), "REMOVE " + sd.getDefinition() + " (scientific name of " + sd.getName() + ")");
         sd.setDefinition("");
         sd.setSaveButtonDisabled(false);
     }
-
+    
     public void addSense() {
         SenseData sd = new SenseData();
         sd.setName("automatically set");
         sd.setSaveButtonDisabled(false);
         senses.add(sd);
     }
-
+    
     public void addSenseRelation(SenseData sd, String relType) {
         log(Level.INFO, loginController.getAccount(), "ADD empty " + relType + " relation to " + sd.getName());
-        SenseData.Openable sdo = new SenseData.Openable();
-        sdo.setViewButtonDisabled(true);
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+        rmt.setId(1);
+        //SenseData.Openable sdo = new SenseData.Openable();
+        //sdo.setViewButtonDisabled(true);
         switch (relType) {
             case "reference":
-                sd.setOWLClass(sdo);
+                //sd.setOWLClass(sdo);
+                sd.setThemeOWLClass(rmt);
                 break;
             default:
         }
     }
-
+    
     public void addSense(String entry, String entryType) {
         senses.clear();
         sensesCopy.clear();
         ArrayList<SenseData> al = null;
         switch (entryType) {
             case "Lemma":
-                al = lexiconManager.getSensesOfLemma(entry);
+                al = lexiconManager.getSensesOfLemma(entry, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
                 break;
             case "Form":
-                al = lexiconManager.getSensesOfForm(entry);
+                al = lexiconManager.getSensesOfForm(entry, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
                 break;
             // it never happens because currently the "Sense" tab panel does not exist
             case "Sense":
-                al = lexiconManager.getSenses(entry);
+                al = lexiconManager.getSenses(entry, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
                 break;
         }
         senses.addAll(al);
         addSenseCopy(al);
     }
-
+    
     public void removeSense(SenseData sd) throws IOException, OWLOntologyStorageException {
         if ((senses.indexOf(sd) == 0) && (senses.indexOf(sd) != -1)) {
             // default sense can't be deleted !
@@ -270,20 +280,20 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             }
         }
     }
-
+    
     public List<String> completeText(String sense) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String relType = (String) component.getAttributes().get("Relation");
         String currentSense = (String) component.getAttributes().get("currentSense");
         List<Map<String, String>> al = null;
-
+        
         if (relType.equals("ontoRef")) {
             return getFilteredClasses(ontologyManager.classesList(), sense);
         } else {
             return null;
         }
     }
-
+    
     private List<String> getFilteredClasses(List<String> list, String keyFilter) {
         List<String> filteredList = new ArrayList();
         Collections.sort(list);
@@ -294,7 +304,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         }
         return filteredList;
     }
-
+    
     public void saveSenseRelation(SenseData sd) throws IOException, OWLOntologyStorageException {
         log(Level.INFO, loginController.getAccount(), "SAVE Sense " + sd.getName());
         int order = senses.indexOf(sd);
@@ -305,26 +315,41 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         info("template.message.saveSenseRelation.summary", "template.message.saveSenseRelation.description", sd.getName());
     }
 
-    public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
+//    public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
+//        switch (relType) {
+//            case "reference":
+//                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty reference" : sdo.getName()) + " (reference of " + sd.getName() + ")");
+//                sd.getOWLClass().setName("");
+//                sd.getOWLClass().setViewButtonDisabled(false);
+//                break;
+//            default:
+//        }
+//        if (!sdo.getName().isEmpty() || (relType.equals("reference"))) {
+//            sd.setSaveButtonDisabled(false);
+//        }
+//        relationPanelCheck(sdo.getName());
+//    }
+    public void removeSenseRelation(SenseData sd, ReferenceMenuTheme rmt, String relType) {
         switch (relType) {
             case "reference":
-                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty reference" : sdo.getName()) + " (reference of " + sd.getName() + ")");
-                sd.getOWLClass().setName("");
-                sd.getOWLClass().setViewButtonDisabled(false);
+                log(Level.INFO, loginController.getAccount(), "REMOVE " + (rmt.getName().isEmpty() ? " empty reference" : rmt.getName()) + " (reference of " + sd.getName() + ")");
+                sd.getThemeOWLClass().setName("");
+                sd.getThemeOWLClass().setId(0);
                 break;
             default:
         }
-        if (!sdo.getName().isEmpty() || (relType.equals("reference"))) {
+        if (!rmt.getName().isEmpty() || (relType.equals("reference"))) {
             sd.setSaveButtonDisabled(false);
         }
-        relationPanelCheck(sdo.getName());
+        relationPanelCheck(rmt.getName());
     }
-
+    
     public void onOntologyReferenceSelect(SenseData sd) {
-        log(Level.INFO, loginController.getAccount(), "ADD ontological reference " + sd.getOWLClass().getName() + " to the sense " + sd.getName());
+        //log(Level.INFO, loginController.getAccount(), "ADD ontological reference " + sd.getOWLClass().getName() + " to the sense " + sd.getName());
+        log(Level.INFO, loginController.getAccount(), "ADD ontological reference " + sd.getThemeOWLClass().getName() + " to the sense " + sd.getName());
         sd.setSaveButtonDisabled(false);
     }
-
+    
     private void relationPanelCheck(String OWLName) {
         if (lexiconCreationControllerRelationDetail.getCurrentLexicalEntry().equals(OWLName)) {
             lexiconCreationControllerRelationDetail.resetRelationDetails();
@@ -348,7 +373,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         lexiconManager.saveLemmaAndDefaultSense(senses.get(0), ld, wordType);
         addSenseCopy(senses.get(0));
     }
-
+    
     private void setDefaultSense() {
         senses.clear();
         sensesCopy.clear();
@@ -357,22 +382,22 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         defaultSense.setDeleteButtonDisabled(false);
         senses.add(defaultSense);
     }
-
+    
     public void ontoClassChanged(SenseData sense) {
         log(Level.INFO, loginController.getAccount(), "UPDATE OntoClass to " + sense.getName() + " of " + sense.getName());
         sense.setSaveButtonDisabled(false);
     }
-
+    
     public void resetSenseDetails() {
         senses.clear();
         senseRendered = false;
     }
-
+    
     public void addOntoReference(SenseData sd) {
         log(Level.INFO, loginController.getAccount(), "ADD empty ontological reference to " + sd.getName());
         sd.getOWLClass().setViewButtonDisabled(true);
     }
-
+    
     public List<SelectItem> getSensesByLanguage(String sense, boolean filterByLanguage) {
         String filter = "";
         if (!filter.isEmpty()) {
@@ -381,7 +406,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             return lexiconManager.getSensesByLanguage(sense, null);
         }
     }
-
+    
     public ArrayList<Ontology> getTaxonomy() {
         return propertyValue.getTaxonomy();
     }
@@ -389,5 +414,5 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     public boolean isOntologyEnabled() {
         return LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY) != null;
     }
-
+    
 }

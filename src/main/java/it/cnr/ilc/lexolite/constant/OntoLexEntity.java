@@ -72,6 +72,7 @@ public class OntoLexEntity {
         SENSE("sense"),
         ENTRY("entry"),
         REFERENCE("reference"),
+        DENOTES("denotes"),
         
         // vartrans module
         LEXICALREL("lexicalRel"),

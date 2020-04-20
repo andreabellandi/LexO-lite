@@ -377,7 +377,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public void onSelect(NodeSelectEvent event) {
-        boolean verified = ((DataTreeNode) event.getTreeNode().getData()).getVerified().equals("true") ? true : false;
+        boolean verified = ((DataTreeNode) event.getTreeNode().getData()).getVerified().equals("true");
         lexiconCreationControllerFormDetail.setVerified(verified);
         lexiconCreationControllerSenseDetail.setVerified(verified);
         long startTime = System.currentTimeMillis();

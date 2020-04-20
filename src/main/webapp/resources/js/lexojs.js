@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 function setHeight() {
 
     var height = $(document.getElementById('content')).height();
@@ -16,7 +15,8 @@ function setHeight() {
     $(document.getElementById('lexiconTabViewForm:tabView:scrollPanelFormTree')).css('height', height - 270);
     $(document.getElementById('lexiconTabViewForm:tabView:scrollPanelOntologyTree')).css('height', height - 300);
 
-};
+}
+;
 
 //window.addEventListener('resize', setHeight);
 window.onresize = setHeight;

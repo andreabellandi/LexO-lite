@@ -66,6 +66,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.reasoner.InferenceDepth;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
@@ -90,14 +91,21 @@ public class OntologyModel extends BaseController {
 
     private int individualsNumber = 0;
 
-    //private static final String ONTOLOGY_FOLDER = System.getProperty("user.home") + LexOliteProperty.getProperty("domainOntologyFolder");
-    //private static final String DEFAULT_ONTOLOGY = ONTOLOGY_FOLDER + LexOliteProperties.getProperty("domainOntologyFileName");
+    private ArrayList<ReferenceMenuTheme> ontoRefItems = new ArrayList();
+
+    public ArrayList<ReferenceMenuTheme> getOntoRefItems() {
+        return ontoRefItems;
+    }
+
+    public void setOntoRefItems(ArrayList<ReferenceMenuTheme> ontoRefItems) {
+        this.ontoRefItems = ontoRefItems;
+    }
 
     private PrefixManager pm;
 
     public OntologyModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
-        try ( InputStream inputStream = f.getFile().getInputstream()) {
+        try (InputStream inputStream = f.getFile().getInputstream()) {
             domainOntology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             reasonerFactory = new StructuralReasonerFactory();
@@ -111,7 +119,7 @@ public class OntologyModel extends BaseController {
 
     public OntologyModel() {
         manager = OWLManager.createOWLOntologyManager();
-        try ( InputStream inputStream = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
+        try (InputStream inputStream = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
                 + LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY))) {
             domainOntology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
@@ -341,12 +349,41 @@ public class OntologyModel extends BaseController {
     }
 
     public List<ReferenceMenuTheme> getOntologyEntities() {
-        ArrayList<ReferenceMenuTheme> al = new ArrayList();
+        ArrayList<ReferenceMenuTheme> alClasses = new ArrayList();
+        ArrayList<ReferenceMenuTheme> alObjProps = new ArrayList();
+        ArrayList<ReferenceMenuTheme> alDataProps = new ArrayList();
+        ArrayList<ReferenceMenuTheme> alIndividuals = new ArrayList();
         OWLClass clazz = manager.getOWLDataFactory().getOWLThing();
+        OWLObjectProperty objProp = factory.getOWLTopObjectProperty();
+        OWLDataProperty dataProp = factory.getOWLTopDataProperty();
         OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(domainOntology);
-        _printClasses(reasoner, clazz, 0, al, 1);
+        _printClasses(reasoner, clazz, 0, alClasses, 1);
+        _printObjectProperties(reasoner, objProp, 0, alObjProps, 1);
+        _printDataProperties(reasoner, dataProp, 0, alDataProps, 1);
+        //_printIndividuals(reasoner, clazz, alIndividuals, 1);
         reasoner.dispose();
-        return al;
+        idNumbering(alClasses, alObjProps, alDataProps);
+        ontoRefItems.addAll(alClasses);
+        ontoRefItems.addAll(alObjProps);
+        ontoRefItems.addAll(alDataProps);
+        //ontoRefItems.addAll(alIndividuals);
+        return ontoRefItems;
+    }
+
+    private void idNumbering(ArrayList<ReferenceMenuTheme> alc, ArrayList<ReferenceMenuTheme> alo, ArrayList<ReferenceMenuTheme> ald) {
+        int id = 0;
+        for (ReferenceMenuTheme _alc : alc) {
+            _alc.setId(id);
+            id = id + 1;
+        }
+        for (ReferenceMenuTheme _alo : alo) {
+            _alo.setId(id);
+            id = id + 1;
+        }
+        for (ReferenceMenuTheme _ald : ald) {
+            _ald.setId(id);
+            id = id + 1;
+        }
     }
 
     private List<ReferenceMenuTheme> _printClasses(OWLReasoner reasoner, OWLClass clazz, int level, ArrayList<ReferenceMenuTheme> al, int id) {
@@ -361,6 +398,54 @@ public class OntologyModel extends BaseController {
             }
         }
         return al;
+    }
+
+    private List<ReferenceMenuTheme> _printObjectProperties(OWLReasoner reasoner, OWLObjectProperty objProp, int level, ArrayList<ReferenceMenuTheme> al, int id) {
+        if (!objProp.getIRI().getShortForm().equals("topObjectProperty") && !objProp.getIRI().getShortForm().equals("bottomObjectProperty")
+                && !contains(al, objProp.getIRI().getShortForm())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.objectProperty, objProp.getIRI().getShortForm()));
+        }
+        NodeSet<OWLObjectPropertyExpression> op = reasoner.getSubObjectProperties(objProp, true);
+        id = id + 1;
+        for (OWLObjectPropertyExpression child : op.entities().collect(Collectors.toList())) {
+            if (!child.getNamedProperty().getIRI().equals(objProp)) {
+                _printObjectProperties(reasoner, child.getNamedProperty(), level + 1, al, id);
+            }
+        }
+        return al;
+    }
+
+    private List<ReferenceMenuTheme> _printDataProperties(OWLReasoner reasoner, OWLDataProperty dataProp, int level, ArrayList<ReferenceMenuTheme> al, int id) {
+        if (!dataProp.getIRI().getShortForm().equals("topDataProperty") && !dataProp.getIRI().getShortForm().equals("bottomDataProperty")
+                && !contains(al, dataProp.getIRI().getShortForm())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.dataProperty, dataProp.getIRI().getShortForm()));
+        }
+        NodeSet<OWLDataProperty> op = reasoner.getSubDataProperties(dataProp, true);
+        id = id + 1;
+        for (OWLDataProperty child : op.entities().collect(Collectors.toList())) {
+            if (!child.getIRI().equals(dataProp)) {
+                _printDataProperties(reasoner, child, level + 1, al, id);
+            }
+        }
+        return al;
+    }
+
+    private List<ReferenceMenuTheme> _printIndividuals(OWLReasoner reasoner, OWLClass clazz, ArrayList<ReferenceMenuTheme> al, int id) {
+        NodeSet<OWLNamedIndividual> individuals = reasoner.getInstances(clazz, InferenceDepth.ALL);
+        for (OWLNamedIndividual i : individuals.entities().collect(Collectors.toList())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.instance, i.getIRI().getShortForm()));
+            id = id + 1;
+        }
+        return al;
+    }
+
+    private boolean contains(ArrayList<ReferenceMenuTheme> al, String objProp) {
+        for (ReferenceMenuTheme rmt : al) {
+            if (rmt.getName().equals(objProp)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<String> printClasses(OWLReasoner reasoner, OWLClass clazz, int level, ArrayList<String> al) {

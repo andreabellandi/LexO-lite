@@ -32,34 +32,34 @@
                     </p:inputTextarea>
                 </h:panelGrid>
 
-<!--                <p:outputLabel value="Custom Content:" for="themeCustom" />
-                <p:autoComplete id="themeCustom" value="{sense.themeOWLClass}" completeMethod="{lexiconControllerSenseDetail.completeTheme}"
-                                var="theme" itemLabel="{theme.name}" itemValue="{theme}" converter="{referenceMenuThemeConverter}" forceSelection="true">
-                    <p:column>
-                        <h:graphicImage name="image/{theme.type}Icon.png" alt="{theme.name}" height="15"  width="15" styleClass="ui-theme"/>
-                    </p:column>
-
-                    <p:column>
-                        <h:outputText value="{theme.name}" />
-                    </p:column>
-                </p:autoComplete>-->
-
-                <h:outputLabel styleClass="titleStyle" value="Reference:" rendered="#{sense.OWLClass.viewButtonDisabled}"/>
-                <h:panelGrid columns="3" rendered="#{sense.OWLClass.viewButtonDisabled}">
-                    <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" maxResults="10" value="#{sense.OWLClass.name}" 
-                                    forceSelection="true" readonly="#{lexiconControllerSenseDetail.locked}"
-                                    completeMethod="#{lexiconControllerSenseDetail.completeText}">
+                <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
+                <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
+                    <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" alt="#{sense.themeOWLClass.type}"
+                                    rendered="#{sense.themeOWLClass.name.length() > 1}"
+                                    height="#{sense.themeOWLClass.type.contains('Property') ? 11 : 15}"  width="15"/>
+                    <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" value="#{sense.themeOWLClass}" 
+                                    completeMethod="#{lexiconControllerSenseDetail.completeTheme}"
+                                    readonly="#{lexiconControllerSenseDetail.locked}"
+                                    var="theme" itemLabel="#{theme.name}" itemValue="#{theme}" converter="#{referenceMenuThemeConverter}" 
+                                    forceSelection="true" maxResults="10">
+                        <p:column>
+                            <h:graphicImage name="image/#{theme.type}Icon.png" alt="#{theme.name}" 
+                                            height="#{theme.type.contains('Property') ? 11 : 15}"  width="15" styleClass="ui-theme"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{theme.name}" />
+                        </p:column>
                         <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onOntologyReferenceSelect(sense)}" 
-                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons OntoRef" />
-                        <f:attribute name="Relation" value="ontoRef"/>
-                        <f:attribute name="currentSense" value="#{sense.name}"/>
+                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons" />
                     </p:autoComplete>
                     <p:watermark class="filterLabel" for="OntoRef" value="Type a semantic description"/>
                     <p:commandButton title="Delete ontology reference relation" icon="fa fa-trash-o"
                                      rendered="#{!lexiconControllerSenseDetail.locked}"
-                                     actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.OWLClass, 'reference')}" 
+                                     actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.themeOWLClass, 'reference')}" 
                                      update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
                 </h:panelGrid>
+
+
 
                 <h:panelGrid id = "senseButtons" columns="4" columnClasses="column" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 

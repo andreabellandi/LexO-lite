@@ -29,6 +29,7 @@ public class ReferenceMenuThemeConverter implements Converter {
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
+                Object obj = ontologyManager.ontologyEntities().get(Integer.parseInt(value));
                 return ontologyManager.ontologyEntities().get(Integer.parseInt(value));
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
@@ -41,6 +42,7 @@ public class ReferenceMenuThemeConverter implements Converter {
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object object) {
         if (object != null) {
+            String s = String.valueOf(((ReferenceMenuTheme) object).getId());
             return String.valueOf(((ReferenceMenuTheme) object).getId());
         } else {
             return null;

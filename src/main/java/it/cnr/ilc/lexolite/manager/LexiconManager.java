@@ -259,7 +259,7 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
-    public synchronized void deleteOntologyRefernces() throws IOException, OWLOntologyStorageException {
+    public synchronized void deleteOntologyReferences() throws IOException, OWLOntologyStorageException {
         lexiconModel.deleteOntologyreferences();
         lexiconModel.persist();
     }
@@ -334,16 +334,16 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getFormsOfLemma(lemma, lang);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma) {
-        return lexiconQuery.getSensesOfLemma(lemma);
+    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getSensesOfLemma(lemma, l);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfForm(String form) {
-        return lexiconQuery.getSensesOfForm(form);
+    public synchronized ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getSensesOfForm(form, l);
     }
 
-    public synchronized ArrayList<SenseData> getSenses(String sense) {
-        return lexiconQuery.getOtherSenses(sense);
+    public synchronized ArrayList<SenseData> getSenses(String sense, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getOtherSenses(sense, l);
     }
 
     public synchronized List<SelectItem> getSensesByLanguage(String sense, String lang) {

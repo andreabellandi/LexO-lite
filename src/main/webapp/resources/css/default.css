@@ -198,6 +198,16 @@ html, body {
     /*    width: 70%;*/
 }
 
+.inputTextDeleteReferencesStyle {
+    font-style: italic;
+    color: gray;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    /*    width: 70%;*/
+}
+
 .inputTextStyleRelationPanelForm {
     border: 1px solid #a8a8a8;
     font-style: italic;
@@ -263,6 +273,7 @@ html, body {
     border: 2px solid gainsboro !important;
     border-radius: 5px;
     padding: 2px 2px 2px 2px;
+    margin: auto;
 }
 
 .roundedBox {

@@ -88,7 +88,7 @@ public class LexiconModel extends BaseController {
 
     public LexiconModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
-        try ( InputStream inputStream = f.getFile().getInputstream()) {
+        try (InputStream inputStream = f.getFile().getInputstream()) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             setPrefixes();
@@ -100,7 +100,7 @@ public class LexiconModel extends BaseController {
     public LexiconModel() {
         LexOliteProperty.load();
         manager = OWLManager.createOWLOntologyManager();
-        try ( InputStream inputStream = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
+        try (InputStream inputStream = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
                 + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY))) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
@@ -169,9 +169,9 @@ public class LexiconModel extends BaseController {
     private void setMoprhology(OWLNamedIndividual le, OWLNamedIndividual cf, LemmaData ld) {
         addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), cf, ld.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
-            addObjectPropertyAxiom("lexinfo", cf, "partOfSpeech", ld.getPoS());
+            addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", ld.getPoS());
         } else {
-            addObjectPropertyAxiom("lexinfo", cf, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
+            addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
         }
         addObjectPropertyAxiom("lexinfo", cf, "gender", ld.getGender());
         addObjectPropertyAxiom("lexinfo", cf, "mood", ld.getMood());
@@ -239,9 +239,9 @@ public class LexiconModel extends BaseController {
     // write all triples about lemma entry with RENAMING
     public void updateLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
         String oldLemmaInstance = oldLemma.getIndividual();
-        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase(), newLemma.getLanguage(), "lemma");
+        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "lemma");
         String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
-        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase(), newLemma.getLanguage(), "entry");
+        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "entry");
         newLemma.setIndividual(newLemmaInstance);
         updateLemma(oldLemma, newLemma);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
@@ -294,18 +294,37 @@ public class LexiconModel extends BaseController {
         String _subject = oldLemma.getIndividual();
         OWLNamedIndividual subject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject));
         OWLNamedIndividual entrySubject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject.replace("_lemma", "_entry")));
-        updateMorphology(subject, oldLemma, newLemma);
+        updateMorphology(entrySubject, subject, oldLemma, newLemma);
         updateEntryValidity(entrySubject, oldLemma, newLemma);
+        updateObjectPropertyAxiom(entrySubject, OntoLexEntity.ObjectProperty.DENOTES.getLabel(),
+                oldLemma.getOWLClass().getName(), newLemma.getOWLClass().getName(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         //updateDataPropertyAxiom(entrySubject, "verified", oldLemma.getValid(), newLemma.getValid(), pm.getPrefixName2PrefixMap().get("dct:"));
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getSeeAlso(), newLemma.getSeeAlso(), "seeAlso");
+        if (oldLemma.getFormWrittenRepr().equals(newLemma.getFormWrittenRepr())) {
+            if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
+                // it needs to modify IRI anyway
+                String oldLemmaInstance = oldLemma.getIndividual();
+                String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "lemma");
+                String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
+                String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "entry");
+                newLemma.setIndividual(newLemmaInstance);
+                IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
+                OWLNamedIndividual le = getIndividual(oldEntryInstance);
+                // form individuals renaming
+                formRenaming(oldLemma, newLemma, le);
+                // sense individuals renaming
+                senseRenaming(oldLemma, newLemma, le);
+                IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
+            }
+        }
     }
 
-    private void updateMorphology(OWLNamedIndividual subject, LemmaData oldLemma, LemmaData newLemma) {
+    private void updateMorphology(OWLNamedIndividual entrySubject, OWLNamedIndividual subject, LemmaData oldLemma, LemmaData newLemma) {
         updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         if (oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
-            updateObjectPropertyAxiom(subject, "partOfSpeech", oldLemma.getPoS(), newLemma.getPoS(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+            updateObjectPropertyAxiom(entrySubject, "partOfSpeech", oldLemma.getPoS(), newLemma.getPoS(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         } else {
-            updateObjectPropertyAxiom(subject, "partOfSpeech", getMultiwordPoS(oldLemma.getPoS()), getMultiwordPoS(newLemma.getPoS()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+            updateObjectPropertyAxiom(entrySubject, "partOfSpeech", getMultiwordPoS(oldLemma.getPoS()), getMultiwordPoS(newLemma.getPoS()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         }
         updateObjectPropertyAxiom(subject, "gender", oldLemma.getGender(), newLemma.getGender(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         updateObjectPropertyAxiom(subject, "person", oldLemma.getPerson(), newLemma.getPerson(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
@@ -948,7 +967,8 @@ public class LexiconModel extends BaseController {
                 addDataPropertyAxiom("definition", sbj, newSense.getDefinition(), pm.getPrefixName2PrefixMap().get("skos:"));
             }
         }
-        saveOntologyReference(sbj, oldSense.getOWLClass(), newSense.getOWLClass());
+        //saveOntologyReference(sbj, oldSense.getOWLClass(), newSense.getOWLClass());
+        saveOntologyReference(sbj, oldSense.getThemeOWLClass(), newSense.getThemeOWLClass());
     }
 
     private void saveOntologyReference(OWLNamedIndividual sbj, Openable oldR, Openable newR) {
@@ -968,6 +988,28 @@ public class LexiconModel extends BaseController {
             if (oldR.isViewButtonDisabled()) {
                 removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
                         factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+            }
+        }
+    }
+
+    private void saveOntologyReference(OWLNamedIndividual sbj, ReferenceMenuTheme oldR, ReferenceMenuTheme newR) {
+        if (!newR.getName().equals(oldR.getName())) {
+            // they are different
+            if (!newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
+                // they are not empty
+                removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
+                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+                addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
+                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+            } else {
+                if (newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
+                    removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
+                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+                }
+                if (!newR.getName().isEmpty() && oldR.getName().isEmpty()) {
+                    addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
+                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+                }
             }
         }
     }
@@ -1075,7 +1117,7 @@ public class LexiconModel extends BaseController {
         if (!f.renameTo(bkp)) {
             throw new IOException("unable to rename " + bkp.getName());
         }
-        try ( FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
+        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + Label.LEXO_FOLDER
                 + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY))) {
             manager.saveOntology(ontology, fos);
             Runtime.getRuntime().exec("gzip " + bkp.getAbsolutePath());

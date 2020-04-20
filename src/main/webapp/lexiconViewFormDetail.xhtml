@@ -12,7 +12,8 @@
 
             <h:outputLabel id="lemmaLabel" styleClass="titleStyle" value="Lemma (*):"/>
             <h:panelGrid columns="4" cellpadding="0" cellspacing="0">
-                <p:keyboard id="lemmaName" styleClass="inputTextStyle" readonly="#{lexiconControllerFormDetail.locked}"
+                <p:keyboard id="lemmaName" styleClass="inputTextStyle" readonly="#{lexiconControllerFormDetail.locked}" 
+                            size="#{lexiconControllerFormDetail.lemma.formWrittenRepr.length() == 0 ? 20 : lexiconControllerFormDetail.lemma.formWrittenRepr.length()}"
                             value="#{lexiconControllerFormDetail.lemma.formWrittenRepr}"   
                             layoutTemplate="אבגדהוזחט,יכךלמםנןס,עפףצץקרשת,-space-space-space-space-space-space-space-space-space,اأإآءبتثج,حخدذرزسشص,ضطظعغفقكل,منهةوؤيىئ"
                             showMode="button" buttonImageOnly="true" buttonImage="/resources/image/keyboardpencil.png">
@@ -46,13 +47,13 @@
                     <h:panelGrid columns="4">
                         <p:graphicImage style="padding-right: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
                                         height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
-                        <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true"
+                        <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true" size="#{comp.label.length()}"
                                         value="#{comp.label}" forceSelection="true" readonly="#{lexiconControllerFormDetail.locked}"
                                         rendered="#{!comp.writtenRep.contains('not found')}"
                                         completeMethod="#{lexiconControllerFormDetail.completeComponents}">
                             <f:attribute name="currentComponent" value="#{comp}"/>
                             <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
-                                    update="lexicalEntryViewButtons :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
+                                    update="lemmaWord lexicalEntryViewButtons :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
                         </p:autoComplete>
                         <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
                                        rendered="#{comp.writtenRep.contains('not found')}"/>
@@ -75,7 +76,7 @@
                     <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerFormDetail.lexicaLanguages}" />
                 </p:selectOneMenu>
             </h:panelGrid>
-            
+
             <h:outputLabel styleClass="titleStyle" value="#{lexiconControllerFormDetail.lemma.type.equals('Word') ? 'Part of Speech:' : 'Type:'}" for="lemmaPoS"/>
             <p:selectOneMenu id="lemmaPoS" appendTo="lemmaPoS" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.poS}" 
                              rendered="#{!lexiconControllerFormDetail.locked}">
@@ -110,7 +111,7 @@
                                        or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective')}"/>
             <p:selectOneMenu id="lemmaNumber" appendTo="lemmaNumber" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.number}"
                              rendered="#{!lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma') or lexiconControllerFormDetail.lemma.poS.equals('verb')
-                                          or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective'))}">
+                                         or lexiconControllerFormDetail.lemma.poS.equals('nounPhrase')or lexiconControllerFormDetail.lemma.poS.equals('adjective') or lexiconControllerFormDetail.lemma.poS.equals('participleAdjective'))}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaNumberChanged}" update="lemmaButtons"/>
                 <f:selectItem itemLabel="No entry specified" itemValue="" />
                 <f:selectItems value="#{lexiconControllerFormDetail.number}" />
@@ -120,17 +121,17 @@
                          readonly="true"
                          rendered="#{lexiconControllerFormDetail.locked and (lexiconControllerFormDetail.lemma.poS.equals('noun') or lexiconControllerFormDetail.lemma.poS.equals('syntagma'))}"/>
 
-            
-            
-<!--            <h:outputLabel styleClass="titleStyle" value="Prova:" />
-            <p:selectOneMenu value="{lexiconControllerFormDetail.lemma.person}">
+
+
+            <h:outputLabel styleClass="titleStyle" value="Prova:" />
+            <p:selectOneMenu value="#{lexiconControllerFormDetail.lemma.person}">
                 <f:selectItem  itemLabel="No entry specified" itemValue="" />
-                <f:selectItems value="{lexiconControllerFormDetail.getPuppa('puppa')}" />
-            </p:selectOneMenu>-->
-            
-            
-            
-            
+                <f:selectItems value="#{lexiconControllerFormDetail.getPuppa('puppa')}" />
+            </p:selectOneMenu>
+
+
+
+
             <h:outputLabel id="lemmaPersonLabel" styleClass="titleStyle" value="Person:" 
                            rendered="#{lexiconControllerFormDetail.lemma.poS.equals('verb')}" />
             <p:selectOneMenu id="lemmaPerson" appendTo="lemmaPerson" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.person}"
@@ -193,6 +194,23 @@
                 </h:panelGrid>
             </ui:repeat>
 
+            <p:outputLabel styleClass="titleStyle" value="Denotes:" for="themeCustom" rendered="#{lexiconControllerFormDetail.lemma.OWLClass != null}"/>
+            <p:autoComplete id="themeCustom" value="#{lexiconControllerFormDetail.lemma.themeOWLClass}" 
+                            completeMethod="#{lexiconControllerSenseDetail.completeTheme}"
+                            var="theme" itemLabel="#{theme.name}" itemValue="#{theme}" converter="#{referenceMenuThemeConverter}" 
+                            forceSelection="true" maxResults="10"
+                            rendered="#{lexiconControllerFormDetail.lemma.OWLClass != null}">
+                <p:column>
+                    <h:graphicImage name="image/#{theme.type}Icon.png" alt="#{theme.name}" 
+                                    height="#{theme.type.contains('Property') ? 11 : 15}"  width="15" styleClass="ui-theme"/>
+                </p:column>
+
+                <p:column>
+                    <h:outputText value="#{theme.name}" />
+                </p:column>
+            </p:autoComplete>
+
+
             <h:outputLabel styleClass="verifiedStyle" value="Verified " rendered="#{!lexiconControllerFormDetail.newAction}"/>
             <p:selectBooleanCheckbox value="#{lexiconControllerFormDetail.lemma.verified}" rendered="#{!lexiconControllerFormDetail.newAction}"
                                      disabled="#{!lexiconControllerFormDetail.userEnable or lexiconControllerFormDetail.locked}">
@@ -208,16 +226,27 @@
                                 disabled="#{lexiconControllerFormDetail.newAction}" 
                                 update="FormDataList"  
                                 actionListener="#{lexiconControllerFormDetail.addForm()}"/>
+                    <p:menuitem styleClass="lexiconTabView" value="Add morphological traits ..." icon="fa fa-plus" 
+                                actionListener="#{lexiconControllerFormDetail.addMorphoTrait()}"
+                                onstart="PF('loadingDialog').show();"
+                                oncomplete="PF('dlgMorphoTrait').show();PF('loadingDialog').hide();"
+                                disabled="#{lexiconControllerFormDetail.newAction}" 
+                                update="LemmaPanelGrid"/>
                     <p:menuitem styleClass="lexiconTabView" value="Add new Sense" icon="fa fa-plus" 
                                 actionListener="#{lexiconControllerFormDetail.addSense()}"
                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                 disabled="#{lexiconControllerFormDetail.newAction}" 
                                 update=":editViewTab:lexiconSenseDetailForm:SenseDataList :systemMessage"/>
-                    <p:separator/>
                     <p:menuitem styleClass="lexiconTabView" value="Add new See also" icon="fa fa-plus" 
                                 actionListener="#{lexiconControllerFormDetail.addReference()}"
                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                 disabled="#{lexiconControllerFormDetail.newAction}" 
+                                update="LemmaPanelGrid"/>
+                    <p:separator/>
+                    <p:menuitem styleClass="lexiconTabView" value="Denote concept" icon="fa fa-plus" 
+                                actionListener="#{lexiconControllerFormDetail.addDenote()}"
+                                disabled="#{lexiconControllerFormDetail.newAction or (lexiconControllerSenseDetail.senses.size() > 0) or (lexiconControllerFormDetail.lemma.OWLClass != null)}" 
+                                onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                 update="LemmaPanelGrid"/>
                 </p:menu>
                 <p:commandButton title="Save Lemma" icon="fa fa-save" 
@@ -272,6 +301,7 @@
                 <h:outputLabel styleClass="titleStyle" value="Variant (*):" />
                 <h:panelGrid columns="2" cellpadding="0" cellspacing="0">
                     <p:keyboard id="formName" styleClass="inputTextStyle"  readonly="#{lexiconControllerFormDetail.locked}"
+                                size="#{form.formWrittenRepr.length() == 0 ? 20 : form.formWrittenRepr.length()}"
                                 value="#{form.formWrittenRepr}" layoutTemplate="אבגדהוזחט,יכךלמםנןס,עפףצץקרשת,-space-space-space-space-space-space-space-space-space,اأإآءبتثج,حخدذرزسشص,ضطظعغفقكل,منهةوؤيىئ,-clear-spacebar"
                                 showMode="button" buttonImageOnly="true" buttonImage="/resources/image/keyboardpencil.png">
                         <p:ajax event="change" listener="#{lexiconControllerFormDetail.formNameKeyupEvent}" update="formButtons errorForm" />
@@ -314,7 +344,7 @@
                 <h:panelGrid id="formButtons" columns="4" cellpadding="0"
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
-                         <p:commandButton title="Save form" icon="fa fa-save" 
+                    <p:commandButton title="Save form" icon="fa fa-save" 
                                      update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage
                                      :lexiconTabViewForm:tabView:formFilterLabel :editViewTab:lexiconViewDictionaryForm" 
                                      onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"

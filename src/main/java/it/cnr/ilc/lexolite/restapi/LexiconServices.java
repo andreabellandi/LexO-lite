@@ -88,7 +88,7 @@ public class LexiconServices {
     // params:
     //      lang (mandatory): language of lemmas
     //      startswith (optional): the chars the lemma starts with
-    //      class (optional): domain ontology class thelemma belgons to
+    //      class (optional): domain ontology class the lemma belgons to
     //      limit (optional): results set size
     // invocation: lexicon/lemmas?lang=string&class=string&limit=n
     public Response list(@QueryParam("lang") String lang, @QueryParam("startswith") String sw, @QueryParam("class") String clazz, @QueryParam("limit") int limit) {
@@ -145,7 +145,7 @@ public class LexiconServices {
         Matcher matcher = pattern.matcher(id);
         if (matcher.find()) {
             fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0]);
-            sds = lexiconManager.getSensesOfLemma(id);
+            sds = lexiconManager.getSensesOfLemma(id, null);
         } else {
             fds = null;
             sds = null;
@@ -258,7 +258,7 @@ public class LexiconServices {
     // invocation: lexicon/lemmaByRel?entry=acorus&rel=translation
     public Response getLemmaByRel(@QueryParam("entry") String entry, @QueryParam("rel") String rel, @QueryParam("lang") String lang) {
         JsonObject senseNumber = new JsonObject();
-        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma");
+        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null);
         for (SenseData sense : senses) {
             JsonObject lemmas = new JsonObject();
             switch (rel) {
@@ -371,17 +371,6 @@ public class LexiconServices {
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS").build();
-    }
-
-    private JsonObject getJSon(LemmaData l) {
-        JsonObject lemma = new JsonObject();
-        lemma.addProperty("writtenRep", l.getFormWrittenRepr());
-        lemma.addProperty("lang", l.getLanguage());
-        lemma.addProperty("type", l.getType());
-        lemma.addProperty("verified", l.getValid());
-        lemma.addProperty("id", l.getIndividual());
-        lemma.addProperty("partOfSpeech", l.getPoS());
-        return lemma;
     }
 
 }

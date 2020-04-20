@@ -42,6 +42,7 @@ public class SenseData implements Serializable {
         this.filedMaxLenght = 0;
         this.OWLClass = new Openable();
         this.themeOWLClass = new ReferenceMenuTheme();
+        this.themeOWLClass.setName("");
         this.definition = "";
         this.senseRels = new ArrayList();
         this.reifiedSenseRels = new ArrayList();

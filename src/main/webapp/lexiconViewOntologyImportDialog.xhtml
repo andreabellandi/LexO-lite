@@ -8,18 +8,25 @@
               modal="true">
         <h:form>
             <h:panelGrid columns="2" columnClasses="column" styleClass="advertiseRoundedBox">
-                <p:graphicImage value="/resources/image/alertIcon.png" height="30px" width="30px"/>
-                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['ontologyImport.advertise']}"/>
+                <p:graphicImage value="/resources/image/infoIcon.png" height="30px" width="30px"/>
+                <p:outputLabel style="font-size:13px !important; font-weight:bold;" value="#{label['ontologyImport.advertise']}"/>
             </h:panelGrid>
+
+            <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
+                <p:outputLabel styleClass="inputTextDeleteReferencesStyle" value="#{label['ontologyImport.deleteReferencesLabel']}"/>
+                <p:selectBooleanCheckbox value="#{lexiconControllerToolbar.deleteLexiconReferences}"/>
+            </h:panelGrid>
+
             <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
                 <p:outputLabel styleClass="ontologyImportFieldStyle" value="#{label['ontologyImport.label']}"/>
                 <p:fileUpload fileUploadListener="#{lexiconControllerToolbar.handleOntologyUpload}"
                               oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgOntologyUpload').hide();PF('loadingDialog').show();"
                               mode="advanced" dragDropSupport="false"
-                              sizeLimit="5000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"
+                              sizeLimit="50000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"
                               update=":lexiconTabViewForm:tabView:ontoFilterPanel :lexiconTabViewForm:tabView:ontoTree 
                               editViewTab:lexiconSenseDetailForm :editViewTab :systemMessage"/>    
             </h:panelGrid>
+
         </h:form>
     </p:dialog>
 

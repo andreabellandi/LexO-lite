@@ -83,7 +83,7 @@ public class LexicalQuery {
             + " PropertyValue(lexicon:_ENTRY_, dct:valid, ?v) }";
 
     public static final String LEMMA_POS = "SELECT ?pos WHERE {"
-            + " PropertyValue(lexicon:_LEMMA_, lexinfo:partOfSpeech, ?pos) }";
+            + " PropertyValue(lexicon:_ENTRY_, lexinfo:partOfSpeech, ?pos) }";
 
     public static final String LEMMA_GENDER = "SELECT ?g WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, lexinfo:gender, ?g) }";
@@ -96,6 +96,9 @@ public class LexicalQuery {
 
     public static final String LEMMA_MOOD = "SELECT ?m WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, lexinfo:mood, ?m) }";
+
+    public static final String ENTRY_DENOTES = "SELECT ?d WHERE {"
+            + " PropertyValue(lexicon:_ENTRY_, ontolex:denotes, ?d) }";
 
     public static final String LEMMA_NUMBER = "SELECT ?n WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, lexinfo:number, ?n) }";
@@ -127,7 +130,7 @@ public class LexicalQuery {
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, dct:valid, ?verified), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
-            + " PropertyValue(?individual, lexinfo:partOfSpeech, ?pos), "
+            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
 //    public static final String LEMMA_BASIC = "SELECT ?lang WHERE {"
@@ -140,7 +143,7 @@ public class LexicalQuery {
             + " PropertyValue(?le, dct:valid, ?verified), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
-            + " PropertyValue(?individual, lexinfo:partOfSpeech, ?pos)  }";
+            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos)  }";
 
     public static final String FORM_BASIC = "SELECT ?writtenRep ?individual ?lang ?lemma ?verified WHERE {"
             + " PropertyValue(?l, lime:language, ?lang), "
@@ -298,7 +301,7 @@ public class LexicalQuery {
     public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
             + " PropertyValue(?le, dct:valid, ?verified), "
-            + " PropertyValue(?individual, lexinfo:partOfSpeech, ?pos), "
+            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, ontolex:sense, ?sense) }";

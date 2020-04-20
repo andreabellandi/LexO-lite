@@ -9,6 +9,7 @@ import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
 import it.cnr.ilc.lexolite.manager.OntologyData.IndividualDetails;
 import it.cnr.ilc.lexolite.manager.OntologyData.Metadata;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.TreeNode;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -53,37 +55,41 @@ public class OntologyManager extends BaseController implements Serializable {
         return ontologyModel;
     }
 
+    public void persist(UploadedFile f) throws IOException {
+        ontologyModel.persist(f);
+    }
+
     public synchronized int getOntologyHierarchy(TreeNode ontoRoot) {
         if (ontologyModel != null) {
-        return ontologyModel.getOntologyHierarchy(ontoRoot);
+            return ontologyModel.getOntologyHierarchy(ontoRoot);
         }
         return 0;
     }
 
     public synchronized int getPropertyHierarchy(TreeNode ontoRoot) {
         if (ontologyModel != null) {
-        return ontologyModel.getPropertyHierarchy(ontoRoot);
-        } 
+            return ontologyModel.getPropertyHierarchy(ontoRoot);
+        }
         return 0;
     }
 
     public synchronized int getOntologyHierarchy(TreeNode ontoRoot, String nameToSelect) {
         if (ontologyModel != null) {
-        return ontologyModel.getOntologyHierarchy(ontoRoot, nameToSelect);
+            return ontologyModel.getOntologyHierarchy(ontoRoot, nameToSelect);
         }
         return 0;
     }
 
     public ArrayList<String> getOntologyClasses() {
         if (ontologyModel != null) {
-        return ontologyModel.getOntologyClasses();
+            return ontologyModel.getOntologyClasses();
         }
         return new ArrayList<>();
     }
 
     public String getOntologyID() {
         if (ontologyModel != null) {
-        return ontologyModel.getDomainOntology().getOntologyID().getOntologyIRI().get().toURI().toString();
+            return ontologyModel.getDomainOntology().getOntologyID().getOntologyIRI().get().toURI().toString();
         }
         return "";
     }
@@ -97,51 +103,55 @@ public class OntologyManager extends BaseController implements Serializable {
 
     public int getIndividualsNumber() {
         if (ontologyModel != null) {
-        return ontologyModel.getIndividualsNumber();
+            return ontologyModel.getIndividualsNumber();
         }
         return 0;
     }
 
     public int getOntologyDatatypePropertiesNumber() {
         if (ontologyModel != null) {
-        ontologyModel.getOntoDetails();
-        ontologyModel.getPropertyDetails();
-        return ontologyModel.getOntologyDatatypePropertiesNumber();
+            ontologyModel.getOntoDetails();
+            ontologyModel.getPropertyDetails();
+            return ontologyModel.getOntologyDatatypePropertiesNumber();
         }
         return 0;
     }
 
     public int getOntologyObjectPropertiesNumber() {
         if (ontologyModel != null) {
-        return ontologyModel.getOntologyObjectPropertiesNumber();
+            return ontologyModel.getOntologyObjectPropertiesNumber();
         }
         return 0;
     }
 
     public ArrayList<IndividualDetails> getIndividualsByClass(String clazz) {
         if (ontologyModel != null) {
-        return ontologyModel.getIndividualsByClass(clazz);
+            return ontologyModel.getIndividualsByClass(clazz);
         }
         return null;
     }
 
     public ArrayList<Metadata> getMetadataByClass(String clazz) {
         if (ontologyModel != null) {
-        return ontologyModel.getMetadataByClass(clazz);
+            return ontologyModel.getMetadataByClass(clazz);
         }
         return null;
     }
 
     public List<String> classesList() {
         if (ontologyModel != null) {
-        return ontologyModel.getClasses();
+            return ontologyModel.getClasses();
         }
         return null;
     }
 
     public List<ReferenceMenuTheme> ontologyEntities() {
         if (ontologyModel != null) {
-        return ontologyModel.getOntologyEntities();
+            if (ontologyModel.getOntoRefItems().size() > 0) {
+                return ontologyModel.getOntoRefItems();
+            } else {
+                return ontologyModel.getOntologyEntities();
+            }
         }
         return new ArrayList<>();
     }

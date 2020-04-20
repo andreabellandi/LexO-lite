@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 
 /**
@@ -38,6 +39,7 @@ public class LexiconControllerTabViewToolbar extends BaseController implements S
         for (String lang : languages) {
             model.addElement(getLanguageItemMenu(lang));
         }
+
     }
 
     private DefaultMenuItem getLanguageItemMenu(String lang) {

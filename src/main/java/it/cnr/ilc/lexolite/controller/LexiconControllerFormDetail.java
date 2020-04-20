@@ -10,6 +10,7 @@ import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
+import it.cnr.ilc.lexolite.manager.LemmaData.Openable;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -86,6 +88,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     //private final String ADMISSIBLE_WORD_REGEXP = "^[^\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&0-9\\s]+[0-9]*$";
     private final String ADMISSIBLE_WORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&\\d\\s]+\\d*$";
     private final String ADMISSIBLE_MULTIWORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&\\d]+$";
+    //writtenrep (pos)@lang
+    private final String MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP = "([aA-zZ]+)\\s\\(([aA-zZ]+)\\)@([aA-zZ]+)";
 
     public boolean isUserEnable() {
         return loginController.getAccount().getType().getName().equals(AccountManager.ADMINISTRATOR);
@@ -577,10 +581,12 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     private void setComponent(Map<String, String> m, Word w, int position) {
+        String _pos[] = m.get("individual").split("_" + m.get("lang"))[0].split("_");
+        String pos = _pos[_pos.length - 1];
         w.setWrittenRep(m.get("writtenRep"));
         w.setOWLName(m.get("individual"));
         w.setLanguage(m.get("lang"));
-        w.setLabel(w.getWrittenRep() + "@" + w.getLanguage());
+        w.setLabel(w.getWrittenRep() + " (" + pos + ")@" + w.getLanguage());
         w.setViewButtonDisabled(false);
         if (!isNewAction()) {
             String OWLComp = lexiconManager.getComponentAtPosition(lemma.getIndividual(), Integer.toString(position));
@@ -682,7 +688,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 //        lemma.setSaveButtonDisabled(isSavableLemma() || (lemma.getFormWrittenRepr().contains(" ")));
 //        lemma.setFormWrittenRepr(lemmaPart);
 //    }
-
     private void ckeckLemmaSavability() {
         if (!lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             lemma.setSaveButtonDisabled(isSavableLemma() || (!lemma.getFormWrittenRepr().contains(" ")));
@@ -1011,7 +1016,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
                 if (!wr.equals(currentLemma)) {
                     if (onlyMW) {
                         if (wr.contains(" ")) {
-                            filteredList.add(wr + "@" + m.get("lang"));
+                            filteredList.add(wr + " (" + m.get("pos") + ") @" + m.get("lang"));
                         }
                     } else {
                         if (seeAOc) {
@@ -1104,20 +1109,34 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         word.setViewButtonDisabled(false);
     }
 
-    // it queries the lexicon in order to get the name of the individual
+    // split w.getLabel() that contains 'writtenrep (pos)@lang'
     private void setWordOfMultiword(Word w) {
-        String splitted[] = w.getLabel().split("@");
-        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
-        String lang = splitted[1];
-        Word wd = lexiconManager.getLemma(lemma, lang);
-        w.setWrittenRep(wd.getWrittenRep());
-        w.setOWLName(wd.getOWLName().replace("_lemma", "_entry"));
-        w.setLanguage(wd.getLanguage());
-        w.setOWLComp(wd.getOWLComp());
-        w.setLabel(wd.getWrittenRep() + "@" + wd.getLanguage());
-    }
+        Pattern pattern = Pattern.compile(MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP);
+        Matcher matcher = pattern.matcher(w.getLabel());
+        String writtenRep = null;
+        String pos = null;
+        String lang = null;
+        while (matcher.find()) {
+            writtenRep = matcher.group(1);
+            pos = matcher.group(2);
+            lang = matcher.group(3);
+        }
+        w.setWrittenRep(writtenRep);
+        w.setOWLName(writtenRep + "_" + pos + "_" + lang + "_entry");
+        w.setLanguage(lang);
 
+//        String splitted[] = w.getLabel().split("@");
+//        String lemma = splitted[0].split("\\([aA-zZ]+\\)")[0].trim();
+//        String lang2 = splitted[1];
+//        Word wd = lexiconManager.getLemma(lemma, lang2);
+//        w.setWrittenRep(wd.getWrittenRep());
+//        w.setOWLName(wd.getOWLName().replace("_lemma", "_entry"));
+//        w.setLanguage(wd.getLanguage());
+//        w.setOWLComp(wd.getOWLComp());
+//        w.setLabel(wd.getWrittenRep() + "@" + wd.getLanguage());
+    }
     // invoked by the lemma box in order to get the details of a component of a multiword
+
     public void addEntryOfMultiwordComponent(Word lemma, String relType) {
         log(Level.INFO, loginController.getAccount(), "VIEW Deatils of multiword component " + lemma.getOWLName() + " of " + lemma.getWrittenRep());
         setMultiwordComponentButtons(lemma);
@@ -1161,6 +1180,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         }
     }
 
+    public void addMorphoTrait() {
+        log(Level.INFO, loginController.getAccount(), "ADD empty reference (seeAlso) to lemma " + lemma.getFormWrittenRepr());
+    }
+    
     // invoked by controller after an user selected add a reference (seeAlso) to lemma
     public void addReference() {
         log(Level.INFO, loginController.getAccount(), "ADD empty reference (seeAlso) to lemma " + lemma.getFormWrittenRepr());
@@ -1174,6 +1197,13 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.getSeeAlso().remove(reference);
         lemma.setSaveButtonDisabled(false);
         relationPanelCheck(reference.getOWLName());
+    }
+
+    public void addDenote() {
+        log(Level.INFO, loginController.getAccount(), "ADD empty denote to lemma " + lemma.getFormWrittenRepr());
+        Openable denote = new Openable();
+        denote.setViewButtonDisabled(true);
+        lemma.setOWLClass(denote);
     }
 
     public void relationPanelCheck(String OWLName) {

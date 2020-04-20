@@ -350,6 +350,14 @@ public class LexiconQuery extends BaseController {
         if (!ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             ld.setMultiword(getLemmaMultiword(lemma, ld.getFormWrittenRepr()));
         }
+        String ontoClass = getDenotes(lemma);
+        if (!ontoClass.equals(Label.NO_ENTRY_FOUND)) {
+            LemmaData.Openable op = new LemmaData.Openable();
+            op.setName(ontoClass);
+            op.setViewButtonDisabled(true);
+            ld.setOWLClass(op);
+        }
+
     }
 
     private String getLemmaNote(String lemma) {
@@ -396,11 +404,13 @@ public class LexiconQuery extends BaseController {
         } else {
             // the word exists as lexical entry
             for (Map<String, String> w : word) {
+                String _pos[] = w.get("individual").split("_" + w.get("lang"))[0].split("_");
+                String pos = _pos[_pos.length - 1];
                 _w.setWrittenRep(w.get("writtenRep"));
                 _w.setOWLName(w.get("individual"));
                 _w.setLanguage(w.get("lang"));
                 _w.setOWLComp(OWLComponentIndividual);
-                _w.setLabel(_w.getWrittenRep() + "@" + _w.getLanguage());
+                _w.setLabel(_w.getWrittenRep() + " (" + pos + ")@" + _w.getLanguage());
             }
         }
         return _w;
@@ -463,14 +473,14 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    public ArrayList<SenseData> getSensesOfLemma(String lemma) {
+    public ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
-                senseData(sense, sd);
+                senseData(sense, sd, l);
                 sdList.add(sd);
             }
         }
@@ -482,7 +492,8 @@ public class LexiconQuery extends BaseController {
         for (SenseData sd : asd) {
             SenseData senseCopy = new SenseData();
             senseCopy.setName(sd.getName());
-            senseCopy.setOWLClass(sd.getOWLClass());
+            //senseCopy.setOWLClass(sd.getOWLClass());
+            senseCopy.setThemeOWLClass(sd.getThemeOWLClass());
             senseCopy.setDefinition(sd.getDefinition());
             getOntoMapping(sd, senseCopy);
             alsd.add(senseCopy);
@@ -519,7 +530,8 @@ public class LexiconQuery extends BaseController {
         for (SenseData sd : asd) {
             SenseData senseCopy = new SenseData();
             senseCopy.setName(sd.getName());
-            senseCopy.setOWLClass(sd.getOWLClass());
+            //senseCopy.setOWLClass(sd.getOWLClass());
+            senseCopy.setThemeOWLClass(sd.getThemeOWLClass());
             senseCopy.setDefinition(sd.getDefinition());
             getSenseRelation(sd, senseCopy);
             getSenseReifiedRelation(sd, senseCopy);
@@ -565,14 +577,14 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getSensesOfForm(String form) {
+    public ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_FORM.replace("_FORM_", form)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
-                senseData(sense, sd);
+                senseData(sense, sd, l);
                 sdList.add(sd);
             }
         }
@@ -584,11 +596,12 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    private void senseData(String sense, SenseData sd) {
+    private void senseData(String sense, SenseData sd, List<ReferenceMenuTheme> l) {
         sd.setName(sense);
         sd.setDefinition(getDefinition(sense));
         sd.setNote(getSenseNote(sense));
-        sd.setOWLClass(getOntoClass(sense));
+        //sd.setOWLClass(getOntoClass(sense));
+        sd.setThemeOWLClass(getOntoClass(sense, l));
         setFieldMaxLenght(sd.getName(), sd);
         setFieldMaxLenght(sd.getOWLClass(), sd);
         sd.setFiledMaxLenght((sd.getFiledMaxLenght() > FIELD_MAX_LENGHT) ? FIELD_MAX_LENGHT : sd.getFiledMaxLenght());
@@ -614,14 +627,14 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getOtherSenses(String sense) {
+    public ArrayList<SenseData> getOtherSenses(String sense, List<ReferenceMenuTheme> l) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.OTHER_INSTANCES_OF_SENSES.replace("_SENSE_", sense)));
         Collections.sort(results);
         for (String s : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
-                senseData(s, sd);
+                senseData(s, sd, l);
                 sdList.add(sd);
             }
         }
@@ -643,7 +656,7 @@ public class LexiconQuery extends BaseController {
     }
 
     private String getLemmaPoS(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_POS, "_LEMMA_", lemma);
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_POS, "_ENTRY_", lemma.replace("_lemma", "_entry"));
     }
 
     private String getEntryVerified(String lemma) {
@@ -721,13 +734,41 @@ public class LexiconQuery extends BaseController {
 //        }
 //        return sdoList;
 //    }
-    private Openable getOntoClass(String sense) {
-        Openable ref = new Openable();
+//    private Openable getOntoClass(String sense) {
+//        Openable ref = new Openable();
+//        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+//                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
+//        ref.setName(ontoClass.equals(Label.NO_ENTRY_FOUND) ? "" : ontoClass);
+//        ref.setViewButtonDisabled(!ontoClass.equals(Label.NO_ENTRY_FOUND));
+//        return ref;
+//    }
+    private ReferenceMenuTheme getOntoClass(String sense, List<ReferenceMenuTheme> l) {
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
                 + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
-        ref.setName(ontoClass.equals(Label.NO_ENTRY_FOUND) ? "" : ontoClass);
-        ref.setViewButtonDisabled(!ontoClass.equals(Label.NO_ENTRY_FOUND));
-        return ref;
+        if (!ontoClass.equals(Label.NO_ENTRY_FOUND)) {
+            if (l != null) {
+                rmt = getReferenceItem(l, ontoClass);
+            }
+        }
+        return rmt;
+    }
+
+    private ReferenceMenuTheme getReferenceItem(List<ReferenceMenuTheme> l, String entity) {
+        ReferenceMenuTheme _rmt = new ReferenceMenuTheme();
+        for (ReferenceMenuTheme rmt : l) {
+            if (rmt.getName().equals(entity)) {
+                _rmt.setName(rmt.getName());
+                _rmt.setId(rmt.getId());
+                _rmt.setType(ReferenceMenuTheme.itemType.valueOf(rmt.getType()));
+                return _rmt;
+            }
+        }
+        return _rmt;
+    }
+
+    private String getDenotes(String lemma) {
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ENTRY_DENOTES, "_ENTRY_", lemma.replace("_lemma", "_entry"));
     }
 
     private String getLemmaGender(String lemma) {

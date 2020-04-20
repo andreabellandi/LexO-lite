@@ -28,6 +28,9 @@ public class LemmaData implements Serializable {
     private String type;
     private String note;
     private String valid;
+    // if view button is true a reference has been specified, else it is false
+    private Openable OWLClass = null;
+    private ReferenceMenuTheme themeOWLClass;
     private boolean verified;
     private ArrayList<Word> seeAlso = new ArrayList();
     private ArrayList<Word> multiword = new ArrayList();
@@ -43,6 +46,22 @@ public class LemmaData implements Serializable {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
         this.verified = false;
+    }
+
+    public ReferenceMenuTheme getThemeOWLClass() {
+        return themeOWLClass;
+    }
+
+    public void setThemeOWLClass(ReferenceMenuTheme themeOWLClass) {
+        this.themeOWLClass = themeOWLClass;
+    }
+
+    public Openable getOWLClass() {
+        return OWLClass;
+    }
+
+    public void setOWLClass(Openable OWLClass) {
+        this.OWLClass = OWLClass;
     }
 
     public String getPerson() {
@@ -226,6 +245,7 @@ public class LemmaData implements Serializable {
         this.lexRels.clear();
         this.reifiedLexRels.clear();
         this.synFrames.clear();
+        this.OWLClass = null;
     }
 
     public static class Word {
@@ -648,6 +668,49 @@ public class LemmaData implements Serializable {
 
         public void setOptional(boolean optional) {
             this.optional = optional;
+        }
+
+    }
+
+    public static class Openable {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String name;
+
+        public Openable() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.name = "";
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getName() {
+            name = name.replaceAll("_APOS_", "'");
+            name = name.replaceAll("OB_", "(");
+            name = name.replaceAll("_CB", ")");
+            name = name.replaceAll("OSB_", "[");
+            name = name.replaceAll("_CSB", "]");
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
     }

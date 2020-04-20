@@ -6,6 +6,8 @@
 package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.manager.PropertyValue;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme.itemType;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,8 +54,6 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
     public void setRendered(boolean rendered) {
         this.rendered = rendered;
     }
-    
-    
 
     public String getLexicalAspectActive() {
         return lexicalAspectActive;
@@ -131,9 +131,16 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
     private SenseData getSenseCopy(SenseData sd) {
         SenseData _sd = new SenseData();
         _sd.setName(sd.getName());
-        SenseData.Openable ref = new SenseData.Openable();
-        ref.setName(sd.getOWLClass().getName());
-        _sd.setOWLClass(ref);
+
+//        SenseData.Openable ref = new SenseData.Openable();
+//        ref.setName(sd.getOWLClass().getName());
+//        _sd.setOWLClass(ref);
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+        rmt.setId(sd.getThemeOWLClass().getId());
+        rmt.setName(sd.getThemeOWLClass().getName());
+        rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
+        _sd.setThemeOWLClass(rmt);
+
         return _sd;
     }
 

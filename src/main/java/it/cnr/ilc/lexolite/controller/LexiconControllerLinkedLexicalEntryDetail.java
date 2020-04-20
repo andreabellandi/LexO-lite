@@ -14,6 +14,7 @@ import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.LexiconQuery;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.IOException;
 import java.io.Serializable;
@@ -320,11 +321,16 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         ArrayList<SenseData.Openable> syns = new ArrayList();
         ArrayList<SenseData.Openable> translations = new ArrayList();
         ArrayList<SenseData.Openable> translationsOf = new ArrayList();
-        SenseData.Openable _OWLClass = new SenseData.Openable();
-        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
-        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
-        _OWLClass.setName(sd.getOWLClass().getName());
-        _sd.setOWLClass(_OWLClass);
+//        SenseData.Openable _OWLClass = new SenseData.Openable();
+//        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
+//        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
+//        _OWLClass.setName(sd.getOWLClass().getName());
+//        _sd.setOWLClass(_OWLClass);
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+        rmt.setId(sd.getThemeOWLClass().getId());
+        rmt.setName(sd.getThemeOWLClass().getName());
+         rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
+        _sd.setThemeOWLClass(rmt);
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
         return _sd;
@@ -336,7 +342,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         createLemmaCopy();
         forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage()));
         addFormCopy(forms);
-        senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual()));
+        senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual(), null));
         addSenseCopy(senses);
     }
 
@@ -364,7 +370,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         createLemmaCopy();
         forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage()));
         addFormCopy(forms);
-        senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual()));
+        senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual(), null));
         addSenseCopy(senses);
     }
 

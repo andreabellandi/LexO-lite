@@ -64,6 +64,16 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     @Inject
     private LoginController loginController;
 
+    private boolean deleteLexiconReferences;
+
+    public boolean isDeleteLexiconReferences() {
+        return deleteLexiconReferences;
+    }
+
+    public void setDeleteLexiconReferences(boolean deleteLexiconReferences) {
+        this.deleteLexiconReferences = deleteLexiconReferences;
+    }
+
     public void newLanguage() {
         lexiconControllerLanguageDetail.clear();
         log(Level.INFO, loginController.getAccount(), "NEW Language panel opened ");
@@ -143,24 +153,29 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     }
 
     public synchronized void handleOntologyUpload(FileUploadEvent event) throws IOException, OWLOntologyStorageException {
-        String previousNamespace = LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY);
+        String msg = "is uploaded.";
+        //String previousNamespace = LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY);
         ontologyManager.loadDomainOntology(event);
         LexOliteProperty.setProperty(Label.ONTOLOGY_NAMESPACE_KEY, ontologyManager.getOntologyID() + "#");
         LexOliteProperty.setProperty(Label.ONTOLOGY_FILE_NAME_KEY, event.getFile().getFileName());
-        String currentNamespace = ontologyManager.getOntologyID() + "#";
+        //String currentNamespace = ontologyManager.getOntologyID() + "#";
         try {
             LexOliteProperty.save();
         } catch (IOException ex) {
             Logger.getLogger(LexiconControllerToolbar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         lexiconCreationControllerTabViewList.initDomainOntologyTabView();
-        if (previousNamespace != null) {
-            if (!previousNamespace.equals(currentNamespace)) {
-                lexiconManager.deleteOntologyRefernces();
-            }
+        //if (previousNamespace != null) {
+        //if (!previousNamespace.equals(currentNamespace) && deleteLexiconReferences) {
+        if (deleteLexiconReferences) {
+            lexiconManager.deleteOntologyReferences();
+            msg = "is uploaded. References deleted.";
         }
+
+        //}
+        //}
         LexOliteProperty.load();
-        FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
+        FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + msg);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 

@@ -15,13 +15,17 @@ public class ReferenceMenuTheme {
         clazz,
         objectProperty,
         dataProperty,
-        instance;
+        instance,
+        none;
     }
     private int id;
     private itemType type;
     private String name;
 
     public ReferenceMenuTheme() {
+        this.id = 0;
+        this.name = "";
+        this.type = itemType.none;
     }
 
     public ReferenceMenuTheme(int id, itemType type, String name) {

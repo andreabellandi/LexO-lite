@@ -11,6 +11,7 @@ import it.cnr.ilc.lexolite.manager.LemmaData.SynArg;
 import it.cnr.ilc.lexolite.manager.LemmaData.SynFrame;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import java.io.IOException;
@@ -101,7 +102,12 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         for (SenseData sd : sensesSynSem) {
             SenseData _sd = new SenseData();
             _sd.setName(sd.getName());
-            _sd.setOWLClass(sd.getOWLClass());
+            //_sd.setOWLClass(sd.getOWLClass());
+            ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+            rmt.setId(sd.getThemeOWLClass().getId());
+            rmt.setName(sd.getThemeOWLClass().getName());
+         rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
+            _sd.setThemeOWLClass(rmt);
             _sd.setDefinition(sd.getDefinition());
             if (sd.getOntoMap() != null) {
                 _sd.setOntoMap(copySynSemOntoMaps(sd.getOntoMap()));
@@ -153,7 +159,7 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         for (SynFrame frame : lexiconControllerSynSemFormDetail.getLemmaSynSem().getSynFrames()) {
             if (selectedFrame.equals(frame.getName())) {
                 for (SynArg sa : frame.getSynArgs()) {
-                    synArgs.add(sa.getName()); 
+                    synArgs.add(sa.getName());
                 }
             }
         }
@@ -218,11 +224,16 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
 
     private SenseData copySenseData(SenseData sd) {
         SenseData _sd = new SenseData();
-        SenseData.Openable _OWLClass = new SenseData.Openable();
-        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
-        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
-        _OWLClass.setName(sd.getOWLClass().getName());
-        _sd.setOWLClass(_OWLClass);
+//        SenseData.Openable _OWLClass = new SenseData.Openable();
+//        _OWLClass.setDeleteButtonDisabled(sd.getOWLClass().isDeleteButtonDisabled());
+//        _OWLClass.setViewButtonDisabled(sd.getOWLClass().isViewButtonDisabled());
+//        _OWLClass.setName(sd.getOWLClass().getName());
+//        _sd.setOWLClass(_OWLClass);
+        ReferenceMenuTheme rmt = new ReferenceMenuTheme();
+        rmt.setId(sd.getThemeOWLClass().getId());
+        rmt.setName(sd.getThemeOWLClass().getName());
+        rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
+        _sd.setThemeOWLClass(rmt);
         _sd.setDefinition(sd.getDefinition());
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
@@ -235,7 +246,7 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         _sd.setOntoMap(om);
         return _sd;
     }
-    
+
     public void resetSenseDetails() {
         sensesSynSem.clear();
         sensesSynSemCopy.clear();
