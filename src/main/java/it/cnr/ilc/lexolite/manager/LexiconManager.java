@@ -37,6 +37,8 @@ public class LexiconManager extends BaseController implements Serializable {
 
     @Inject
     private LoginController loginController;
+    @Inject
+    private PropertyValue propertyValue;
 
     private static LexiconModel lexiconModel;
     private static LexiconQuery lexiconQuery;
@@ -79,11 +81,11 @@ public class LexiconManager extends BaseController implements Serializable {
     public String getLexiconNamespace() {
         if (lexiconModel != null) {
             //if (!lexiconModel.getOntology().getOntologyID().getOntologyIRI().isEmpty()) {
-             //   return lexiconModel.getOntology().getOntologyID().getOntologyIRI().get().toURI().toString();
-           // } else {
-                OWLDocumentFormat format = lexiconModel.getManager().getOntologyFormat(lexiconModel.getOntology());
-                OWLOntologyXMLNamespaceManager nsManager = new OWLOntologyXMLNamespaceManager(lexiconModel.getOntology(), format);
-                return nsManager.getDefaultNamespace();
+            //   return lexiconModel.getOntology().getOntologyID().getOntologyIRI().get().toURI().toString();
+            // } else {
+            OWLDocumentFormat format = lexiconModel.getManager().getOntologyFormat(lexiconModel.getOntology());
+            OWLOntologyXMLNamespaceManager nsManager = new OWLOntologyXMLNamespaceManager(lexiconModel.getOntology(), format);
+            return nsManager.getDefaultNamespace();
             //}
         } else {
             return "";
@@ -316,6 +318,10 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getLemmaAttributes(lemma, morphoTraits);
     }
 
+    public synchronized LemmaData getLemmaAttributes(String lemma) {
+        return lexiconQuery.getLemmaAttributes(lemma, propertyValue.getMorphoTrait());
+    }
+
     // invoked in order to retrieve the data of the lemma involved in sublemma or collocation relation
     public synchronized Word getLemma(String lemma, String lang) {
         return lexiconQuery.getLemma(lemma, lang);
@@ -333,6 +339,10 @@ public class LexiconManager extends BaseController implements Serializable {
 
     public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
         return lexiconQuery.getFormsOfLemma(lemma, lang, morphoTraits);
+    }
+
+    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang) {
+        return lexiconQuery.getFormsOfLemma(lemma, lang, propertyValue.getMorphoTrait());
     }
 
     public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {

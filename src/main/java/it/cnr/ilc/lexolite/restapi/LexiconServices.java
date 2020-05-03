@@ -57,9 +57,6 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
  */
 @Path("/")
 public class LexiconServices {
-
-    @Inject
-    private PropertyValue propertyValue;
     
     private LexiconManager lexiconManager = LexiconManager.getInstance();
 
@@ -144,12 +141,12 @@ public class LexiconServices {
     // params: none
     // invocation: lexicon/id=lemma-id
     public Response getLemma(@QueryParam("id") String id) {
-        LemmaData ld = lexiconManager.getLemmaAttributes(id, propertyValue.getMorphoTrait());
+        LemmaData ld = lexiconManager.getLemmaAttributes(id);
         ArrayList<FormData> fds;
         ArrayList<SenseData> sds;
         Matcher matcher = pattern.matcher(id);
         if (matcher.find()) {
-            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0], propertyValue.getMorphoTrait());
+            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0]);
             sds = lexiconManager.getSensesOfLemma(id, null);
         } else {
             fds = null;

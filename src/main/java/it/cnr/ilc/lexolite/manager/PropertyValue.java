@@ -26,6 +26,7 @@ import javax.faces.model.SelectItemGroup;
 public class PropertyValue {
 
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
+
     private ArrayList<String> lemmaInfo;
     private ArrayList<String> alphabet;
     private ArrayList<String> PoS;
@@ -319,7 +320,7 @@ public class PropertyValue {
         morphoTraitList.put("termType", "sku");
         morphoTraitList.put("termType", "string");
         morphoTraitList.put("termType", "symbol");
-        
+
         morphoTraitList.put("verbFormMood", "conditional");
         morphoTraitList.put("verbFormMood", "gerundive");
         morphoTraitList.put("verbFormMood", "imperative");
@@ -338,7 +339,7 @@ public class PropertyValue {
         PoS.add("preposition");
         PoS.add("noun");
         PoS.add("verb");
-        
+
         multiwordType = new ArrayList<String>();
         multiwordType.add("nounPhrase");
         multiwordType.add("verbPhrase");
