@@ -58,7 +58,7 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 @Path("/")
 public class LexiconServices {
     
-    private LexiconManager lexiconManager = LexiconManager.getInstance();
+    private final LexiconManager lexiconManager = LexiconManager.getInstance();
 
     public static Pattern pattern = Pattern.compile("([a-z]+_lemma)");
 
