@@ -7,7 +7,7 @@
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:lexinfo="https://www.lexinfo.net/ontology/2.0/lexinfo#"
+     xmlns:lexinfo="https://www.lexinfo.net/ontology/3.0/lexinfo#"
      xmlns:decomp="http://www.w3.org/ns/lemon/decomp#"
      xmlns:dcr="http://www.isocat.org/ns/dcr.rdf#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"

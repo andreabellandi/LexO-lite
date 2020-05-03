@@ -14,12 +14,16 @@
                     <p:menuitem value="Language" styleClass="lexiconTabView"
                                 actionListener="#{lexiconControllerToolbar.newLanguage()}"
                                 onstart="PF('loadingDialog').show();"
-                                oncomplete="PF('newLanguageDialog').show();PF('loadingDialog').hide();"
+                                oncomplete="setHeight();PF('newLanguageDialog').show();PF('loadingDialog').hide();"
                                 update=":newLanguagePanel"/>
                     <p:submenu styleClass="lexiconTabView" label="Lemma">
-                        <p:menuitem value="Word" styleClass="lexiconTabView" icon="fa fa-plus" action="#{lexiconControllerToolbar.newLemma('Word')}"
+                        <p:menuitem value="Word" styleClass="lexiconTabView" icon="fa fa-plus" 
+                                    action="#{lexiconControllerToolbar.newLemma('Word')}"
+                                    oncomplete="setHeight();"
                                     update=":editViewTab"/>
-                        <p:menuitem value="Multiword" icon="fa fa-plus" styleClass="lexiconTabView" action="#{lexiconControllerToolbar.newLemma('Multiword')}"
+                        <p:menuitem value="Multiword" icon="fa fa-plus" styleClass="lexiconTabView" 
+                                    action="#{lexiconControllerToolbar.newLemma('Multiword')}"
+                                    oncomplete="setHeight();"
                                     update=":editViewTab"/>
                     </p:submenu> 
                 </p:tieredMenu>
@@ -30,12 +34,12 @@
                     <p:menuitem value="Lexicon" styleClass="lexiconTabView"
                                 actionListener="#{lexiconControllerToolbar.lexiconImport()}"
                                 onstart="PF('loadingDialog').show();"
-                                oncomplete="PF('dlgLexiconUpload').show();PF('loadingDialog').hide();"
+                                oncomplete="setHeight();PF('dlgLexiconUpload').show();PF('loadingDialog').hide();"
                                 update=":lexiconUploadPanel"/>
                     <p:menuitem value="Ontology" 
                                 actionListener="#{lexiconControllerToolbar.ontologyImport()}"
                                 onstart="PF('loadingDialog').show();"
-                                oncomplete="PF('dlgOntologyUpload').show();PF('loadingDialog').hide();"
+                                oncomplete="setHeight();PF('dlgOntologyUpload').show();PF('loadingDialog').hide();"
                                 update="ontologyUploadPanel"/>
                 </p:tieredMenu>
 

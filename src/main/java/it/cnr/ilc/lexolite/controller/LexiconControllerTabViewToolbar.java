@@ -62,6 +62,5 @@ public class LexiconControllerTabViewToolbar extends BaseController implements S
         }
         return model;
     }
-    
 
 }

@@ -653,14 +653,10 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                 return "color: #F6CECE;";
             case "he":
                 return "color: #5858FA;";
-            case "ar":
-                return "color: #9AFE2E;";
             case "de":
                 return "color: #FACC2E;";
-            case "gr":
-                return "color: #AC58FA;";
             case "en":
-                return "color: #AC58FA;";
+                return "color: #9AFE2E;";
         }
         return "color: #9E9E9E";
     }

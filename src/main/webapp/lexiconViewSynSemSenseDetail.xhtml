@@ -78,7 +78,7 @@
                         <p:menuitem styleClass="lexiconTabView" value="#{label['synsem.lemmaButton.subMap']}" icon="fa fa-plus"  
                                     actionListener="#{lexiconControllerVarTransSenseDetail.addIndirectTranslation(sense)}"
                                     update=":editViewTab:lexiconSynSemSenseDetailForm"
-                                    disabled="#{lexiconControllerSynSemSenseDetail.ontoSubMappingDisabled(sense)}"/>
+                                    disabled="#{lexiconControllerSynSemSenseDetail.ontoSubMappingDisabled(sense) or true}"/>
                     </p:menu>
                     <p:commandButton title="Save" icon="fa fa-save" id="saveSense"
                                      update="SenseSynSemDataList

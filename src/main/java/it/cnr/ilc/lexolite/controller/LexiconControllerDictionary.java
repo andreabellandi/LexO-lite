@@ -66,6 +66,14 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         return morpho.toString();
     }
 
+    private String getMorphoTraits(ArrayList<LemmaData.MorphoTrait> almt) {
+        StringBuilder morpho = new StringBuilder();
+        for (LemmaData.MorphoTrait mt : almt) {
+            morpho.append(mt.getValue()).append(" ");
+        }
+        return morpho.toString().trim();
+    }
+
     private String getLemma() {
         String ret;
         if (null != lexiconCreationControllerFormDetail) {
@@ -78,32 +86,17 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         return "unknown";
     }
 
+    private ArrayList<LemmaData.MorphoTrait> getMorphoTraits() {
+        return lexiconCreationControllerFormDetail.getLemma().getMorphoTraits();
+    }
+
     private String getPos() {
         return lexiconCreationControllerFormDetail.getLemma().getPoS().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getPoS();
     }
 
-    private String getGender() {
-        return lexiconCreationControllerFormDetail.getLemma().getGender().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getGender();
-    }
-
-    private String getNumber() {
-        return lexiconCreationControllerFormDetail.getLemma().getNumber().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getNumber();
-    }
-
-    private String getPerson() {
-        return lexiconCreationControllerFormDetail.getLemma().getPerson().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getPerson();
-    }
-
-    private String getMood() {
-        return lexiconCreationControllerFormDetail.getLemma().getMood().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getMood();
-    }
-
-    private String getVoice() {
-        return lexiconCreationControllerFormDetail.getLemma().getVoice().equals("No entry specified") ? "" : lexiconCreationControllerFormDetail.getLemma().getVoice();
-    }
-
     private String getTraits() {
-        return getMorphoTraits(getPos(), getGender(), getNumber(), getPerson(), getMood(), getVoice());
+        return getMorphoTraits(getMorphoTraits());
+        //return getMorphoTraits(getPos(), getGender(), getNumber(), getPerson(), getMood(), getVoice());
     }
 
     public String getLemmaGramGrpInfo(String lemmaId, String lemmaClassName, String expClassName, String gramGrpClassName) {

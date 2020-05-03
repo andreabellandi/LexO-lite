@@ -63,12 +63,13 @@
                             <p:outputLabel id="formFilterLabel" value="#{lexiconControllerTabViewList.formCounter}" styleClass="filterLabel" for="formFilter"/>
                     </h:panelGrid>
                     <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+                    
                     <ui:include src="/lexiconViewFormFilter.xhtml"/>
-                    <p:scrollPanel  id="scrollPanelFormTree" mode="native" style="overflow-x: hidden; overflow-y: auto;" styleClass="roundedBox">
+                    <p:scrollPanel  id="scrollPanelFormTree" mode="native" styleClass="roundedBox">
                         <p:tree id="formTree" value="#{lexiconControllerTabViewList.formRoot}" var="form" selectionMode="single" 
                                 selection="#{lexiconControllerTabViewList.selection}">
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
-                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                     update=":editViewTab :systemMessage"/>
                             <f:attribute name="LexicalEntryType" value="Form" />
                             <p:treeNode>
@@ -93,7 +94,7 @@
                         <p:tree id="ontoTree" value="#{lexiconControllerTabViewList.ontoRoot}" var="ontoClass" selectionMode="single"
                                 selection="#{lexiconControllerTabViewList.selection}" >
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onOntoSelect}"
-                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                     update=":editViewTab :systemMessage"/>
                             <f:attribute name="Onto" value="Onto"/>
                             <p:treeNode>

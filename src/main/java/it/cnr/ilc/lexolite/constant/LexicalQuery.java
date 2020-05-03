@@ -53,21 +53,6 @@ public class LexicalQuery {
     public static final String FORM_POS = "SELECT ?pos WHERE {"
             + " PropertyValue(lexicon:_FORM_, lexinfo:partOfSpeech, ?pos) }";
 
-    public static final String FORM_GENDER = "SELECT ?g WHERE {"
-            + " PropertyValue(lexicon:_FORM_, lexinfo:gender, ?g) }";
-
-    public static final String FORM_PERSON = "SELECT ?p WHERE {"
-            + " PropertyValue(lexicon:_FORM_, lexinfo:person, ?p) }";
-
-    public static final String FORM_MOOD = "SELECT ?m WHERE {"
-            + " PropertyValue(lexicon:_FORM_, lexinfo:mood, ?m) }";
-
-    public static final String FORM_VOICE = "SELECT ?v WHERE {"
-            + " PropertyValue(lexicon:_FORM_, lexinfo:voice, ?v) }";
-
-    public static final String FORM_NUMBER = "SELECT ?n WHERE {"
-            + " PropertyValue(lexicon:_FORM_, lexinfo:number, ?n) }";
-
     public static final String SENSES_OF_LEMMA = "SELECT ?s WHERE {"
             + " PropertyValue(?l, ontolex:canonicalForm, lexicon:_LEMMA_),"
             + " PropertyValue(?l, ontolex:sense, ?s) }";
@@ -84,18 +69,6 @@ public class LexicalQuery {
 
     public static final String LEMMA_POS = "SELECT ?pos WHERE {"
             + " PropertyValue(lexicon:_ENTRY_, lexinfo:partOfSpeech, ?pos) }";
-
-    public static final String LEMMA_GENDER = "SELECT ?g WHERE {"
-            + " PropertyValue(lexicon:_LEMMA_, lexinfo:gender, ?g) }";
-
-    public static final String LEMMA_PERSON = "SELECT ?p WHERE {"
-            + " PropertyValue(lexicon:_LEMMA_, lexinfo:person, ?p) }";
-
-    public static final String LEMMA_VOICE = "SELECT ?v WHERE {"
-            + " PropertyValue(lexicon:_LEMMA_, lexinfo:voice, ?v) }";
-
-    public static final String LEMMA_MOOD = "SELECT ?m WHERE {"
-            + " PropertyValue(lexicon:_LEMMA_, lexinfo:mood, ?m) }";
 
     public static final String ENTRY_DENOTES = "SELECT ?d WHERE {"
             + " PropertyValue(lexicon:_ENTRY_, ontolex:denotes, ?d) }";
@@ -193,6 +166,12 @@ public class LexicalQuery {
             + "PropertyValue(?_le, rdf:seeAlso, ?le),   "
             + "PropertyValue(?le, ontolex:canonicalForm, ?individual),  "
             + "PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
+
+    public static final String LEMMA_MORPHO_TRAITS = "SELECT ?trait ?value WHERE { "
+            + "PropertyValue(lexicon:_LEMMA_, ?trait, ?value) }";
+
+    public static final String FORM_MORPHO_TRAITS = "SELECT ?trait ?value WHERE { "
+            + "PropertyValue(lexicon:_FORM_, ?trait, ?value) }";
 
     public static final String CONSTITUENTS = "SELECT ?constituent ?position WHERE { "
             + "PropertyValue(lexicon:_ENTRY_, decomp:constituent, ?constituent), "

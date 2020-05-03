@@ -198,12 +198,12 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
 
     public boolean ontoMappingDisabled(SenseData sd) {
         return (lexiconControllerSynSemFormDetail.getLemmaSynSem().getSynFrames().isEmpty())
-                || (sd.getOWLClass().getName().length() == 0) || (sd.getOntoMap() != null);
+                || (sd.getThemeOWLClass().getName().isEmpty()) || (sd.getOntoMap() != null);
     }
 
     public boolean ontoSubMappingDisabled(SenseData sd) {
         return (lexiconControllerSynSemFormDetail.getLemmaSynSem().getSynFrames().isEmpty())
-                || (sd.getOWLClass().getName().length() == 0) || (!sd.getSubOntoMap().isEmpty())
+                || (sd.getThemeOWLClass().getName().isEmpty()) || (!sd.getSubOntoMap().isEmpty())
                 || (sd.getOntoMap() != null);
     }
 

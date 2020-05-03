@@ -149,6 +149,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
+
     public LexiconManager getLexiconManager() {
         return lexiconManager;
     }
@@ -247,12 +248,8 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
     // for keeping track of modifies
     private void createLemmaCopy() {
         this.lemmaCopy.setFormWrittenRepr(lemma.getFormWrittenRepr());
-        this.lemmaCopy.setGender(lemma.getGender());
-        this.lemmaCopy.setPerson(lemma.getPerson());
-        this.lemmaCopy.setMood(lemma.getMood());
-        this.lemmaCopy.setVoice(lemma.getVoice());
+        this.lemmaCopy.setMorphoTraits(copyMorphData(lemma.getMorphoTraits()));
         this.lemmaCopy.setLanguage(lemma.getLanguage());
-        this.lemmaCopy.setNumber(lemma.getNumber());
         this.lemmaCopy.setPoS(lemma.getPoS());
         this.lemmaCopy.setIndividual(lemma.getIndividual());
         this.lemmaCopy.setType(lemma.getType());
@@ -261,6 +258,18 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         this.lemmaCopy.setSeeAlso(copyWordData(lemma.getSeeAlso()));
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
         this.lemmaCopy.setValid(lemma.getValid());
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> copyMorphData(ArrayList<LemmaData.MorphoTrait> almt) {
+        ArrayList<LemmaData.MorphoTrait> _almt = new ArrayList<>();
+        for (LemmaData.MorphoTrait mt : almt) {
+            LemmaData.MorphoTrait _mt = new LemmaData.MorphoTrait();
+            _mt.setName(mt.getName());
+            _mt.setSchema(mt.getSchema());
+            _mt.setValue(mt.getValue());
+            _almt.add(_mt);
+        }
+        return _almt;
     }
 
     private ArrayList<LemmaData.Word> copyWordData(ArrayList<LemmaData.Word> alw) {
@@ -292,15 +301,23 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
     private FormData copyFormData(FormData fd) {
         FormData _fd = new FormData();
         _fd.setFormWrittenRepr(fd.getFormWrittenRepr());
-        _fd.setGender(fd.getGender());
-        _fd.setPerson(fd.getPerson());
-        _fd.setMood(fd.getMood());
-        _fd.setVoice(fd.getVoice());
+        _fd.setMorphoTraits(copyFormMorphoTraits(fd.getMorphoTraits()));
         _fd.setNote(fd.getNote());
         _fd.setLanguage(fd.getLanguage());
-        _fd.setNumber(fd.getNumber());
         _fd.setIndividual(fd.getIndividual());
         return _fd;
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> copyFormMorphoTraits(ArrayList<LemmaData.MorphoTrait> almt) {
+        ArrayList<LemmaData.MorphoTrait> _almt = new ArrayList<>();
+        for (LemmaData.MorphoTrait mt : almt) {
+            LemmaData.MorphoTrait _mt = new LemmaData.MorphoTrait();
+            _mt.setName(mt.getName());
+            _mt.setSchema(mt.getValue());
+            _mt.setValue(mt.getValue());
+            _almt.add(_mt);
+        }
+        return _almt;
     }
 
     private void updateSenseCopy(SenseData sd, int order) {
@@ -329,7 +346,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         rmt.setId(sd.getThemeOWLClass().getId());
         rmt.setName(sd.getThemeOWLClass().getName());
-         rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
+        rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
         _sd.setThemeOWLClass(rmt);
         _sd.setName(sd.getName());
         _sd.setNote(sd.getNote());
@@ -338,9 +355,9 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
 
     public void setEntryOfLexicalRelation(String r) {
         clearRelationPanel();
-        lemma = lexiconManager.getLemmaAttributes(r);
+        lemma = lexiconManager.getLemmaAttributes(r, propertyValue.getMorphoTrait());
         createLemmaCopy();
-        forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage()));
+        forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage(), propertyValue.getMorphoTrait()));
         addFormCopy(forms);
         senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual(), null));
         addSenseCopy(senses);
@@ -366,9 +383,9 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         lemma = null;
         forms.clear();
         senses.clear();
-        lemma = lexiconManager.getLemmaOfSense(r);
+        lemma = lexiconManager.getLemmaOfSense(r, propertyValue.getMorphoTrait());
         createLemmaCopy();
-        forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage()));
+        forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage(), propertyValue.getMorphoTrait()));
         addFormCopy(forms);
         senses.addAll(lexiconManager.getSensesOfLemma(lemma.getIndividual(), null));
         addSenseCopy(senses);
@@ -400,26 +417,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
 
     public ArrayList<String> getPoS() {
         return propertyValue.getPoS(lemma.getType());
-    }
-
-    public ArrayList<String> getNumber() {
-        return propertyValue.getNumber();
-    }
-
-    public ArrayList<String> getGender() {
-        return propertyValue.getGender();
-    }
-
-    public ArrayList<String> getPerson() {
-        return propertyValue.getPerson();
-    }
-
-    public ArrayList<String> getMood() {
-        return propertyValue.getMood();
-    }
-
-    public ArrayList<String> getVoice() {
-        return propertyValue.getVoice();
     }
 
     public List<String> completeComponents(String currentComponent) {
@@ -503,46 +500,6 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         }
     }
 
-    public void lemmaGenderChanged(AjaxBehaviorEvent e) {
-        String gender = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma gender of " + lemma.getFormWrittenRepr() + " to " + gender);
-        lemma.setGender(gender);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaPersonChanged(AjaxBehaviorEvent e) {
-        String person = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma person of " + lemma.getFormWrittenRepr() + " to " + person);
-        lemma.setPerson(person);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaMoodChanged(AjaxBehaviorEvent e) {
-        String mood = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma mood of " + lemma.getFormWrittenRepr() + " to " + mood);
-        lemma.setMood(mood);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaVoiceChanged(AjaxBehaviorEvent e) {
-        String voice = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma voice of " + lemma.getFormWrittenRepr() + " to " + voice);
-        lemma.setVoice(voice);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaNumberChanged(AjaxBehaviorEvent e) {
-        String number = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma number of " + lemma.getFormWrittenRepr() + " to " + number);
-        lemma.setNumber(number);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
     public void lemmaPoSChanged(AjaxBehaviorEvent e) {
         String pos = (String) e.getComponent().getAttributes().get("value");
         log(Level.INFO, loginController.getAccount(), "UPDATE Lemma Part-of-Speech of " + lemma.getFormWrittenRepr() + " to " + pos);
@@ -575,7 +532,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         lexiconManager.unlock(lemma.getIndividual());
         System.out.println(lemma.getIndividual() + " unlocked.");
     }
-    
+
     public void onReferenceSelect(LemmaData.Word reference) {
         log(Level.INFO, loginController.getAccount(), "ADD Reference (seeAlso) " + reference.getWrittenRep() + " to the Lemma " + lemma.getFormWrittenRepr());
         lemma.setSaveButtonDisabled(false);
@@ -687,52 +644,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         log(Level.INFO, loginController.getAccount(), "CLOSE note of Form " + form);
     }
 
-    public void formNumberChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String number = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form number of " + fd.getFormWrittenRepr() + " to " + number);
-        fd.setNumber(number);
-        fd.setSaveButtonDisabled(false);
-    }
-
-    public void formGenderChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String gender = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form gender of " + fd.getFormWrittenRepr() + " to " + gender);
-        fd.setGender(gender);
-        fd.setSaveButtonDisabled(false);
-    }
-
-    public void formPersonChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String person = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form person of " + fd.getFormWrittenRepr() + " to " + person);
-        fd.setPerson(person);
-        fd.setSaveButtonDisabled(false);
-    }
-
-    public void formMoodChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String mood = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form mood of " + fd.getFormWrittenRepr() + " to " + mood);
-        fd.setMood(mood);
-        fd.setSaveButtonDisabled(false);
-    }
-
-    public void formVoiceChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String voice = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form voice of " + fd.getFormWrittenRepr() + " to " + voice);
-        fd.setVoice(voice);
-        fd.setSaveButtonDisabled(false);
-    }
-
-    public void saveForm(FormData fd) throws IOException, OWLOntologyStorageException {
+   public void saveForm(FormData fd) throws IOException, OWLOntologyStorageException {
         fd.setSaveButtonDisabled(true);
         fd.setDeleteButtonDisabled(false);
         int order = forms.indexOf(fd);

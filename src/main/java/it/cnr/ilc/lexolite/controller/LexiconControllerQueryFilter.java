@@ -119,50 +119,6 @@ public class LexiconControllerQueryFilter extends BaseController implements Seri
         return al;
     }
 
-//    public void morphologyQueryGroup_1() {
-//        long startTime = System.currentTimeMillis();
-//        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
-//        List<Map<String, String>> f = new ArrayList<Map<String, String>>();
-//        List<Map<String, String>> s = new ArrayList<Map<String, String>>();
-////        System.out.println("size: " + res.size());
-//        for (Map<String, String> m : lexiconManager.morphologyQueryGroup_1_lemmas(pos, gender, number)) {
-////            System.out.println(m.get("pos") + "-" + m.get("gender") + "-" + m.get("number"));
-//            if (isAskedMorpho(m)) {
-//                Map<String, String> _mL = new HashMap<String, String>();
-//                Map<String, String> _mS = new HashMap<String, String>();
-//                String lang = getLang(m.get("le"));
-//                _mL.put("writtenRep", m.get("writtenRep"));
-//                _mL.put("individual", m.get("individual"));
-//                _mL.put("verified", m.get("verified"));
-//                _mL.put("lang", lang);
-//                _mL.put("type", m.get("type"));
-//                l.add(_mL);
-//                _mS.put("writtenRep", m.get("sense"));
-//                _mS.put("individual", m.get("sense"));
-//                _mL.put("verified", m.get("verified"));
-//                _mS.put("lang", lang);
-//                s.add(_mS);
-//            }
-//        }
-//        for (Map<String, String> m : lexiconManager.morphologyQueryGroup_1_forms(pos, gender, number)) {
-////            System.out.println(m.get("pos") + "-" + m.get("gender") + "-" + m.get("number"));
-//            if (isAskedMorpho(m)) {
-//                Map<String, String> _mF = new HashMap<String, String>();
-//                _mF.put("writtenRep", m.get("writtenRep"));
-//                _mF.put("individual", m.get("individual"));
-//                _mF.put("verified", m.get("verified"));
-//                _mF.put("lang", getLang(m.get("le")));
-//                _mF.put("type", m.get("type"));
-//                f.add(_mF);
-//            }
-//        }
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("durata: " + (endTime - startTime));
-//        lexiconCreationControllerTabViewList.cnlqFilterLemmaTabView(l);
-//        lexiconCreationControllerTabViewList.cnlqFilterSenseTabView(s);
-//        lexiconCreationControllerTabViewList.cnlqFilterFormTabView(f);
-//    }
-
     private String getLang(String individual) {
         Matcher matcher = entryLangPattern.matcher(individual);
         if (matcher.find()) {
@@ -171,24 +127,6 @@ public class LexiconControllerQueryFilter extends BaseController implements Seri
             return null;
         }
     }
-
-//    private boolean isAskedMorpho(Map<String, String> m) {
-//        String _pos = m.get("pos");
-//        String _gender = m.get("gender");
-//        String _number = m.get("number");
-//        if (((pos == null ? _pos == null : pos.equals(_pos)) && (gender == null ? _gender == null : gender.equals(_gender)) && number.equals(_number))
-//                || ("".equals(pos) && (gender == null ? _gender == null : gender.equals(_gender)) && (number == null ? _number == null : number.equals(_number)))
-//                || ((pos == null ? _pos == null : pos.equals(_pos)) && "".equals(gender) && (number == null ? _number == null : number.equals(_number)))
-//                || ((pos == null ? _pos == null : pos.equals(_pos)) && (gender == null ? _gender == null : gender.equals(_gender)) && "".equals(number))
-//                || ("".equals(pos) && "".equals(gender) && (number == null ? _number == null : number.equals(_number)))
-//                || ("".equals(pos) && (gender == null ? _gender == null : gender.equals(_gender)) && "".equals(number))
-//                || ((pos == null ? _pos == null : pos.equals(_pos)) && "".equals(gender) && "".equals(number))
-//                || ("".equals(pos) && "".equals(gender) && "".equals(number))) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
 
     private boolean isAskedConcept(Map<String, String> m) {
         String _concept = m.get("ontoClass");

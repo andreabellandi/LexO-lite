@@ -7,6 +7,8 @@ package it.cnr.ilc.lexolite.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -19,15 +21,13 @@ public class LemmaData implements Serializable {
     private String formWrittenRepr;
     private String PoS;
     private String language;
-    private String gender;
-    private String number;
-    private String person;
-    private String mood;
-    private String voice;
     private String individual;
     private String type;
     private String note;
     private String valid;
+
+    private ArrayList<MorphoTrait> morphoTraits = new ArrayList();
+
     // if view button is true a reference has been specified, else it is false
     private Openable OWLClass = null;
     private ReferenceMenuTheme themeOWLClass;
@@ -48,6 +48,14 @@ public class LemmaData implements Serializable {
         this.verified = false;
     }
 
+    public ArrayList<MorphoTrait> getMorphoTraits() {
+        return morphoTraits;
+    }
+
+    public void setMorphoTraits(ArrayList<MorphoTrait> morphoTraits) {
+        this.morphoTraits = morphoTraits;
+    }
+
     public ReferenceMenuTheme getThemeOWLClass() {
         return themeOWLClass;
     }
@@ -62,46 +70,6 @@ public class LemmaData implements Serializable {
 
     public void setOWLClass(Openable OWLClass) {
         this.OWLClass = OWLClass;
-    }
-
-    public String getPerson() {
-        return person;
-    }
-
-    public void setPerson(String person) {
-        this.person = person;
-    }
-
-    public String getMood() {
-        return mood;
-    }
-
-    public void setMood(String mood) {
-        this.mood = mood;
-    }
-
-    public String getVoice() {
-        return voice;
-    }
-
-    public void setVoice(String voice) {
-        this.voice = voice;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getIndividual() {
@@ -230,11 +198,6 @@ public class LemmaData implements Serializable {
         this.formWrittenRepr = "";
         this.PoS = "";
         this.language = "";
-        this.number = "";
-        this.gender = "";
-        this.person = "";
-        this.mood = "";
-        this.voice = "";
         this.type = "";
         this.individual = "";
         this.note = "";
@@ -245,6 +208,7 @@ public class LemmaData implements Serializable {
         this.lexRels.clear();
         this.reifiedLexRels.clear();
         this.synFrames.clear();
+        this.morphoTraits.clear();
         this.OWLClass = null;
     }
 
@@ -711,6 +675,38 @@ public class LemmaData implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+    }
+
+    public static class MorphoTrait {
+
+        private String name;
+        private String value;
+        private String schema;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getSchema() {
+            return schema;
+        }
+
+        public void setSchema(String schema) {
+            this.schema = schema;
         }
 
     }

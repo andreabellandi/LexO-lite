@@ -400,6 +400,28 @@ html, body {
     padding-left: 5px;
 }
 
+.morphologyLemmaTextBlock {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    line-height: 1.5;
+    border: 2px solid #b74c4c;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.morphologyFormTextBlock {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    line-height: 1.5;
+    border: 2px solid #7286ad;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
 .attTextDialog {
     background-color: #E0F1FF;
     padding-top: 5px;
@@ -873,7 +895,7 @@ ontologyDetailView {
 
 .gramGrpClass {
     font-family: "Times New Roman", Times, serif;
-    font-size: 20px !important; 
+    font-size: 15px !important; 
 }
 
 .lemmaClass {

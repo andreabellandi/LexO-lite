@@ -9,6 +9,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -24,14 +26,8 @@ import javax.faces.model.SelectItemGroup;
 public class PropertyValue {
 
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
-
     private ArrayList<String> lemmaInfo;
     private ArrayList<String> alphabet;
-    private ArrayList<String> gender;
-    private ArrayList<String> number;
-    private ArrayList<String> person;
-    private ArrayList<String> mood;
-    private ArrayList<String> voice;
     private ArrayList<String> PoS;
     private ArrayList<String> multiwordType;
 
@@ -49,11 +45,19 @@ public class PropertyValue {
     private ArrayList<Ontology> taxonomy;
 
     private ArrayList<String> lingCatList;
-    
+
     private Multimap<String, String> morphoTraitList;
 
     public ArrayList<String> getMorphoTrait(String s) {
-        return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class))); 
+        return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class)));
+    }
+
+    public Set<String> getMorphoTrait() {
+        Set<String> traits = new HashSet<>();
+        for (Object key : morphoTraitList.keys()) {
+            traits.add(key.toString());
+        }
+        return traits;
     }
 
     public ArrayList<SelectItem> getSenseCategory() {
@@ -104,38 +108,6 @@ public class PropertyValue {
         return alphabet;
     }
 
-    public ArrayList<String> getGender() {
-        return gender;
-    }
-
-    public ArrayList<String> getNumber() {
-        return number;
-    }
-
-    public ArrayList<String> getPerson() {
-        return person;
-    }
-
-    public void setPerson(ArrayList<String> person) {
-        this.person = person;
-    }
-
-    public ArrayList<String> getMood() {
-        return mood;
-    }
-
-    public void setMood(ArrayList<String> mood) {
-        this.mood = mood;
-    }
-
-    public ArrayList<String> getVoice() {
-        return voice;
-    }
-
-    public void setVoice(ArrayList<String> voice) {
-        this.voice = voice;
-    }
-
     public ArrayList<String> getMultiwordType() {
         return multiwordType;
     }
@@ -151,14 +123,6 @@ public class PropertyValue {
             return multiwordType;
         }
     }
-
-//    public LexiconManager getLexiconManager() {
-//        return lexiconManager;
-//    }
-//
-//    public void setLexiconManager(LexiconManager lexiconManager) {
-//        this.lexiconManager = lexiconManager;
-//    }
 
     public ArrayList<String> getLexicalRelType() {
         return lexicalRelType;
@@ -208,10 +172,162 @@ public class PropertyValue {
         lexicalAspects.add("Syntax and Semantics");
 
         morphoTraitList = HashMultimap.create();
-        morphoTraitList.put("puppa", "value1");
-        morphoTraitList.put("puppa", "value2");
-        morphoTraitList.put("puppa", "value3");
+
+        morphoTraitList.put("gender", "commonGender");
+        morphoTraitList.put("gender", "otherGender");
+        morphoTraitList.put("gender", "feminine");
+        morphoTraitList.put("gender", "masculine");
+        morphoTraitList.put("gender", "neuter");
+
+        morphoTraitList.put("number", "massNoun");
+        morphoTraitList.put("number", "otherNumber");
+        morphoTraitList.put("number", "collective");
+        morphoTraitList.put("number", "dual");
+        morphoTraitList.put("number", "paucal");
+        morphoTraitList.put("number", "plural");
+        morphoTraitList.put("number", "quadrial");
+        morphoTraitList.put("number", "singular");
+        morphoTraitList.put("number", "trial");
+
+        morphoTraitList.put("person", "firstPerson");
+        morphoTraitList.put("person", "secondPerson");
+        morphoTraitList.put("person", "thirdPerson");
+
+        morphoTraitList.put("mood", "imperative");
+        morphoTraitList.put("mood", "indicative");
+        morphoTraitList.put("mood", "subjunctive");
+
+        morphoTraitList.put("voice", "activeVoice");
+        morphoTraitList.put("voice", "middleVoice");
+        morphoTraitList.put("voice", "passiveVoice");
+
+        morphoTraitList.put("tense", "future");
+        morphoTraitList.put("tense", "imperfect");
+        morphoTraitList.put("tense", "past");
+        morphoTraitList.put("tense", "present");
+        morphoTraitList.put("tense", "preterite");
+
+        morphoTraitList.put("animacy", "otherAnimacy");
+        morphoTraitList.put("animacy", "animate");
+        morphoTraitList.put("animacy", "inanimate");
+
+        morphoTraitList.put("aspect", "cessative");
+        morphoTraitList.put("aspect", "imperfective");
+        morphoTraitList.put("aspect", "inchoative");
+        morphoTraitList.put("aspect", "perfective");
+        morphoTraitList.put("aspect", "unaccomplished");
+
+        morphoTraitList.put("case", "abessiveCase");
+        morphoTraitList.put("case", "ablativeCase");
+        morphoTraitList.put("case", "absolutiveCase");
+        morphoTraitList.put("case", "accusativeCase");
+        morphoTraitList.put("case", "adessiveCase");
+        morphoTraitList.put("case", "aditiveCase");
+        morphoTraitList.put("case", "allativeCase");
+        morphoTraitList.put("case", "benefactiveCase");
+        morphoTraitList.put("case", "causativeCase");
+        morphoTraitList.put("case", "comitativeCase");
+        morphoTraitList.put("case", "dativeCase");
+        morphoTraitList.put("case", "delativeCase");
+        morphoTraitList.put("case", "elativeCase");
+        morphoTraitList.put("case", "equativeCase");
+        morphoTraitList.put("case", "ergativeCase");
+        morphoTraitList.put("case", "essiveCase");
+        morphoTraitList.put("case", "genitiveCase");
+        morphoTraitList.put("case", "illativeCase");
+        morphoTraitList.put("case", "inessiveCase");
+        morphoTraitList.put("case", "instrumentalCase");
+        morphoTraitList.put("case", "lativeCase");
+        morphoTraitList.put("case", "locativeCase");
+        morphoTraitList.put("case", "nominativeCase");
+        morphoTraitList.put("case", "obliqueCase");
+        morphoTraitList.put("case", "partitiveCase");
+        morphoTraitList.put("case", "prolativeCase");
+        morphoTraitList.put("case", "sociativeCase");
+        morphoTraitList.put("case", "sublativeCase");
+        morphoTraitList.put("case", "superessiveCase");
+        morphoTraitList.put("case", "terminativeCase");
+        morphoTraitList.put("case", "translativeCase");
+        morphoTraitList.put("case", "vocativeCase");
+
+        morphoTraitList.put("cliticness", "bound");
+        morphoTraitList.put("cliticness", "yes");
+        morphoTraitList.put("cliticness", "no");
+
+        morphoTraitList.put("dating", "modern");
+        morphoTraitList.put("dating", "old");
+
+        morphoTraitList.put("definiteness", "fullArticle");
+        morphoTraitList.put("definiteness", "shortArticle");
+        morphoTraitList.put("definiteness", "definite");
+        morphoTraitList.put("definiteness", "indefinite");
+
+        morphoTraitList.put("degree", "comparative");
+        morphoTraitList.put("degree", "positive");
+        morphoTraitList.put("degree", "superlative");
+
+        morphoTraitList.put("finiteness", "nonFinite");
+        morphoTraitList.put("finiteness", "finite");
+
+        morphoTraitList.put("frequency", "commonlyUsed");
+        morphoTraitList.put("frequency", "infrequentlyUsed");
+        morphoTraitList.put("frequency", "rarelyUsed");
+
+        morphoTraitList.put("negative", "yes");
+        morphoTraitList.put("negative", "no");
+
+        morphoTraitList.put("termElement", "baseElement");
+        morphoTraitList.put("termElement", "inflectionElement");
+        morphoTraitList.put("termElement", "morphologicalElement");
+        morphoTraitList.put("termElement", "optionalElement");
+        morphoTraitList.put("termElement", "wordElement");
+        morphoTraitList.put("termElement", "affix");
+        morphoTraitList.put("termElement", "infix");
+        morphoTraitList.put("termElement", "prefix");
+        morphoTraitList.put("termElement", "radical");
+        morphoTraitList.put("termElement", "suffix");
+        morphoTraitList.put("termElement", "syllable");
+
+        morphoTraitList.put("termType", "abbreviatedForm");
+        morphoTraitList.put("termType", "clippedTerm");
+        morphoTraitList.put("termType", "commonName");
+        morphoTraitList.put("termType", "entryTerm");
+        morphoTraitList.put("termType", "fullForm");
+        morphoTraitList.put("termType", "internationalScientificName");
+        morphoTraitList.put("termType", "logicalExpression");
+        morphoTraitList.put("termType", "partNumber");
+        morphoTraitList.put("termType", "phraseologicalUnit");
+        morphoTraitList.put("termType", "productName");
+        morphoTraitList.put("termType", "setPhrase");
+        morphoTraitList.put("termType", "shortForm");
+        morphoTraitList.put("termType", "standardText");
+        morphoTraitList.put("termType", "stringCategory");
+        morphoTraitList.put("termType", "transcribedForm");
+        morphoTraitList.put("termType", "abbreviation");
+        morphoTraitList.put("termType", "acronym");
+        morphoTraitList.put("termType", "appellation");
+        morphoTraitList.put("termType", "compound");
+        morphoTraitList.put("termType", "contraction");
+        morphoTraitList.put("termType", "equation");
+        morphoTraitList.put("termType", "expression");
+        morphoTraitList.put("termType", "formula");
+        morphoTraitList.put("termType", "idiom");
+        morphoTraitList.put("termType", "initialism");
+        morphoTraitList.put("termType", "internationalism");
+        morphoTraitList.put("termType", "nucleus");
+        morphoTraitList.put("termType", "proverb");
+        morphoTraitList.put("termType", "sku");
+        morphoTraitList.put("termType", "string");
+        morphoTraitList.put("termType", "symbol");
         
+        morphoTraitList.put("verbFormMood", "conditional");
+        morphoTraitList.put("verbFormMood", "gerundive");
+        morphoTraitList.put("verbFormMood", "imperative");
+        morphoTraitList.put("verbFormMood", "indicative");
+        morphoTraitList.put("verbFormMood", "infinitive");
+        morphoTraitList.put("verbFormMood", "participle");
+        morphoTraitList.put("verbFormMood", "subjunctive");
+
         // properties and values are loaded "by hands", but they should be retrieved from lexinfo ontology !
         PoS = new ArrayList<String>();
         PoS.add("adjective");
@@ -222,30 +338,11 @@ public class PropertyValue {
         PoS.add("preposition");
         PoS.add("noun");
         PoS.add("verb");
+        
         multiwordType = new ArrayList<String>();
         multiwordType.add("nounPhrase");
         multiwordType.add("verbPhrase");
         multiwordType.add("adjectivePhrase");
-        gender = new ArrayList<String>();
-        gender.add("feminine");
-        gender.add("masculine");
-        gender.add("neuter");
-        number = new ArrayList<String>();
-        number.add("singular");
-        number.add("plural");
-        number.add("dual");
-        person = new ArrayList<String>();
-        person.add("firstPerson");
-        person.add("secondPerson");
-        person.add("thirdPerson");
-        mood = new ArrayList<String>();
-        mood.add("subjunctive");
-        mood.add("imperative");
-        mood.add("indicative");
-        voice = new ArrayList<String>();
-        voice.add("activeVoice");
-        voice.add("passiveVoice");
-        voice.add("middleVoice");
 
         loadLexicalRelationTypes();
         loadSenseRelationTypes();
@@ -316,7 +413,7 @@ public class PropertyValue {
             new SelectItem("string", "string"),
             new SelectItem("stringCategory", "string category"),
             new SelectItem("symbol", "symbol")});
-        
+
         lexicalCategory.add(g1);
         lexicalCategory.add(g2);
         lexicalCategory.add(g3);

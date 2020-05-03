@@ -184,9 +184,9 @@ public class LexiconQuery extends BaseController {
     }
 
     // invoked in order to get lemma attributes of a specific lemma
-    public LemmaData getLemmaAttributes(String lemma) {
+    public LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits) {
         LemmaData ld = new LemmaData();
-        setLemmaData(lemma, ld);
+        setLemmaData(lemma, ld, morphoTraits);
         return ld;
     }
 
@@ -206,20 +206,20 @@ public class LexiconQuery extends BaseController {
     }
 
     // invoked in order to get a lemma attributes of a specific sense
-    public LemmaData getLemmaOfSense(String sense) {
+    public LemmaData getLemmaOfSense(String sense, Set<String> morphoTraits) {
         LemmaData ld = new LemmaData();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_SENSE.replace("_SENSE_", sense)));
         String lemma = results.get(0);
-        setLemmaData(lemma, ld);
+        setLemmaData(lemma, ld, morphoTraits);
         return ld;
     }
 
     // invoked in order to get a lemma attributes of a specific form
-    public LemmaData getLemmaEntry(String form) {
+    public LemmaData getLemmaEntry(String form, Set<String> morphoTraits) {
         LemmaData ld = new LemmaData();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_FORM.replace("_FORM_", form)));
         String lemma = results.get(0);
-        setLemmaData(lemma, ld);
+        setLemmaData(lemma, ld, morphoTraits);
         return ld;
     }
 
@@ -321,7 +321,7 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    private void setLemmaData(String lemma, LemmaData ld) {
+    private void setLemmaData(String lemma, LemmaData ld, Set<String> morphoTraits) {
         ld.setIndividual(lemma);
         // It is the type of the entry of the lemma
         ld.setType(getLemmaType(lemma));
@@ -340,11 +340,9 @@ public class LexiconQuery extends BaseController {
         }
         ld.setValid(valid);
         ld.setPoS(ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
-        ld.setGender(getLemmaGender(lemma));
-        ld.setPerson(getLemmaPerson(lemma));
-        ld.setMood(getLemmaMood(lemma));
-        ld.setVoice(getLemmaVoice(lemma));
-        ld.setNumber(getLemmaNumber(lemma));
+
+        ld.setMorphoTraits(getLemmaMorphoTraits(lemma, morphoTraits));
+
         ld.setNote(getLemmaNote(lemma));
         ld.setSeeAlso(getLemmaReference(lemma));
         if (!ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
@@ -369,6 +367,14 @@ public class LexiconQuery extends BaseController {
         return getEntryAttributeWordList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_SEEALSO, "_LEMMA_", lemma);
     }
 
+    private ArrayList<LemmaData.MorphoTrait> getLemmaMorphoTraits(String lemma, Set<String> morphoTraits) {
+        return getEntryAttributeMorphoTraitsList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_MORPHO_TRAITS, "_LEMMA_", lemma, morphoTraits);
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> getFormMorphoTraits(String form, Set<String> morphoTraits) {
+        return getEntryAttributeMorphoTraitsList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_MORPHO_TRAITS, "_FORM_", form, morphoTraits);
+    }
+
     private String getLemmaType(String lemma) {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_TYPE, "_LEMMA_", lemma);
     }
@@ -391,6 +397,21 @@ public class LexiconQuery extends BaseController {
             alw.add(getWord(word, m.get("constituent"), m.get("position"), wr));
         }
         return alw;
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> getEntryAttributeMorphoTraitsList(String q, String t, String e, Set<String> morphoTraits) {
+        ArrayList<LemmaData.MorphoTrait> almt = new ArrayList();
+        List<Map<String, String>> mtl = processQuery(q.replace(t, e));
+        for (Map<String, String> m : mtl) {
+            if (morphoTraits.contains(m.get("trait"))) {
+                LemmaData.MorphoTrait mt = new LemmaData.MorphoTrait();
+                mt.setName(m.get("trait"));
+                mt.setValue(m.get("value"));
+                mt.setSchema("lexinfo");
+                almt.add(mt);
+            }
+        }
+        return almt;
     }
 
     private Word getWord(List<Map<String, String>> word, String OWLComponentIndividual, String position, String wr) {
@@ -442,29 +463,25 @@ public class LexiconQuery extends BaseController {
         return w;
     }
 
-    public ArrayList<FormData> getFormsOfLemma(String lemma, String lang) {
+    public ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
         ArrayList<FormData> fdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_INSTANCES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String form : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 FormData fd = new FormData();
-                setFormData(form, lang, fd);
+                setFormData(form, lang, fd, morphoTraits);
                 fdList.add(fd);
             }
         }
         return fdList;
     }
 
-    private void setFormData(String form, String lang, FormData fd) {
+    private void setFormData(String form, String lang, FormData fd, Set<String> morphoTraits) {
         fd.setIndividual(form);
         fd.setLanguage(lang);
         fd.setFormWrittenRepr(getFormWrittenRep(form));
-        fd.setGender(getFormGender(form));
-        fd.setPerson(getFormPerson(form));
-        fd.setMood(getFormMood(form));
-        fd.setVoice(getFormVoice(form));
-        fd.setNumber(getFormNumber(form));
+        fd.setMorphoTraits(getFormMorphoTraits(form, morphoTraits));
         fd.setNote(getFormNote(form));
     }
 
@@ -667,44 +684,10 @@ public class LexiconQuery extends BaseController {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_REPRESENTATION, "_FORM_", form);
     }
 
-    private String getFormGender(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_GENDER, "_FORM_", form);
-    }
-
-    private String getFormPerson(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_PERSON, "_FORM_", form);
-    }
-
-    private String getFormMood(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_MOOD, "_FORM_", form);
-    }
-
-    private String getFormVoice(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_VOICE, "_FORM_", form);
-    }
-
-    private String getFormNumber(String form) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_NUMBER, "_FORM_", form);
-    }
-
     public String getDefinition(String sense) {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_DEFINITION, "_SENSE_", sense);
     }
 
-//    public ArrayList<Openable> getSynonym(String sense) {
-//        ArrayList<Openable> sdoList = new ArrayList();
-//        ArrayList<String> syns = getEntryAttributeList(LexicalQuery.PREFIXES + LexicalQuery.SENSE_SYNONYM, "_SENSE_", sense);
-//        for (String syn : syns) {
-//            SenseData.Openable sdo = new SenseData.Openable();
-//            if (!syn.equals(Label.NO_ENTRY_FOUND)) {
-//                sdo.setName(syn);
-//                sdo.setViewButtonDisabled(false);
-//                sdo.setDeleteButtonDisabled(false);
-//                sdoList.add(sdo);
-//            }
-//        }
-//        return sdoList;
-//    }
     public ArrayList<Openable> getSenseRelation(String sense, String query) {
         ArrayList<Openable> sdoList = new ArrayList();
         ArrayList<String> s = getEntryAttributeList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + query, "_SENSE_", sense);
@@ -720,28 +703,6 @@ public class LexiconQuery extends BaseController {
         return sdoList;
     }
 
-//    public ArrayList<Openable> getTranslation(String sense) {
-//        ArrayList<Openable> sdoList = new ArrayList();
-//        ArrayList<String> trans = getEntryAttributeList(LexicalQuery.PREFIXES + LexicalQuery.SENSE_TRANSLATION, "_SENSE_", sense);
-//        for (String tr : trans) {
-//            SenseData.Openable sdo = new SenseData.Openable();
-//            if (!tr.equals(Label.NO_ENTRY_FOUND)) {
-//                sdo.setName(tr);
-//                sdo.setViewButtonDisabled(false);
-//                sdo.setDeleteButtonDisabled(false);
-//                sdoList.add(sdo);
-//            }
-//        }
-//        return sdoList;
-//    }
-//    private Openable getOntoClass(String sense) {
-//        Openable ref = new Openable();
-//        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
-//                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
-//        ref.setName(ontoClass.equals(Label.NO_ENTRY_FOUND) ? "" : ontoClass);
-//        ref.setViewButtonDisabled(!ontoClass.equals(Label.NO_ENTRY_FOUND));
-//        return ref;
-//    }
     private ReferenceMenuTheme getOntoClass(String sense, List<ReferenceMenuTheme> l) {
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
@@ -769,26 +730,6 @@ public class LexiconQuery extends BaseController {
 
     private String getDenotes(String lemma) {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.ENTRY_DENOTES, "_ENTRY_", lemma.replace("_lemma", "_entry"));
-    }
-
-    private String getLemmaGender(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_GENDER, "_LEMMA_", lemma);
-    }
-
-    private String getLemmaPerson(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_PERSON, "_LEMMA_", lemma);
-    }
-
-    private String getLemmaMood(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_MOOD, "_LEMMA_", lemma);
-    }
-
-    private String getLemmaVoice(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_VOICE, "_LEMMA_", lemma);
-    }
-
-    private String getLemmaNumber(String lemma) {
-        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_NUMBER, "_LEMMA_", lemma);
     }
 
     private String getEntryAttribute(String q, String t, String e) {

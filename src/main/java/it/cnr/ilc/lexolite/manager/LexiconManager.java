@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -311,8 +312,8 @@ public class LexiconManager extends BaseController implements Serializable {
     }
 
     // invoked in order to get lemma attributes of a specific lemma
-    public synchronized LemmaData getLemmaAttributes(String lemma) {
-        return lexiconQuery.getLemmaAttributes(lemma);
+    public synchronized LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits) {
+        return lexiconQuery.getLemmaAttributes(lemma, morphoTraits);
     }
 
     // invoked in order to retrieve the data of the lemma involved in sublemma or collocation relation
@@ -321,17 +322,17 @@ public class LexiconManager extends BaseController implements Serializable {
     }
 
     // invoked in order to get a lemma and its attributes of a specific form
-    public synchronized LemmaData getLemmaEntry(String form) {
-        return lexiconQuery.getLemmaEntry(form);
+    public synchronized LemmaData getLemmaEntry(String form, Set<String> morphoTraits) {
+        return lexiconQuery.getLemmaEntry(form, morphoTraits);
     }
 
     // invoked in order to get a lemma and its attributes of a specific sense
-    public synchronized LemmaData getLemmaOfSense(String sense) {
-        return lexiconQuery.getLemmaOfSense(sense);
+    public synchronized LemmaData getLemmaOfSense(String sense, Set<String> morphoTraits) {
+        return lexiconQuery.getLemmaOfSense(sense, morphoTraits);
     }
 
-    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang) {
-        return lexiconQuery.getFormsOfLemma(lemma, lang);
+    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
+        return lexiconQuery.getFormsOfLemma(lemma, lang, morphoTraits);
     }
 
     public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {

@@ -14,6 +14,7 @@ import it.cnr.ilc.lexolite.controller.LexiconComparator;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
+import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -56,6 +58,9 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 @Path("/")
 public class LexiconServices {
 
+    @Inject
+    private PropertyValue propertyValue;
+    
     private LexiconManager lexiconManager = LexiconManager.getInstance();
 
     public static Pattern pattern = Pattern.compile("([a-z]+_lemma)");
@@ -139,12 +144,12 @@ public class LexiconServices {
     // params: none
     // invocation: lexicon/id=lemma-id
     public Response getLemma(@QueryParam("id") String id) {
-        LemmaData ld = lexiconManager.getLemmaAttributes(id);
+        LemmaData ld = lexiconManager.getLemmaAttributes(id, propertyValue.getMorphoTrait());
         ArrayList<FormData> fds;
         ArrayList<SenseData> sds;
         Matcher matcher = pattern.matcher(id);
         if (matcher.find()) {
-            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0]);
+            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0], propertyValue.getMorphoTrait());
             sds = lexiconManager.getSensesOfLemma(id, null);
         } else {
             fds = null;

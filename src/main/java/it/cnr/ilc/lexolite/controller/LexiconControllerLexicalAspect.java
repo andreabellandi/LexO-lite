@@ -65,43 +65,46 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
 
     // managing of the menu buttons of the lexical aspects
     public void lexicalAspectChangeEvent(AjaxBehaviorEvent e) {
-        String aspect = (String) e.getComponent().getAttributes().get("value");
-        switch (aspect) {
-            case "Core":
-                lexiconControllerFormDetail.setLemmaRendered(true);
-                lexiconControllerSenseDetail.setSenseRendered(true);
-                lexiconControllerVarTransFormDetail.setVarTransRendered(false);
-                lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
-                lexiconControllerSynSemFormDetail.setSynSemRendered(false);
-                lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
-                lexiconControllerOntologyDetail.setOntologyClassRendered(false);
-                break;
-            case "Variation and Translation":
-                lexiconControllerFormDetail.setLemmaRendered(false);
-                lexiconControllerSenseDetail.setSenseRendered(false);
-                lexiconControllerVarTransFormDetail.setVarTransRendered(true);
-                lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(true);
-                lexiconControllerSynSemFormDetail.setSynSemRendered(false);
-                lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
-                lexiconControllerOntologyDetail.setOntologyClassRendered(false);
-                setVarTransEntryAndCopy();
-                lexiconControllerVarTransFormDetail.addLexicalRelations();
-                lexiconControllerVarTransSenseDetail.addSenseRelations();
-                break;
-            case "Syntax and Semantics":
-                lexiconControllerFormDetail.setLemmaRendered(false);
-                lexiconControllerSenseDetail.setSenseRendered(false);
-                lexiconControllerVarTransFormDetail.setVarTransRendered(false);
-                lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
-                lexiconControllerSynSemFormDetail.setSynSemRendered(true);
-                lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(true);
-                lexiconControllerOntologyDetail.setOntologyClassRendered(false);
-                setSynSemEntryAndCopy();
-                lexiconControllerSynSemFormDetail.addSyntax();
-                lexiconControllerSynSemSenseDetail.addSemantics();
-                break;
-            default:
-                break;
+        // just a simple way to verify if an entry is selected
+        if (lexiconControllerFormDetail.getLemma().getFormWrittenRepr() != null) {
+            String aspect = (String) e.getComponent().getAttributes().get("value");
+            switch (aspect) {
+                case "Core":
+                    lexiconControllerFormDetail.setLemmaRendered(true);
+                    lexiconControllerSenseDetail.setSenseRendered(true);
+                    lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+                    lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+                    lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+                    lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+                    lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    break;
+                case "Variation and Translation":
+                    lexiconControllerFormDetail.setLemmaRendered(false);
+                    lexiconControllerSenseDetail.setSenseRendered(false);
+                    lexiconControllerVarTransFormDetail.setVarTransRendered(true);
+                    lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(true);
+                    lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+                    lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+                    lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    setVarTransEntryAndCopy();
+                    lexiconControllerVarTransFormDetail.addLexicalRelations();
+                    lexiconControllerVarTransSenseDetail.addSenseRelations();
+                    break;
+                case "Syntax and Semantics":
+                    lexiconControllerFormDetail.setLemmaRendered(false);
+                    lexiconControllerSenseDetail.setSenseRendered(false);
+                    lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+                    lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+                    lexiconControllerSynSemFormDetail.setSynSemRendered(true);
+                    lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(true);
+                    lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    setSynSemEntryAndCopy();
+                    lexiconControllerSynSemFormDetail.addSyntax();
+                    lexiconControllerSynSemSenseDetail.addSemantics();
+                    break;
+                default:
+                    break;
+            }
         }
 
     }

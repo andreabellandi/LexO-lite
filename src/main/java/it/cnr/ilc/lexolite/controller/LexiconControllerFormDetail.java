@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.FormData;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -33,6 +35,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import org.primefaces.model.menu.DefaultMenuItem;
+import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.DefaultSeparator;
+import org.primefaces.model.menu.DefaultSubMenu;
+import org.primefaces.model.menu.MenuModel;
+import org.primefaces.model.menu.Separator;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -91,6 +99,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     //writtenrep (pos)@lang
     private final String MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP = "([aA-zZ]+)\\s\\(([aA-zZ]+)\\)@([aA-zZ]+)";
 
+    //private MenuModel addMenuModel = null;
     public boolean isUserEnable() {
         return loginController.getAccount().getType().getName().equals(AccountManager.ADMINISTRATOR);
     }
@@ -267,8 +276,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the controller after an user selected a lemma in the tabview
     public void addLemma(String lemma) {
         this.lemma.clear();
-        this.lemma = lexiconManager.getLemmaAttributes(lemma);
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(lemma, this.lemma.getLanguage());
+        this.lemma = lexiconManager.getLemmaAttributes(lemma, propertyValue.getMorphoTrait());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(lemma, this.lemma.getLanguage(), propertyValue.getMorphoTrait());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -278,12 +287,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // for keeping track of modifies
     private void createLemmaCopy() {
         this.lemmaCopy.setFormWrittenRepr(lemma.getFormWrittenRepr());
-        this.lemmaCopy.setGender(lemma.getGender());
-        this.lemmaCopy.setPerson(lemma.getPerson());
-        this.lemmaCopy.setMood(lemma.getMood());
-        this.lemmaCopy.setVoice(lemma.getVoice());
+        this.lemmaCopy.setMorphoTraits(copyMorphData(lemma.getMorphoTraits()));
         this.lemmaCopy.setLanguage(lemma.getLanguage());
-        this.lemmaCopy.setNumber(lemma.getNumber());
         this.lemmaCopy.setPoS(lemma.getPoS());
         this.lemmaCopy.setIndividual(lemma.getIndividual());
         this.lemmaCopy.setType(lemma.getType());
@@ -293,6 +298,19 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
         this.lemmaCopy.setLexRels(copyLexicalRelationData(lemma.getLexRels()));
         this.lemmaCopy.setValid(lemma.getValid());
+        
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> copyMorphData(ArrayList<LemmaData.MorphoTrait> almt) {
+        ArrayList<LemmaData.MorphoTrait> _almt = new ArrayList<>();
+        for (LemmaData.MorphoTrait mt : almt) {
+            LemmaData.MorphoTrait _mt = new LemmaData.MorphoTrait();
+            _mt.setName(mt.getName());
+            _mt.setSchema(mt.getSchema());
+            _mt.setValue(mt.getValue());
+            _almt.add(_mt);
+        }
+        return _almt;
     }
 
     private ArrayList<Word> copyWordData(ArrayList<Word> alw) {
@@ -355,15 +373,23 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private FormData copyFormData(FormData fd) {
         FormData _fd = new FormData();
         _fd.setFormWrittenRepr(fd.getFormWrittenRepr());
-        _fd.setGender(fd.getGender());
-        _fd.setPerson(fd.getPerson());
-        _fd.setMood(fd.getMood());
-        _fd.setVoice(fd.getVoice());
+        _fd.setMorphoTraits(copyFormMorphoTraits(fd.getMorphoTraits()));
         _fd.setNote(fd.getNote());
         _fd.setLanguage(fd.getLanguage());
-        _fd.setNumber(fd.getNumber());
         _fd.setIndividual(fd.getIndividual());
         return _fd;
+    }
+
+    private ArrayList<LemmaData.MorphoTrait> copyFormMorphoTraits(ArrayList<LemmaData.MorphoTrait> almt) {
+        ArrayList<LemmaData.MorphoTrait> _almt = new ArrayList<>();
+        for (LemmaData.MorphoTrait mt : almt) {
+            LemmaData.MorphoTrait _mt = new LemmaData.MorphoTrait();
+            _mt.setName(mt.getName());
+            _mt.setSchema(mt.getValue());
+            _mt.setValue(mt.getValue());
+            _almt.add(_mt);
+        }
+        return _almt;
     }
 
     // invoked by an user that adds a new form of a lemma
@@ -382,8 +408,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the controller after an user selected a form in the tabview
     public void addForm(String form) {
         this.lemma.clear();
-        this.lemma = lexiconManager.getLemmaEntry(form);
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage());
+        this.lemma = lexiconManager.getLemmaEntry(form, propertyValue.getMorphoTrait());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -394,8 +420,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the controller after an user selected a sense in the tabview
     public void addForms(String sense) {
         this.lemma.clear();
-        this.lemma = lexiconManager.getLemmaOfSense(sense);
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage());
+        this.lemma = lexiconManager.getLemmaOfSense(sense, propertyValue.getMorphoTrait());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -731,44 +757,19 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         }
     }
 
-    public void lemmaGenderChanged(AjaxBehaviorEvent e) {
-        String gender = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma gender of " + lemma.getFormWrittenRepr() + " to " + gender);
-        lemma.setGender(gender);
-        addFormButtonDisabled = true;
-        ckeckLemmaSavability();
-    }
-
-    public void lemmaPersonChanged(AjaxBehaviorEvent e) {
-        String person = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma person of " + lemma.getFormWrittenRepr() + " to " + person);
-        lemma.setPerson(person);
+    public void lemmaMorphoTraitChanged(AjaxBehaviorEvent e) {
+        String trait = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma morphological trait of " + lemma.getFormWrittenRepr() + " to " + trait);
         addFormButtonDisabled = true;
         lemma.setSaveButtonDisabled(false);
     }
 
-    public void lemmaMoodChanged(AjaxBehaviorEvent e) {
-        String mood = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma mood of " + lemma.getFormWrittenRepr() + " to " + mood);
-        lemma.setMood(mood);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaVoiceChanged(AjaxBehaviorEvent e) {
-        String voice = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma voice of " + lemma.getFormWrittenRepr() + " to " + voice);
-        lemma.setVoice(voice);
-        addFormButtonDisabled = true;
-        lemma.setSaveButtonDisabled(false);
-    }
-
-    public void lemmaNumberChanged(AjaxBehaviorEvent e) {
-        String number = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma number of " + lemma.getFormWrittenRepr() + " to " + number);
-        lemma.setNumber(number);
-        addFormButtonDisabled = true;
-        ckeckLemmaSavability();
+    public void formMorphoTraitChanged(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        FormData fd = (FormData) component.getAttributes().get("form");
+        String trait = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Form morphological trait of " + fd.getFormWrittenRepr() + " to " + trait);
+        fd.setSaveButtonDisabled(isSavableForm(fd));
     }
 
     public void lemmaPoSChanged(AjaxBehaviorEvent e) {
@@ -780,52 +781,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         ckeckLemmaSavability();
     }
 
-    public void formNumberChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String number = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form number of " + fd.getFormWrittenRepr() + " to " + number);
-        fd.setNumber(number);
-        fd.setSaveButtonDisabled(isSavableForm(fd));
-    }
-
-    public void formGenderChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String gender = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form gender of " + fd.getFormWrittenRepr() + " to " + gender);
-        fd.setGender(gender);
-        fd.setSaveButtonDisabled(isSavableForm(fd));
-    }
-
-    public void formPersonChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String person = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form person of " + fd.getFormWrittenRepr() + " to " + person);
-        fd.setPerson(person);
-        fd.setSaveButtonDisabled(isSavableForm(fd));
-    }
-
-    public void formMoodChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String mood = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form mood of " + fd.getFormWrittenRepr() + " to " + mood);
-        fd.setMood(mood);
-        fd.setSaveButtonDisabled(isSavableForm(fd));
-    }
-
-    public void formVoiceChanged(AjaxBehaviorEvent e) {
-        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-        FormData fd = (FormData) component.getAttributes().get("form");
-        String voice = (String) e.getComponent().getAttributes().get("value");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form voice of " + fd.getFormWrittenRepr() + " to " + voice);
-        fd.setVoice(voice);
-        fd.setSaveButtonDisabled(isSavableForm(fd));
-    }
-
     private boolean isSavableLemma() {
+        if (lemma.getLanguage().isEmpty()) {
+            lemma.setLanguage(getLexicaLanguages().get(0));
+        }
         if ((lemma.getFormWrittenRepr().isEmpty()) || (lemma.getLanguage().isEmpty()) || (lemma.getPoS().isEmpty())) {
             return true;
         } else {
@@ -1180,10 +1139,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         }
     }
 
-    public void addMorphoTrait() {
-        log(Level.INFO, loginController.getAccount(), "ADD empty reference (seeAlso) to lemma " + lemma.getFormWrittenRepr());
-    }
-    
     // invoked by controller after an user selected add a reference (seeAlso) to lemma
     public void addReference() {
         log(Level.INFO, loginController.getAccount(), "ADD empty reference (seeAlso) to lemma " + lemma.getFormWrittenRepr());
@@ -1197,6 +1152,18 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.getSeeAlso().remove(reference);
         lemma.setSaveButtonDisabled(false);
         relationPanelCheck(reference.getOWLName());
+    }
+
+    public void removeMorphoTrait(LemmaData.MorphoTrait trait) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE morphological trait " + (trait.getName().isEmpty() ? "(empty)" : trait.getName()) + " from " + lemma.getFormWrittenRepr());
+        lemma.getMorphoTraits().remove(trait);
+        lemma.setSaveButtonDisabled(false);
+    }
+
+    public void removeMorphoTrait(FormData fd, LemmaData.MorphoTrait trait) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE morphological trait " + (trait.getName().isEmpty() ? "(empty)" : trait.getName()) + " from " + fd.getFormWrittenRepr());
+        fd.getMorphoTraits().remove(trait);
+        fd.setSaveButtonDisabled(false);
     }
 
     public void addDenote() {
@@ -1213,32 +1180,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         }
     }
 
-    public ArrayList<String> getPuppa(String s) {
-        return propertyValue.getMorphoTrait(s);
-    }
-
     public ArrayList<String> getPoS() {
         return propertyValue.getPoS(lemma.getType());
-    }
-
-    public ArrayList<String> getNumber() {
-        return propertyValue.getNumber();
-    }
-
-    public ArrayList<String> getGender() {
-        return propertyValue.getGender();
-    }
-
-    public ArrayList<String> getPerson() {
-        return propertyValue.getPerson();
-    }
-
-    public ArrayList<String> getMood() {
-        return propertyValue.getMood();
-    }
-
-    public ArrayList<String> getVoice() {
-        return propertyValue.getVoice();
     }
 
     public void checkForLock(String entry) {
@@ -1253,6 +1196,178 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             lexiconCreationControllerRelationDetail.setLocker("");
             log(Level.INFO, loginController.getAccount(), "LOCK the lexical entry related to " + entry);
         }
+    }
+
+    public ArrayList<String> getMorphoTraitValues(String traitName) {
+        return propertyValue.getMorphoTrait(traitName);
+    }
+
+    public void addMorpho(String trait) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty morpho trait (" + trait + ") to lemma " + lemma.getFormWrittenRepr());
+        LemmaData.MorphoTrait mt = new LemmaData.MorphoTrait();
+        mt.setName(trait);
+        lemma.getMorphoTraits().add(mt);
+        lemma.setSaveButtonDisabled(false);
+    }
+
+    public void addFormMorpho(String trait) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        FormData fd = (FormData) component.getAttributes().get("form");
+        log(Level.INFO, loginController.getAccount(), "ADD empty morpho trait (" + trait + ") to form " + fd.getFormWrittenRepr());
+        LemmaData.MorphoTrait mt = new LemmaData.MorphoTrait();
+        mt.setName(trait);
+        fd.getMorphoTraits().add(mt);
+        fd.setSaveButtonDisabled(false);
+    }
+
+    // dynamic lemma menu creation
+    public MenuModel getAddMenuModel() {
+
+        MenuModel addMenuModel = new DefaultMenuModel();
+        DefaultSubMenu morphoMenu = new DefaultSubMenu();
+        morphoMenu.setLabel("Add morphological trait");
+        morphoMenu.setStyleClass("lexiconTabView");
+        morphoMenu.setIcon("fa fa-plus");
+        createMorphoSubMenu(morphoMenu);
+
+        DefaultMenuItem newForm = new DefaultMenuItem();
+        newForm.setValue("Add new form");
+        newForm.setStyleClass("lexiconTabView");
+        newForm.setIcon("fa fa-plus");
+        newForm.setDisabled(newAction);
+        newForm.setUpdate("FormDataList :systemMessage");
+        newForm.setCommand("#{lexiconControllerFormDetail.addForm()}");
+        newForm.setOnstart("PF('loadingDialog').show();");
+        newForm.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        DefaultMenuItem newSense = new DefaultMenuItem();
+        newSense.setValue("Add new sense");
+        newSense.setStyleClass("lexiconTabView");
+        newSense.setIcon("fa fa-plus");
+        newSense.setDisabled(newAction);
+        newSense.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList :systemMessage");
+        newSense.setCommand("#{lexiconControllerFormDetail.addSense()}");
+        newSense.setOnstart("PF('loadingDialog').show();");
+        newSense.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        DefaultMenuItem newSeeAlso = new DefaultMenuItem();
+        newSeeAlso.setValue("Add see also");
+        newSeeAlso.setStyleClass("lexiconTabView");
+        newSeeAlso.setIcon("fa fa-plus");
+        newSeeAlso.setDisabled(newAction);
+        newSeeAlso.setUpdate("LemmaPanelGrid :systemMessage");
+        newSeeAlso.setCommand("#{lexiconControllerFormDetail.addReference()}");
+        newSeeAlso.setOnstart("PF('loadingDialog').show();");
+        newSeeAlso.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        addMenuModel.getElements().add(morphoMenu);
+        addMenuModel.addElement(newSeeAlso);
+        addMenuModel.addElement(new DefaultSeparator());
+        addMenuModel.addElement(newForm);
+        addMenuModel.addElement(newSense);
+        addMenuModel.generateUniqueIds();
+
+        return addMenuModel;
+    }
+
+    private boolean isItemDisabled(String value) {
+        for (LemmaData.MorphoTrait item : lemma.getMorphoTraits()) {
+            if (item.getName().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void createMorphoSubMenu(DefaultSubMenu morphoMenu) {
+        morphoMenu.getElements().add(getItem(Label.MORPHO_ANIMACY_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_ASPECT_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_CASE_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_CLITICNESS_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DATING_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DEFINITENESS_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DEGREE_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_FINITENESS_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_FREQUENCY_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_GENDER_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_MOOD_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_NEGATIVE_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_NUMBER_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_PERSON_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TENSE_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TERM_ELEMENT_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TERM_TYPE_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_VERB_FORM_MOOD_LABEL));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_VOICE_LABEL));
+    }
+
+    private DefaultMenuItem getItem(String value) {
+        DefaultMenuItem item = new DefaultMenuItem();
+        item.setValue(value);
+        item.setDisabled(isItemDisabled(value));
+        item.setUpdate("LemmaPanelGrid :editViewTab:lexiconViewDictionaryForm");
+        item.setCommand("#{lexiconControllerFormDetail.addMorpho('" + value + "')}");
+        item.setOnstart("PF('loadingDialog').show();");
+        item.setOncomplete("setHeight();PF('loadingDialog').hide()");
+        return item;
+    }
+
+    // dynamic form menu creation
+    public MenuModel getAddFormMenuModel(FormData fd) {
+
+        MenuModel addFormMenuModel = new DefaultMenuModel();
+        DefaultSubMenu morphoMenu = new DefaultSubMenu();
+        morphoMenu.setLabel("Add morphological trait");
+        morphoMenu.setStyleClass("lexiconTabView");
+        morphoMenu.setIcon("fa fa-plus");
+        createMorphoSubMenu(morphoMenu, fd);
+
+        addFormMenuModel.getElements().add(morphoMenu);
+        addFormMenuModel.generateUniqueIds();
+
+        return addFormMenuModel;
+    }
+
+    private void createMorphoSubMenu(DefaultSubMenu morphoMenu, FormData fd) {
+        morphoMenu.getElements().add(getItem(Label.MORPHO_ANIMACY_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_ASPECT_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_CASE_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_CLITICNESS_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DATING_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DEFINITENESS_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_DEGREE_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_FINITENESS_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_FREQUENCY_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_GENDER_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_MOOD_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_NEGATIVE_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_NUMBER_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_PERSON_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TENSE_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TERM_ELEMENT_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_TERM_TYPE_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_VERB_FORM_MOOD_LABEL, fd));
+        morphoMenu.getElements().add(getItem(Label.MORPHO_VOICE_LABEL, fd));
+    }
+
+    private boolean isItemDisabled(String value, FormData fd) {
+        for (LemmaData.MorphoTrait item : fd.getMorphoTraits()) {
+            if (item.getName().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private DefaultMenuItem getItem(String value, FormData fd) {
+        DefaultMenuItem item = new DefaultMenuItem();
+        item.setValue(value);
+        item.setDisabled(isItemDisabled(value, fd));
+        item.setUpdate("FormDataList :editViewTab:lexiconViewDictionaryForm");
+        item.setCommand("#{lexiconControllerFormDetail.addFormMorpho('" + value + "')}");
+        item.setOnstart("PF('loadingDialog').show();");
+        item.setOncomplete("setHeight();PF('loadingDialog').hide()");
+        return item;
     }
 
 }

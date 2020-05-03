@@ -173,11 +173,11 @@ public class LexiconModel extends BaseController {
         } else {
             addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
         }
-        addObjectPropertyAxiom("lexinfo", cf, "gender", ld.getGender());
-        addObjectPropertyAxiom("lexinfo", cf, "mood", ld.getMood());
-        addObjectPropertyAxiom("lexinfo", cf, "person", ld.getPerson());
-        addObjectPropertyAxiom("lexinfo", cf, "voice", ld.getVoice());
-        addObjectPropertyAxiom("lexinfo", cf, "number", ld.getNumber());
+
+        for (LemmaData.MorphoTrait mt : ld.getMorphoTraits()) {
+            addObjectPropertyAxiom("lexinfo", cf, mt.getName(), mt.getValue());
+        }
+
         addDataPropertyAxiom("valid", le, "false", pm.getPrefixName2PrefixMap().get("dct:"));
     }
 
@@ -296,8 +296,8 @@ public class LexiconModel extends BaseController {
         OWLNamedIndividual entrySubject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject.replace("_lemma", "_entry")));
         updateMorphology(entrySubject, subject, oldLemma, newLemma);
         updateEntryValidity(entrySubject, oldLemma, newLemma);
-        updateObjectPropertyAxiom(entrySubject, OntoLexEntity.ObjectProperty.DENOTES.getLabel(),
-                oldLemma.getOWLClass().getName(), newLemma.getOWLClass().getName(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+//        updateObjectPropertyAxiom(entrySubject, OntoLexEntity.ObjectProperty.DENOTES.getLabel(),
+//                oldLemma.getOWLClass().getName(), newLemma.getOWLClass().getName(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         //updateDataPropertyAxiom(entrySubject, "verified", oldLemma.getValid(), newLemma.getValid(), pm.getPrefixName2PrefixMap().get("dct:"));
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getSeeAlso(), newLemma.getSeeAlso(), "seeAlso");
         if (oldLemma.getFormWrittenRepr().equals(newLemma.getFormWrittenRepr())) {
@@ -326,11 +326,13 @@ public class LexiconModel extends BaseController {
         } else {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", getMultiwordPoS(oldLemma.getPoS()), getMultiwordPoS(newLemma.getPoS()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         }
-        updateObjectPropertyAxiom(subject, "gender", oldLemma.getGender(), newLemma.getGender(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "person", oldLemma.getPerson(), newLemma.getPerson(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "mood", oldLemma.getMood(), newLemma.getMood(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "voice", oldLemma.getVoice(), newLemma.getVoice(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "number", oldLemma.getNumber(), newLemma.getNumber(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+        for (LemmaData.MorphoTrait mt : oldLemma.getMorphoTraits()) {
+            removeObjectPropertyAxiom("lexinfo", subject, mt.getName(),
+                    factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexinfo:") + mt.getValue())));
+        }
+        for (LemmaData.MorphoTrait mt : newLemma.getMorphoTraits()) {
+            addObjectPropertyAxiom("lexinfo", subject, mt.getName(), mt.getValue());
+        }
     }
 
     private void updateLinkingRelation(String sbj, ArrayList<Word> oldWords, ArrayList<Word> newWords, String rel) {
@@ -800,11 +802,10 @@ public class LexiconModel extends BaseController {
 
     private void setMorphology(OWLNamedIndividual of, FormData fd) {
         addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), of, fd.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
-        addObjectPropertyAxiom("lexinfo", of, "gender", fd.getGender());
-        addObjectPropertyAxiom("lexinfo", of, "number", fd.getNumber());
-        addObjectPropertyAxiom("lexinfo", of, "person", fd.getPerson());
-        addObjectPropertyAxiom("lexinfo", of, "mood", fd.getMood());
-        addObjectPropertyAxiom("lexinfo", of, "voice", fd.getVoice());
+
+        for (LemmaData.MorphoTrait mt : fd.getMorphoTraits()) {
+            addObjectPropertyAxiom("lexinfo", of, mt.getName(), mt.getValue());
+        }
     }
 
     // write all triples about a form with RENAMING
@@ -823,11 +824,15 @@ public class LexiconModel extends BaseController {
 
     private void updateMorphology(OWLNamedIndividual subject, FormData oldForm, FormData newForm) {
         updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldForm.getFormWrittenRepr(), newForm.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
-        updateObjectPropertyAxiom(subject, "gender", oldForm.getGender(), newForm.getGender(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "number", oldForm.getNumber(), newForm.getNumber(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "person", oldForm.getPerson(), newForm.getPerson(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "mood", oldForm.getMood(), newForm.getMood(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-        updateObjectPropertyAxiom(subject, "voice", oldForm.getVoice(), newForm.getVoice(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+
+        for (LemmaData.MorphoTrait mt : oldForm.getMorphoTraits()) {
+            removeObjectPropertyAxiom("lexinfo", subject, mt.getName(),
+                    factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexinfo:") + mt.getValue())));
+        }
+        for (LemmaData.MorphoTrait mt : newForm.getMorphoTraits()) {
+            addObjectPropertyAxiom("lexinfo", subject, mt.getName(), mt.getValue());
+        }
+
     }
 
     private void updateDataPropertyAxiom(OWLNamedIndividual subject, String dataProperty, String oldValue, String newValue, String ns) {
@@ -1178,4 +1183,5 @@ public class LexiconModel extends BaseController {
         return factory;
     }
 
+    
 }
