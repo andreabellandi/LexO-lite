@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.manager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,11 +27,10 @@ import javax.faces.model.SelectItemGroup;
 public class PropertyValue {
 
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
-
-    private ArrayList<String> lemmaInfo;
-    private ArrayList<String> alphabet;
     private ArrayList<String> PoS;
     private ArrayList<String> multiwordType;
+
+    private ArrayList<String> lexicalEntryType;
 
     private ArrayList<String> lexicalRelType;
     private ArrayList<String> senselRelType;
@@ -42,8 +42,6 @@ public class PropertyValue {
     private ArrayList<String> synArgType;
 
     private ArrayList<String> lexicalAspects;
-
-    private ArrayList<Ontology> taxonomy;
 
     private ArrayList<String> lingCatList;
 
@@ -59,6 +57,10 @@ public class PropertyValue {
             traits.add(key.toString());
         }
         return traits;
+    }
+
+    public ArrayList<String> getLexicalEntryType() {
+        return lexicalEntryType;
     }
 
     public ArrayList<SelectItem> getSenseCategory() {
@@ -101,14 +103,6 @@ public class PropertyValue {
         this.synArgType = synArgType;
     }
 
-    public ArrayList<String> getLemmaInfo() {
-        return lemmaInfo;
-    }
-
-    public ArrayList<String> getAlphabet() {
-        return alphabet;
-    }
-
     public ArrayList<String> getMultiwordType() {
         return multiwordType;
     }
@@ -118,10 +112,14 @@ public class PropertyValue {
     }
 
     public ArrayList<String> getPoS(String lemmaType) {
-        if (lemmaType.equals("Word")) {
-            return PoS;
+        if (lemmaType != null) {
+            if (lemmaType.equals("Word")) {
+                return PoS;
+            } else {
+                return multiwordType;
+            }
         } else {
-            return multiwordType;
+            return new ArrayList<>();
         }
     }
 
@@ -147,14 +145,6 @@ public class PropertyValue {
 
     public void setLexicalCategory(ArrayList<SelectItem> lexicalCategory) {
         this.lexicalCategory = lexicalCategory;
-    }
-
-    public ArrayList<Ontology> getTaxonomy() {
-        return taxonomy;
-    }
-
-    public void setTaxonomy(ArrayList<Ontology> taxonomy) {
-        this.taxonomy = taxonomy;
     }
 
     public ArrayList<String> getLexicalAspects() {
@@ -360,6 +350,11 @@ public class PropertyValue {
 
         lingCatList = new ArrayList();
         lingCatList.add("http://www.lexinfo.net/ontologies/3.0/lexinfo");
+
+        lexicalEntryType = new ArrayList();
+        lexicalEntryType.add(OntoLexEntity.Class.AFFIX.getLabel());
+        lexicalEntryType.add(OntoLexEntity.Class.WORD.getLabel());
+        lexicalEntryType.add(OntoLexEntity.Class.MULTIWORD.getLabel());
 
     }
 

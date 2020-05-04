@@ -138,6 +138,11 @@ html, body {
     font-weight:bold;
 }
 
+.newLETitleStyle {
+    font-size:12px !important; 
+    font-weight:bold;
+}
+
 .ontologyImportTitleStyle {
     font-size:10px; 
     font-weight:bold;
@@ -173,7 +178,24 @@ html, body {
     padding-right: 10px;
 }
 
+.newLECols {
+    padding-right: 10px;
+}
+
 .inputNewLangTextStyle {
+    border: 1px solid #a8a8a8;
+    font-style: italic;
+    color: gray;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    border-radius: 5px;
+    font-size: 12px !important;
+    /*    width: 70%;*/
+}
+
+.inputNewLETextStyle {
     border: 1px solid #a8a8a8;
     font-style: italic;
     color: gray;

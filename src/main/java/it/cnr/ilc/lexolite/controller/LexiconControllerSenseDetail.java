@@ -407,10 +407,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         }
     }
     
-    public ArrayList<Ontology> getTaxonomy() {
-        return propertyValue.getTaxonomy();
-    }
-    
     public boolean isOntologyEnabled() {
         return LexOliteProperty.getProperty(Label.ONTOLOGY_FILE_NAME_KEY) != null;
     }

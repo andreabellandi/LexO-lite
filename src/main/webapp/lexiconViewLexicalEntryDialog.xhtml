@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="newLexicalEntryPanel" widgetVar="newLexicalEntryDialog" 
+              header="#{label['newLexicalEntry.header']}" resizable="false" closable="true"
+              modal="true">
+        <h:form>
+            <h:panelGrid columns="4" columnClasses="newLECols, newLECols, newLECols, newLECols">
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.entryType']}"/>
+                <p:selectOneMenu id="leType" styleClass="menu" 
+                                 panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.entryType}" 
+                                 appendTo="leType">
+                    <p:ajax event="valueChange" listener="#{lexiconControllerLexicalEntryDetail.entryTypeChanged}" 
+                            update="newLEButtons lepos"/>
+                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.lexicaEntryTypeList}" />
+                </p:selectOneMenu>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.language']}"/>
+                <p:selectOneMenu id="leLang" styleClass="menu" 
+                                 panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.language}" 
+                                 appendTo="leLang">
+                    <p:ajax event="valueChange" listener="#{lexiconControllerLexicalEntryDetail.languageChanged}" 
+                            update="newLEButtons"/>
+                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.lexicaLanguages}" />
+                </p:selectOneMenu>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.lelabel']}"/>
+                <p:inputText id="leLabel" styleClass="inputNewLETextStyle" style="width: 100%;" 
+                             value="#{lexiconControllerLexicalEntryDetail.lelabel}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLexicalEntryDetail.lexicalEntryLabelKeyupEvent}"
+                            update="newLEButtons"/>
+                    <p:watermark for="leLabel" value="empty, if it's the same as the form"/>
+                </p:inputText>
+                <p:graphicImage id="label" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="label" value="#{label['tooltip.dialog.newLE.label']}" position="right"/>
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.pos']}"/>
+                <p:selectOneMenu id="lepos" styleClass="menu" 
+                                 panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.pos}" 
+                                 appendTo="lepos">
+                    <p:ajax event="valueChange" listener="#{lexiconControllerLexicalEntryDetail.posChanged}" 
+                            update="newLEButtons"/>
+                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.WPoSList}" />
+                </p:selectOneMenu>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+
+
+                <h:panelGrid id="newLEButtons" columns="3" style="padding-top: 10px;">
+                    <p:commandButton icon="fa fa-save" disabled="#{lexiconControllerLexicalEntryDetail.saveDisabled}"
+                                     actionListener="#{lexiconControllerLexicalEntryDetail.save()}"
+                                     onstart="PF('loadingDialog').show();"
+                                     oncomplete="PF('newLexicalEntryDialog').hide(); PF('loadingDialog').hide();"
+                                     update=":lexiconTabViewToolbarForm :systemMessage"/>
+                </h:panelGrid>
+
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

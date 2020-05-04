@@ -298,7 +298,11 @@ public class LexiconManager extends BaseController implements Serializable {
     }
 
     public synchronized ArrayList<String> lexicaLanguagesList() {
-        return lexiconQuery.getLexicaLanguages();
+        if (lexiconQuery != null) {
+            return lexiconQuery.getLexicaLanguages();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public synchronized ArrayList<String> lexicalizazions(String entry) {

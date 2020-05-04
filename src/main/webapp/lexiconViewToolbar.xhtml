@@ -16,6 +16,11 @@
                                 onstart="PF('loadingDialog').show();"
                                 oncomplete="setHeight();PF('newLanguageDialog').show();PF('loadingDialog').hide();"
                                 update=":newLanguagePanel"/>
+                    <p:menuitem value="Lexical Entry" styleClass="lexiconTabView"
+                                actionListener="#{lexiconControllerToolbar.newLexicalEntry()}"
+                                onstart="PF('loadingDialog').show();"
+                                oncomplete="setHeight();PF('newLexicalEntryDialog').show();PF('loadingDialog').hide();"
+                                update=":newLexicalEntryPanel"/>
                     <p:submenu styleClass="lexiconTabView" label="Lemma">
                         <p:menuitem value="Word" styleClass="lexiconTabView" icon="fa fa-plus" 
                                     action="#{lexiconControllerToolbar.newLemma('Word')}"
@@ -27,7 +32,7 @@
                                     update=":editViewTab"/>
                     </p:submenu> 
                 </p:tieredMenu>
-                
+
                 <p:commandButton id="importButton" icon="ui-icon-triangle-1-s" value="Import" type="button" styleClass="lexiconToolbarButton" 
                                  disabled="#{!lexiconControllerToolbar.toolbarEnabled}"/>
                 <p:tieredMenu overlay="true" styleClass="lexiconTabView" trigger="importButton" my="left top" at="left top" style="width:120px">

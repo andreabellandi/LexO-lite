@@ -54,6 +54,8 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     @Inject
     private LexiconControllerLanguageDetail lexiconControllerLanguageDetail;
     @Inject
+    private LexiconControllerLexicalEntryDetail lexiconControllerLexicalEntryDetail;
+    @Inject
     private LexiconControllerTabViewList lexiconCreationControllerTabViewList;
     @Inject
     private AccountManager accountManager;
@@ -77,6 +79,12 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     public void newLanguage() {
         lexiconControllerLanguageDetail.clear();
         log(Level.INFO, loginController.getAccount(), "NEW Language panel opened ");
+    }
+
+    public void newLexicalEntry() {
+        lexiconControllerLexicalEntryDetail.clear();
+        
+        log(Level.INFO, loginController.getAccount(), "NEW Lexical entry panel opened ");
     }
 
     public void ontologyImport() {
