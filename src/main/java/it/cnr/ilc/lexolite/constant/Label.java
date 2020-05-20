@@ -14,12 +14,16 @@ import it.cnr.ilc.lexolite.controller.BaseController;
 public class Label extends BaseController {
 
     public static final String NO_ENTRY_FOUND = "No entry found";
+    public static final String NO_CANONICAL_FORM = "nolemma";
+    public static final String NO_POS = "nopos";
     public static final String LEXICON_FILE_NAME_KEY = "lexiconFileName";
     public static final String LEXICON_NAMESPACE_KEY = "lexiconNamespace";
     public static final String ONTOLOGY_FILE_NAME_KEY = "domainOntologyFileName";
     public static final String ONTOLOGY_NAMESPACE_KEY = "domainOntologyNamespace";
     public static final String LEXO_FOLDER = "/.LexO-lite/";
     public static final String LEXO_PROPERTIES_FILE_NAME = "lexolite.properties";
+    public static final String CANONICAL_FORM = "Canonical";
+    public static final String OTHER_FORM = "Other";
     
     // morpho menu items label
     public static final String MORPHO_ANIMACY_LABEL = "animacy";

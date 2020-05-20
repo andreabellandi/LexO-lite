@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.manager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,8 @@ public class PropertyValue {
     private ArrayList<String> PoS;
     private ArrayList<String> multiwordType;
 
+    private ArrayList<String> formTypeList;
+
     private ArrayList<String> lexicalEntryType;
 
     private ArrayList<String> lexicalRelType;
@@ -49,6 +52,10 @@ public class PropertyValue {
 
     public ArrayList<String> getMorphoTrait(String s) {
         return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class)));
+    }
+
+    public ArrayList<String> getFormTypeList() {
+        return formTypeList;
     }
 
     public Set<String> getMorphoTrait() {
@@ -355,6 +362,10 @@ public class PropertyValue {
         lexicalEntryType.add(OntoLexEntity.Class.AFFIX.getLabel());
         lexicalEntryType.add(OntoLexEntity.Class.WORD.getLabel());
         lexicalEntryType.add(OntoLexEntity.Class.MULTIWORD.getLabel());
+        
+        formTypeList = new ArrayList<>();
+        formTypeList.add(Label.CANONICAL_FORM);
+        formTypeList.add(Label.OTHER_FORM);
 
     }
 

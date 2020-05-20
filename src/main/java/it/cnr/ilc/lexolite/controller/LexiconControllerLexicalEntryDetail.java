@@ -115,6 +115,10 @@ public class LexiconControllerLexicalEntryDetail extends BaseController implemen
         return propertyValue.getLingCatList();
     }
 
+    public ArrayList<String> getFormTypeList() {
+        return propertyValue.getFormTypeList();
+    }
+
     public ArrayList<String> getWPoSList() {
         if (propertyValue != null) {
             return propertyValue.getPoS(entryType);
@@ -148,8 +152,15 @@ public class LexiconControllerLexicalEntryDetail extends BaseController implemen
         ckeckLexicalEntrySavability();
     }
 
+    public void createSenseChanged(AjaxBehaviorEvent e) {
+        boolean sense = (boolean) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE create sense of new lexical entry to " + sense);
+        createSense = sense;
+        ckeckLexicalEntrySavability();
+    }
+
     private void ckeckLexicalEntrySavability() {
-        if (!entryType.isEmpty() && !language.isEmpty() && !writtenRep.isEmpty() && !pos.isEmpty()) {
+        if (!entryType.isEmpty() && !language.isEmpty() && !writtenRep.isEmpty()) {
             saveDisabled = false;
         } else {
             saveDisabled = true;
@@ -159,6 +170,13 @@ public class LexiconControllerLexicalEntryDetail extends BaseController implemen
     public void lexicalEntryLabelKeyupEvent(AjaxBehaviorEvent e) {
         String label = (String) e.getComponent().getAttributes().get("value");
         log(Level.INFO, loginController.getAccount(), "UPDATE label of new lexical entry to " + label);
+        ckeckLexicalEntrySavability();
+    }
+
+    public void writtenRepKeyupEvent(AjaxBehaviorEvent e) {
+        String wr = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE written rep of new lexical entry to " + wr);
+        ckeckLexicalEntrySavability();
     }
 
     public ArrayList<String> getLexicaLanguages() {
@@ -171,6 +189,7 @@ public class LexiconControllerLexicalEntryDetail extends BaseController implemen
     }
 
     public void save() throws IOException, OWLOntologyStorageException {
+        lexiconManager.saveLexicalEntry(createSense, entryType, language, writtenRep, lelabel, formType, pos);
 //        if (!langName.isEmpty()) {
 //            lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
 //            log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);

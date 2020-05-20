@@ -10,18 +10,18 @@
         <h:form>
             <h:panelGrid columns="4" columnClasses="newLECols, newLECols, newLECols, newLECols">
 
-                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.entryType']}"/>
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.entryType']} (*)"/>
                 <p:selectOneMenu id="leType" styleClass="menu" 
                                  panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.entryType}" 
                                  appendTo="leType">
                     <p:ajax event="valueChange" listener="#{lexiconControllerLexicalEntryDetail.entryTypeChanged}" 
                             update="newLEButtons lepos"/>
-                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.lexicaEntryTypeList}" />
+                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.lexicaEntryTypeList}"/>
                 </p:selectOneMenu>
-                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
 
-                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.language']}"/>
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.language']} (*)"/>
                 <p:selectOneMenu id="leLang" styleClass="menu" 
                                  panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.language}" 
                                  appendTo="leLang">
@@ -29,18 +29,35 @@
                             update="newLEButtons"/>
                     <f:selectItems value="#{lexiconControllerLexicalEntryDetail.lexicaLanguages}" />
                 </p:selectOneMenu>
-                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.writtenRep']} (*)"/>
+                <p:inputText id="wr" styleClass="inputNewLETextStyle" style="width: 100%;" 
+                             value="#{lexiconControllerLexicalEntryDetail.writtenRep}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerLexicalEntryDetail.writtenRepKeyupEvent}"
+                            update="newLEButtons"/>
+                </p:inputText>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
 
                 <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.lelabel']}"/>
                 <p:inputText id="leLabel" styleClass="inputNewLETextStyle" style="width: 100%;" 
                              value="#{lexiconControllerLexicalEntryDetail.lelabel}">
+                    <!-- METTERE CONTROLLO PER VERIFICARE CHE NON ESITA GIA'-->
                     <p:ajax event="keyup" listener="#{lexiconControllerLexicalEntryDetail.lexicalEntryLabelKeyupEvent}"
                             update="newLEButtons"/>
-                    <p:watermark for="leLabel" value="empty, if it's the same as the form"/>
+                    <p:watermark for="leLabel" value="#{label['newLexicalEntry.lelabel.watermark']}"/>
                 </p:inputText>
                 <p:graphicImage id="label" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
                 <p:tooltip for="label" value="#{label['tooltip.dialog.newLE.label']}" position="right"/>
+
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.formType']}"/>
+                <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerLexicalEntryDetail.formType}">
+                    <f:selectItems value="#{lexiconControllerLexicalEntryDetail.formTypeList}" />
+                </p:selectOneMenu>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
 
                 <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.pos']}"/>
                 <p:selectOneMenu id="lepos" styleClass="menu" 
@@ -48,11 +65,18 @@
                                  appendTo="lepos">
                     <p:ajax event="valueChange" listener="#{lexiconControllerLexicalEntryDetail.posChanged}" 
                             update="newLEButtons"/>
+                    <f:selectItem itemLabel="No entry specified" itemValue="" />
                     <f:selectItems value="#{lexiconControllerLexicalEntryDetail.WPoSList}" />
                 </p:selectOneMenu>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
 
+                <p:outputLabel styleClass="newLETitleStyle" value="#{label['newLexicalEntry.sense']}"/>
+                <p:selectBooleanCheckbox  value="#{lexiconControllerLexicalEntryDetail.createSense}">
+                    <p:ajax listener="#{lexiconControllerLexicalEntryDetail.createSenseChanged}"/>
+                </p:selectBooleanCheckbox>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
+                <p:outputLabel styleClass="newLETitleStyle" value=""/>
 
                 <h:panelGrid id="newLEButtons" columns="3" style="padding-top: 10px;">
                     <p:commandButton icon="fa fa-save" disabled="#{lexiconControllerLexicalEntryDetail.saveDisabled}"
@@ -63,6 +87,7 @@
                 </h:panelGrid>
 
             </h:panelGrid>
+            
         </h:form>
     </p:dialog>
 

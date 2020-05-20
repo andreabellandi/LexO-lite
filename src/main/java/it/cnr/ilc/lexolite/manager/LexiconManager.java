@@ -142,6 +142,12 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
+    public synchronized void saveLexicalEntry(boolean createSense, String... params) throws IOException, OWLOntologyStorageException {
+        String lexiconInstance = lexiconQuery.getLexicon(params[1]);
+        lexiconModel.addLexicalEntry(loginController.getAccount(), createSense, lexiconInstance, params);
+        lexiconModel.persist();
+    }
+
     public synchronized void saveLemmaNote(LemmaData ld, String oldNote) throws IOException, OWLOntologyStorageException {
         lexiconModel.saveLemmaNote(ld, oldNote);
         lexiconModel.persist();

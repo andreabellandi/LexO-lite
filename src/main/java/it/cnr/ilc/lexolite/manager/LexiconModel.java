@@ -11,6 +11,7 @@ import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
+import it.cnr.ilc.lexolite.domain.Account;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -29,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.singleton;
@@ -77,14 +80,14 @@ import org.semanticweb.owlapi.util.OWLEntityRenamer;
 public class LexiconModel extends BaseController {
 
     @Inject
-    private OntologyManager ontologyManager;
-    @Inject
     private LoginController loginController;
 
     private OWLOntologyManager manager;
     private OWLOntology ontology;
     private OWLDataFactory factory;
     private PrefixManager pm;
+
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy");
 
     public LexiconModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
@@ -150,6 +153,50 @@ public class LexiconModel extends BaseController {
         addDataPropertyAxiom("linguisticCatalog", lexiconEntry, params[2], pm.getPrefixName2PrefixMap().get("lime:"));
         addDataPropertyAxiom("description", lexiconEntry, params[3], pm.getPrefixName2PrefixMap().get("dct:"));
         addDataPropertyAxiom("creator", lexiconEntry, params[4], pm.getPrefixName2PrefixMap().get("dct:"));
+    }
+
+    // NEW lexical entry
+    // params: entryType, lang, wr, leLabel, formType, pos, sense
+    public void addLexicalEntry(Account user, boolean createSense, String lex, String... params) {
+        String leInstance = LexiconUtil.getIRI(params[3].isEmpty() ? params[2] : params[3], params[5].isEmpty() ? Label.NO_POS : params[5], params[1], "entry");
+        String formInstance;
+        if (params[4].equals(Label.CANONICAL_FORM)) {
+            formInstance = LexiconUtil.getIRI(params[2], params[5].isEmpty() ? Label.NO_POS : params[5], params[1], "lemma");
+        } else {
+            formInstance = LexiconUtil.getIRI(Label.NO_CANONICAL_FORM,
+                    params[5].isEmpty() ? Label.NO_POS : params[5], params[1], params[2], "form");
+        }
+        OWLNamedIndividual lexicon = getIndividual(lex);
+        OWLNamedIndividual le = getEntry(leInstance, params[0]);
+        OWLNamedIndividual lf = getForm(formInstance);
+        addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.ENTRY.getLabel(), lexicon, le, pm.getPrefixName2PrefixMap().get("lime:"));
+        addObjectPropertyAxiom(params[4].equals(Label.CANONICAL_FORM) ? OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel()
+                : OntoLexEntity.ObjectProperty.OTHERFORM.getLabel(),
+                le, lf, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), lf, params[2], pm.getPrefixName2PrefixMap().get("ontolex:"));
+        if (!params[5].isEmpty()) {
+            addObjectPropertyAxiom("lexinfo", le, "partOfSpeech",
+                    params[0].equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getMultiwordPoS(params[5]) : params[5]);
+        }
+        addDataPropertyAxiom("label", le, params[3].isEmpty() ? params[2] : params[3], pm.getPrefixName2PrefixMap().get("rdfs:"));
+        addDataPropertyAxiom("valid", le, "false", pm.getPrefixName2PrefixMap().get("dct:"));
+        createSense(createSense, le);
+        setMetadata(lf, user);
+        setMetadata(le, user);
+    }
+
+    private void setMetadata(OWLNamedIndividual i, Account user) {
+        // Dublin Core properties
+        addDataPropertyAxiom("created", i, dtf.format(LocalDateTime.now()), pm.getPrefixName2PrefixMap().get("dct:"));
+        addDataPropertyAxiom("creator", i, user.getName(), pm.getPrefixName2PrefixMap().get("dct:"));
+    }
+
+    private void createSense(boolean createSense, OWLNamedIndividual le) {
+        if (createSense) {
+            String senseInstance = le.getIRI().getShortForm().replace("_entry", "_sense");
+            OWLNamedIndividual s = getSense(senseInstance, 1);
+            addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SENSE.getLabel(), le, s, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        }
     }
 
     // NEW LEMMA ACTION: write all the triples about the new lemma entry
@@ -1183,5 +1230,4 @@ public class LexiconModel extends BaseController {
         return factory;
     }
 
-    
 }
