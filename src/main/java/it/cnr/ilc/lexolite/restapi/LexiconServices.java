@@ -16,6 +16,7 @@ import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
+import it.cnr.ilc.lexolite.manager.SenseData.SenseRelation;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +58,7 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
  */
 @Path("/")
 public class LexiconServices {
-    
+
     private LexiconManager lexiconManager = LexiconManager.getInstance();
 
     public static Pattern pattern = Pattern.compile("([a-z]+_lemma)");
@@ -263,37 +264,11 @@ public class LexiconServices {
         List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null);
         for (SenseData sense : senses) {
             JsonObject lemmas = new JsonObject();
-            switch (rel) {
-//                case "synonym":
-//                    for (SenseData.Openable sRel : sense.getSynonym()) {
-//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-//                    }
-//                    break;
-//                case "antonym":
-//                    for (SenseData.Openable sRel : sense.getAntonym()) {
-//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-//                    }
-//                    break;
-//                case "hypernym":
-//                    for (SenseData.Openable sRel : sense.getHypernym()) {
-//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-//                    }
-//                    break;
-//                case "hyponym":
-//                    for (SenseData.Openable sRel : sense.getHyponym()) {
-//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-//                    }
-//                    break;
-//                case "translation":
-//                    for (SenseData.Openable sRel : sense.getTranslation()) {
-//                        LemmaData ld = lexiconManager.getLemmaOfSense(sRel.getName());
-//                        lemmas.add(ld.getFormWrittenRepr(), getJSon(ld));
-//                    }
-//                    break;
+            for (SenseRelation sr : sense.getSenseRels()) {
+                if (sr.getRelation().equals(rel)) {
+                    LemmaData ld = lexiconManager.getLemmaOfSense(sr.getWrittenRep());
+                    lemmas.add(ld.getFormWrittenRepr(), setLemma(ld));
+                }
             }
             if (lemmas.size() > 0) {
                 senseNumber.add(sense.getName(), lemmas);
@@ -304,6 +279,14 @@ public class LexiconServices {
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS").build();
+    }
+
+    private JsonObject setLemma(LemmaData ld) {
+        JsonObject lemma = new JsonObject();
+        lemma.addProperty("id", ld.getIndividual());
+        lemma.addProperty("writtenRep", ld.getFormWrittenRepr());
+        lemma.addProperty("type", ld.getType());
+        return lemma;
     }
 
     @GET

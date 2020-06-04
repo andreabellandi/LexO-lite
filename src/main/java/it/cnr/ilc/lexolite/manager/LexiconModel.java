@@ -294,6 +294,7 @@ public class LexiconModel extends BaseController {
         String _subject = oldLemma.getIndividual();
         OWLNamedIndividual subject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject));
         OWLNamedIndividual entrySubject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject.replace("_lemma", "_entry")));
+        updatePhonetic(subject, oldLemma.getFormPhoneticRep(), newLemma.getFormPhoneticRep());
         updateMorphology(entrySubject, subject, oldLemma, newLemma);
         updateEntryValidity(entrySubject, oldLemma, newLemma);
 //        updateObjectPropertyAxiom(entrySubject, OntoLexEntity.ObjectProperty.DENOTES.getLabel(),
@@ -316,6 +317,14 @@ public class LexiconModel extends BaseController {
                 senseRenaming(oldLemma, newLemma, le);
                 IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
             }
+        }
+    }
+
+    private void updatePhonetic(OWLNamedIndividual subject, String oldPhonetic, String newPhonetic) {
+        if (oldPhonetic.isEmpty() || oldPhonetic.equals(Label.NO_ENTRY_FOUND)) {
+            addDataPropertyAxiom(OntoLexEntity.DataProperty.PHONETICREP.getLabel(), subject, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        } else {
+            updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
         }
     }
 
@@ -588,6 +597,9 @@ public class LexiconModel extends BaseController {
         addIndividualAxiom(SyntacticFrame, sf);
         addIndividualAxiom(sfType, sf);
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SYNBEHAVIOR.getLabel(), le, sf, pm.getPrefixName2PrefixMap().get("synsem:"));
+        if (!synFrame.getExample().isEmpty()) {
+            addDataPropertyAxiom("example", sf, synFrame.getExample(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+        }
         return sf.getIRI().getShortForm();
     }
 
@@ -603,6 +615,11 @@ public class LexiconModel extends BaseController {
             OWLNamedIndividual sf = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), newSynFrame.getName());
             removeIndividualAxiom(sfOldType, sf);
             addIndividualAxiom(sfNewType, sf);
+        }
+        if (!oldSynFrame.getExample().equals(newSynFrame.getExample())) {
+            OWLNamedIndividual sf = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), newSynFrame.getName());
+            addDataPropertyAxiom("example", sf, newSynFrame.getExample(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
+            removeDataPropertyAxiom(pm.getPrefixName2PrefixMap().get("lexinfo:"), sf, "example", oldSynFrame.getExample());
         }
     }
 
@@ -819,7 +836,16 @@ public class LexiconModel extends BaseController {
     public void updateForm(FormData oldForm, FormData newForm, LemmaData ld) {
         String _subject = oldForm.getIndividual();
         OWLNamedIndividual subject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject));
+        updateFormPhonetic(subject, oldForm.getFormPhoneticRep(), newForm.getFormPhoneticRep());
         updateMorphology(subject, oldForm, newForm);
+    }
+
+    private void updateFormPhonetic(OWLNamedIndividual subject, String oldPhonetic, String newPhonetic) {
+        if (oldPhonetic.isEmpty() || oldPhonetic.equals(Label.NO_ENTRY_FOUND)) {
+            addDataPropertyAxiom(OntoLexEntity.DataProperty.PHONETICREP.getLabel(), subject, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        } else {
+            updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        }
     }
 
     private void updateMorphology(OWLNamedIndividual subject, FormData oldForm, FormData newForm) {
@@ -1183,5 +1209,4 @@ public class LexiconModel extends BaseController {
         return factory;
     }
 
-    
 }

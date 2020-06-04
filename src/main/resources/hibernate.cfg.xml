@@ -18,6 +18,7 @@
 
         <mapping class="it.cnr.ilc.lexolite.domain.SuperEntity"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Account"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.Authoring"/>
         <mapping class="it.cnr.ilc.lexolite.domain.AccountType"/>
 
     </session-factory>

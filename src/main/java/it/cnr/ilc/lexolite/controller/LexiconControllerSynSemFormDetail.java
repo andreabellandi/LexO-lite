@@ -150,6 +150,7 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
             _sf.setNewFrame(_sf.isNewFrame());
             _sf.setSynArgs(copySynArgs(sf.getSynArgs()));
             _sf.setType(sf.getType());
+            _sf.setExample(sf.getExample());
             sfl.add(_sf);
         }
         return sfl;
@@ -167,6 +168,14 @@ public class LexiconControllerSynSemFormDetail extends BaseController implements
             _alsa.add(_sa);
         }
         return _alsa;
+    }
+
+    public void frameExampleKeyupEvent(AjaxBehaviorEvent e) {
+        String ex = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE SynFrame example of " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr() + " to " + ex);
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SynFrame sf = (SynFrame) component.getAttributes().get("frame");
+        sf.setSaveButtonDisabled(false);
     }
 
     public void synFrameTypeChanged(AjaxBehaviorEvent e) {

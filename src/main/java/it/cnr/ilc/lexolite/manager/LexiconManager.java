@@ -337,6 +337,10 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getLemmaOfSense(sense, morphoTraits);
     }
 
+    public synchronized LemmaData getLemmaOfSense(String sense) {
+        return lexiconQuery.getLemmaOfSense(sense);
+    }
+
     public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
         return lexiconQuery.getFormsOfLemma(lemma, lang, morphoTraits);
     }

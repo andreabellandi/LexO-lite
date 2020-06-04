@@ -49,6 +49,7 @@ public class OntoLexEntity {
 
         // Core
         WRITTENREP("writtenRep"),
+        PHONETICREP("phoneticRep"),
 
         // synsem module
         OPTIONAL("optional");

@@ -89,6 +89,21 @@
                          readonly="true"
                          rendered="#{lexiconControllerFormDetail.locked}"/>
 
+            <h:outputLabel styleClass="titleStyle" 
+                           rendered="#{!lexiconControllerFormDetail.newAction 
+                                       and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')
+                                       and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('')}" 
+                           value="Phonetic:"/>
+            <h:panelGrid id="phoneticPanel" columns="1" cellpadding="0" 
+                         rendered="#{!lexiconControllerFormDetail.newAction 
+                                     and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')
+                                     and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('')}">
+                <p:inputText id="phonetic" value="#{lexiconControllerFormDetail.lemma.formPhoneticRep}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.phoneticKeyUpEvent}"
+                            update="lemmaButtons"/>
+                </p:inputText>
+            </h:panelGrid>
+
             <h:panelGrid  columns="1" cellpadding="0" rendered="#{lexiconControllerFormDetail.lemma.morphoTraits.size() > 0}">
                 <h:outputLabel  styleClass="multiwordTitleStyle" value="Morphology:"/>
             </h:panelGrid>
@@ -157,7 +172,8 @@
             <h:panelGrid id="lemmaButtons" columns="4" columnClasses="column" cellpadding="0" 
                          rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                      or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
-                <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical entities and relations"/>
+                <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical entities and relations"
+                                 disabled="#{lexiconControllerFormDetail.renderedEntryErrorLabel or lexiconControllerFormDetail.newAction}" />
                 <p:tieredMenu overlay="true" trigger="menuButton" my="left top" at="left bottom"  
                               model="#{lexiconControllerFormDetail.addMenuModel}"/>
 
@@ -191,7 +207,8 @@
             </h:panelGrid>
         </h:panelGrid>
 
-        <p:overlayPanel id="lemmaNotePanel" widgetVar="lemmaNotePanel" dismissable="false" showCloseIcon="true" style="width: 300px; height: 200px"  my="right top">
+        <p:overlayPanel id="lemmaNotePanel" my="left top" at="right bottom" 
+                        widgetVar="lemmaNotePanel" dismissable="false" showCloseIcon="true" style="width: 300px; height: 200px">
             <p:inplace effectSpeed="fast" editor="#{!lexiconControllerFormDetail.locked}">
                 <f:facet name="output">
                     <h:outputText value="#{lexiconControllerFormDetail.emptyMessage(lexiconControllerFormDetail.lemma.note, '...')}"/>
@@ -229,6 +246,18 @@
                     </h:panelGrid>
                 </h:panelGrid>
 
+                <h:outputLabel styleClass="titleStyle" 
+                               rendered="#{!lexiconControllerFormDetail.newFormAction and !form.formPhoneticRep.equals('No entry found')}" 
+                               value="Phonetic:"/>
+                <h:panelGrid id="formPhoneticPanel" columns="1" cellpadding="0" 
+                             rendered="#{!lexiconControllerFormDetail.newFormAction and !form.formPhoneticRep.equals('No entry found')}">
+                    <p:inputText id="formPhonetic" value="#{form.formPhoneticRep}">
+                        <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.phoneticFormKeyUpEvent}"
+                                update=":editViewTab:lexiconFormDetailForm:FormDataList:formButtons"/>
+                        <f:attribute name="form" value="#{form}"/>
+                    </p:inputText>
+                </h:panelGrid>
+
                 <h:panelGrid  columns="1" cellpadding="0" rendered="#{form.morphoTraits.size() > 0}">
                     <h:outputLabel  styleClass="multiwordTitleStyle" value="Morphology:"/>
                 </h:panelGrid>
@@ -254,27 +283,28 @@
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
 
-                    <p:commandButton id="menuButtonForm" type="button" icon="fa fa-plus" title="Add relations"/>
-                        <p:tieredMenu overlay="true" trigger="menuButtonForm" my="left top" at="left bottom"  
-                                      model="#{lexiconControllerFormDetail.getAddFormMenuModel(form)}">
-                            <f:attribute name="form" value="#{form}"/>
-                        </p:tieredMenu>
+                    <p:commandButton id="menuButtonForm" type="button" icon="fa fa-plus" title="Add relations" 
+                                     disabled="#{lexiconControllerFormDetail.formAlreadyExists or lexiconControllerFormDetail.newFormAction}"/>
+                    <p:tieredMenu overlay="true" trigger="menuButtonForm" my="left top" at="left bottom"  
+                                  model="#{lexiconControllerFormDetail.getAddFormMenuModel(form)}">
+                        <f:attribute name="form" value="#{form}"/>
+                    </p:tieredMenu>
 
-                        <p:commandButton title="Save form" icon="fa fa-save" 
-                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage
-                                         :lexiconTabViewForm:tabView:formFilterLabel :editViewTab:lexiconViewDictionaryForm" 
-                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
-                                         action="#{lexiconControllerFormDetail.saveForm(form)}"
-                                         disabled="#{form.saveButtonDisabled}">
-                        </p:commandButton>
-                        <p:commandButton title="Delete form" icon="fa fa-trash"
-                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage 
-                                         :lexiconTabViewForm:tabView:formFilterLabel" 
-                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
-                                         action="#{lexiconControllerFormDetail.removeForm(form)}"
-                                         disabled="#{form.deleteButtonDisabled}">
-                            <p:confirm message="#{label['lexicon.creation.confirm.deleteForm']}" icon="ui-icon-alert" />
-                        </p:commandButton>
+                    <p:commandButton title="Save form" icon="fa fa-save" 
+                                     update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage
+                                     :lexiconTabViewForm:tabView:formFilterLabel :editViewTab:lexiconViewDictionaryForm" 
+                                     onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                     action="#{lexiconControllerFormDetail.saveForm(form)}"
+                                     disabled="#{form.saveButtonDisabled}">
+                    </p:commandButton>
+                    <p:commandButton title="Delete form" icon="fa fa-trash"
+                                     update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage 
+                                     :lexiconTabViewForm:tabView:formFilterLabel" 
+                                     onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                     action="#{lexiconControllerFormDetail.removeForm(form)}"
+                                     disabled="#{form.deleteButtonDisabled or lexiconControllerFormDetail.formAlreadyExists}">
+                        <p:confirm message="#{label['lexicon.creation.confirm.deleteForm']}" icon="ui-icon-alert" />
+                    </p:commandButton>
                 </h:panelGrid>
 
                 <h:panelGrid id="errorForm" columns="1" columnClasses="column" cellpadding="0">

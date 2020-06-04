@@ -214,6 +214,16 @@ public class LexiconQuery extends BaseController {
         return ld;
     }
 
+    public LemmaData getLemmaOfSense(String sense) {
+        LemmaData ld = new LemmaData();
+        ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_SENSE.replace("_SENSE_", sense)));
+        String lemma = results.get(0);
+        ld.setIndividual(lemma);
+        ld.setType(getLemmaType(lemma));
+        ld.setFormWrittenRepr(getLemmaWrittenRep(lemma));
+        return ld;
+    }
+
     // invoked in order to get a lemma attributes of a specific form
     public LemmaData getLemmaEntry(String form, Set<String> morphoTraits) {
         LemmaData ld = new LemmaData();
@@ -251,25 +261,31 @@ public class LexiconQuery extends BaseController {
                     synFrame.setType(ft.get("type"));
                 }
             }
+            List<Map<String, String>> frameExample = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_FRAME_EXAMPLE).replace("_FRAME_", m.get("frameName")));
+            for (Map<String, String> fex : frameExample) {
+                synFrame.setExample(fex.get("ex"));
+            }
             List<Map<String, String>> frameArgs = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_FRAME_ARGS).replace("_FRAME_", m.get("frameName")));
             for (Map<String, String> fa : frameArgs) {
-                LemmaData.SynArg synArg = new LemmaData.SynArg();
-                synArg.setType(fa.get("type"));
-                synArg.setName(fa.get("synArg"));
-                synArg.setNumber(Integer.parseInt(fa.get("synArg").split("_arg_")[1]));
-                synArg.setOptional(false);
-                List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
-                for (Map<String, String> ap : argProps) {
-                    if (ap.get("rel").equals(OntoLexEntity.DataProperty.OPTIONAL.getLabel())) {
-                        if (ap.get("value").equals("true")) {
-                            synArg.setOptional(true);
+                if (!fa.get("type").equals("example")) {
+                    LemmaData.SynArg synArg = new LemmaData.SynArg();
+                    synArg.setType(fa.get("type"));
+                    synArg.setName(fa.get("synArg"));
+                    synArg.setNumber(Integer.parseInt(fa.get("synArg").split("_arg_")[1]));
+                    synArg.setOptional(false);
+                    List<Map<String, String>> argProps = processQuery((LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SYNTACTIC_ARG_PROPS).replace("_ARG_", fa.get("synArg")));
+                    for (Map<String, String> ap : argProps) {
+                        if (ap.get("rel").equals(OntoLexEntity.DataProperty.OPTIONAL.getLabel())) {
+                            if (ap.get("value").equals("true")) {
+                                synArg.setOptional(true);
+                            }
+                        }
+                        if (ap.get("rel").equals(OntoLexEntity.ObjectProperty.MARKER.getLabel())) {
+                            synArg.setMarker(ap.get("value"));
                         }
                     }
-                    if (ap.get("rel").equals(OntoLexEntity.ObjectProperty.MARKER.getLabel())) {
-                        synArg.setMarker(ap.get("value"));
-                    }
+                    synFrame.getSynArgs().add(synArg);
                 }
-                synFrame.getSynArgs().add(synArg);
             }
             alr.add(synFrame);
         }
@@ -340,7 +356,7 @@ public class LexiconQuery extends BaseController {
         }
         ld.setValid(valid);
         ld.setPoS(ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
-
+        ld.setFormPhoneticRep(getLemmaPhoneticRep(lemma));
         ld.setMorphoTraits(getLemmaMorphoTraits(lemma, morphoTraits));
 
         ld.setNote(getLemmaNote(lemma));
@@ -481,6 +497,7 @@ public class LexiconQuery extends BaseController {
         fd.setIndividual(form);
         fd.setLanguage(lang);
         fd.setFormWrittenRepr(getFormWrittenRep(form));
+        fd.setFormPhoneticRep(getFormPhonetic(form));
         fd.setMorphoTraits(getFormMorphoTraits(form, morphoTraits));
         fd.setNote(getFormNote(form));
     }
@@ -672,6 +689,10 @@ public class LexiconQuery extends BaseController {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_REPRESENTATION, "_LEMMA_", lemma);
     }
 
+    private String getLemmaPhoneticRep(String lemma) {
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_PHONETIC, "_LEMMA_", lemma);
+    }
+
     private String getLemmaPoS(String lemma) {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_POS, "_ENTRY_", lemma.replace("_lemma", "_entry"));
     }
@@ -682,6 +703,10 @@ public class LexiconQuery extends BaseController {
 
     private String getFormWrittenRep(String form) {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_REPRESENTATION, "_FORM_", form);
+    }
+
+    private String getFormPhonetic(String form) {
+        return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_PHONETIC, "_FORM_", form);
     }
 
     public String getDefinition(String sense) {

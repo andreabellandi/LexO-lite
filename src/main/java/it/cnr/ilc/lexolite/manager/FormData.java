@@ -19,6 +19,7 @@ public class FormData implements Serializable {
     private boolean addFormdisabled;
 
     private String formWrittenRepr;
+    private String formPhoneticRep;
     private String language;
     private String individual;
     private String note;
@@ -33,6 +34,7 @@ public class FormData implements Serializable {
         this.individual = "";
         this.note = "";
         this.morphoTraits.clear();
+        this.formPhoneticRep = "No entry found";
     }
 
     public ArrayList<LemmaData.MorphoTrait> getMorphoTraits() {
@@ -49,6 +51,14 @@ public class FormData implements Serializable {
 
     public void setIndividual(String individual) {
         this.individual = individual;
+    }
+
+    public String getFormPhoneticRep() {
+        return formPhoneticRep;
+    }
+
+    public void setFormPhoneticRep(String formPhoneticRep) {
+        this.formPhoneticRep = formPhoneticRep;
     }
 
     public String getLanguage() {

@@ -7,8 +7,6 @@ package it.cnr.ilc.lexolite.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -19,6 +17,7 @@ public class LemmaData implements Serializable {
     private boolean saveButtonDisabled;
     private boolean deleteButtonDisabled;
     private String formWrittenRepr;
+    private String formPhoneticRep;
     private String PoS;
     private String language;
     private String individual;
@@ -46,6 +45,14 @@ public class LemmaData implements Serializable {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
         this.verified = false;
+    }
+
+    public String getFormPhoneticRep() {
+        return formPhoneticRep;
+    }
+
+    public void setFormPhoneticRep(String formPhoneticRep) {
+        this.formPhoneticRep = formPhoneticRep;
     }
 
     public ArrayList<MorphoTrait> getMorphoTraits() {
@@ -210,6 +217,7 @@ public class LemmaData implements Serializable {
         this.synFrames.clear();
         this.morphoTraits.clear();
         this.OWLClass = null;
+        this.formPhoneticRep = "";
     }
 
     public static class Word {
@@ -526,6 +534,7 @@ public class LemmaData implements Serializable {
 
         private String type;
         private String name;
+        private String example;
         private ArrayList<SynArg> synArgs = new ArrayList();
         private boolean saveButtonDisabled = true;
         private boolean newFrame = true;
@@ -534,10 +543,19 @@ public class LemmaData implements Serializable {
             this.type = "";
             this.name = "";
             this.synArgs.clear();
+            this.example = "";
         }
 
         public boolean isNewFrame() {
             return newFrame;
+        }
+
+        public String getExample() {
+            return example;
+        }
+
+        public void setExample(String example) {
+            this.example = example;
         }
 
         public void setNewFrame(boolean newFrame) {

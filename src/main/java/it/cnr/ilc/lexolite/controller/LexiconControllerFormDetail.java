@@ -7,7 +7,9 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.manager.AccountManager;
+import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
@@ -35,6 +37,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import org.primefaces.event.MenuActionEvent;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
@@ -66,6 +69,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
+    @Inject
+    private AuthoringManager authoringManager;
 
     private LemmaData lemma = new LemmaData();
     private LemmaData lemmaCopy = new LemmaData();
@@ -80,6 +85,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private boolean lemmaRendered = false;
 
     private boolean newAction = false;
+    private boolean newFormAction = false;
     private boolean lemmAlreadyExists = false;
     private boolean isAdmissibleLemma = true;
     private boolean formAlreadyExists = false;
@@ -142,6 +148,14 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     public LemmaData getLemmaCopy() {
         return lemmaCopy;
+    }
+
+    public boolean isNewFormAction() {
+        return newFormAction;
+    }
+
+    public void setNewFormAction(boolean newFormAction) {
+        this.newFormAction = newFormAction;
     }
 
     public boolean isNewAction() {
@@ -254,6 +268,11 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "EDIT note of Lemma " + lemma.getFormWrittenRepr() + " in " + lemma.getNote());
         lexiconManager.saveLemmaNote(lemma, lemmaCopy.getNote());
         lemmaCopy.setNote(lemma.getNote());
+        if (lemma.getNote().isEmpty()) {
+            authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_ENTRY_NOTE.name(), lemma.getIndividual());
+        } else {
+            authoringManager.updateNoteAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY_NOTE.name(), lemma.getIndividual());
+        }
         info("template.message.saveLemmaNote.summary", "template.message.saveLemmaNote.description");
     }
 
@@ -287,6 +306,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // for keeping track of modifies
     private void createLemmaCopy() {
         this.lemmaCopy.setFormWrittenRepr(lemma.getFormWrittenRepr());
+        this.lemmaCopy.setFormPhoneticRep(lemma.getFormPhoneticRep());
         this.lemmaCopy.setMorphoTraits(copyMorphData(lemma.getMorphoTraits()));
         this.lemmaCopy.setLanguage(lemma.getLanguage());
         this.lemmaCopy.setPoS(lemma.getPoS());
@@ -298,7 +318,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
         this.lemmaCopy.setLexRels(copyLexicalRelationData(lemma.getLexRels()));
         this.lemmaCopy.setValid(lemma.getValid());
-        
+
     }
 
     private ArrayList<LemmaData.MorphoTrait> copyMorphData(ArrayList<LemmaData.MorphoTrait> almt) {
@@ -373,6 +393,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private FormData copyFormData(FormData fd) {
         FormData _fd = new FormData();
         _fd.setFormWrittenRepr(fd.getFormWrittenRepr());
+        _fd.setFormPhoneticRep(fd.getFormPhoneticRep());
         _fd.setMorphoTraits(copyFormMorphoTraits(fd.getMorphoTraits()));
         _fd.setNote(fd.getNote());
         _fd.setLanguage(fd.getLanguage());
@@ -399,10 +420,12 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         setFormDefaultValues(fd);
         forms.add(0, fd);
         addFormCopy(fd);
+        setNewFormAction(true);
     }
 
     private void setFormDefaultValues(FormData fd) {
         fd.setLanguage(lemma.getLanguage());
+        fd.setFormWrittenRepr("");
     }
 
     // invoked by the controller after an user selected a form in the tabview
@@ -451,7 +474,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         fd.setSaveButtonDisabled(true);
         fd.setDeleteButtonDisabled(false);
         int order = forms.indexOf(fd);
-        if (formsCopy.get(order).getFormWrittenRepr() == null) {
+        if (formsCopy.get(order).getFormWrittenRepr() == null || formsCopy.get(order).getFormWrittenRepr().isEmpty()) {
             // saving due to new form action
             log(Level.INFO, loginController.getAccount(), "SAVE new Form " + fd.getFormWrittenRepr());
             lexiconManager.saveForm(fd, lemma);
@@ -471,6 +494,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         lexiconCreationControllerTabViewList.initFormTabView(currentLanguage);
         updateFormCopy(fd, order);
+        setNewFormAction(false);
     }
 
     private boolean isSameWrittenRep(String wr, int order) {
@@ -485,9 +509,9 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         FormData fd = (FormData) component.getAttributes().get("form");
         String formPart = ((String) e.getComponent().getAttributes().get("value"));
-        String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
+        String currentLanguage = lemma.getLanguage();
         List<Map<String, String>> formList = lexiconManager.formsList(currentLanguage);
-        if (contains(formList, formPart, fd.getLanguage(), lemma.getPoS())
+        if (contains(formList, formPart, lemma.getLanguage(), lemma.getPoS())
                 && (isSameLemma(formList, formPart))
                 && (!isSameForm(fd, formPart))) {
             formAlreadyExists = true;
@@ -779,6 +803,22 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         addFormButtonDisabled = true;
         lemmaNameKeyupEvent(lemma.getFormWrittenRepr(), lemmaListCached);
         ckeckLemmaSavability();
+    }
+
+    public void phoneticKeyUpEvent(AjaxBehaviorEvent e) {
+        String phonetic = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma phonetic of " + lemma.getFormWrittenRepr() + " to " + phonetic);
+        lemma.setFormPhoneticRep(phonetic);
+        addFormButtonDisabled = true;
+        ckeckLemmaSavability();
+    }
+
+    public void phoneticFormKeyUpEvent(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        String phonetic = (String) e.getComponent().getAttributes().get("value");
+        FormData fd = (FormData) component.getAttributes().get("form");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Form phonetic of " + fd.getFormWrittenRepr() + " to " + phonetic);
+        fd.setSaveButtonDisabled(isSavableForm(fd));
     }
 
     private boolean isSavableLemma() {
@@ -1147,6 +1187,20 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.getSeeAlso().add(reference);
     }
 
+    // invoked by controller after an user selected add phonetic to lemma
+    public void addPhonetic() {
+        log(Level.INFO, loginController.getAccount(), "ADD empty phonetic to lemma " + lemma.getFormPhoneticRep());
+        lemma.setFormPhoneticRep("");
+    }
+
+    public void addFormPhonetic(MenuActionEvent event) {
+        DefaultMenuItem item = (DefaultMenuItem) event.getMenuItem();
+        Map<String, List<String>> params = item.getParams();
+        FormData fd = forms.get(Integer.parseInt(params.get("id").get(0)));
+        log(Level.INFO, loginController.getAccount(), "ADD empty phonetic to form " + fd.getFormWrittenRepr());
+        fd.setFormPhoneticRep("");
+    }
+
     public void removeReference(Word reference) {
         log(Level.INFO, loginController.getAccount(), "REMOVE reference (seeAlso) " + (reference.getWrittenRep().isEmpty() ? " empty see also" : reference.getWrittenRep()) + " from " + lemma.getFormWrittenRepr());
         lemma.getSeeAlso().remove(reference);
@@ -1260,7 +1314,18 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         newSeeAlso.setOnstart("PF('loadingDialog').show();");
         newSeeAlso.setOncomplete("setHeight();PF('loadingDialog').hide()");
 
+        DefaultMenuItem phonetic = new DefaultMenuItem();
+        phonetic.setValue("Add phonetic");
+        phonetic.setStyleClass("lexiconTabView");
+        phonetic.setIcon("fa fa-plus");
+        phonetic.setDisabled(newAction || !lemma.getFormPhoneticRep().isEmpty() && !lemma.getFormPhoneticRep().equals(Label.NO_ENTRY_FOUND));
+        phonetic.setUpdate("LemmaPanelGrid :systemMessage");
+        phonetic.setCommand("#{lexiconControllerFormDetail.addPhonetic()}");
+        phonetic.setOnstart("PF('loadingDialog').show();");
+        phonetic.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
         addMenuModel.getElements().add(morphoMenu);
+        addMenuModel.addElement(phonetic);
         addMenuModel.addElement(newSeeAlso);
         addMenuModel.addElement(new DefaultSeparator());
         addMenuModel.addElement(newForm);
@@ -1322,6 +1387,18 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         morphoMenu.setIcon("fa fa-plus");
         createMorphoSubMenu(morphoMenu, fd);
 
+        DefaultMenuItem phonetic = new DefaultMenuItem();
+        phonetic.setValue("Add phonetic");
+        phonetic.setStyleClass("lexiconTabView");
+        phonetic.setIcon("fa fa-plus");
+        phonetic.setDisabled(newFormAction || !fd.getFormPhoneticRep().isEmpty() && !fd.getFormPhoneticRep().equals(Label.NO_ENTRY_FOUND));
+        phonetic.setUpdate("FormDataList :editViewTab:lexiconViewDictionaryForm");
+        phonetic.setParam("id", forms.indexOf(fd));
+        phonetic.setCommand("#{lexiconControllerFormDetail.addFormPhonetic}");
+        phonetic.setOnstart("PF('loadingDialog').show();");
+        phonetic.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        addFormMenuModel.addElement(phonetic);
         addFormMenuModel.getElements().add(morphoMenu);
         addFormMenuModel.generateUniqueIds();
 

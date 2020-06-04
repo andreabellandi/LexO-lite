@@ -50,6 +50,9 @@ public class LexicalQuery {
     public static final String FORM_REPRESENTATION = "SELECT ?wr WHERE {"
             + " PropertyValue(lexicon:_FORM_, ontolex:writtenRep, ?wr) }";
 
+    public static final String FORM_PHONETIC = "SELECT ?ph WHERE {"
+            + " PropertyValue(lexicon:_FORM_, ontolex:phoneticRep, ?ph) }";
+
     public static final String FORM_POS = "SELECT ?pos WHERE {"
             + " PropertyValue(lexicon:_FORM_, lexinfo:partOfSpeech, ?pos) }";
 
@@ -63,6 +66,9 @@ public class LexicalQuery {
 
     public static final String LEMMA_REPRESENTATION = "SELECT ?wr WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, ontolex:writtenRep, ?wr) }";
+
+    public static final String LEMMA_PHONETIC = "SELECT ?wr WHERE {"
+            + " PropertyValue(lexicon:_LEMMA_, ontolex:phoneticRep, ?wr) }";
 
     public static final String ENTRY_VALID = "SELECT ?v WHERE {"
             + " PropertyValue(lexicon:_ENTRY_, dct:valid, ?v) }";
@@ -126,13 +132,14 @@ public class LexicalQuery {
             + " PropertyValue(?le, ontolex:canonicalForm, ?lemma), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
-    public static final String FORM_BASIC_BY_LANGUAGE = "SELECT ?writtenRep ?individual ?lang ?lemma ?verified WHERE {"
+    public static final String FORM_BASIC_BY_LANGUAGE = "SELECT ?writtenRep ?individual ?lang ?lemma ?verified ?pos WHERE {"
             + " PropertyValue(?l, lime:language, \"_LANG_\"), "
             + " PropertyValue(?l, lime:language, ?lang), "
             + " PropertyValue(?l, lime:entry, ?le), "
             + " PropertyValue(?le, dct:valid, ?verified), "
             + " PropertyValue(?le, ontolex:otherForm, ?individual), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?lemma), "
+            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
     public static final String SENSE_BASIC = "SELECT ?writtenRep ?lang ?verified WHERE {"
@@ -254,6 +261,9 @@ public class LexicalQuery {
 
     public static final String SYNTACTIC_FRAME_TYPE = "SELECT ?type WHERE {"
             + " Type(lexicon:_FRAME_, ?type) }";
+
+    public static final String SYNTACTIC_FRAME_EXAMPLE = "SELECT ?ex WHERE {"
+            + " PropertyValue(lexicon:_FRAME_, lexinfo:example, ?ex) }";
 
     public static final String SYNTACTIC_FRAME_ARGS = "SELECT ?type ?synArg WHERE {"
             + " PropertyValue(lexicon:_FRAME_, ?type, ?synArg) }";

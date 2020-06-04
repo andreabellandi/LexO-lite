@@ -80,6 +80,14 @@
                                    var="sf" itemLabel="#{sf}" itemValue="#{lexiconControllerSynSemFormDetail.getClassName(sf)}"/>
                 </p:selectOneMenu>
 
+                <h:outputLabel styleClass="titleStyle" value="Frame example:"/>
+                <p:inputText id="example" value="#{synFrame.example}" style="width: 95%;"
+                             readonly="#{lexiconControllerFormDetail.locked}">
+                <p:ajax event="keyup" listener="#{lexiconControllerSynSemFormDetail.frameExampleKeyupEvent}"
+                                update="synFrameButtons"/>
+                <f:attribute name="frame" value="#{synFrame}"/>
+                </p:inputText>
+                
                 <h:outputLabel styleClass="titleStyle" value="Arguments:" rendered="#{synFrame.synArgs.size() > 0}"/>
                 <ui:repeat value="#{synFrame.synArgs}" var="synArg" rendered="#{synFrame.synArgs.size() > 0}">
                     <!--<h:outputLabel styleClass="titleStyle" value="{' #'.concat(synArg.number)}"/>-->
