@@ -817,6 +817,13 @@ html, body {
     background-color: whitesmoke;
 }
 
+.userStatsDetailTable {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: seashell;
+}
+
 .ontologyFilterBox {
     border: 1px solid black;
     border-radius: 5px;
@@ -1044,6 +1051,22 @@ ontologyDetailView {
 }
 
 .accountToolbarButton .ui-button {
+    width: 110px;
+    height: 25px;
+}
+
+.extensionToolbar {
+    overflow: hidden;
+}
+
+.extensionToolbarButton {
+    font-size: 12px !important;
+    margin: 2px !important;
+    width: 110px;
+    height: 25px;
+}
+
+.extensionToolbarButton .ui-button {
     width: 110px;
     height: 25px;
 }

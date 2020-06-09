@@ -8,6 +8,8 @@ package it.cnr.ilc.lexolite.controller;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.domain.Authoring;
+import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
@@ -21,6 +23,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.ItemSelectEvent;
+import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -56,6 +59,8 @@ public class StatisticsController extends BaseController implements Serializable
     private OntologyManager ontologyManager;
     @Inject
     private LoginController loginController;
+    @Inject
+    private AuthoringManager authoringManager;
 
     private DonutChartModel donutModel;
     private BarChartModel barModel2;
@@ -68,6 +73,16 @@ public class StatisticsController extends BaseController implements Serializable
     private String lexiconDataset;
     private int lexicalizations;
     private int conceptualizations;
+
+    private ArrayList<UserStatisticsDetail> usd = new ArrayList<>();
+
+    public ArrayList<UserStatisticsDetail> getUsd() {
+        return usd;
+    }
+
+    public void setUsd(ArrayList<UserStatisticsDetail> usd) {
+        this.usd = usd;
+    }
 
     public String getLanguageDescription() {
         return languageDescription;
@@ -303,14 +318,80 @@ public class StatisticsController extends BaseController implements Serializable
         return posDist;
     }
 
-    public static class User {
+    public ArrayList<UserStatistics> getUserStatistics() {
+        // 0=type of edit; 1=user; 2=user role
+        ArrayList<UserStatistics> al = new ArrayList<>();
+        List<Object[]> stats = authoringManager.getUserStatistics();
+        String user = (String) stats.get(0)[1];
+        String role = (String) stats.get(0)[2];
+        int leNumber = 0, formNumber = 0, senseNumber = 0;
+        for (Object[] o : stats) {
+            if (user.equals(o[1])) {
+                if (0 == Integer.parseInt(o[0].toString())) {
+                    leNumber++;
+                } else {
+                    if (1 == Integer.parseInt(o[0].toString())) {
+                        formNumber++;
+                    } else {
+                        if (2 == Integer.parseInt(o[0].toString())) {
+                            senseNumber++;
+                        }
+                    }
+                }
+            } else {
+                addUser(al, user, leNumber, formNumber, senseNumber, role);
+                leNumber = 0;
+                formNumber = 0;
+                senseNumber = 0;
+                user = o[1].toString();
+                role = o[2].toString();
+                if (0 == Integer.parseInt(o[0].toString())) {
+                    leNumber++;
+                } else {
+                    if (1 == Integer.parseInt(o[0].toString())) {
+                        formNumber++;
+                    } else {
+                        if (2 == Integer.parseInt(o[0].toString())) {
+                            senseNumber++;
+                        }
+                    }
+                }
+            }
+        }
+        addUser(al, user, leNumber, formNumber, senseNumber, role);
+        return al;
+    }
+
+    private void addUser(ArrayList<UserStatistics> al, String user, int leNumber, int formNumber, int senseNumber, String role) {
+        UserStatistics us = new UserStatistics();
+        us.setUsername(user);
+        us.setRole(role);
+        us.setLeNumber(String.valueOf(leNumber));
+        us.setFormNumber(String.valueOf(formNumber));
+        us.setSenseNumber(String.valueOf(senseNumber));
+        us.setTotal(String.valueOf(leNumber + formNumber + senseNumber));
+        al.add(us);
+    }
+
+    public void onRowToggle(ToggleEvent event) {
+        // 0=iri; 1=creation
+        usd.clear();
+        for (Object[] o : authoringManager.getStatDetails(((UserStatistics) event.getData()).username)) {
+            UserStatisticsDetail _usd = new UserStatisticsDetail();
+            _usd.setCreation(o[1].toString());
+            _usd.setIRI(o[0].toString());
+            usd.add(_usd);
+        }
+    }
+
+    public static class UserStatistics {
 
         private String username;
-        private String password;
         private String role;
-        private String editedEntries;
-        private String validatedEntries;
-        private String percent;
+        private String leNumber;
+        private String formNumber;
+        private String senseNumber;
+        private String total;
 
         public String getUsername() {
             return username;
@@ -318,14 +399,6 @@ public class StatisticsController extends BaseController implements Serializable
 
         public void setUsername(String username) {
             this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
         }
 
         public String getRole() {
@@ -336,37 +409,59 @@ public class StatisticsController extends BaseController implements Serializable
             this.role = role;
         }
 
-        public String getEditedEntries() {
-            return editedEntries;
+        public String getLeNumber() {
+            return leNumber;
         }
 
-        public void setEditedEntries(String editedEntries) {
-            this.editedEntries = editedEntries;
+        public void setLeNumber(String leNumber) {
+            this.leNumber = leNumber;
         }
 
-        public String getValidatedEntries() {
-            return validatedEntries;
+        public String getFormNumber() {
+            return formNumber;
         }
 
-        public void setValidatedEntries(String validatedEntries) {
-            this.validatedEntries = validatedEntries;
+        public void setFormNumber(String formNumber) {
+            this.formNumber = formNumber;
         }
 
-        public String getPercent() {
-            return percent;
+        public String getSenseNumber() {
+            return senseNumber;
         }
 
-        public void setPercent(String percent) {
-            this.percent = percent;
+        public void setSenseNumber(String senseNumber) {
+            this.senseNumber = senseNumber;
         }
 
-        public User(String us, String pwd, String role, String ee, String ve, String perc) {
-            this.editedEntries = ee;
-            this.password = pwd;
-            this.percent = perc;
-            this.role = role;
-            this.username = us;
-            this.validatedEntries = ve;
+        public String getTotal() {
+            return total;
+        }
+
+        public void setTotal(String total) {
+            this.total = total;
+        }
+
+    }
+
+    public static class UserStatisticsDetail {
+
+        private String IRI;
+        private String creation;
+
+        public String getIRI() {
+            return IRI;
+        }
+
+        public void setIRI(String IRI) {
+            this.IRI = IRI;
+        }
+
+        public String getCreation() {
+            return creation;
+        }
+
+        public void setCreation(String creation) {
+            this.creation = creation;
         }
 
     }

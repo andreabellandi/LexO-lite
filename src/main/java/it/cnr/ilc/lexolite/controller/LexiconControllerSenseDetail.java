@@ -7,6 +7,8 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.domain.Authoring;
+import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
@@ -57,6 +59,8 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
+    @Inject
+    private AuthoringManager authoringManager;
     
     private final List<SenseData> senses = new ArrayList<>();
     private final List<SenseData> sensesCopy = new ArrayList<>();
@@ -140,6 +144,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         lexiconManager.saveSenseNote(sd, sensesCopy.get(order).getNote());
         sensesCopy.get(order).setNote(sd.getNote());
         info("template.message.saveSenseNote.summary", "template.message.saveSenseNote.description");
+        if (sd.getNote().isEmpty()) {
+            authoringManager.removeAuthoring(Authoring.IRIType.SENSE_NOTE, sd.getName());
+        } else {
+            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.SENSE_NOTE, sd.getName());
+        }
     }
     
     public void closeNote(String senseName) {
@@ -268,6 +277,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
                 // it sets all sense relations as invalid (to be deleted)
                 log(Level.INFO, loginController.getAccount(), "DELETE Sense " + sd.getName());
                 lexiconManager.deleteSense(sd);
+                authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
                 info("template.message.deleteSense.summary", "template.message.deleteSense.description", sd.getName());
                 if (senseOpenedInRelation != null) {
                     if (sd.getName().equals(senseOpenedInRelation)) {
@@ -362,6 +372,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         SenseData sd = new SenseData();
         sd.setSaveButtonDisabled(true);
         lexiconManager.saveSense(sd, ld);
+        authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_SENSE, sd.getName());
         senses.add(sd);
         addSenseCopy(sd);
         info("template.message.saveSense.summary", "template.message.saveSense.description", sd.getName());
