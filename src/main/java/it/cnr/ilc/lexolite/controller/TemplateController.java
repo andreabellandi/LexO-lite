@@ -52,4 +52,9 @@ public class TemplateController extends BaseController implements Serializable {
         log(Level.INFO, loginController.getAccount(), "navigate to lexicon statistics");
         return "statisticsView?faces-redirect=true";
     }
+
+    public String lexiconExtensionAction() {
+        log(Level.INFO, loginController.getAccount(), "navigate to lexicon extension");
+        return "extensionView?faces-redirect=true";
+    }
 }

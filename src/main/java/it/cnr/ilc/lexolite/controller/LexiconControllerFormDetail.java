@@ -8,11 +8,14 @@ package it.cnr.ilc.lexolite.controller;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.domain.Authoring;
+import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
 import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.DomainManager;
+import it.cnr.ilc.lexolite.manager.ExtensionAttributeManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
+import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Openable;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -72,6 +75,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private LoginController loginController;
     @Inject
     private AuthoringManager authoringManager;
+    @Inject
+    private ExtensionAttributeManager extensionAttributeManager;
 
     private LemmaData lemma = new LemmaData();
     private LemmaData lemmaCopy = new LemmaData();
@@ -92,6 +97,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private boolean formAlreadyExists = false;
     private boolean addFormButtonDisabled = true;
 
+    private ArrayList<ExtensionAttribute> extensionAttributeList = new ArrayList();
     private boolean verified = false;
 
     private boolean locked = false;
@@ -141,6 +147,15 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     public ArrayList<FormData> getFormsCopy() {
         return formsCopy;
+    }
+
+    public ArrayList<ExtensionAttribute> getExtensionAttributeList() {
+        extensionAttributeList = (ArrayList<ExtensionAttribute>) extensionAttributeManager.loadActiveExtensionsAttribute();
+        return extensionAttributeList;
+    }
+
+    public void setExtensionAttributeList(ArrayList<ExtensionAttribute> extensionAttributeList) {
+        this.extensionAttributeList = extensionAttributeList;
     }
 
     public LemmaData getLemma() {
@@ -322,6 +337,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         this.lemmaCopy.setVerified(lemma.isVerified());
         this.lemmaCopy.setSeeAlso(copyWordData(lemma.getSeeAlso()));
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
+        this.lemmaCopy.setExtensionAttributeInstances(copyExtensionAttributeInstances(lemma.getExtensionAttributeInstances()));
         this.lemmaCopy.setLexRels(copyLexicalRelationData(lemma.getLexRels()));
         this.lemmaCopy.setValid(lemma.getValid());
 
@@ -337,6 +353,19 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             _almt.add(_mt);
         }
         return _almt;
+    }
+
+    private ArrayList<LemmaData.ExtensionAttributeIstance> copyExtensionAttributeInstances(ArrayList<LemmaData.ExtensionAttributeIstance> aleai) {
+        ArrayList<LemmaData.ExtensionAttributeIstance> _aleai = new ArrayList();
+        for (LemmaData.ExtensionAttributeIstance eai : aleai) {
+            LemmaData.ExtensionAttributeIstance _eai = new LemmaData.ExtensionAttributeIstance();
+            _eai.setName(eai.getName());
+            _eai.setType(eai.getType());
+            _eai.setLabel(eai.getLabel());
+            _eai.setValue(eai.getValue());
+            _aleai.add(_eai);
+        }
+        return _aleai;
     }
 
     private ArrayList<Word> copyWordData(ArrayList<Word> alw) {
@@ -821,6 +850,20 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         ckeckLemmaSavability();
     }
 
+    public void extensionAttributeKeyUpEvent(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        ExtensionAttributeIstance eai = (ExtensionAttributeIstance) component.getAttributes().get("extAtt");
+        String att = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Lemma attribute extesion " + eai.getName() + " of " + lemma.getFormWrittenRepr() + " to " + att);
+        for (LemmaData.ExtensionAttributeIstance _eai : lemma.getExtensionAttributeInstances()) {
+            if (eai.getName().equals(_eai.getName())) {
+                _eai.setValue(att);
+            }
+        }
+        addFormButtonDisabled = true;
+        ckeckLemmaSavability();
+    }
+
     public void phoneticFormKeyUpEvent(AjaxBehaviorEvent e) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String phonetic = (String) e.getComponent().getAttributes().get("value");
@@ -1203,6 +1246,16 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.setFormPhoneticRep("");
     }
 
+    public void addExtensionAttribute(String attName, String label) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty extension attribute " + attName + " to lemma " + lemma.getFormPhoneticRep());
+        LemmaData.ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+        eai.setName(attName);
+        eai.setValue("");
+        eai.setLabel(label);
+        eai.setDisabled(true);
+        lemma.getExtensionAttributeInstances().add(eai);
+    }
+
     public void addFormPhonetic(MenuActionEvent event) {
         DefaultMenuItem item = (DefaultMenuItem) event.getMenuItem();
         Map<String, List<String>> params = item.getParams();
@@ -1216,6 +1269,12 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.getSeeAlso().remove(reference);
         lemma.setSaveButtonDisabled(false);
         relationPanelCheck(reference.getOWLName());
+    }
+
+    public void removeExtensionAttribute(ExtensionAttributeIstance eai) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE extension attribute " + eai.getName() + " with value " + (eai.getValue().isEmpty() ? " empty" : eai.getValue()) + " from " + lemma.getFormWrittenRepr());
+        lemma.getExtensionAttributeInstances().remove(eai);
+        lemma.setSaveButtonDisabled(false);
     }
 
     public void removeMorphoTrait(LemmaData.MorphoTrait trait) {
@@ -1340,9 +1399,40 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         addMenuModel.addElement(new DefaultSeparator());
         addMenuModel.addElement(newForm);
         addMenuModel.addElement(newSense);
+
+        addExtensionAttributeElement(addMenuModel);
+
         addMenuModel.generateUniqueIds();
 
         return addMenuModel;
+    }
+
+    private void addExtensionAttributeElement(MenuModel addMenuModel) {
+        if (getExtensionAttributeList().size() > 0) {
+            addMenuModel.addElement(new DefaultSeparator());
+            for (ExtensionAttribute ea : getExtensionAttributeList()) {
+                DefaultMenuItem dmi = new DefaultMenuItem();
+                dmi.setValue("Add " + ea.getLabel());
+                dmi.setStyleClass("lexiconTabView");
+                dmi.setIcon("fa fa-user-plus");
+                dmi.setDisabled(setDisabled(ea));
+                dmi.setUpdate("LemmaPanelGrid :systemMessage");
+                dmi.setCommand("#{lexiconControllerFormDetail.addExtensionAttribute('"
+                        + ea.getName() + "', '" + ea.getLabel() + "')}");
+                dmi.setOnstart("PF('loadingDialog').show();");
+                dmi.setOncomplete("setHeight();PF('loadingDialog').hide()");
+                addMenuModel.addElement(dmi);
+            }
+        }
+    }
+
+    private boolean setDisabled(ExtensionAttribute ea) {
+        for (ExtensionAttributeIstance eai : lemma.getExtensionAttributeInstances()) {
+            if (eai.getName().equals(ea.getName())) {
+                return eai.isDisabled() || newAction;
+            }
+        }
+        return false;
     }
 
     private boolean isItemDisabled(String value) {

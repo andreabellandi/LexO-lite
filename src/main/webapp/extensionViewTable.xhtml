@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="extensionTableForm">
+
+        <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
+                     style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
+            <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionClass.table.title']}"/>
+        </h:panelGrid>
+
+        <p:dataTable id="extensionClassTable" style="width: 90%; margin: auto;" emptyMessage="#{label['extensionClass.table.empty']}">
+        </p:dataTable>
+
+        <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
+                     style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
+            <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionProperty.table.title']}"/>
+        </h:panelGrid>
+
+        <p:dataTable id="extensionPropertyTable" style="width: 90%; margin: auto;" emptyMessage="#{label['extensionProperty.table.empty']}">
+        </p:dataTable>
+
+        <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
+                     style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
+            <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionAttribute.table.title']}"/>
+        </h:panelGrid>
+
+        <p:dataTable id="extensionAttributeTable" style="width: 90%; margin: auto;" 
+                     emptyMessage="#{label['extensionAttribute.table.empty']}" editable="true"
+                     widgetVar="extensionAttributeTable" editMode="cell"
+                     var="ea" value="#{extensionAttributeControllerTable.data}" 
+                     selectionMode="single" selection="#{extensionAttributeControllerTable.selection}" rowKey="#{ea.id}">
+            <p:tooltip/>
+            <p:ajax event="rowSelect" listener="#{extensionAttributeControllerTable.onRowSelect}" update=":extensionToolbarForm "/>
+            <p:ajax event="cellEdit" listener="#{extensionAttributeControllerTable.onCellEdit}" update=":systemMessage" />
+
+            <p:column id="attributeActive" style="width: 14%;">
+                <f:facet name="header">
+                    <h:outputText value="#{label['extensionAttribute.table.active']}"/>
+                    <p:graphicImage id="aa" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
+                                    height="13px" width="13px"/>
+                    <p:tooltip for="aa" value="#{label['tooltip.extensionAttribute.table.active']}" position="top"/>
+                </f:facet>
+                <h:selectBooleanCheckbox style="margin: auto;" title="#{label['extensionAttribute.table.active']}" value="#{ea.active}">
+                    <p:ajax listener="#{extensionAttributeControllerTable.enableExtensionAttribute(ea)}" update="@this :systemMessage"/>
+                </h:selectBooleanCheckbox>
+            </p:column>
+
+            <p:column id="attributeName" style="width: 14%;">
+                <f:facet name="header">
+                    <h:outputText value="#{label['extensionAttribute.table.name']}"/>
+                    <p:graphicImage id="an" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
+                                    height="13px" width="13px"/>
+                    <p:tooltip for="an" value="#{label['tooltip.extensionAttribute.table.name']}" position="top"/>
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.name}" /></f:facet>
+                    <f:facet name="input"><p:inputText id="modelInput" value="#{ea.name}" style="width:100%"/></f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column id="attributeLabel" style="width: 14%;">
+                <f:facet name="header">
+                    <h:outputText value="#{label['extensionAttribute.table.label']}"/>
+                    <p:graphicImage id="al" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
+                                    height="13px" width="13px"/>
+                    <p:tooltip for="al" value="#{label['tooltip.extensionAttribute.table.label']}" position="top"/>
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.label}" /></f:facet>
+                    <f:facet name="input"><p:inputText id="modelInput2" value="#{ea.label}" style="width:100%"/></f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column id="attributeRelation" style="width: 14%;">
+                <f:facet name="header">
+                    <h:outputText value="#{label['extensionAttribute.table.relation']}"/>
+                    <p:graphicImage id="ar" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
+                                    height="13px" width="13px"/>
+                    <p:tooltip for="ar" value="#{label['tooltip.extensionAttribute.table.relation']}" position="top"/>
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.relation}" /></f:facet>
+                    <f:facet name="input"><p:inputText id="modelInput3" value="#{ea.relation}" style="width:100%"/></f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column id="attributeDatatype" style="width: 14%;" headerText="#{label['extensionAttribute.table.type']}">
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.type}" /></f:facet>
+                    <f:facet name="input">
+                        <p:selectOneMenu value="#{ea.type}" style="width: 90%;">
+                            <f:selectItems value="#{extensionAttributeControllerTable.propertyValue.attributeTypes}" 
+                                           var="r" itemLabel="#{r}" itemValue="#{r}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column id="attributeDomain" style="width: 14%;" headerText="#{label['extensionAttribute.table.domain']}">
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.domain}" /></f:facet>
+                    <f:facet name="input">
+                        <p:selectOneMenu value="#{ea.domain}" style="width: 90%;">
+                            <f:selectItems value="#{extensionAttributeControllerTable.propertyValue.attributeDomain}" 
+                                           var="r" itemLabel="#{r}" itemValue="#{r}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column id="attributeCardinality" style="width: 14%;">
+                <f:facet name="header">
+                    <h:outputText value="#{label['extensionAttribute.table.cardinality']}"/>
+                    <p:graphicImage id="ac" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
+                                    height="13px" width="13px"/>
+                    <p:tooltip for="ac" value="#{label['tooltip.extensionAttribute.table.cardinality']}" position="top"/>
+                </f:facet>
+                <p:cellEditor>
+                    <f:facet name="output"><h:outputText value="#{ea.cardinality}" /></f:facet>
+                    <f:facet name="input">
+                        <p:selectOneMenu value="#{ea.cardinality}" style="width: 90%;">
+                            <f:selectItems value="#{extensionAttributeControllerTable.propertyValue.attributeCardinality}" 
+                                           var="r" itemLabel="#{r}" itemValue="#{r}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+        </p:dataTable>
+
+        <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
+                     style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
+            <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionIndividual.table.title']}"/>
+        </h:panelGrid>
+
+        <p:dataTable id="extensionIndividualTable" style="width: 90%; margin: auto;" emptyMessage="#{label['extensionIndividual.table.empty']}">
+        </p:dataTable>
+
+
+    </h:form> 
+
+</ui:composition>

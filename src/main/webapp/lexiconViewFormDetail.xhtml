@@ -163,6 +163,31 @@
             </p:autoComplete>
 
 
+            <!-- EXTENSIONS -->
+            <!-- Attributes -->
+            <c:forEach items="#{lexiconControllerFormDetail.lemma.extensionAttributeInstances}" var="extAtt" 
+                       rendered="#{lexiconControllerFormDetail.lemma.extensionAttributeInstances.size() > 0}">
+                <h:outputLabel styleClass="titleStyle" 
+                               rendered="#{!lexiconControllerFormDetail.newAction}" 
+                               value="#{extAtt.label}:"/>
+                <h:panelGrid id="#{extAtt.label}Panel" columns="2" cellpadding="0" 
+                             rendered="#{!lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.locked}">
+                    <p:inputText id="#{extAtt.label}Field" >
+                        <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.extensionAttributeKeyUpEvent}"
+                                update="editViewTab:lexiconFormDetailForm:lemmaSaveButton"/>
+                        <f:attribute name="extAtt" value="#{extAtt}" />
+                    </p:inputText>
+                    <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                     actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt)}" 
+                                     update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid :editViewTab:lexiconRelationDetailForm"/> 
+                </h:panelGrid>
+                <p:inputText styleClass="inputTextStyle"  
+                             readonly="true"
+                             rendered="#{lexiconControllerFormDetail.locked}"/>
+            </c:forEach>
+            <!-- End of Attributes -->
+            <!-- END OF EXTENSIONS -->
+
             <h:outputLabel styleClass="verifiedStyle" value="Verified " rendered="#{!lexiconControllerFormDetail.newAction}"/>
             <p:selectBooleanCheckbox value="#{lexiconControllerFormDetail.lemma.verified}" rendered="#{!lexiconControllerFormDetail.newAction}"
                                      disabled="#{!lexiconControllerFormDetail.userEnable or lexiconControllerFormDetail.locked}">
@@ -177,7 +202,7 @@
                 <p:tieredMenu overlay="true" trigger="menuButton" my="left top" at="left bottom"  
                               model="#{lexiconControllerFormDetail.addMenuModel}"/>
 
-                <p:commandButton title="Save Lemma" icon="fa fa-save" 
+                <p:commandButton id="lemmaSaveButton" title="Save Lemma" icon="fa fa-save" 
                                  update="LemmaPanelGrid :lexiconTabViewForm:tabView:lemmaTree :systemMessage
                                  :editViewTab:lexiconSenseDetailForm :lexiconTabViewForm:tabView:lemmaFilterLabel 
                                  :lexiconTabViewForm:tabView:formTree :editViewTab:lexiconSenseDetailForm

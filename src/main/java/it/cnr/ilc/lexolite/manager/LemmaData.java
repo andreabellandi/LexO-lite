@@ -41,10 +41,21 @@ public class LemmaData implements Serializable {
     // modulo synsem
     private ArrayList<SynFrame> synFrames = new ArrayList();
 
+    // attribute extension
+    private ArrayList<ExtensionAttributeIstance> extensionAttributeInstances = new ArrayList();
+
     public LemmaData() {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
         this.verified = false;
+    }
+
+    public ArrayList<ExtensionAttributeIstance> getExtensionAttributeInstances() {
+        return extensionAttributeInstances;
+    }
+
+    public void setExtensionAttributeInstances(ArrayList<ExtensionAttributeIstance> extensionAttributeInstances) {
+        this.extensionAttributeInstances = extensionAttributeInstances;
     }
 
     public String getFormPhoneticRep() {
@@ -216,6 +227,7 @@ public class LemmaData implements Serializable {
         this.reifiedLexRels.clear();
         this.synFrames.clear();
         this.morphoTraits.clear();
+        this.extensionAttributeInstances.clear();
         this.OWLClass = null;
         this.formPhoneticRep = "";
     }
@@ -725,6 +737,62 @@ public class LemmaData implements Serializable {
 
         public void setSchema(String schema) {
             this.schema = schema;
+        }
+
+    }
+
+    public static class ExtensionAttributeIstance {
+
+        public enum DataType {
+            STRING,
+            INTEGER,
+            FLOAT
+        }
+
+        private String name;
+        private String value;
+        private String label;
+        private boolean disabled = false;
+        private DataType type;
+
+        public boolean isDisabled() {
+            return disabled;
+        }
+
+        public void setDisabled(boolean disabled) {
+            this.disabled = disabled;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public DataType getType() {
+            return type;
+        }
+
+        public void setType(DataType type) {
+            this.type = type;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
 
     }

@@ -257,6 +257,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         this.lemmaCopy.setVerified(lemma.isVerified());
         this.lemmaCopy.setSeeAlso(copyWordData(lemma.getSeeAlso()));
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
+        this.lemmaCopy.setExtensionAttributeInstances(copyExtensionAttributeInstances(lemma.getExtensionAttributeInstances()));
         this.lemmaCopy.setValid(lemma.getValid());
     }
 
@@ -270,6 +271,18 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
             _almt.add(_mt);
         }
         return _almt;
+    }
+
+    private ArrayList<LemmaData.ExtensionAttributeIstance> copyExtensionAttributeInstances(ArrayList<LemmaData.ExtensionAttributeIstance> aleai) {
+        ArrayList<LemmaData.ExtensionAttributeIstance> _aleai = new ArrayList();
+        for (LemmaData.ExtensionAttributeIstance eai : aleai) {
+            LemmaData.ExtensionAttributeIstance _eai = new LemmaData.ExtensionAttributeIstance();
+            _eai.setName(eai.getName());
+            _eai.setType(eai.getType());
+            _eai.setValue(eai.getValue());
+            _aleai.add(_eai);
+        }
+        return _aleai;
     }
 
     private ArrayList<LemmaData.Word> copyWordData(ArrayList<LemmaData.Word> alw) {
@@ -644,7 +657,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
         log(Level.INFO, loginController.getAccount(), "CLOSE note of Form " + form);
     }
 
-   public void saveForm(FormData fd) throws IOException, OWLOntologyStorageException {
+    public void saveForm(FormData fd) throws IOException, OWLOntologyStorageException {
         fd.setSaveButtonDisabled(true);
         fd.setDeleteButtonDisabled(false);
         int order = forms.indexOf(fd);

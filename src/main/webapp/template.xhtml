@@ -49,6 +49,11 @@
                                        rendered="#{templateController.enableAccount}" onstart="PF('loadingDialog').show()">
                             <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_lexiconStat.png" width="20" height="20"/>
                         </p:commandLink>
+
+                        <p:commandLink title="#{label['template.ExtensionView']}" action="#{templateController.lexiconExtensionAction()}"
+                                       rendered="#{templateController.enableAccount and false}" onstart="PF('loadingDialog').show()">
+                            <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_extension.png" width="20" height="20"/>
+                        </p:commandLink>
                     </f:facet>
                     <f:facet name="right">
                         <p:menuButton styleClass="topToolbarButton accountMenuButton" value="#{loginController.account.name}">

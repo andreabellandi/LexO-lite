@@ -19,6 +19,7 @@ public class Label extends BaseController {
     public static final String ONTOLOGY_FILE_NAME_KEY = "domainOntologyFileName";
     public static final String ONTOLOGY_NAMESPACE_KEY = "domainOntologyNamespace";
     public static final String LEXO_FOLDER = "/.LexO-lite/";
+//    public static final String LEXO_FOLDER = "/.LexO-lite-VQ/";
     public static final String LEXO_PROPERTIES_FILE_NAME = "lexolite.properties";
     
     // morpho menu items label

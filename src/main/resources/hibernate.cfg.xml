@@ -4,6 +4,7 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_VQusers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
         <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">root</property>
@@ -19,6 +20,7 @@
         <mapping class="it.cnr.ilc.lexolite.domain.SuperEntity"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Account"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Authoring"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.ExtensionAttribute"/>
         <mapping class="it.cnr.ilc.lexolite.domain.AccountType"/>
 
     </session-factory>

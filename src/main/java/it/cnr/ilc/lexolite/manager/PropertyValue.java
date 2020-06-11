@@ -26,7 +26,6 @@ import javax.faces.model.SelectItemGroup;
 public class PropertyValue {
 
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
-
     private ArrayList<String> lemmaInfo;
     private ArrayList<String> alphabet;
     private ArrayList<String> PoS;
@@ -49,6 +48,11 @@ public class PropertyValue {
 
     private Multimap<String, String> morphoTraitList;
 
+    // for extensions
+    private ArrayList<String> attributeTypes;
+    private ArrayList<String> attributeCardinality;
+    private ArrayList<String> attributeDomain;
+
     public ArrayList<String> getMorphoTrait(String s) {
         return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class)));
     }
@@ -61,12 +65,24 @@ public class PropertyValue {
         return traits;
     }
 
+    public ArrayList<String> getAttributeTypes() {
+        return attributeTypes;
+    }
+
     public ArrayList<SelectItem> getSenseCategory() {
         return senseCategory;
     }
 
     public void setSenseCategory(ArrayList<SelectItem> senseCategory) {
         this.senseCategory = senseCategory;
+    }
+
+    public ArrayList<String> getAttributeDomain() {
+        return attributeDomain;
+    }
+
+    public void setAttributeDomain(ArrayList<String> attributeDomain) {
+        this.attributeDomain = attributeDomain;
     }
 
     public ArrayList<String> getTranslationCategory() {
@@ -83,6 +99,10 @@ public class PropertyValue {
 
     public void setLingCatList(ArrayList<String> lingCatList) {
         this.lingCatList = lingCatList;
+    }
+
+    public ArrayList<String> getAttributeCardinality() {
+        return attributeCardinality;
     }
 
     public ArrayList<String> getSynFrameType() {
@@ -361,6 +381,19 @@ public class PropertyValue {
         lingCatList = new ArrayList();
         lingCatList.add("http://www.lexinfo.net/ontologies/3.0/lexinfo");
 
+        attributeTypes = new ArrayList();
+        attributeTypes.add("string");
+        attributeTypes.add("integer");
+        attributeTypes.add("float");
+
+        attributeCardinality = new ArrayList();
+        attributeCardinality.add("single");
+        attributeCardinality.add("multiple");
+
+        attributeDomain = new ArrayList();
+        attributeDomain.add("Lexical Entry");
+        attributeDomain.add("Form");
+        attributeDomain.add("Sense");
     }
 
     private void loadLexicalCategories() {
