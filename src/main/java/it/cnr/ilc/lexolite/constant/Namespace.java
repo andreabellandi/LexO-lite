@@ -28,5 +28,8 @@ public class Namespace {
     public static final String VARTRANS = "http://www.w3.org/ns/lemon/vartrans#";
     public static final String SYNSEM = "http://www.w3.org/ns/lemon/synsem#";
     public static final String TRCAT = "http://purl.org/net/translation-categories#";
+    
+    // Extensions
+    public static final String EXTENSION = "http://lexo/extension#";
 
 }

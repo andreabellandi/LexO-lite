@@ -5,11 +5,14 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -34,6 +37,8 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
     @Inject
     private LexiconManager lexiconManager;
     @Inject
+    private LanguageColorManager languageColorManager;
+    @Inject
     private LexiconControllerTabViewList lexiconCreationControllerTabViewList;
 
     private String langName;
@@ -41,6 +46,7 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
     private String linguisticCatalog;
     private String description;
     private String creator;
+    private String tagColor;
 
     public String getLangName() {
         return langName;
@@ -72,6 +78,14 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTagColor() {
+        return tagColor;
+    }
+
+    public void setTagColor(String tagColor) {
+        this.tagColor = tagColor;
     }
 
     public String getCreator() {
@@ -111,6 +125,8 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
             lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
             log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);
             lexiconCreationControllerTabViewList.updateLexiconLanguagesList();
+            languageColorManager.insertLanguageColor(loginController.getAccount(), langName, creator, description, tagColor);
+            updateLanguageColorList(langName, tagColor);
             FacesMessage message = new FacesMessage("Successful", "language " + langName + " was created.");
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
@@ -120,6 +136,10 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
+    
+    private void updateLanguageColorList(String lang, String color) {
+        languageColorManager.getLangColors().put(lang, color);
+    }
 
     public void clear() {
         this.creator = "";
@@ -127,6 +147,7 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
         this.langName = "";
         this.uriCode = "";
         this.linguisticCatalog = "";
+        this.tagColor = "";
     }
 
 }

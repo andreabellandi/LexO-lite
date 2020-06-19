@@ -90,18 +90,19 @@
                          rendered="#{lexiconControllerFormDetail.locked}"/>
 
             <h:outputLabel styleClass="titleStyle" 
-                           rendered="#{!lexiconControllerFormDetail.newAction 
-                                       and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')
-                                       and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('')}" 
+                           rendered="#{!lexiconControllerFormDetail.newAction
+                                       and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')}" 
                            value="Phonetic:"/>
-            <h:panelGrid id="phoneticPanel" columns="1" cellpadding="0" 
-                         rendered="#{!lexiconControllerFormDetail.newAction 
-                                     and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')
-                                     and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('')}">
+            <h:panelGrid id="phoneticPanel" columns="2" cellpadding="0" 
+                         rendered="#{!lexiconControllerFormDetail.newAction
+                                     and !lexiconControllerFormDetail.lemma.formPhoneticRep.equals('No entry found')}">
                 <p:inputText id="phonetic" value="#{lexiconControllerFormDetail.lemma.formPhoneticRep}">
                     <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.phoneticKeyUpEvent}"
                             update="lemmaButtons"/>
                 </p:inputText>
+                <p:commandButton title="Delete phonetic" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                 actionListener="#{lexiconControllerFormDetail.removePhonetic()}" 
+                                 update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid :editViewTab:lexiconRelationDetailForm"/>
             </h:panelGrid>
 
             <h:panelGrid  columns="1" cellpadding="0" rendered="#{lexiconControllerFormDetail.lemma.morphoTraits.size() > 0}">
@@ -172,7 +173,7 @@
                                value="#{extAtt.label}:"/>
                 <h:panelGrid id="#{extAtt.label}Panel" columns="2" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.locked}">
-                    <p:inputText id="#{extAtt.label}Field" >
+                    <p:inputText id="#{extAtt.label}Field" value="#{extAtt.value}">
                         <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.extensionAttributeKeyUpEvent}"
                                 update="editViewTab:lexiconFormDetailForm:lemmaSaveButton"/>
                         <f:attribute name="extAtt" value="#{extAtt}" />
@@ -274,13 +275,16 @@
                 <h:outputLabel styleClass="titleStyle" 
                                rendered="#{!lexiconControllerFormDetail.newFormAction and !form.formPhoneticRep.equals('No entry found')}" 
                                value="Phonetic:"/>
-                <h:panelGrid id="formPhoneticPanel" columns="1" cellpadding="0" 
+                <h:panelGrid id="formPhoneticPanel" columns="2" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.newFormAction and !form.formPhoneticRep.equals('No entry found')}">
                     <p:inputText id="formPhonetic" value="#{form.formPhoneticRep}">
                         <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.phoneticFormKeyUpEvent}"
                                 update=":editViewTab:lexiconFormDetailForm:FormDataList:formButtons"/>
                         <f:attribute name="form" value="#{form}"/>
                     </p:inputText>
+                    <p:commandButton title="Delete phonetic" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                     actionListener="#{lexiconControllerFormDetail.removePhonetic(form)}" 
+                                     update=":editViewTab:lexiconFormDetailForm:FormDataList :editViewTab:lexiconRelationDetailForm"/>
                 </h:panelGrid>
 
                 <h:panelGrid  columns="1" cellpadding="0" rendered="#{form.morphoTraits.size() > 0}">

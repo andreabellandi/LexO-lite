@@ -232,6 +232,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         senses.add(sd);
     }
     
+    public void addDefinition(SenseData sd) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty definition to sense " + sd.getName());
+        sd.setDefinition("");
+    }
+    
     public void addSenseRelation(SenseData sd, String relType) {
         log(Level.INFO, loginController.getAccount(), "ADD empty " + relType + " relation to " + sd.getName());
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();

@@ -27,6 +27,8 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.manager.LanguageColorManager;
+import java.util.HashMap;
 
 /**
  *
@@ -61,6 +63,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private OntologyManager ontologyManager;
     @Inject
     private AccountManager accountManager;
+    @Inject
+    private LanguageColorManager languageColorManager;
     @Inject
     private LexiconControllerLemmaFilter lexiconCreationLemmaFilterController;
     @Inject
@@ -226,6 +230,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             ontologyManager.deafult_loadOntology();
             initDomainOntologyTabView();
         }
+        
     }
 
     public void loadLexicon(String lang) {
@@ -635,37 +640,15 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         setSelection(null);
     }
 
-    // temporary naive solution. When a user creates a new language 
-    // he/she should have the possibility to choice a color
     public String getLanguageColor(String lang) {
-        switch (lang) {
-            case "fr":
-                return "color: #5858FA;";
-            case "it":
-                return "color: #AC58FA;";
-            case "ru":
-                return "color: #2E2EFE;";
-            case "pl":
-                return "color: #FE2E2E;";
-            case "es":
-                return "color: #5F04B4;";
-            case "la":
-                return "color: #F6CECE;";
-            case "he":
-                return "color: #5858FA;";
-            case "de":
-                return "color: #FACC2E;";
-            case "en":
-                return "color: #9AFE2E;";
-        }
-        return "color: #9E9E9E";
+        return "color: #" + languageColorManager.getLangColors().get(lang);
     }
 
     public String getPosFromIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         return ret[ret.length - 1];
     }
-    
+
     public static class DataTreeNode {
 
         private int hierarchyLevel;

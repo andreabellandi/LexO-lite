@@ -11,6 +11,7 @@ import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
+import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -126,6 +127,7 @@ public class LexiconModel extends BaseController {
         pm.setPrefix("vartrans", Namespace.VARTRANS);
         pm.setPrefix("trcat", Namespace.TRCAT);
         pm.setPrefix("synsem", Namespace.SYNSEM);
+        pm.setPrefix("extension", Namespace.EXTENSION);
     }
 
     private String getLexiconNamespace() {
@@ -301,6 +303,7 @@ public class LexiconModel extends BaseController {
 //                oldLemma.getOWLClass().getName(), newLemma.getOWLClass().getName(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         //updateDataPropertyAxiom(entrySubject, "verified", oldLemma.getValid(), newLemma.getValid(), pm.getPrefixName2PrefixMap().get("dct:"));
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getSeeAlso(), newLemma.getSeeAlso(), "seeAlso");
+        updateExtensionAttribute(subject, oldLemma.getExtensionAttributeInstances(), newLemma.getExtensionAttributeInstances());
         if (oldLemma.getFormWrittenRepr().equals(newLemma.getFormWrittenRepr())) {
             if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
                 // it needs to modify IRI anyway
@@ -325,6 +328,21 @@ public class LexiconModel extends BaseController {
             addDataPropertyAxiom(OntoLexEntity.DataProperty.PHONETICREP.getLabel(), subject, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
         } else {
             updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
+        }
+    }
+
+    private void updateExtensionAttribute(OWLNamedIndividual subject, ArrayList<ExtensionAttributeIstance> oldExtAtt,
+            ArrayList<ExtensionAttributeIstance> newExtAtt) {
+        // *******************
+        // let suppose that extension attributes are i) at lemma-level, ii) single value
+        // *******************
+        for (ExtensionAttributeIstance oldEai : oldExtAtt) {
+            // delete oldier attributes
+            removeDataPropertyAxiom("extension", subject, oldEai.getName(), oldEai.getValue());
+        }
+        for (ExtensionAttributeIstance newEai : newExtAtt) {
+            // add newer attributes
+            addDataPropertyAxiom(newEai.getName(), subject, newEai.getValue(), pm.getPrefixName2PrefixMap().get("extension:"));
         }
     }
 
@@ -619,7 +637,7 @@ public class LexiconModel extends BaseController {
         if (!oldSynFrame.getExample().equals(newSynFrame.getExample())) {
             OWLNamedIndividual sf = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), newSynFrame.getName());
             addDataPropertyAxiom("example", sf, newSynFrame.getExample(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
-            removeDataPropertyAxiom(pm.getPrefixName2PrefixMap().get("lexinfo:"), sf, "example", oldSynFrame.getExample());
+            removeDataPropertyAxiom("lexinfo", sf, "example", oldSynFrame.getExample());
         }
     }
 
@@ -993,7 +1011,7 @@ public class LexiconModel extends BaseController {
     public void addSenseRelation(SenseData oldSense, SenseData newSense) {
         OWLNamedIndividual sbj = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldSense.getName()));
         if (!newSense.getDefinition().equals(oldSense.getDefinition())) {
-            removeDataPropertyAxiom(pm.getPrefixName2PrefixMap().get("skos:"), sbj, "definition", oldSense.getDefinition());
+            removeDataPropertyAxiom("skos", sbj, "definition", oldSense.getDefinition());
             if (!newSense.getDefinition().isEmpty() && !newSense.getDefinition().equals(Label.NO_ENTRY_FOUND)) {
                 addDataPropertyAxiom("definition", sbj, newSense.getDefinition(), pm.getPrefixName2PrefixMap().get("skos:"));
             }

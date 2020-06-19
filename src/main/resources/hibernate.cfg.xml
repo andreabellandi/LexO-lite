@@ -7,7 +7,7 @@
         <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_VQusers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
         <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.connection.password">root</property><!--(;qs(d#ez6oE-->
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.c3p0.min_size">5</property>
         <property name="hibernate.c3p0.max_size">20</property>
@@ -22,6 +22,7 @@
         <mapping class="it.cnr.ilc.lexolite.domain.Authoring"/>
         <mapping class="it.cnr.ilc.lexolite.domain.ExtensionAttribute"/>
         <mapping class="it.cnr.ilc.lexolite.domain.AccountType"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.LanguageColor"/>
 
     </session-factory>
 </hibernate-configuration>

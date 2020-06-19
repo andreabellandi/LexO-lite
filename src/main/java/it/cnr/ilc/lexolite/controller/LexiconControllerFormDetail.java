@@ -316,7 +316,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the controller after an user selected a lemma in the tabview
     public void addLemma(String lemma) {
         this.lemma.clear();
-        this.lemma = lexiconManager.getLemmaAttributes(lemma, propertyValue.getMorphoTrait());
+        this.lemma = lexiconManager.getLemmaAttributes(lemma, propertyValue.getMorphoTrait(), getExtensionAttributeList());
         ArrayList<FormData> al = lexiconManager.getFormsOfLemma(lemma, this.lemma.getLanguage(), propertyValue.getMorphoTrait());
         forms.clear();
         forms.addAll(al);
@@ -1242,12 +1242,18 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     // invoked by controller after an user selected add phonetic to lemma
     public void addPhonetic() {
-        log(Level.INFO, loginController.getAccount(), "ADD empty phonetic to lemma " + lemma.getFormPhoneticRep());
+        log(Level.INFO, loginController.getAccount(), "ADD empty phonetic to lemma " + lemma.getFormWrittenRepr());
         lemma.setFormPhoneticRep("");
     }
 
+    public void removePhonetic() {
+        log(Level.INFO, loginController.getAccount(), "REMOVE phonetic " + lemma.getFormPhoneticRep() + " of the lemma " + lemma.getFormWrittenRepr());
+        lemma.setFormPhoneticRep(Label.NO_ENTRY_FOUND);
+        lemma.setSaveButtonDisabled(false);
+    }
+
     public void addExtensionAttribute(String attName, String label) {
-        log(Level.INFO, loginController.getAccount(), "ADD empty extension attribute " + attName + " to lemma " + lemma.getFormPhoneticRep());
+        log(Level.INFO, loginController.getAccount(), "ADD empty extension attribute " + attName + " to lemma " + lemma.getFormWrittenRepr());
         LemmaData.ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
         eai.setName(attName);
         eai.setValue("");
@@ -1275,6 +1281,12 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "REMOVE extension attribute " + eai.getName() + " with value " + (eai.getValue().isEmpty() ? " empty" : eai.getValue()) + " from " + lemma.getFormWrittenRepr());
         lemma.getExtensionAttributeInstances().remove(eai);
         lemma.setSaveButtonDisabled(false);
+    }
+
+    public void removePhonetic(FormData fd) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE phonetic " + fd.getFormPhoneticRep() + " from " + fd.getFormWrittenRepr());
+        fd.setFormPhoneticRep(Label.NO_ENTRY_FOUND);
+        fd.setSaveButtonDisabled(false);
     }
 
     public void removeMorphoTrait(LemmaData.MorphoTrait trait) {
@@ -1387,7 +1399,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         phonetic.setValue("Add phonetic");
         phonetic.setStyleClass("lexiconTabView");
         phonetic.setIcon("fa fa-plus");
-        phonetic.setDisabled(newAction || !lemma.getFormPhoneticRep().isEmpty() && !lemma.getFormPhoneticRep().equals(Label.NO_ENTRY_FOUND));
+        phonetic.setDisabled(newAction || !lemma.getFormPhoneticRep().equals(Label.NO_ENTRY_FOUND));
         phonetic.setUpdate("LemmaPanelGrid :systemMessage");
         phonetic.setCommand("#{lexiconControllerFormDetail.addPhonetic()}");
         phonetic.setOnstart("PF('loadingDialog').show();");

@@ -368,7 +368,7 @@ public class LexiconControllerLinkedLexicalEntryDetail extends BaseController im
 
     public void setEntryOfLexicalRelation(String r) {
         clearRelationPanel();
-        lemma = lexiconManager.getLemmaAttributes(r, propertyValue.getMorphoTrait());
+        lemma = lexiconManager.getLemmaAttributes(r, propertyValue.getMorphoTrait(), null);
         createLemmaCopy();
         forms.addAll(lexiconManager.getFormsOfLemma(lemma.getIndividual(), lemma.getLanguage(), propertyValue.getMorphoTrait()));
         addFormCopy(forms);

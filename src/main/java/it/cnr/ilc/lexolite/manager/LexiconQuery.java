@@ -20,6 +20,8 @@ import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LexiconComparator;
 import it.cnr.ilc.lexolite.controller.LexiconControllerTabViewList;
+import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
+import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -184,9 +186,9 @@ public class LexiconQuery extends BaseController {
     }
 
     // invoked in order to get lemma attributes of a specific lemma
-    public LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits) {
+    public LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
         LemmaData ld = new LemmaData();
-        setLemmaData(lemma, ld, morphoTraits);
+        setLemmaData(lemma, ld, morphoTraits, alea);
         return ld;
     }
 
@@ -210,7 +212,7 @@ public class LexiconQuery extends BaseController {
         LemmaData ld = new LemmaData();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_SENSE.replace("_SENSE_", sense)));
         String lemma = results.get(0);
-        setLemmaData(lemma, ld, morphoTraits);
+        setLemmaData(lemma, ld, morphoTraits, null);
         return ld;
     }
 
@@ -229,7 +231,7 @@ public class LexiconQuery extends BaseController {
         LemmaData ld = new LemmaData();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_FORM.replace("_FORM_", form)));
         String lemma = results.get(0);
-        setLemmaData(lemma, ld, morphoTraits);
+        setLemmaData(lemma, ld, morphoTraits, null);
         return ld;
     }
 
@@ -337,7 +339,7 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    private void setLemmaData(String lemma, LemmaData ld, Set<String> morphoTraits) {
+    private void setLemmaData(String lemma, LemmaData ld, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
         ld.setIndividual(lemma);
         // It is the type of the entry of the lemma
         ld.setType(getLemmaType(lemma));
@@ -371,7 +373,31 @@ public class LexiconQuery extends BaseController {
             op.setViewButtonDisabled(true);
             ld.setOWLClass(op);
         }
+        // check for attribute extensions *** let assume that the attribute is single value !!! ***
+        if (alea != null) {
+            ArrayList<ExtensionAttributeIstance> aleai = new ArrayList();
+            for (ExtensionAttribute ea : alea) {
+                String val = getExtAtt(lemma, ea.getName());
+                if (!val.isEmpty()) {
+                    ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+                    eai.setDisabled(true);
+                    eai.setLabel(ea.getLabel());
+                    eai.setValue(val);
+                    eai.setName(ea.getName());
+                    eai.setType(ExtensionAttributeIstance.DataType.STRING);
+                    aleai.add(eai);
+                }
+            }
+            ld.setExtensionAttributeInstances(aleai);
+        }
 
+    }
+
+    private String getExtAtt(String lemma, String attribute) {
+        String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
+                + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + LexicalQuery.LEMMA_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_LEMMA_", lemma);
+        return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
     }
 
     private String getLemmaNote(String lemma) {

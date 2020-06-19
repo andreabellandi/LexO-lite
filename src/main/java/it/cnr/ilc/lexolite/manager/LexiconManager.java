@@ -8,6 +8,7 @@ package it.cnr.ilc.lexolite.manager;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
+import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.io.IOException;
@@ -314,12 +315,12 @@ public class LexiconManager extends BaseController implements Serializable {
     }
 
     // invoked in order to get lemma attributes of a specific lemma
-    public synchronized LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits) {
-        return lexiconQuery.getLemmaAttributes(lemma, morphoTraits);
+    public synchronized LemmaData getLemmaAttributes(String lemma, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getLemmaAttributes(lemma, morphoTraits, alea);
     }
 
     public synchronized LemmaData getLemmaAttributes(String lemma) {
-        return lexiconQuery.getLemmaAttributes(lemma, propertyValue.getMorphoTrait());
+        return lexiconQuery.getLemmaAttributes(lemma, propertyValue.getMorphoTrait(), null);
     }
 
     // invoked in order to retrieve the data of the lemma involved in sublemma or collocation relation

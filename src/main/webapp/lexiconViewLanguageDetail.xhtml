@@ -27,6 +27,12 @@
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
 
+                <h:outputText styleClass="newLangTitleStyle" value="#{label['newLanguage.color']}" />
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:colorPicker value="#{lexiconControllerLanguageDetail.tagColor}"/>  
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newLanguage.catalog']}(*)"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
                 <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerLanguageDetail.linguisticCatalog}">

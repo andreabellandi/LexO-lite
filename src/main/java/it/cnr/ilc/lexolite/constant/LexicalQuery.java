@@ -25,6 +25,7 @@ public class LexicalQuery {
             + "PREFIX dct: <" + Namespace.DCT + ">\n"
             + "PREFIX vartrans: <" + Namespace.VARTRANS + ">\n"
             + "PREFIX synsem: <" + Namespace.SYNSEM + ">\n"
+            + "PREFIX extension: <" + Namespace.EXTENSION + ">\n"
             + "PREFIX trcat: <" + Namespace.TRCAT + ">\n";
     //+ "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
 
@@ -161,6 +162,9 @@ public class LexicalQuery {
 
     public static final String LEMMA_NOTE = "SELECT ?note WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, rdfs:comment, ?note) } ";
+
+    public static final String LEMMA_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
+            + " PropertyValue(lexicon:_LEMMA_, extension:_ATTRIBUTE_, ?val) } ";
 
     public static final String LEXICAL_RELATION_WORD = "SELECT ?individual WHERE {"
             + " PropertyValue(?l, lime:language, \"_LANG_\"), "

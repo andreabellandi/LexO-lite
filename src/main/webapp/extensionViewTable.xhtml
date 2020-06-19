@@ -11,7 +11,7 @@
             <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionClass.table.title']}"/>
         </h:panelGrid>
 
-        <p:dataTable id="extensionClassTable" style="width: 90%; margin: auto;" emptyMessage="#{label['extensionClass.table.empty']}">
+        <p:dataTable id="extensionClassTable" style="width: 90%; margin: auto; padding-bottom: 40px;" emptyMessage="#{label['extensionClass.table.empty']}">
         </p:dataTable>
 
         <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
@@ -19,7 +19,7 @@
             <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionProperty.table.title']}"/>
         </h:panelGrid>
 
-        <p:dataTable id="extensionPropertyTable" style="width: 90%; margin: auto;" emptyMessage="#{label['extensionProperty.table.empty']}">
+        <p:dataTable id="extensionPropertyTable" style="width: 90%; margin: auto; padding-bottom: 40px;" emptyMessage="#{label['extensionProperty.table.empty']}">
         </p:dataTable>
 
         <h:panelGrid columns="1" columnClasses="colCentered" cellpadding="5" 
@@ -27,7 +27,7 @@
             <h:outputLabel style="font-size: 18px; font-style: oblique; font-weight: bold;" value="#{label['extensionAttribute.table.title']}"/>
         </h:panelGrid>
 
-        <p:dataTable id="extensionAttributeTable" style="width: 90%; margin: auto;" 
+        <p:dataTable id="extensionAttributeTable" style="width: 90%; margin: auto; padding-bottom: 40px;" 
                      emptyMessage="#{label['extensionAttribute.table.empty']}" editable="true"
                      widgetVar="extensionAttributeTable" editMode="cell"
                      var="ea" value="#{extensionAttributeControllerTable.data}" 
@@ -36,7 +36,7 @@
             <p:ajax event="rowSelect" listener="#{extensionAttributeControllerTable.onRowSelect}" update=":extensionToolbarForm "/>
             <p:ajax event="cellEdit" listener="#{extensionAttributeControllerTable.onCellEdit}" update=":systemMessage" />
 
-            <p:column id="attributeActive" style="width: 14%;">
+            <p:column id="attributeActive" style="width: 5%; text-align: center;">
                 <f:facet name="header">
                     <h:outputText value="#{label['extensionAttribute.table.active']}"/>
                     <p:graphicImage id="aa" style="padding-left: 5px;" value="/resources/image/iconTooltip.png"
