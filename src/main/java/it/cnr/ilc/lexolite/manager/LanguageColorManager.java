@@ -28,7 +28,7 @@ public class LanguageColorManager implements Serializable {
     @Inject
     private DomainManager domainManager;
 
-    private HashMap<String, String> langColors = new HashMap();
+    private static HashMap<String, String> langColors = new HashMap();
 
     public HashMap<String, String> getLangColors() {
         return langColors;
@@ -40,8 +40,7 @@ public class LanguageColorManager implements Serializable {
 
     private static final String COLOR_BY_LANG = "SELECT languageTag, color FROM LanguageColor";
 
-    @PostConstruct
-    private void init() {
+    static {
         langColors.clear();
         for (Iterator it = HibernateUtil.getSession().createSQLQuery(COLOR_BY_LANG).list().iterator(); it.hasNext();) {
             Object[] obj = (Object[]) it.next();

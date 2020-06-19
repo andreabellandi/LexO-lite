@@ -358,6 +358,7 @@ public class PropertyValue {
         PoS.add("participleAdjective");
         PoS.add("preposition");
         PoS.add("noun");
+        PoS.add("properNoun");
         PoS.add("verb");
 
         multiwordType = new ArrayList<String>();

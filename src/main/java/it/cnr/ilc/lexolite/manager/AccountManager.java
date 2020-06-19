@@ -41,13 +41,12 @@ public class AccountManager implements Serializable {
     @Inject
     private DomainManager domainManager;
 
-    private AccountType defaultType;
-    private List<AccountType> accountTypes;
-    private final Map<String, AccountType> accountTypesByColor = new HashMap<>();
-    private final Map<String, AccountType> accountTypesByName = new HashMap<>();
+    private static AccountType defaultType;
+    private static List<AccountType> accountTypes;
+    private static final Map<String, AccountType> accountTypesByColor = new HashMap<>();
+    private static final Map<String, AccountType> accountTypesByName = new HashMap<>();
 
-    @PostConstruct
-    private void init() {
+    static {
         accountTypes = HibernateUtil.getSession().createCriteria(AccountType.class).list();
         for (AccountType accountType : accountTypes) {
             accountTypesByColor.put(accountType.getColor(), accountType);
