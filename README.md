@@ -73,7 +73,7 @@ The tool allows information to be easily manually curated by humans. LexO's prim
 <a name="how-to-deploy"><h3>How to deploy</h3></a>
 <p>
 <p>  
-Check out the [Installation Guide](INSTALLATION.md)
+Check out the <a href="INSTALLATION.md">Installation Guide</a>
 </p>  
 <a name="prepare-the-environment"><h4>Prepare the environment</h4></a>
   <p>
