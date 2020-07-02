@@ -283,6 +283,8 @@ public class StatisticsController extends BaseController implements Serializable
     private int[] getEntriesDetails(String selectedLang) {
         int[] posDist = new int[7];
         for (Map<String, String> m : lexiconManager.lemmasList(selectedLang)) {
+            String _pos = lexiconCreationControllerTabViewList.getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
             if (m.get("type").equals(OntoLexEntity.Class.WORD.getLabel())) {
                 if (m.get("pos").equals("noun")) {
                     posDist[0] = posDist[0] + 1;

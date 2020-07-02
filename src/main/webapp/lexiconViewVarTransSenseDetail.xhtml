@@ -29,7 +29,7 @@
                            rendered="#{sense.senseRels.size() > 0}">
                     <h:panelGrid id="SenseRelation" columns="1" styleClass="senseSenseRelTextBlock">
 
-                        <p:selectOneMenu id="senseSenseRel" styleClass="menu" 
+                        <p:selectOneMenu id="senseSenseRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                          panelStyleClass="panel" value="#{senseRel.relation}" 
                                          appendTo="senseSenseRel">
                             <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
@@ -50,7 +50,7 @@
 
                             <p:commandButton id="senseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":editViewTab"
+                                             update=":systemMessage"
                                              action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseRel)}"/>
 
                             <p:commandButton title="Delete relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
@@ -73,6 +73,10 @@
                                          appendTo="senseRelCategory">
                             <f:selectItem itemDisabled="#{lexiconControllerSenseDetail.locked}" itemLabel="No entry specified" itemValue="" />
                             <f:selectItems itemDisabled="#{lexiconControllerSenseDetail.locked}" value="#{lexiconControllerVarTransSenseDetail.translationCategories}" />
+                            <p:ajax event="valueChange" listener="#{lexiconControllerVarTransSenseDetail.translationCategoryChanged}" 
+                                    update=":editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
+                            <f:attribute name="senseReifRel" value="#{senseReifRel}"/>
+                            <f:attribute name="sense" value="#{sense}"/>
                         </p:selectOneMenu>
 
                         <h:outputLabel styleClass="titleStyle" value="Source:"/>
@@ -91,16 +95,16 @@
 
                             <p:commandButton id="reifSenseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseReifRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":editViewTab"
+                                             update=":systemMessage"
                                              action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseReifRel)}"/> 
                             <p:commandButton title="Delete sense relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
                                              disabled="#{senseReifRel.deleteButtonDisabled}"
                                              update=":editViewTab"
-                                             actionListener="#{lexiconControllerVarTransSenseDetail.removeTranslationSenseRelation(sd, senseReifRel)}"/> 
+                                             actionListener="#{lexiconControllerVarTransSenseDetail.removeTranslationSenseRelation(sense, senseReifRel)}"/> 
                         </h:panelGrid>
 
 
-                        <h:outputLabel id="conf" styleClass="titleStyle" for="@next" value="Confidence: " />
+                        <h:outputLabel id="conf" styleClass="titleStyle" for="@minMax" value="Confidence: " />
                         <p:spinner id="minMax" styleClass="titleStyle" value="#{senseReifRel.confidence}" min="0.1" max="1" stepFactor="0.1" >
                             <p:ajax update=":editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons" process="@this" />
                         </p:spinner>
@@ -114,7 +118,7 @@
                            rendered="#{sense.reifiedSenseRels.size() > 0}">
                     <h:panelGrid id="SenseReifRelation" columns="2" styleClass="senseReifSenseRelTextBlock">
                         <h:outputLabel styleClass="titleStyle" value="Category:"/>
-                        <p:selectOneMenu id="senseRelCategory" styleClass="menu" 
+                        <p:selectOneMenu id="senseRelCategory" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                          panelStyleClass="panel" value="#{senseReifRel.category}" 
                                          appendTo="senseRelCategory">
                             <f:selectItem itemDisabled="#{lexiconControllerSenseDetail.locked}" itemLabel="No entry specified" itemValue="" />
@@ -138,12 +142,12 @@
 
                             <p:commandButton id="reifSenseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseReifRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":editViewTab"
+                                             update=":systemMessage"
                                              action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseReifRel)}"/> 
                             <p:commandButton title="Delete sense relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
                                              disabled="#{senseReifRel.deleteButtonDisabled}"
                                              update=":editViewTab"
-                                             actionListener="#{lexiconControllerVarTransSenseDetail.removeReifSenseRelation(sd, senseReifRel)}"/> 
+                                             actionListener="#{lexiconControllerVarTransSenseDetail.removeReifSenseRelation(sense, senseReifRel)}"/> 
                         </h:panelGrid>
                     </h:panelGrid>
                     <p:separator style="border: 0;"/>

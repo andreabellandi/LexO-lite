@@ -43,7 +43,7 @@
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
                                          action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":editViewTab"
+                                         update=":systemMessage"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>
@@ -69,7 +69,7 @@
                     rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}">
             <h:panelGrid styleClass="synFrameBlock" columns="2" cellpadding="5">
                 <h:outputLabel styleClass="titleStyle" value="Frame type:"/>
-                <p:selectOneMenu id="synFrameType" styleClass="menu" 
+                <p:selectOneMenu id="synFrameType" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                  panelStyleClass="panel" value="#{synFrame.type}" 
                                  appendTo="synFrameType">
                     <p:ajax event="valueChange" listener="#{lexiconControllerSynSemFormDetail.synFrameTypeChanged}" 
@@ -95,7 +95,7 @@
                         <h:outputLabel styleClass="titleStyle" value="Number: "/>
                         <h:outputLabel styleClass="titleStyle" value="#{' #'.concat(synArg.number)}"/>
                         <h:outputLabel styleClass="titleStyle" value="Type:"/>
-                        <p:selectOneMenu id="synArgType" styleClass="menu" 
+                        <p:selectOneMenu id="synArgType" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                          panelStyleClass="panel" value="#{synArg.type}" 
                                          appendTo="synArgType">
                             <p:ajax event="valueChange" listener="#{lexiconControllerSynSemFormDetail.synArgTypeChanged}" 

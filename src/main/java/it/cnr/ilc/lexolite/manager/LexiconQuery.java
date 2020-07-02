@@ -357,7 +357,12 @@ public class LexiconQuery extends BaseController {
             ld.setVerified(true);
         }
         ld.setValid(valid);
-        ld.setPoS(ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
+        String pos = ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase";
+        if (!pos.contains(Label.NO_ENTRY_FOUND)) {
+            ld.setPoS(ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
+        } else {
+            ld.setPoS(Label.UNSPECIFIED_POS);
+        }
         ld.setFormPhoneticRep(getLemmaPhoneticRep(lemma));
         ld.setMorphoTraits(getLemmaMorphoTraits(lemma, morphoTraits));
 

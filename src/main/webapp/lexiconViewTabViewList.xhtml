@@ -41,7 +41,7 @@
                                 <h:outputText styleClass="#{!lemma.verified.equals('false') ? 'colorCircleTextLemmaVerified' : 'colorCircleText'}" value="#{lemma.name}"/>
                                 <span>
                                     <h:outputText style="vertical-align: sub; font-style: italic; font-size: 9px; padding-right: 3px;" 
-                                                  value="(#{lexiconControllerTabViewList.getPosFromIndividual(lemma.OWLname, lemma.language)})"/>
+                                                  value="#{lexiconControllerTabViewList.getPosFromIndividual(lemma.OWLname, lemma.language, lemma.type)}"/>
                                     <h:outputText style="font-style: italic; #{lexiconControllerTabViewList.getLanguageColor(lemma.language)}" 
                                                   value="@#{lemma.language}"/>
                                 </span>

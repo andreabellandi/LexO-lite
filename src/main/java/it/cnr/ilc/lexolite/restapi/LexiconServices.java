@@ -304,6 +304,8 @@ public class LexiconServices {
         int noun = 0, adjective = 0, verb = 0, nounPhrase = 0, adjectivePhrase = 0, verbPhrase = 0;
         int lexicalization = 0;
         for (Map<String, String> m : lemmaList) {
+            String _pos = getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
             if (m.get("type").equals(OntoLexEntity.Class.WORD.getLabel())) {
                 if (m.get("pos").equals("noun")) {
                     noun++;
@@ -356,6 +358,15 @@ public class LexiconServices {
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
                 .allow("OPTIONS").build();
+    }
+
+    public String getPosFromIndividual(String individual, String lang) {
+        String[] ret = individual.split("_" + lang + "_")[0].split("_");
+        if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
+            return "(" + ret[ret.length - 1] + ")";
+        } else {
+            return "";
+        }
     }
 
 }

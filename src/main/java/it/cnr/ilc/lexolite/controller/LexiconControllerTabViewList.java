@@ -27,6 +27,7 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import java.util.HashMap;
 
@@ -230,7 +231,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             ontologyManager.deafult_loadOntology();
             initDomainOntologyTabView();
         }
-        
+
     }
 
     public void loadLexicon(String lang) {
@@ -324,6 +325,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lemmaRoot.getChildren().clear();
         updateCache(lexiconManager.lemmasList(lang), "Lemma");
         for (Map<String, String> m : cachedLemmaList) {
+            m.put("pos", getPosFromIndividual(m.get("individual"), lang));
             DataTreeNode dtn = new DataTreeNode(m, 0);
             lemmaRoot.getChildren().add(new DefaultTreeNode(dtn));
         }
@@ -544,7 +546,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                     || ((lexiconCreationFormFilterController.isStartWith() && type.equals("Form")))
                     || ((lexiconCreationSenseFilterController.isStartWith() && type.equals("Sense")))) {
                 for (Map<String, String> m : list) {
-                    if ((m.get("writtenRep").startsWith(keyFilter)) && (!m.get("writtenRep").isEmpty())) {
+                    if ((m.get("writtenRep").toLowerCase().startsWith(keyFilter.toLowerCase())) && (!m.get("writtenRep").isEmpty())) {
                         if (type.equals("Sense")) {
                             m.put("individual", m.get("writtenRep"));
                         }
@@ -563,7 +565,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                     || ((lexiconCreationFormFilterController.isContains() && type.equals("Form")))
                     || ((lexiconCreationSenseFilterController.isContains() && type.equals("Sense")))) {
                 for (Map<String, String> m : list) {
-                    if ((m.get("writtenRep").contains(keyFilter)) && (!m.get("writtenRep").isEmpty())) {
+                    if ((m.get("writtenRep").toLowerCase().contains(keyFilter.toLowerCase())) && (!m.get("writtenRep").isEmpty())) {
                         if (type.equals("Sense")) {
                             m.put("individual", m.get("writtenRep"));
                         }
@@ -646,7 +648,20 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 
     public String getPosFromIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
-        return ret[ret.length - 1];
+        if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
+            return "(" + ret[ret.length - 1] + ")";
+        } else {
+            return "";
+        }
+    }
+
+    public String getPosFromIndividual(String individual, String lang, String type) {
+        String[] ret = individual.split("_" + lang + "_")[0].split("_");
+        if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
+            return "(" + ret[ret.length - 1] + (type.equals(OntoLexEntity.Class.WORD.getLabel()) ? ")" : "Phrase)");
+        } else {
+            return "";
+        }
     }
 
     public static class DataTreeNode {

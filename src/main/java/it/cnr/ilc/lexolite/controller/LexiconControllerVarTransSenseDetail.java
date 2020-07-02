@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -191,6 +192,17 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         log(Level.INFO, loginController.getAccount(), "ADD direct sense relation with " + sr.getWrittenRep());
     }
 
+    public void translationCategoryChanged(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        ReifiedTranslationRelation rtr = (ReifiedTranslationRelation) component.getAttributes().get("senseReifRel");
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
+        String cat = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE translation category of " + sd.getName() + " to " + cat);
+        
+        sd.setSaveButtonDisabled(sd.isSaveButtonDisabled() || rtr.getCategory().isEmpty());
+        
+    }
+
     public void onTranslationRelationSelect(SenseData s, SenseData.ReifiedTranslationRelation slr) {
         s.setSaveButtonDisabled(false);
         setSenseRelationEntry(slr);
@@ -296,16 +308,17 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     }
 
     public void addEntryOfSenseRelation(SenseData.SenseRelation sr) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + sr.getWrittenRep() + " by " + sr.getRelation()
-                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-        lexiconControllerFormDetail.checkForLock(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-        lexiconManager.getLexiconLocker().print();
-        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
+        info("todo.title", "todo.description");
+//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + sr.getWrittenRep() + " by " + sr.getRelation()
+//                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
+//        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
+//        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
+//        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
+//        lexiconControllerFormDetail.checkForLock(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
+//        lexiconManager.getLexiconLocker().print();
+//        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
+//        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
+//        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
     }
 
     public void addEntryOfSenseRelation(SenseData.ReifiedSenseRelation rsr) {

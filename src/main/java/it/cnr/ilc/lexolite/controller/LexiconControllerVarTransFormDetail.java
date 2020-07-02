@@ -199,16 +199,17 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
     }
 
     public void addEntryOfReifLexicalRelation(LemmaData.ReifiedLexicalRelation lr) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + lr.getSourceWrittenRep() + " by " + lr.getCategory()
-                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(lr.getTargetOWLName().replace("_entry", "_lemma"));
-        lexiconControllerFormDetail.checkForLock(lr.getTargetOWLName());
-        lexiconManager.getLexiconLocker().print();
-        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(lr.getTargetOWLName());
-        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
+        info("todo.title", "todo.description");
+//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + lr.getSourceWrittenRep() + " by " + lr.getCategory()
+//                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
+//        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
+//        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
+//        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(lr.getTargetOWLName().replace("_entry", "_lemma"));
+//        lexiconControllerFormDetail.checkForLock(lr.getTargetOWLName());
+//        lexiconManager.getLexiconLocker().print();
+//        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
+//        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(lr.getTargetOWLName());
+//        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
     }
 
     public void removeLexicalRelation(LemmaData.LexicalRelation lr) {

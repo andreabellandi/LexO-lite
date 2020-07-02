@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexolite.manager;
 
+import it.cnr.ilc.lexolite.constant.Label;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -48,6 +49,7 @@ public class LemmaData implements Serializable {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
         this.verified = false;
+        this.PoS = Label.UNSPECIFIED_POS;
     }
 
     public ArrayList<ExtensionAttributeIstance> getExtensionAttributeInstances() {
@@ -214,7 +216,7 @@ public class LemmaData implements Serializable {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
         this.formWrittenRepr = "";
-        this.PoS = "";
+        this.PoS = Label.UNSPECIFIED_POS;
         this.language = "";
         this.type = "";
         this.individual = "";

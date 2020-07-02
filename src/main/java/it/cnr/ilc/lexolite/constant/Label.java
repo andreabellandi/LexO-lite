@@ -14,6 +14,7 @@ import it.cnr.ilc.lexolite.controller.BaseController;
 public class Label extends BaseController {
 
     public static final String NO_ENTRY_FOUND = "No entry found";
+    public static final String UNSPECIFIED_POS = "unspecified";
     public static final String LEXICON_FILE_NAME_KEY = "lexiconFileName";
     public static final String LEXICON_NAMESPACE_KEY = "lexiconNamespace";
     public static final String ONTOLOGY_FILE_NAME_KEY = "domainOntologyFileName";

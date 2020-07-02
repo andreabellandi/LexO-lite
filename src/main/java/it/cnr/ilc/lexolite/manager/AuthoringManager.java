@@ -42,18 +42,18 @@ public class AuthoringManager implements Serializable {
         }
     }
 
-    private Authoring loadAuthoringByResource(String type, String iri) {
-        Criteria criteria = HibernateUtil.getSession().createCriteria(Authoring.class);
-        criteria.add(Restrictions.eq("type", type)).add(Restrictions.eq("iri", iri));
-        List<Authoring> list = criteria.list();
-        return list.isEmpty() ? null : list.get(0);
-    }
-
     public void removeAuthoring(IRIType type, String iri) {
-        Authoring authoring = loadAuthoringByResource(type.name(), iri);
+        Authoring authoring = loadAuthoringByResource(type, iri);
         if (authoring != null) {
             domainManager.delete(authoring);
         }
+    }
+
+    private Authoring loadAuthoringByResource(IRIType type, String iri) {
+        Criteria criteria = HibernateUtil.getSession().createCriteria(Authoring.class);
+        criteria.add(Restrictions.eq("type", type)).add(Restrictions.eq("IRI", iri));
+        List<Authoring> list = criteria.list();
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private static final String CHECK_IRI_PRESENCE = "select count(*) from Authoring where status = 1 and IRI = ':iri' and type = ':type'";
@@ -72,12 +72,12 @@ public class AuthoringManager implements Serializable {
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(USER_STAT);
         return query.list();
     }
-    
+
     private static final String USER_STAT_DETAILS = "SELECT aut.IRI, aut.time "
             + "FROM Authoring aut join Account acc on aut.account_id = acc.id "
             + "WHERE acc.status = 1 and aut.status = 1 and acc.username = ':username' "
             + "ORDER BY aut.IRI";
-    
+
     public List<Object[]> getStatDetails(String username) {
         String sql = USER_STAT_DETAILS.replaceAll(":username", username);
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(sql);

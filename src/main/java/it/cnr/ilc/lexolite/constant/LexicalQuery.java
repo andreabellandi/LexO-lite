@@ -104,18 +104,16 @@ public class LexicalQuery {
     public static final String SENSE_REFERENCE = "SELECT ?ref WHERE {"
             + " PropertyValue(lexicon:_SENSE_, ontolex:reference, ?ref) }";
 
-    public static final String LEMMA_BASIC = "SELECT DISTINCT ?writtenRep ?individual ?lang ?type ?verified ?pos WHERE {"
+    public static final String LEMMA_BASIC = "SELECT DISTINCT ?writtenRep ?individual ?lang ?type ?verified WHERE {"
             + " PropertyValue(?l, lime:language, ?lang), "
             + " PropertyValue(?l, lime:entry, ?le), "
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, dct:valid, ?verified), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
-            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
+//            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
-//    public static final String LEMMA_BASIC = "SELECT ?lang WHERE {"
-//            + " PropertyValue(?l, lime:language, ?lang) }";
-    public static final String LEMMA_BASIC_BY_LANGUAGE = "SELECT DISTINCT ?writtenRep ?individual ?lang ?type ?verified ?pos WHERE {"
+    public static final String LEMMA_BASIC_BY_LANGUAGE = "SELECT DISTINCT ?writtenRep ?individual ?lang ?type ?verified WHERE {"
             + " PropertyValue(?l, lime:language, \"_LANG_\"), "
             + " PropertyValue(?l, lime:language, ?lang), "
             + " PropertyValue(?l, lime:entry, ?le), "

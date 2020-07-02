@@ -44,7 +44,7 @@
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
                                          action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":editViewTab"
+                                         update=":systemMessage"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>
@@ -55,7 +55,7 @@
                        rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels.size() > 0}">
                 <h:panelGrid id="LexicalRelation" columns="1" styleClass="lemmaLexRelTextBlock">
 
-                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" filter="true" filterMatchMode="contains"
+                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                      panelStyleClass="panel" value="#{lexRel.relation}" 
                                      appendTo="lemmaLexRel">
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
@@ -74,7 +74,7 @@
 
                         <p:commandButton id="lexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{lexRel.viewButtonDisabled}"
                                          onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                         update=":editViewTab"
+                                         update=":systemMessage"
                                          action="#{lexiconControllerVarTransFormDetail.addEntryOfLexicalRelation(lexRel)}"/> 
 
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
@@ -95,7 +95,7 @@
                 <h:panelGrid id="ReifiedLexicalRelation" columns="2" styleClass="lemmaReifLexRelTextBlock">
 
                     <h:outputLabel styleClass="titleStyle" value="Category:"/>
-                    <p:selectOneMenu id="lexRelCategory" styleClass="menu" 
+                    <p:selectOneMenu id="lexRelCategory" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                      panelStyleClass="panel" value="#{reifLexRel.category}" 
                                      appendTo="lexRelCategory">
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
@@ -117,7 +117,7 @@
 
                         <p:commandButton id="reifLexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{reifLexRel.viewButtonDisabled}"
                                          onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                         update=":editViewTab"
+                                         update=":systemMessage"
                                          action="#{lexiconControllerVarTransFormDetail.addEntryOfReifLexicalRelation(reifLexRel)}"/> 
 
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"

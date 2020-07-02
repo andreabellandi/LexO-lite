@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.manager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import it.cnr.ilc.lexolite.constant.Label;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -351,6 +352,7 @@ public class PropertyValue {
 
         // properties and values are loaded "by hands", but they should be retrieved from lexinfo ontology !
         PoS = new ArrayList<String>();
+        PoS.add(Label.UNSPECIFIED_POS);
         PoS.add("adjective");
         PoS.add("article");
         PoS.add("fusedPrepositionDeterminer");
@@ -362,6 +364,7 @@ public class PropertyValue {
         PoS.add("verb");
 
         multiwordType = new ArrayList<String>();
+        multiwordType.add(Label.UNSPECIFIED_POS);
         multiwordType.add("nounPhrase");
         multiwordType.add("verbPhrase");
         multiwordType.add("adjectivePhrase");

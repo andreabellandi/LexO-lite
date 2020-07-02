@@ -60,7 +60,7 @@
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
                                          action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":editViewTab"
+                                         update=":systemMessage"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>
@@ -81,7 +81,7 @@
                              rendered="#{!lexiconControllerFormDetail.locked}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaPoSChanged}" 
                         update="lemmaButtons editViewTab:lexiconFormDetailForm"/>
-                <f:selectItem itemLabel="No entry specified" itemValue="" />
+<!--                <f:selectItem itemLabel="No entry specified" itemValue="" />-->
                 <f:selectItems value="#{lexiconControllerFormDetail.poS}" />
             </p:selectOneMenu>
             <p:inputText styleClass="inputTextStyle" 
@@ -138,7 +138,7 @@
                     <p:commandButton id="seeAlsoShowLE" title="View the lexical entry" icon="fa fa-eye"
                                      onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
                                      action="#{lexiconControllerFormDetail.addEntryOfLexicalRelation(reference, 'See Also')}"
-                                     update=":editViewTab"
+                                     update=":systemMessage"
                                      disabled="#{reference.viewButtonDisabled}"/> 
                     <p:commandButton title="Delete reference" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                      actionListener="#{lexiconControllerFormDetail.removeReference(reference)}" 

@@ -711,6 +711,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private boolean contains(List<Map<String, String>> l, String form, String lang, String pos) {
         boolean contains = false;
         for (Map<String, String> m : l) {
+            String _pos = lexiconCreationControllerTabViewList.getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
             if (lang.isEmpty() && pos.isEmpty()) {
                 if (m.get("writtenRep").equals(form.trim())) {
                     contains = true;
@@ -1063,6 +1065,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         List<String> filteredList = new ArrayList();
         Collections.sort(list, new LexiconComparator("writtenRep"));
         for (Map<String, String> m : list) {
+            String _pos = lexiconCreationControllerTabViewList.getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
             String wr = m.get("writtenRep");
             if ((wr.startsWith(keyFilter)) && (!wr.isEmpty())) {
                 if (!wr.equals(currentLemma)) {
@@ -1113,6 +1117,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         List<String> filteredList = new ArrayList();
         String[] splitted = getNormalizedHomonym(writtenRep);
         for (Map<String, String> m : list) {
+            String _pos = lexiconCreationControllerTabViewList.getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
             String wr = m.get("writtenRep");
             if ((wr.matches(splitted[0] + MULTIWORD_COMPONENT_REGEXP)) && (!wr.isEmpty())) {
                 filteredList.add(wr + " (" + m.get("pos") + ")@" + m.get("lang"));
@@ -1190,16 +1196,17 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the lemma box in order to get the details of a component of a multiword
 
     public void addEntryOfMultiwordComponent(Word lemma, String relType) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of multiword component " + lemma.getOWLName() + " of " + lemma.getWrittenRep());
-        setMultiwordComponentButtons(lemma);
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
-        lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
-        lexiconCreationControllerRelationDetail.setEntryOfLexicalRelation(lemma.getOWLName().replace("_entry", "_lemma"));
-        checkForLock(lemma.getOWLName().replace("_entry", "_lemma"));
-        lexiconManager.getLexiconLocker().print();
-        lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
-        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(lemma.getOWLName().replace("_entry", "_lemma"));
-        lexiconCreationControllerRelationDetail.setActiveTab(2);
+        info("todo.title", "todo.description");
+//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of multiword component " + lemma.getOWLName() + " of " + lemma.getWrittenRep());
+//        setMultiwordComponentButtons(lemma);
+//        lexiconCreationControllerRelationDetail.resetRelationDetails();
+//        lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
+//        lexiconCreationControllerRelationDetail.setEntryOfLexicalRelation(lemma.getOWLName().replace("_entry", "_lemma"));
+//        checkForLock(lemma.getOWLName().replace("_entry", "_lemma"));
+//        lexiconManager.getLexiconLocker().print();
+//        lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
+//        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(lemma.getOWLName().replace("_entry", "_lemma"));
+//        lexiconCreationControllerRelationDetail.setActiveTab(2);
     }
 
     private void setMultiwordComponentButtons(Word comp) {
@@ -1214,15 +1221,16 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     // invoked by the lemma box in order to get the details of the lexical relation
     public void addEntryOfLexicalRelation(Word w, String relType) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + w.getWrittenRep() + " by " + relType + " relation of Lemma " + lemma.getFormWrittenRepr());
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
-        lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
-        lexiconCreationControllerRelationDetail.setEntryOfLexicalRelation(w.getOWLName());
-        checkForLock(w.getOWLName());
-        lexiconManager.getLexiconLocker().print();
-        lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
-        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(w.getOWLName());
-        lexiconCreationControllerRelationDetail.setActiveTab(2);
+        info("todo.title", "todo.description");
+//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + w.getWrittenRep() + " by " + relType + " relation of Lemma " + lemma.getFormWrittenRepr());
+//        lexiconCreationControllerRelationDetail.resetRelationDetails();
+//        lexiconCreationControllerRelationDetail.setAddButtonsDisabled(false);
+//        lexiconCreationControllerRelationDetail.setEntryOfLexicalRelation(w.getOWLName());
+//        checkForLock(w.getOWLName());
+//        lexiconManager.getLexiconLocker().print();
+//        lexiconCreationControllerRelationDetail.setRelationLemmaRendered(true);
+//        lexiconCreationControllerRelationDetail.setCurrentLexicalEntry(w.getOWLName());
+//        lexiconCreationControllerRelationDetail.setActiveTab(2);
     }
 
     public void setLexicalRelationButtons(boolean b) {

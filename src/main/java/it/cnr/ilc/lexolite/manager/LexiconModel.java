@@ -170,12 +170,13 @@ public class LexiconModel extends BaseController {
 
     private void setMoprhology(OWLNamedIndividual le, OWLNamedIndividual cf, LemmaData ld) {
         addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), cf, ld.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
-        if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
-            addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", ld.getPoS());
-        } else {
-            addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
+        if (!ld.getPoS().equals(Label.UNSPECIFIED_POS)) {
+            if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+                addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", ld.getPoS());
+            } else {
+                addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
+            }
         }
-
         for (LemmaData.MorphoTrait mt : ld.getMorphoTraits()) {
             addObjectPropertyAxiom("lexinfo", cf, mt.getName(), mt.getValue());
         }
@@ -192,7 +193,7 @@ public class LexiconModel extends BaseController {
             case "adjectivePhrase":
                 return "adjective";
         }
-        return null;
+        return Label.UNSPECIFIED_POS;
     }
 
     // write the entry as individual of the related class and returns it 
@@ -348,11 +349,13 @@ public class LexiconModel extends BaseController {
 
     private void updateMorphology(OWLNamedIndividual entrySubject, OWLNamedIndividual subject, LemmaData oldLemma, LemmaData newLemma) {
         updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+
         if (oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", oldLemma.getPoS(), newLemma.getPoS(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         } else {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", getMultiwordPoS(oldLemma.getPoS()), getMultiwordPoS(newLemma.getPoS()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         }
+
         for (LemmaData.MorphoTrait mt : oldLemma.getMorphoTraits()) {
             removeObjectPropertyAxiom("lexinfo", subject, mt.getName(),
                     factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexinfo:") + mt.getValue())));
@@ -901,13 +904,21 @@ public class LexiconModel extends BaseController {
         if (!oldObj.equals(newObj)) {
             OWLObjectProperty p = factory.getOWLObjectProperty(IRI.create(ns + objProperty));
             if (oldObj.equals(Label.NO_ENTRY_FOUND)) {
-                addAxiom(ns, newObj, p, subject);
+                if (!newObj.equals(Label.UNSPECIFIED_POS)) {
+                    addAxiom(ns, newObj, p, subject);
+                }
             } else {
                 if (newObj.equals(Label.NO_ENTRY_FOUND)) {
-                    removeAxiom(ns, oldObj, p, subject);
+                    if (!oldObj.equals(Label.UNSPECIFIED_POS)) {
+                        removeAxiom(ns, oldObj, p, subject);
+                    }
                 } else {
-                    addAxiom(ns, newObj, p, subject);
-                    removeAxiom(ns, oldObj, p, subject);
+                    if (!newObj.equals(Label.UNSPECIFIED_POS)) {
+                        addAxiom(ns, newObj, p, subject);
+                    }
+                    if (!oldObj.equals(Label.UNSPECIFIED_POS)) {
+                        removeAxiom(ns, oldObj, p, subject);
+                    }
                 }
             }
         }
