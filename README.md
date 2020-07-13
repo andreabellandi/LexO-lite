@@ -73,7 +73,7 @@ The tool allows information to be easily manually curated by humans. LexO's prim
 <a name="how-to-deploy"><h3>How to deploy</h3></a>
 <p>
 <p>  
-Check out the <a href="INSTALLATION.md">Installation Guide</a>.
+Check out the <a href="https://github.com/andreabellandi/LexO-lite/wiki/LexO%E2%80%90lite-Installation-Guide">Installation Guide</a> in the wiki.
 </p>  
 <a name="prepare-the-environment"><h4>Prepare the environment</h4></a>
   <p>
