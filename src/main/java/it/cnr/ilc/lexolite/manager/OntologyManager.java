@@ -123,7 +123,7 @@ public class OntologyManager extends BaseController implements Serializable {
         }
         return 0;
     }
-
+    
     public ArrayList<IndividualDetails> getIndividualsByClass(String clazz) {
         if (ontologyModel != null) {
             return ontologyModel.getIndividualsByClass(clazz);
@@ -141,6 +141,13 @@ public class OntologyManager extends BaseController implements Serializable {
     public List<String> classesList() {
         if (ontologyModel != null) {
             return ontologyModel.getClasses();
+        }
+        return null;
+    }
+    
+    public List<String> subClassesListOf(String clazz) {
+        if (ontologyModel != null) {
+            return ontologyModel.getSubClassesOf(clazz);
         }
         return null;
     }

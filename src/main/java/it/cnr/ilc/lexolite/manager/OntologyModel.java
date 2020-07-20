@@ -348,6 +348,16 @@ public class OntologyModel extends BaseController {
         return al;
     }
 
+    public List<String> getSubClassesOf(String clazz) {
+        ArrayList<String> al = new ArrayList();
+        OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(domainOntology);
+        OWLClass cl = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("domainOntology:"), "#" + clazz);
+        printClasses(reasoner, cl, al);
+        reasoner.dispose();
+        al.remove(clazz);
+        return al;
+    }
+
     public List<ReferenceMenuTheme> getOntologyEntities() {
         ArrayList<ReferenceMenuTheme> alClasses = new ArrayList();
         ArrayList<ReferenceMenuTheme> alObjProps = new ArrayList();
@@ -456,6 +466,19 @@ public class OntologyModel extends BaseController {
         for (OWLClass child : c.entities().collect(Collectors.toList())) {
             if (!child.equals(clazz)) {
                 printClasses(reasoner, child, level + 1, al);
+            }
+        }
+        return al;
+    }
+
+    private List<String> printClasses(OWLReasoner reasoner, OWLClass clazz, ArrayList<String> al) {
+        if (!clazz.getIRI().getShortForm().equals("Thing") && !clazz.getIRI().getShortForm().equals("Nothing")) {
+            al.add(clazz.getIRI().getShortForm());
+        }
+        NodeSet<OWLClass> c = reasoner.getSubClasses(clazz, true);
+        for (OWLClass child : c.entities().collect(Collectors.toList())) {
+            if (!child.equals(clazz)) {
+                printClasses(reasoner, child, al);
             }
         }
         return al;

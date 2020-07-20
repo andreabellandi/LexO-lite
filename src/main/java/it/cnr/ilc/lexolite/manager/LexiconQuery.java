@@ -25,6 +25,7 @@ import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
+import it.cnr.ilc.lexolite.manager.OntologyData.LinguisticReference;
 import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.util.ArrayList;
@@ -604,6 +605,29 @@ public class LexiconQuery extends BaseController {
             alsd.add(senseCopy);
         }
         return alsd;
+    }
+
+    public ArrayList<LinguisticReference> getReferencingByOntology(String clazz, LinguisticReference.ReferenceType type) {
+        ArrayList<LinguisticReference> allr = new ArrayList<>();
+        getReferencingByClass(clazz, allr, type);
+        return allr;
+    }
+
+    private void getReferencingByClass(String clazz, ArrayList<LinguisticReference> allr, LinguisticReference.ReferenceType type) {
+        List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES
+                + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + "PREFIX domainOntology: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+                + LexicalQuery.LING_REF_BY_CONCEPT.replace("_CLAZZ_", clazz));
+        for (Map<String, String> m : results) {
+            LinguisticReference lr = new LinguisticReference();
+            lr.setName(m.get("wr"));
+            lr.setOntologyEntityName(clazz);
+            lr.setType(type);
+            String[] split = m.get("s").split("_");
+            lr.setPoS(split[split.length - 3]);
+            lr.setDefinition(getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_DEFINITION, "_SENSE_", m.get("s")));
+            allr.add(lr);
+        }
     }
 
     private void getSenseRelation(SenseData sd, SenseData senseCopy) {

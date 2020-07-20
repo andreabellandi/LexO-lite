@@ -938,7 +938,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         if (lemmaCopy.getFormWrittenRepr().isEmpty()) {
             // saving due to a new lemma action
             saveLemma(false, true);
-            String entry = LexiconUtil.getIRI(lemma.getFormWrittenRepr(), lemma.getPoS().toLowerCase(), lemma.getLanguage(), "lemma");
+            String entry = LexiconUtil.getIRI(lemma.getFormWrittenRepr(), lemma.getLanguage(), "lemma");
             // check if the lexical entry is available and lock it
             lexiconManager.lock(entry);
             setLocked(false);

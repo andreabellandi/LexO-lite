@@ -10,6 +10,7 @@ import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LoginController;
 import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
+import it.cnr.ilc.lexolite.manager.OntologyData.LinguisticReference;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.io.IOException;
 import java.io.Serializable;
@@ -406,4 +407,7 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getSensesSynSemAttributesOfSense(asd);
     }
 
+    public ArrayList<LinguisticReference> getReferencingByOntology(String clazz, LinguisticReference.ReferenceType type) {
+        return lexiconQuery.getReferencingByOntology(clazz, type);
+    }
 }

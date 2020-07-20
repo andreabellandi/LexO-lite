@@ -363,7 +363,7 @@ public class LexiconServices {
     public String getPosFromIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
-            return "(" + ret[ret.length - 1] + ")";
+            return ret[ret.length - 1];
         } else {
             return "";
         }

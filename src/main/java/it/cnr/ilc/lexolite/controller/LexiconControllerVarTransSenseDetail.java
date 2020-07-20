@@ -68,6 +68,15 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     public List<SenseData> getSensesVarTrans() {
         return sensesVarTrans;
     }
+    
+    public SenseData getSenseVarTrans(String sense) {
+        for (SenseData sd : sensesVarTrans) {
+            if (sd.getName().equals(sense)) {
+                return sd;
+            }
+        }
+        return null;
+    }
 
     public boolean isSenseVarTransRendered() {
         return senseVarTransRendered;

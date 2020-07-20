@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import java.io.Serializable;
@@ -311,12 +312,14 @@ public class LexiconControllerAdvancedFilter extends BaseController implements S
         if (unverified) {
             check = "false";
         }
-        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
-        List<Map<String, String>> f = new ArrayList<Map<String, String>>();
-        List<Map<String, String>> s = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> l = new ArrayList<>();
+        List<Map<String, String>> f = new ArrayList<>();
+        List<Map<String, String>> s = new ArrayList<>();
         for (Map<String, String> m : lexiconManager.advancedFilter_lemmas()) {
-            Map<String, String> _mL = new HashMap<String, String>();
-            Map<String, String> _mS = new HashMap<String, String>();
+            String _pos = lexiconCreationControllerTabViewList.getPosFromIndividual(m.get("individual"), m.get("lang"));
+            m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
+            Map<String, String> _mL = new HashMap<>();
+            Map<String, String> _mS = new HashMap<>();
             if (type.equals("all")) {
                 filterEntry(m, _mL, _mS, l, s, check);
             } else {

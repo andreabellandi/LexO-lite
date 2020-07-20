@@ -51,7 +51,7 @@
                         </p:commandLink>
 
                         <p:commandLink title="#{label['template.ExtensionView']}" action="#{templateController.lexiconExtensionAction()}"
-                                       rendered="#{templateController.enableAccount}" onstart="PF('loadingDialog').show()">
+                                       rendered="#{templateController.enableAccount and false}" onstart="PF('loadingDialog').show()">
                             <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_extension.png" width="20" height="20"/>
                         </p:commandLink>
                     </f:facet>
@@ -60,7 +60,7 @@
                             <p:menuitem styleClass="lexiconTabView" icon="ui-icon-power" value="#{label['template.exit']}" action="#{loginController.exitAction()}" ajax="false"/>
                         </p:menuButton>
                         <h:outputLink title="#{label['template.userGuide']}" 
-                                      value="https://github.com/GitHubAndre/LexO-lite" 
+                                      value="https://docs.google.com/document/d/1rTzEKBU7a_nvG3_paDKcyBitgIn06XW7von883NKnn0/edit" 
                                       target="_blank">
                             <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_information.png" width="20" height="20"/>
                         </h:outputLink>

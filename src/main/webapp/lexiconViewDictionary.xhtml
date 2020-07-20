@@ -9,7 +9,7 @@
         <p:panel id="basicInfoId" class="dictionaryEntry radiusBox"  rendered="#{lexiconControllerDictionary.rendable}">
             <!-- LEMMA -->
             <h:outputText escape="false" 
-                          value="#{lexiconControllerDictionary.getLemmaGramGrpInfo('lemmaId', 'lemmaClass', 'expClass', 'gramGrpClass')}" />
+                          value="#{lexiconControllerDictionary.getLemmaGramGrpInfo('lemmaId', 'lemmaClass', 'expClass', 'gramGrpClass', 'verifiedClass')}" />
             <p:panel class="radiusBox lemmaCommentFrameClass" 
                      rendered="#{lexiconControllerDictionary.rendableLemmaComment}">
                 <h:outputText escape="false"  class="lemmaCommentClass"
@@ -18,7 +18,7 @@
             </p:panel>
             <!-- FORMS -->
             <h:outputText escape="false"
-                          value="#{lexiconControllerDictionary.getVariants('variantFormFrameClass','variantClass','variantFormClass','variantAttestationsClass', 'variantNoteClass')}" />
+                          value="#{lexiconControllerDictionary.getVariants('variantFormFrameClass','variantClass','variantFormClass','variantFormMorphoClass','variantAttestationsClass', 'variantNoteClass')}" />
 
             <!-- SENSES -->
             <p:panel id="sensePanelId"  class="radiusBox senseFrameClass" rendered="#{lexiconControllerDictionary.rendable}">

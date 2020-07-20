@@ -416,6 +416,9 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
         lexiconControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        // for dicitonary view purposes
+        lexiconControllerVarTransSenseDetail.addSenseRelations();
+        // -----
         lexiconControllerSynSemFormDetail.setSynSemRendered(false);
         lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
         checkForLock(entry);
@@ -649,20 +652,21 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     public String getPosFromIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
-            return "(" + ret[ret.length - 1] + ")";
+            return ret[ret.length - 1];
         } else {
             return "";
         }
     }
-
-    public String getPosFromIndividual(String individual, String lang, String type) {
+    
+    public String getPosFromFormIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
-            return "(" + ret[ret.length - 1] + (type.equals(OntoLexEntity.Class.WORD.getLabel()) ? ")" : "Phrase)");
+            return ret[ret.length - 1];
         } else {
             return "";
         }
     }
+    
 
     public static class DataTreeNode {
 

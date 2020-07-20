@@ -843,6 +843,20 @@ ontologyDetailView {
 }
 
 .ontologyDetailBlock {
+    background-color: #ecf9ec;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 1px solid black;
+    font-size: 12px !important;
+    /*margin-left: 20px !important;*/
+    width: 500px;
+}
+
+.referenceDetailBlock {
     background-color: #F2F2F2;
     border-radius: 5px;
     padding-top: 5px;
@@ -850,7 +864,35 @@ ontologyDetailView {
     padding-bottom: 5px;
     padding-left: 3px;
     line-height: 1.5;
-    border: 2px solid #646D7E;
+    border: 2px solid #7286ad;
+    font-size: 12px !important;
+    /*margin-left: 20px !important;*/
+    width: 500px;
+}
+
+.referenceClassDetailBlock {
+    background-color: lemonchiffon;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #000000;
+    font-size: 12px !important;
+    /*margin-left: 20px !important;*/
+    width: 500px;
+}
+
+.referenceSubClassDetailBlock {
+    background-color: #fcfaf3;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #000000;
     font-size: 12px !important;
     /*margin-left: 20px !important;*/
     width: 500px;
@@ -905,6 +947,12 @@ ontologyDetailView {
     font-size: 15px !important; 
 }
 
+.verifiedClass {
+    float: right;
+    height: 32px;
+    width: 20px;
+}
+
 .lemmaClass {
     font-family: "Times New Roman", Times, serif;
     font-size: 20px !important; 
@@ -949,6 +997,11 @@ ontologyDetailView {
 }
 .variantFormClass {
     font-family: "Times New Roman", Times, serif;
+}
+
+.variantFormMorphoClass {
+    font-family: "Times New Roman", Times, serif;
+    font-style: italic;
 }
 
 .variantAttestationsClass{

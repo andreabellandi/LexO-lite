@@ -110,7 +110,7 @@ public class LexicalQuery {
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, dct:valid, ?verified), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
-//            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
+            //            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
     public static final String LEMMA_BASIC_BY_LANGUAGE = "SELECT DISTINCT ?writtenRep ?individual ?lang ?type ?verified WHERE {"
@@ -288,11 +288,23 @@ public class LexicalQuery {
             + " PropertyValue(lexicon:_SENSE_, synsem:subjOfProp, ?subjOfProp), "
             + " PropertyValue(lexicon:_SENSE_, synsem:objOfProp, ?objOfProp)  }";
 
+    // lexicon - ontology
+    public static final String SENSE_BY_CONCEPT = "SELECT ?s WHERE {"
+            + " PropertyValue(?s, ontolex:reference, domainOntology:_CLAZZ_) }";
+
+    public static final String LING_REF_BY_CONCEPT = "SELECT ?s ?wr WHERE {"
+            + " PropertyValue(?s, ontolex:reference, domainOntology:_CLAZZ_), "
+            + " PropertyValue(?le, ontolex:sense, ?s), "
+            + " PropertyValue(?le, ontolex:canonicalForm, ?cf), "
+            + " PropertyValue(?cf, ontolex:writtenRep, ?wr)  }";
+
     // query for filter panel
-    public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?type ?pos WHERE {"
+    public static final String ADVANCED_FILTER_LEMMA = "SELECT ?le ?individual ?writtenRep ?sense ?verified ?lang ?type WHERE {"
+            + " PropertyValue(?l, lime:language, ?lang), "
+            + " PropertyValue(?l, lime:entry, ?le), "
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
             + " PropertyValue(?le, dct:valid, ?verified), "
-            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
+            //            + " PropertyValue(?le, lexinfo:partOfSpeech, ?pos), "
             + " PropertyValue(?individual, ontolex:writtenRep, ?writtenRep), "
             + " DirectType(?le, ?type), "
             + " PropertyValue(?le, ontolex:sense, ?sense) }";

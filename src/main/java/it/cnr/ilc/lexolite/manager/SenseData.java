@@ -43,7 +43,7 @@ public class SenseData implements Serializable {
         this.OWLClass = new Openable();
         this.themeOWLClass = new ReferenceMenuTheme();
         this.themeOWLClass.setName("");
-        this.definition = "";
+        this.definition = "No entry found";
         this.senseRels = new ArrayList();
         this.reifiedSenseRels = new ArrayList();
         this.reifiedTranslationRels = new ArrayList();

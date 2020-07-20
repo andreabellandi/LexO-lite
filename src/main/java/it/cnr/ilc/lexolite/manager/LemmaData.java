@@ -50,6 +50,7 @@ public class LemmaData implements Serializable {
         this.deleteButtonDisabled = false;
         this.verified = false;
         this.PoS = Label.UNSPECIFIED_POS;
+        this.formPhoneticRep = "No entry found";
     }
 
     public ArrayList<ExtensionAttributeIstance> getExtensionAttributeInstances() {
@@ -231,7 +232,7 @@ public class LemmaData implements Serializable {
         this.morphoTraits.clear();
         this.extensionAttributeInstances.clear();
         this.OWLClass = null;
-        this.formPhoneticRep = "";
+        this.formPhoneticRep = "No entry found";
     }
 
     public static class Word {

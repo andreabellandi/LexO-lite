@@ -6,17 +6,14 @@
 package it.cnr.ilc.lexolite.manager;
 
 import it.cnr.ilc.lexolite.HibernateUtil;
-import it.cnr.ilc.lexolite.controller.StatisticsController.UserStatistics;
 import it.cnr.ilc.lexolite.domain.Account;
 import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.Authoring.IRIType;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 /**

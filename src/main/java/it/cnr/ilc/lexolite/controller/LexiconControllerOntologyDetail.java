@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.domain.AccountType;
 import it.cnr.ilc.lexolite.manager.AccountManager;
+import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyData;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
 import java.io.Serializable;
@@ -24,6 +25,8 @@ public class LexiconControllerOntologyDetail extends BaseController implements S
 
     @Inject
     private OntologyManager ontologyManager;
+    @Inject
+    private LexiconManager lexiconManager; 
     @Inject
     private AccountManager accountManager;
     @Inject
@@ -55,6 +58,10 @@ public class LexiconControllerOntologyDetail extends BaseController implements S
         ontologyData.setMetadata(ontologyManager.getMetadataByClass(clazz));
 //        individualTabList = domainOntologyManager.getIndividualsByClass(clazz);
         ontologyData.setIndividuals(ontologyManager.getIndividualsByClass(clazz));
+        ontologyData.addLinguistiReferences(lexiconManager.getReferencingByOntology(clazz, OntologyData.LinguisticReference.ReferenceType.CLASS));
+        for (String cl : ontologyManager.subClassesListOf(clazz)) {
+            ontologyData.addLinguistiReferences(lexiconManager.getReferencingByOntology(cl, OntologyData.LinguisticReference.ReferenceType.SUBCLASS));
+        }
     }
 
     public boolean isOntologyTabEnabled() {

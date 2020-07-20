@@ -9,10 +9,12 @@ import it.cnr.ilc.lexolite.HibernateUtil;
 import it.cnr.ilc.lexolite.domain.Account;
 import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.LanguageColor;
+import java.awt.Color;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.hibernate.Criteria;
@@ -64,4 +66,19 @@ public class LanguageColorManager implements Serializable {
         List<LanguageColor> list = criteria.list();
         return list.isEmpty() ? null : list.get(0);
     }
+
+    public Color getColorByLanguage(String lang) {
+        Criteria criteria = HibernateUtil.getSession().createCriteria(LanguageColor.class);
+        criteria.add(Restrictions.eq("languageTag", lang));
+        List<LanguageColor> list = criteria.list();
+        if (list.isEmpty()) {
+            return null;
+        } else {
+            return new Color(
+                    Integer.valueOf(list.get(0).getColor().substring(0, 2), 16),
+                    Integer.valueOf(list.get(0).getColor().substring(2, 4), 16),
+                    Integer.valueOf(list.get(0).getColor().substring(4, 6), 16));
+        }
+    }
+
 }

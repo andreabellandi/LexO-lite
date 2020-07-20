@@ -10,6 +10,7 @@ import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.manager.AuthoringManager;
+import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.OntologyManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
@@ -57,6 +58,8 @@ public class StatisticsController extends BaseController implements Serializable
     private LexiconManager lexiconManager;
     @Inject
     private OntologyManager ontologyManager;
+    @Inject
+    private LanguageColorManager languageColorManager;
     @Inject
     private LoginController loginController;
     @Inject
@@ -227,7 +230,10 @@ public class StatisticsController extends BaseController implements Serializable
         int noun = 0, adjective = 0, verb = 0, nounPhrase = 0, adjectivePhrase = 0, verbPhrase = 0;
         for (String lang : lexiconCreationControllerTabViewList.getDynamicLexicaMenuItems()) {
             if (!lang.equals("All languages")) {
-                Color c = LexiconUtil.getRandomColor();
+                Color c = languageColorManager.getColorByLanguage(lang);
+                if (c == null) {
+                    c = LexiconUtil.getRandomColor();
+                }
                 partialNumberOfEntries = lexiconManager.lemmasList(lang).size();
                 values.add(partialNumberOfEntries);
                 totalNumberOfEntries = totalNumberOfEntries + partialNumberOfEntries;
@@ -324,43 +330,45 @@ public class StatisticsController extends BaseController implements Serializable
         // 0=type of edit; 1=user; 2=user role
         ArrayList<UserStatistics> al = new ArrayList<>();
         List<Object[]> stats = authoringManager.getUserStatistics();
-        String user = (String) stats.get(0)[1];
-        String role = (String) stats.get(0)[2];
-        int leNumber = 0, formNumber = 0, senseNumber = 0;
-        for (Object[] o : stats) {
-            if (user.equals(o[1])) {
-                if (0 == Integer.parseInt(o[0].toString())) {
-                    leNumber++;
-                } else {
-                    if (1 == Integer.parseInt(o[0].toString())) {
-                        formNumber++;
+        if (stats.size() > 0) {
+            String user = (String) stats.get(0)[1];
+            String role = (String) stats.get(0)[2];
+            int leNumber = 0, formNumber = 0, senseNumber = 0;
+            for (Object[] o : stats) {
+                if (user.equals(o[1])) {
+                    if (0 == Integer.parseInt(o[0].toString())) {
+                        leNumber++;
                     } else {
-                        if (2 == Integer.parseInt(o[0].toString())) {
-                            senseNumber++;
+                        if (1 == Integer.parseInt(o[0].toString())) {
+                            formNumber++;
+                        } else {
+                            if (2 == Integer.parseInt(o[0].toString())) {
+                                senseNumber++;
+                            }
                         }
                     }
-                }
-            } else {
-                addUser(al, user, leNumber, formNumber, senseNumber, role);
-                leNumber = 0;
-                formNumber = 0;
-                senseNumber = 0;
-                user = o[1].toString();
-                role = o[2].toString();
-                if (0 == Integer.parseInt(o[0].toString())) {
-                    leNumber++;
                 } else {
-                    if (1 == Integer.parseInt(o[0].toString())) {
-                        formNumber++;
+                    addUser(al, user, leNumber, formNumber, senseNumber, role);
+                    leNumber = 0;
+                    formNumber = 0;
+                    senseNumber = 0;
+                    user = o[1].toString();
+                    role = o[2].toString();
+                    if (0 == Integer.parseInt(o[0].toString())) {
+                        leNumber++;
                     } else {
-                        if (2 == Integer.parseInt(o[0].toString())) {
-                            senseNumber++;
+                        if (1 == Integer.parseInt(o[0].toString())) {
+                            formNumber++;
+                        } else {
+                            if (2 == Integer.parseInt(o[0].toString())) {
+                                senseNumber++;
+                            }
                         }
                     }
                 }
             }
+            addUser(al, user, leNumber, formNumber, senseNumber, role);
         }
-        addUser(al, user, leNumber, formNumber, senseNumber, role);
         return al;
     }
 

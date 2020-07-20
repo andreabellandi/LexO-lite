@@ -16,6 +16,7 @@ public class OntologyData {
 
     private List<Metadata> metadata;
     private List<IndividualDetails> individuals;
+    private List<LinguisticReference> linguistiReferences;
 
     public List<Metadata> getMetadata() {
         return metadata;
@@ -33,7 +34,26 @@ public class OntologyData {
         this.individuals = individuals;
     }
 
+    public List<LinguisticReference> getLinguistiReferences(String type) {
+        ArrayList<LinguisticReference> allr = new ArrayList();
+        for (LinguisticReference lr : linguistiReferences) {
+            if (lr.type.name().equals(type)) {
+                allr.add(lr);
+            }
+        }
+        return allr;
+    }
+
+    public void setLinguistiReferences(List<LinguisticReference> linguistiReferences) {
+        this.linguistiReferences = linguistiReferences;
+    }
+
+    public void addLinguistiReferences(List<LinguisticReference> lrl) {
+        linguistiReferences.addAll(lrl);
+    }
+
     public OntologyData() {
+        linguistiReferences = new ArrayList<>();
     }
 
     public static class Metadata {
@@ -147,6 +167,61 @@ public class OntologyData {
             this.property = property;
             this.value = value;
             this.type = type;
+        }
+
+    }
+
+    public static class LinguisticReference {
+
+        public enum ReferenceType {
+            CLASS,
+            SUBCLASS
+        }
+
+        private ReferenceType type;
+        private String ontologyEntityName;
+        private String name;
+        private String PoS;
+        private String definition;
+
+        public ReferenceType getType() {
+            return type;
+        }
+
+        public void setType(ReferenceType type) {
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getPoS() {
+            return PoS;
+        }
+
+        public void setPoS(String PoS) {
+            this.PoS = PoS;
+        }
+
+        public String getDefinition() {
+            return definition;
+        }
+
+        public void setDefinition(String definition) {
+            this.definition = definition;
+        }
+
+        public String getOntologyEntityName() {
+            return ontologyEntityName;
+        }
+
+        public void setOntologyEntityName(String ontologyEntityName) {
+            this.ontologyEntityName = ontologyEntityName;
         }
 
     }

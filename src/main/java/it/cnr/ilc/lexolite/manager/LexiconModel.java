@@ -156,8 +156,8 @@ public class LexiconModel extends BaseController {
 
     // NEW LEMMA ACTION: write all the triples about the new lemma entry
     public void addLemma(LemmaData ld, String lex) {
-        String lemmaInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS().toLowerCase(), ld.getLanguage(), "lemma");
-        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS().toLowerCase(), ld.getLanguage(), "entry");
+        String lemmaInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "lemma");
+        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "entry");
         ld.setIndividual(lemmaInstance);
         OWLNamedIndividual lexicon = getIndividual(lex);
         OWLNamedIndividual le = getEntry(entryInstance, ld.getType());
@@ -242,9 +242,9 @@ public class LexiconModel extends BaseController {
     // write all triples about lemma entry with RENAMING
     public void updateLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
         String oldLemmaInstance = oldLemma.getIndividual();
-        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "lemma");
+        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
         String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
-        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "entry");
+        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
         newLemma.setIndividual(newLemmaInstance);
         updateLemma(oldLemma, newLemma);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
@@ -261,6 +261,19 @@ public class LexiconModel extends BaseController {
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, otherForm, ontology).collect(Collectors.toList())) {
             String formInstance = i.toStringID().replace(pm.getPrefixName2PrefixMap().get("lexicon:"), "");
             formInstance = formInstance.replace(LexiconUtil.sanitize(oldLemma.getFormWrittenRepr()), LexiconUtil.sanitize(newLemma.getFormWrittenRepr()));
+            if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
+                // old pos is unspecified
+                if (oldLemma.getPoS().isEmpty()) {
+                    formInstance = formInstance.replace(Label.UNSPECIFIED_POS, newLemma.getPoS());
+                } else {
+                    // new pos is unspecified
+                    if (newLemma.getPoS().isEmpty()) {
+                        formInstance = formInstance.replace(oldLemma.getPoS(), Label.UNSPECIFIED_POS);
+                    } else {
+                        formInstance = formInstance.replace(oldLemma.getPoS(), newLemma.getPoS());
+                    }
+                }
+            }
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + formInstance));
         }
     }
@@ -269,9 +282,21 @@ public class LexiconModel extends BaseController {
         OWLObjectProperty sense = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.ObjectProperty.SENSE.getLabel());
         int senseNumb = 1;
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, sense, ontology).collect(Collectors.toList())) {
-            String senseInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase(), oldLemma.getLanguage(), "sense");
+            String senseInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(),
+                    newLemma.getPoS().isEmpty() ? Label.UNSPECIFIED_POS : newLemma.getPoS(), oldLemma.getLanguage(), "sense");
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + senseInstance + senseNumb));
             senseNumb++;
+        }
+    }
+
+    private void synsemRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
+        OWLObjectProperty synBehavior = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.ObjectProperty.SYNBEHAVIOR.getLabel());
+        int frame = 1;
+        for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, synBehavior, ontology).collect(Collectors.toList())) {
+            String frameInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(),
+                    newLemma.getPoS().isEmpty() ? Label.UNSPECIFIED_POS : newLemma.getPoS(), oldLemma.getLanguage(), "frame");
+            IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + frameInstance + frame));
+            frame++;
         }
     }
 
@@ -309,9 +334,9 @@ public class LexiconModel extends BaseController {
             if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
                 // it needs to modify IRI anyway
                 String oldLemmaInstance = oldLemma.getIndividual();
-                String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "lemma");
+                String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
                 String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
-                String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS().toLowerCase().split("phrase")[0], newLemma.getLanguage(), "entry");
+                String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
                 newLemma.setIndividual(newLemmaInstance);
                 IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
                 OWLNamedIndividual le = getIndividual(oldEntryInstance);
@@ -320,15 +345,16 @@ public class LexiconModel extends BaseController {
                 // sense individuals renaming
                 senseRenaming(oldLemma, newLemma, le);
                 IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
+                // synsem individuals renaming
+                
             }
         }
     }
 
     private void updatePhonetic(OWLNamedIndividual subject, String oldPhonetic, String newPhonetic) {
-        if (oldPhonetic.isEmpty() || oldPhonetic.equals(Label.NO_ENTRY_FOUND)) {
+        removeDataPropertyAxiom("ontolex", subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic);
+        if (!newPhonetic.isEmpty() && !newPhonetic.equals(Label.NO_ENTRY_FOUND)) {
             addDataPropertyAxiom(OntoLexEntity.DataProperty.PHONETICREP.getLabel(), subject, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
-        } else {
-            updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
         }
     }
 
@@ -776,13 +802,15 @@ public class LexiconModel extends BaseController {
     // UPDATE multiwordLemma with no renaming
     public void updateMultiwordLemma(LemmaData oldLemma, LemmaData newLemma) {
         // it verifies if some component has been changed
-        updateComponentsOfLemma(oldLemma.getMultiword(), newLemma.getMultiword());
+        //updateComponentsOfLemma(oldLemma.getMultiword(), newLemma.getMultiword(), oldLemma.getPoS(), newLemma.getPoS());
+        deleteMultiwordDecomposition(oldLemma);
         // update the oppurtune lemma fields
         updateLemma(oldLemma, newLemma);
+        createMultiwordDecomposition(newLemma);
     }
 
     // A component can be changed but NOT the written representation of the multiword 
-    private void updateComponentsOfLemma(ArrayList<Word> oldComponents, ArrayList<Word> newComponents) {
+    private void updateComponentsOfLemma(ArrayList<Word> oldComponents, ArrayList<Word> newComponents, String oldPoS, String newPoS) {
         for (int i = 0; i < oldComponents.size(); i++) {
             if (!oldComponents.get(i).getLabel().equals(newComponents.get(i).getLabel())) {
                 Word oldComp = oldComponents.get(i);
@@ -793,6 +821,14 @@ public class LexiconModel extends BaseController {
                     removeObjectPropertyAxiom(pm.getPrefixName2PrefixMap().get("decomp:"), getIndividual(oldComp.getOWLComp()), "correspondsTo", getIndividual(oldComp.getOWLName()));
                 }
                 addObjectPropertyAxiom("correspondsTo", getIndividual(oldComp.getOWLComp()), getIndividual(newComp.getOWLName().replace("_lemma", "_entry")), pm.getPrefixName2PrefixMap().get("decomp:"));
+            }
+        }
+        if (!oldPoS.equals(newPoS)) {
+            for (int j = 0; j < newComponents.size(); j++) {
+                String oldIndividual = oldComponents.get(j).getOWLComp();
+                String newIndividual = oldIndividual.replaceAll((oldPoS.isEmpty() ? Label.UNSPECIFIED_POS : oldPoS), (newPoS.isEmpty() ? Label.UNSPECIFIED_POS : newPoS));
+                IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldIndividual),
+                        IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newIndividual));
             }
         }
     }
@@ -829,8 +865,8 @@ public class LexiconModel extends BaseController {
 
     // NEW FORM ACTION: write all triples about the form
     public void addForm(FormData fd, LemmaData ld) {
-        String formInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS().toLowerCase(), ld.getLanguage(), fd.getFormWrittenRepr(), "form");
-        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS().toLowerCase(), ld.getLanguage(), "entry");
+        String formInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), fd.getFormWrittenRepr(), "form");
+        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "entry");
         OWLNamedIndividual le = getIndividual(entryInstance);
         OWLNamedIndividual of = getForm(formInstance);
         fd.setIndividual(formInstance);
@@ -849,7 +885,7 @@ public class LexiconModel extends BaseController {
     // write all triples about a form with RENAMING
     public void addFormWithRenaming(FormData oldForm, FormData newForm, LemmaData ld) {
         String oldFormInstance = oldForm.getIndividual();
-        String newFormInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS().toLowerCase(), ld.getLanguage(), newForm.getFormWrittenRepr(), "form");
+        String newFormInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), newForm.getFormWrittenRepr(), "form");
         updateForm(oldForm, newForm, ld);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldFormInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newFormInstance));
     }
@@ -862,10 +898,9 @@ public class LexiconModel extends BaseController {
     }
 
     private void updateFormPhonetic(OWLNamedIndividual subject, String oldPhonetic, String newPhonetic) {
-        if (oldPhonetic.isEmpty() || oldPhonetic.equals(Label.NO_ENTRY_FOUND)) {
+        removeDataPropertyAxiom("ontolex", subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic);
+        if (!newPhonetic.isEmpty() && !newPhonetic.equals(Label.NO_ENTRY_FOUND)) {
             addDataPropertyAxiom(OntoLexEntity.DataProperty.PHONETICREP.getLabel(), subject, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
-        } else {
-            updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.PHONETICREP.getLabel(), oldPhonetic, newPhonetic, pm.getPrefixName2PrefixMap().get("ontolex:"));
         }
     }
 

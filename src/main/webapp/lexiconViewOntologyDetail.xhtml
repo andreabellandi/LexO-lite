@@ -15,6 +15,30 @@
                 </ui:repeat>
             </h:panelGrid>
             <p:spacer height="20"/>
+            <h:panelGrid id="LinguisticPanelGridClass" columns="1" cellpadding="5">
+                <h:panelGrid id="LinguisticPanelGrid" styleClass="referenceClassDetailBlock" columns="2" cellpadding="5">
+                    <h:outputText style="font-weight: bold;" value="Linguistic reference"/>
+                    <ui:repeat value="#{lexiconControllerOntologyDetail.ontologyClassDetail.getLinguistiReferences('CLASS')}" var="ref">
+                        <h:panelGrid columns="2" rendered="#{ref != null}">
+                            <h:outputText value="#{ref.name.concat(' (').concat(ref.poS).concat(')')}" />
+                            <h:outputText value="#{ref.definition.contains('No entry found') ? '' : ref.definition}" />
+                        </h:panelGrid>
+                    </ui:repeat>
+                </h:panelGrid>
+                <h:panelGrid columns="1" style="padding-left: 30px;">
+                    <h:panelGrid id="LinguisticPanelGridSubclass" styleClass="referenceSubClassDetailBlock" columns="2" cellpadding="5">
+                        <h:outputText style="font-weight: bold;" value="Inferred linguistic reference " />
+                        <ui:repeat value="#{lexiconControllerOntologyDetail.ontologyClassDetail.getLinguistiReferences('SUBCLASS')}" var="ref">
+                            <h:panelGrid columns="3" rendered="#{ref != null}">
+                                <h:outputText style="font-weight: bold;" value="#{ref.ontologyEntityName}" />
+                                <h:outputText value="#{ref.name.concat(' (').concat(ref.poS).concat(')')}" />
+                                <h:outputText value="#{ref.definition.contains('No entry found') ? '' : ref.definition}" />
+                            </h:panelGrid>
+                        </ui:repeat>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:panelGrid>
+            <p:spacer height="20"/>
             <p:accordionPanel styleClass="instancesAccordion" value="#{lexiconControllerOntologyDetail.ontologyClassDetail.individuals}" var="ind">
                 <p:tab title="#{ind.shortForm}" disabled="#{empty ind}">
                     <f:facet name="title">
