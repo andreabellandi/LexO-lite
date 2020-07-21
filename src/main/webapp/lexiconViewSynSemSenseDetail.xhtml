@@ -13,8 +13,9 @@
                 <h:outputLabel styleClass="titleStyle" value="Name:" />
                 <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" size="#{sense.filedMaxLenght}"/>
 
-                <h:outputLabel styleClass="titleStyle" value="Definition:"/>
-                <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" readonly="true"/>
+                <h:outputLabel styleClass="titleStyle" value="Definition:" rendered="#{!sense.definition.equals('No entry found')}"/>
+                <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" readonly="true"
+                                 rendered="#{!sense.definition.equals('No entry found')}"/>
 
                 <h:outputLabel styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
                 <h:panelGrid columns="2" rendered="#{sense.themeOWLClass.id > 0}">
