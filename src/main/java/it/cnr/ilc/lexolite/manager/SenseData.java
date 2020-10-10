@@ -34,6 +34,9 @@ public class SenseData implements Serializable {
     private SenseData.OntoMap ontoMap;
     private ArrayList<SenseData.OntoMap> subOntoMap;
 
+    // Melchuk's lexical functions
+    private ArrayList<SenseData.LexicalFunction> lexicalFunctions;
+
     public SenseData() {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
@@ -49,6 +52,7 @@ public class SenseData implements Serializable {
         this.reifiedTranslationRels = new ArrayList();
         this.ontoMap = null;
         this.subOntoMap = new ArrayList();
+        this.lexicalFunctions = new ArrayList();
     }
 
     public ReferenceMenuTheme getThemeOWLClass() {
@@ -85,6 +89,14 @@ public class SenseData implements Serializable {
 
     public ArrayList<SenseRelation> getSenseRels() {
         return senseRels;
+    }
+
+    public ArrayList<LexicalFunction> getLexicalFunctions() {
+        return lexicalFunctions;
+    }
+
+    public void setLexicalFunctions(ArrayList<LexicalFunction> lexicalFunctions) {
+        this.lexicalFunctions = lexicalFunctions;
     }
 
     public void setSenseRels(ArrayList<SenseRelation> senseRels) {
@@ -458,6 +470,94 @@ public class SenseData implements Serializable {
 
         public void setCategory(String category) {
             this.category = category;
+        }
+
+    }
+
+    public static class LexicalFunction {
+
+        private boolean viewButtonDisabled;
+        private boolean deleteButtonDisabled;
+        private String source;
+        private String target;
+        private String type;
+        private String sourceWrittenRep;
+        private String targetWrittenRep;
+        private String lexFunName;
+
+        public LexicalFunction() {
+            this.viewButtonDisabled = false;
+            this.deleteButtonDisabled = false;
+            this.source = "";
+            this.target = "";
+            this.sourceWrittenRep = "";
+            this.lexFunName = "";
+            this.targetWrittenRep = "";
+            this.type = "";
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public boolean isViewButtonDisabled() {
+            return viewButtonDisabled;
+        }
+
+        public void setViewButtonDisabled(boolean viewButtonDisabled) {
+            this.viewButtonDisabled = viewButtonDisabled;
+        }
+
+        public boolean isDeleteButtonDisabled() {
+            return deleteButtonDisabled;
+        }
+
+        public void setDeleteButtonDisabled(boolean deleteButtonDisabled) {
+            this.deleteButtonDisabled = deleteButtonDisabled;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getSourceWrittenRep() {
+            return sourceWrittenRep;
+        }
+
+        public void setSourceWrittenRep(String sourceWrittenRep) {
+            this.sourceWrittenRep = sourceWrittenRep;
+        }
+
+        public String getTargetWrittenRep() {
+            return targetWrittenRep;
+        }
+
+        public void setTargetWrittenRep(String targetWrittenRep) {
+            this.targetWrittenRep = targetWrittenRep;
+        }
+
+        public String getLexFunName() {
+            return lexFunName;
+        }
+
+        public void setLexFunName(String lexFunName) {
+            this.lexFunName = lexFunName;
         }
 
     }

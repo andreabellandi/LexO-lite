@@ -7,10 +7,17 @@ package it.cnr.ilc.lexolite.manager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.controller.LexicalFunctionComparator;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -25,6 +32,16 @@ import javax.faces.model.SelectItemGroup;
 @Named
 @ApplicationScoped
 public class PropertyValue {
+
+//    private static final Properties lexicalFunctions = new Properties();
+//
+//    public static void loadLFs() {
+//        try (InputStream input = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.LEXICAL_FUNCTIONS_FILE_NAME)) {
+//            lexicalFunctions.load(input);
+//            input.close();
+//        } catch (IOException ex) {
+//        }
+//    }
 
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
     private ArrayList<String> lemmaInfo;
@@ -48,6 +65,10 @@ public class PropertyValue {
     private ArrayList<String> lingCatList;
 
     private Multimap<String, String> morphoTraitList;
+
+    // for melchuck
+    private static ArrayList<SelectItem> syntagmaticLexicalFunctions;
+    private static ArrayList<SelectItem> paradigmaticLexicalFunctions;
 
     // for extensions
     private ArrayList<String> attributeTypes;
@@ -84,6 +105,14 @@ public class PropertyValue {
 
     public void setAttributeDomain(ArrayList<String> attributeDomain) {
         this.attributeDomain = attributeDomain;
+    }
+
+    public static ArrayList<SelectItem> getSyntagmaticLexicalFunctions() {
+        return syntagmaticLexicalFunctions;
+    }
+
+    public static ArrayList<SelectItem> getParadigmaticLexicalFunctions() {
+        return paradigmaticLexicalFunctions;
     }
 
     public ArrayList<String> getTranslationCategory() {
@@ -188,6 +217,10 @@ public class PropertyValue {
 
     @PostConstruct
     public void load() {
+
+//        loadLFs();
+        MelchuckModelExtension.load();
+
         lexicalAspects = new ArrayList();
         lexicalAspects.add("Core");
         lexicalAspects.add("Variation and Translation");
@@ -398,7 +431,99 @@ public class PropertyValue {
         attributeDomain.add("Lexical Entry");
         attributeDomain.add("Form");
         attributeDomain.add("Sense");
+
+//        loadLexicalFunctions();
     }
+
+//    private void loadLexicalFunctions() {
+//
+//        syntagmaticLexicalFunctions = new ArrayList();
+//        paradigmaticLexicalFunctions = new ArrayList();
+//        if (lexicalFunctions.size() > 0) {
+//            Set<Object> keys = lexicalFunctions.keySet();
+//            keys.forEach((k) -> {
+//                String[] key = ((String) k).split("\\.");
+//                if (key[0].equals("syntagmatic")) {
+//                    syntagmaticLexicalFunctions.add(new SelectItem(key[1], lexicalFunctions.getProperty((String) k), null, false, false));
+//                } else {
+//                    paradigmaticLexicalFunctions.add(new SelectItem(key[1], lexicalFunctions.getProperty((String) k), null, false, false));
+//                }
+//            });
+//            Collections.sort(syntagmaticLexicalFunctions, new LexicalFunctionComparator());
+//            Collections.sort(paradigmaticLexicalFunctions, new LexicalFunctionComparator());
+//        }
+//        paradigmaticLexicalFunctions.add("Syn");
+//        paradigmaticLexicalFunctions.add("Syn⊃");
+//        paradigmaticLexicalFunctions.add("Syn⊂");
+//        paradigmaticLexicalFunctions.add("Syn∩");
+//        paradigmaticLexicalFunctions.add("Anti");
+//        paradigmaticLexicalFunctions.add("Anti⊃");
+//        paradigmaticLexicalFunctions.add("Anti⊂");
+//        paradigmaticLexicalFunctions.add("Anti∩");
+//        paradigmaticLexicalFunctions.add("Conv(n)");
+//        paradigmaticLexicalFunctions.add("Contr");
+//        paradigmaticLexicalFunctions.add("Epit");
+//        paradigmaticLexicalFunctions.add("Gener");
+//        paradigmaticLexicalFunctions.add("Figur");
+//        paradigmaticLexicalFunctions.add("S₀");
+//        paradigmaticLexicalFunctions.add("A₀");
+//        paradigmaticLexicalFunctions.add("V₀");
+//        paradigmaticLexicalFunctions.add("Adv₀");
+//        paradigmaticLexicalFunctions.add("Sₐ");
+//        paradigmaticLexicalFunctions.add("Sinstr");
+//        paradigmaticLexicalFunctions.add("Smed");
+//        paradigmaticLexicalFunctions.add("Smod");
+//        paradigmaticLexicalFunctions.add("Sloc");
+//        paradigmaticLexicalFunctions.add("Sres");
+//        paradigmaticLexicalFunctions.add("Able");
+//        paradigmaticLexicalFunctions.add("Qual");
+//        paradigmaticLexicalFunctions.add("Mult");
+//        paradigmaticLexicalFunctions.add("Sing");
+//        paradigmaticLexicalFunctions.add("Cap");
+//        paradigmaticLexicalFunctions.add("Equip");
+//        paradigmaticLexicalFunctions.add("Ai");
+//        paradigmaticLexicalFunctions.add("Advi");
+//        paradigmaticLexicalFunctions.add("Imper");
+//        paradigmaticLexicalFunctions.add("Result");
+//
+//        syntagmaticLexicalFunctions.add("Centr");
+//        syntagmaticLexicalFunctions.add("Magn");
+//        syntagmaticLexicalFunctions.add("Plus");
+//        syntagmaticLexicalFunctions.add("Minus");
+//        syntagmaticLexicalFunctions.add("Ver");
+//        syntagmaticLexicalFunctions.add("Bon");
+//        syntagmaticLexicalFunctions.add("Posi");
+//        syntagmaticLexicalFunctions.add("Locin");
+//        syntagmaticLexicalFunctions.add("Locab");
+//        syntagmaticLexicalFunctions.add("Locad");
+//        syntagmaticLexicalFunctions.add("Locin temp");
+//        syntagmaticLexicalFunctions.add("Instr");
+//        syntagmaticLexicalFunctions.add("Propt");
+//        syntagmaticLexicalFunctions.add("Copul");
+//        syntagmaticLexicalFunctions.add("Pred");
+//        syntagmaticLexicalFunctions.add("Opern");
+//        syntagmaticLexicalFunctions.add("Funcn");
+//        syntagmaticLexicalFunctions.add("Laborn");
+//        syntagmaticLexicalFunctions.add("Incep");
+//        syntagmaticLexicalFunctions.add("Cont");
+//        syntagmaticLexicalFunctions.add("Fin");
+//        syntagmaticLexicalFunctions.add("Causi");
+//        syntagmaticLexicalFunctions.add("Perm");
+//        syntagmaticLexicalFunctions.add("Liqu");
+//        syntagmaticLexicalFunctions.add("Realn");
+//        syntagmaticLexicalFunctions.add("Factn");
+//        syntagmaticLexicalFunctions.add("Labrealn");
+//        syntagmaticLexicalFunctions.add("Involv");
+//        syntagmaticLexicalFunctions.add("Manif");
+//        syntagmaticLexicalFunctions.add("Prox");
+//        syntagmaticLexicalFunctions.add("Prepari");
+//        syntagmaticLexicalFunctions.add("Degrad");
+//        syntagmaticLexicalFunctions.add("Son");
+//        syntagmaticLexicalFunctions.add("Obstr");
+//        syntagmaticLexicalFunctions.add("Stop");
+//        syntagmaticLexicalFunctions.add("Excessn");
+//        syntagmaticLexicalFunctions.add("Symptn");
+//    }
 
     private void loadLexicalCategories() {
         lexicalCategory = new ArrayList<>();

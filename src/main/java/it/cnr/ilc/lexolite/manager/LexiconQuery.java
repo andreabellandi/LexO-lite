@@ -13,6 +13,7 @@ import de.derivo.sparqldlapi.QueryResult;
 import de.derivo.sparqldlapi.exceptions.QueryEngineException;
 import de.derivo.sparqldlapi.exceptions.QueryParserException;
 import it.cnr.ilc.lexolite.LexOliteProperty;
+import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.LexicalQuery;
 import it.cnr.ilc.lexolite.constant.Namespace;
@@ -29,6 +30,7 @@ import it.cnr.ilc.lexolite.manager.OntologyData.LinguisticReference;
 import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +55,9 @@ import org.apache.logging.log4j.Logger;
  * @author andrea
  */
 public class LexiconQuery extends BaseController {
+
+    @Inject
+    private PropertyValue propertyValue;
 
     private static final Logger LOG = LogManager.getLogger(LexiconQuery.class);
 
@@ -602,6 +607,7 @@ public class LexiconQuery extends BaseController {
             getSenseRelation(sd, senseCopy);
             getSenseReifiedRelation(sd, senseCopy);
             getSenseTranslationRelation(sd, senseCopy);
+            getLexicalFunction(sd, senseCopy);
             alsd.add(senseCopy);
         }
         return alsd;
@@ -633,23 +639,29 @@ public class LexiconQuery extends BaseController {
     private void getSenseRelation(SenseData sd, SenseData senseCopy) {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
-            if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel())) {
-                SenseData.SenseRelation sr = new SenseData.SenseRelation();
-                sr.setWrittenRep(m.get("sense"));
-                sr.setRelation(m.get("rel"));
-                sr.setLanguage(m.get("lang"));
-                senseCopy.getSenseRels().add(sr);
+            if (MelchuckModelExtension.getParadigmaticRenderingTable().get(m.get("rel")) == null &&
+                    MelchuckModelExtension.getSyntagmaticRenderingTable().get(m.get("rel")) == null) {
+                if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel())) {
+                    SenseData.SenseRelation sr = new SenseData.SenseRelation();
+                    sr.setWrittenRep(m.get("sense"));
+                    sr.setRelation(m.get("rel"));
+                    sr.setLanguage(m.get("lang"));
+                    senseCopy.getSenseRels().add(sr);
+                }
             }
         }
     }
+
 
     private void getSenseReifiedRelation(SenseData sd, SenseData senseCopy) {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.TERMINOLOGICAL_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
             SenseData.ReifiedSenseRelation sr = new SenseData.ReifiedSenseRelation();
-            sr.setTarget(m.get("entry"));
+            sr.setSource(sd.getName());
+            sr.setTarget(m.get("trgind"));
             sr.setCategory(m.get("cat"));
             sr.setTargetLanguage(m.get("trglang"));
+            sr.setTargetWrittenRep(m.get("trgind"));
             senseCopy.getReifiedSenseRels().add(sr);
         }
     }
@@ -658,11 +670,27 @@ public class LexiconQuery extends BaseController {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.TRANSLATION_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
             SenseData.ReifiedTranslationRelation sr = new SenseData.ReifiedTranslationRelation();
-            sr.setTarget(m.get("entry"));
+            sr.setSource(sd.getName());
+            sr.setTarget(m.get("trgind"));
             sr.setCategory(m.get("cat"));
             sr.setTargetLanguage(m.get("trglang"));
             sr.setConfidence(Double.valueOf(m.get("conf")));
+            sr.setTargetWrittenRep(m.get("trgind"));
             senseCopy.getReifiedTranslationRels().add(sr);
+        }
+    }
+
+    private void getLexicalFunction(SenseData sd, SenseData senseCopy) {
+        if (MelchuckModelExtension.getParadigmaticLexicalFunctions().size() > 0 || MelchuckModelExtension.getSyntagmaticLexicalFunctions().size() > 0) {
+            List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICAL_FUNCTION.replace("_SENSE_", sd.getName()));
+            for (Map<String, String> m : results) {
+                SenseData.LexicalFunction lf = new SenseData.LexicalFunction();
+                lf.setSource(sd.getName());
+                lf.setTarget(m.get("sense"));
+                lf.setLexFunName(m.get("lf"));
+                lf.setTargetWrittenRep(m.get("sense"));
+                senseCopy.getLexicalFunctions().add(lf);
+            }
         }
     }
 

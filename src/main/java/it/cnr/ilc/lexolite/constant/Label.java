@@ -20,9 +20,12 @@ public class Label extends BaseController {
     public static final String ONTOLOGY_FILE_NAME_KEY = "domainOntologyFileName";
     public static final String ONTOLOGY_NAMESPACE_KEY = "domainOntologyNamespace";
     public static final String LEXO_FOLDER = "/.LexO-lite/";
+    public static final String MODELS_FOLDER = "models/";
 //    public static final String LEXO_FOLDER = "/.LexO-lite-VQ/";
+//        public static final String LEXO_FOLDER = "/.LexO-lite-Theresa/";
     public static final String LEXO_PROPERTIES_FILE_NAME = "lexolite.properties";
-    
+    public static final String LEXICAL_FUNCTIONS_FILE_NAME = "melchuck.lexicalFunctions";
+
     // morpho menu items label
     public static final String MORPHO_ANIMACY_LABEL = "animacy";
     public static final String MORPHO_ASPECT_LABEL = "aspect";
@@ -43,6 +46,5 @@ public class Label extends BaseController {
     public static final String MORPHO_TERM_TYPE_LABEL = "termType";
     public static final String MORPHO_VERB_FORM_MOOD_LABEL = "verbFormMood";
     public static final String MORPHO_VOICE_LABEL = "voice";
-    
 
 }

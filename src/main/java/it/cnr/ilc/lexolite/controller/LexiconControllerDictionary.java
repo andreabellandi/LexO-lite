@@ -5,17 +5,14 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.SenseData;
-import it.cnr.ilc.lexolite.util.LexiconUtil;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
 import static j2html.TagCreator.span;
-import static j2html.TagCreator.li;
-import static j2html.TagCreator.ul;
-import static j2html.TagCreator.a;
 import static j2html.TagCreator.i;
 import static j2html.TagCreator.img;
 import static j2html.TagCreator.join;
@@ -288,6 +285,21 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 }
                 for (Map.Entry<String, String> entry : senseRelations.entrySet()) {
                     mainDiv.with(div(span(join(entry.getKey() + ": ", entry.getValue()))));
+                }
+            }
+        }
+        
+        // Melchuck's lexical function's
+        if (sd != null) {
+            if (sd.getLexicalFunctions().size() > 0) {
+                for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
+                    if (MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) != null) {
+                        mainDiv.with(div(span(join(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "(" +
+                                getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
+                    } else {
+                        mainDiv.with(div(span(join(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "(" +
+                                getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
+                    }
                 }
             }
         }

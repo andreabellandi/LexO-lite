@@ -153,6 +153,48 @@
                     </h:panelGrid>
                     <p:separator style="border: 0;"/>
                 </ui:repeat>
+                
+                <!-- Melchuck's lexical functions -->
+                <h:outputLabel styleClass="titleStyle" value="Lexical function:" rendered="#{sense.lexicalFunctions.size() > 0}"/>
+                <ui:repeat value="#{sense.lexicalFunctions}" var="lf" 
+                           rendered="#{sense.lexicalFunctions.size() > 0}">
+                    <h:panelGrid id="LexicalFunction" columns="2" styleClass="lexicalFunctionsTextBlock">
+                        <h:outputLabel styleClass="titleStyle" value="Function name:"/>
+                        <p:selectOneMenu id="LexicalFunctionName" styleClass="menu" 
+                                         panelStyleClass="panel" value="#{lf.lexFunName}" 
+                                         appendTo="LexicalFunctionName">
+                            <f:selectItem itemDisabled="#{lexiconControllerSenseDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                            <f:selectItems itemDisabled="#{lexiconControllerSenseDetail.locked}" value="#{lexiconControllerVarTransSenseDetail.getLexicalFunctions(lf)}" />
+                            <p:ajax event="valueChange" listener="#{lexiconControllerVarTransSenseDetail.lexicalFunctionChanged}" 
+                                    update=":editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
+                            <f:attribute name="lf" value="#{lf}"/>
+                            <f:attribute name="sense" value="#{sense}"/>
+                        </p:selectOneMenu>
+
+                        <h:outputLabel styleClass="titleStyle" value="Target:"/>
+                        <h:panelGrid id="lfInput" columns="4">
+                            <p:autoComplete  maxResults="10" value="#{lf.target}" forceSelection="true"
+                                             readonly="#{lexiconControllerSenseDetail.locked}" 
+                                             completeMethod="#{lexiconControllerVarTransSenseDetail.completeText}">
+                                <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransSenseDetail.onLexicalFunctionSelect(sense, lf)}" 
+                                        update="lfInput :editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
+                                <f:attribute name="currentSense" value="#{sense.name}"/>
+                            </p:autoComplete>
+                            <p:watermark class="filterLabel" for="LexicalFunction" value="Type a sense"/>   
+
+                            <p:commandButton id="LexicalFunctionShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{lf.viewButtonDisabled}"
+                                             onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                             action="#{lexiconControllerVarTransSenseDetail.addEntryOfLexicalFunction(lf)}"
+                                             update=":systemMessage"/>
+                            <p:commandButton title="Delete lexical function" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                             disabled="#{lf.deleteButtonDisabled}"
+                                             actionListener="#{lexiconControllerVarTransSenseDetail.removeLexicalFunction(sense, lf)}"
+                                             update=":editViewTab"/> 
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+                    <p:separator style="border: 0;"/>
+                </ui:repeat>
 
                 <h:panelGrid id = "senseVarTransButtons" columns="4" columnClasses="column" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
@@ -168,6 +210,15 @@
                         <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.senseButton.indirectTerminologicalRelation']}" icon="fa fa-plus"  
                                     actionListener="#{lexiconControllerVarTransSenseDetail.addTerminologicalRelation(sense)}"
                                     update=":editViewTab:lexiconVarTransSenseDetailForm"/>
+                        <p:submenu styleClass="lexiconTabView" label="#{label['varTrans.senseButton.lexicalFunction']}"
+                                   rendered="#{lexiconControllerVarTransSenseDetail.melchuckActive}">
+                            <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.senseButton.lexicalFunction.paradigmatic']}" icon="fa fa-plus"
+                                        actionListener="#{lexiconControllerVarTransSenseDetail.addLexicalFunction(sense, 'paradigmatic')}"
+                                        update=":editViewTab:lexiconVarTransSenseDetailForm"/>
+                            <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.senseButton.lexicalFunction.syntagmatic']}" icon="fa fa-plus"
+                                        actionListener="#{lexiconControllerVarTransSenseDetail.addLexicalFunction(sense, 'syntagmatic')}"
+                                        update=":editViewTab:lexiconVarTransSenseDetailForm"/>
+                        </p:submenu>
                     </p:menu>
                     <p:commandButton title="Save" icon="fa fa-save" id="saveSense"
                                      update="SenseVarTransDataList

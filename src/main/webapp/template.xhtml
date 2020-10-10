@@ -51,7 +51,7 @@
                         </p:commandLink>
 
                         <p:commandLink title="#{label['template.ExtensionView']}" action="#{templateController.lexiconExtensionAction()}"
-                                       rendered="#{templateController.enableAccount and false}" onstart="PF('loadingDialog').show()">
+                                       rendered="#{templateController.enableAccount}" onstart="PF('loadingDialog').show()">
                             <p:graphicImage styleClass="topToolbarButton" value="/resources/image/iconfinder_extension.png" width="20" height="20"/>
                         </p:commandLink>
                     </f:facet>

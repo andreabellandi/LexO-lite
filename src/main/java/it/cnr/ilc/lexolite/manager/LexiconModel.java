@@ -128,6 +128,7 @@ public class LexiconModel extends BaseController {
         pm.setPrefix("trcat", Namespace.TRCAT);
         pm.setPrefix("synsem", Namespace.SYNSEM);
         pm.setPrefix("extension", Namespace.EXTENSION);
+        pm.setPrefix("melchuck", Namespace.LEXFUN);
     }
 
     private String getLexiconNamespace() {
@@ -346,7 +347,7 @@ public class LexiconModel extends BaseController {
                 senseRenaming(oldLemma, newLemma, le);
                 IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
                 // synsem individuals renaming
-                
+
             }
         }
     }
@@ -517,6 +518,18 @@ public class LexiconModel extends BaseController {
         removeIndividualAxiom(TranslationRelation, tr);
     }
 
+    private void addLexicalFunction(SenseData.LexicalFunction lf) {
+        OWLNamedIndividual src = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), lf.getSource());
+        OWLNamedIndividual trg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), lf.getTarget());
+        addObjectPropertyAxiom(lf.getLexFunName(), src, trg, pm.getPrefixName2PrefixMap().get("melchuck:"));
+    }
+
+    private void removeLexicalFunction(SenseData.LexicalFunction lf) {
+        OWLNamedIndividual src = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), lf.getSource());
+        OWLNamedIndividual trg = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), lf.getTarget());
+        removeObjectPropertyAxiom("melchuck", src, lf.getLexFunName(), trg);
+    }
+
     private void addReifiedSenseRelation(ReifiedSenseRelation rsr) {
         OWLClass SenseRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TERMINOLOGICALRELATION.getLabel());
         OWLNamedIndividual termRel = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getSource() + "_" + rsr.getCategory() + "_" + rsr.getTarget());
@@ -530,7 +543,7 @@ public class LexiconModel extends BaseController {
     }
 
     private void removeReifiedSenseRelation(ReifiedSenseRelation rsr) {
-        OWLClass SenseRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TRANSLATION.getLabel());
+        OWLClass SenseRelation = factory.getOWLClass(pm.getPrefixName2PrefixMap().get("vartrans:"), OntoLexEntity.Class.TERMINOLOGICALRELATION.getLabel());
         OWLNamedIndividual termRel = factory.getOWLNamedIndividual(pm.getPrefixName2PrefixMap().get("lexicon:"), rsr.getSource() + "_" + rsr.getCategory() + "_" + rsr.getTarget());
         removeIndividualAxiom(SenseRelation, termRel);
     }
@@ -546,6 +559,7 @@ public class LexiconModel extends BaseController {
             updateDirectSenseRelation(sbj, oldSense.get(i).getSenseRels(), newSense.get(i).getSenseRels());
             updateTranslationlRelation(oldSense.get(i).getReifiedTranslationRels(), newSense.get(i).getReifiedTranslationRels());
             updateTerminologicalRelation(oldSense.get(i).getReifiedSenseRels(), newSense.get(i).getReifiedSenseRels());
+            updateLexicalFunction(oldSense.get(i).getLexicalFunctions(), newSense.get(i).getLexicalFunctions());
         }
     }
 
@@ -590,6 +604,21 @@ public class LexiconModel extends BaseController {
         }
     }
 
+    private void updateLexicalFunction(ArrayList<SenseData.LexicalFunction> oldLf, ArrayList<SenseData.LexicalFunction> newLf) {
+        // for each old lf, if it is not in new lf then remove old lf
+        for (SenseData.LexicalFunction lf : oldLf) {
+            if ((!contains(newLf, lf)) && (!lf.getTargetWrittenRep().isEmpty()) && (!lf.getLexFunName().isEmpty())) {
+                removeLexicalFunction(lf);
+            }
+        }
+        // for each new lf, if it is not in old lf then add new lf
+        for (SenseData.LexicalFunction lf : newLf) {
+            if ((!contains(oldLf, lf)) && (!lf.getTargetWrittenRep().isEmpty()) && (!lf.getLexFunName().isEmpty())) {
+                addLexicalFunction(lf);
+            }
+        }
+    }
+
     private void updateTerminologicalRelation(ArrayList<ReifiedSenseRelation> oldReifRels, ArrayList<ReifiedSenseRelation> newReifRels) {
         // for each old sense relation relation, if it is not in new sense relation then remove old sense relation
         for (ReifiedSenseRelation rr : oldReifRels) {
@@ -628,6 +657,16 @@ public class LexiconModel extends BaseController {
         for (ReifiedTranslationRelation _lr : alr) {
             if (_lr.getSource().equals(lr.getSource()) && (_lr.getCategory().equals(lr.getCategory()))
                     && (_lr.getTarget().equals(lr.getTarget()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean contains(ArrayList<SenseData.LexicalFunction> allf, SenseData.LexicalFunction lf) {
+        for (SenseData.LexicalFunction _lf : allf) {
+            if (_lf.getSource().equals(lf.getSource()) && (_lf.getLexFunName().equals(lf.getLexFunName()))
+                    && (_lf.getTarget().equals(lf.getTarget()))) {
                 return true;
             }
         }

@@ -29,6 +29,9 @@ public class Namespace {
     public static final String SYNSEM = "http://www.w3.org/ns/lemon/synsem#";
     public static final String TRCAT = "http://purl.org/net/translation-categories#";
     
+    // Melchuck
+    public static final String LEXFUN = "http://lexo/melchuck#";
+    
     // Extensions
     public static final String EXTENSION = "http://lexo/extension#";
 

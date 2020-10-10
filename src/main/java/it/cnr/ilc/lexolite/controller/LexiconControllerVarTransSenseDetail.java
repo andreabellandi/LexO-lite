@@ -5,17 +5,20 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import javax.faces.model.SelectItem;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
+import it.cnr.ilc.lexolite.manager.SenseData.LexicalFunction;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.SenseRelation;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +71,7 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     public List<SenseData> getSensesVarTrans() {
         return sensesVarTrans;
     }
-    
+
     public SenseData getSenseVarTrans(String sense) {
         for (SenseData sd : sensesVarTrans) {
             if (sd.getName().equals(sense)) {
@@ -105,6 +108,7 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         _sd.setSenseRels(copySenseRelationData(sd.getSenseRels()));
         _sd.setReifiedSenseRels(copyReifiedSenseRelsData(sd.getReifiedSenseRels()));
         _sd.setReifiedTranslationRels(copyReifiedTranslationRelsData(sd.getReifiedTranslationRels()));
+        _sd.setLexicalFunctions(copyLexicalFunctionData(sd.getLexicalFunctions()));
         return _sd;
     }
 
@@ -156,6 +160,21 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         return _alw;
     }
 
+    private ArrayList<SenseData.LexicalFunction> copyLexicalFunctionData(ArrayList<SenseData.LexicalFunction> alw) {
+        ArrayList<SenseData.LexicalFunction> _alw = new ArrayList();
+        for (SenseData.LexicalFunction w : alw) {
+            SenseData.LexicalFunction _w = new SenseData.LexicalFunction();
+            _w.setSource(w.getSource());
+            _w.setSourceWrittenRep(w.getSourceWrittenRep());
+            _w.setTarget(w.getTarget());
+            _w.setLexFunName(w.getLexFunName());
+            _w.setTarget(w.getTarget());
+            _w.setTargetWrittenRep(w.getTargetWrittenRep());
+            _alw.add(_w);
+        }
+        return _alw;
+    }
+
     public void saveSenseRelation(SenseData sd) throws IOException, OWLOntologyStorageException {
 //        log(Level.INFO, loginController.getAccount(), "SAVE Sense " + sd.getName());
 //        int order = lexiconControllerSenseDetail.getSenses().indexOf(sd);
@@ -189,7 +208,14 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         SenseData.ReifiedSenseRelation rsr = new ReifiedSenseRelation();
         rsr.setViewButtonDisabled(true);
         sd.getReifiedSenseRels().add(rsr);
+    }
 
+    public void addLexicalFunction(SenseData sd, String lfType) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty " + lfType + "lexical function to " + sd.getName());
+        SenseData.LexicalFunction lf = new SenseData.LexicalFunction();
+        lf.setViewButtonDisabled(true);
+        lf.setType(lfType);
+        sd.getLexicalFunctions().add(lf);
     }
 
     public void onSenseRelSelect(SenseData s, SenseRelation sr) {
@@ -207,9 +233,18 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         SenseData sd = (SenseData) component.getAttributes().get("sense");
         String cat = (String) e.getComponent().getAttributes().get("value");
         log(Level.INFO, loginController.getAccount(), "UPDATE translation category of " + sd.getName() + " to " + cat);
-        
         sd.setSaveButtonDisabled(sd.isSaveButtonDisabled() || rtr.getCategory().isEmpty());
-        
+
+    }
+
+    public void lexicalFunctionChanged(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        LexicalFunction lf = (LexicalFunction) component.getAttributes().get("lf");
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
+        String selectedLf = (String) e.getComponent().getAttributes().get("value");
+        log(Level.INFO, loginController.getAccount(), "UPDATE lexical function of " + sd.getName() + " to " + selectedLf);
+        sd.setSaveButtonDisabled(sd.isSaveButtonDisabled() || lf.getLexFunName().isEmpty());
+
     }
 
     public void onTranslationRelationSelect(SenseData s, SenseData.ReifiedTranslationRelation slr) {
@@ -220,6 +255,16 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         s.setSaveButtonDisabled(false);
         slr.setSource(s.getName());
         log(Level.INFO, loginController.getAccount(), "ADD tanslation relation with " + slr.getTarget() + " to the sense " + s.getName());
+    }
+
+    public void onLexicalFunctionSelect(SenseData s, SenseData.LexicalFunction lf) {
+        s.setSaveButtonDisabled(false);
+        setSenseRelationEntry(lf);
+        lf.setDeleteButtonDisabled(false);
+        lf.setViewButtonDisabled(false);
+        s.setSaveButtonDisabled(false);
+        lf.setSource(s.getName());
+        log(Level.INFO, loginController.getAccount(), "ADD lexical function " + lf.getLexFunName() + "with " + lf.getTarget() + " to the sense " + s.getName());
     }
 
     public void onTerminologicalRelationSelect(SenseData s, SenseData.ReifiedSenseRelation slr) {
@@ -262,6 +307,16 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         lexiconControllerFormDetail.relationPanelCheck(rsr.getTarget().replace("_entry", "_lemma"));
     }
 
+    public void removeLexicalFunction(SenseData sd, SenseData.LexicalFunction lf) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE lexical function " + (lf.getTarget().isEmpty() ? " empty lexical function" : lf.getLexFunName())
+                + " from " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
+        sd.getLexicalFunctions().remove(lf);
+        if (!lf.getTarget().isEmpty()) {
+            sd.setSaveButtonDisabled(false);
+        }
+        lexiconControllerFormDetail.relationPanelCheck(lf.getTarget().replace("_entry", "_lemma"));
+    }
+
     private void setSenseRelationEntry(SenseData.SenseRelation sr) {
         String splitted[] = sr.getWrittenRep().split("@");
         String sense = splitted[0];
@@ -286,6 +341,13 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         slr.setTargetWrittenRep(sense);
         slr.setTarget(sense);
         slr.setTargetLanguage(lang);
+    }
+
+    private void setSenseRelationEntry(SenseData.LexicalFunction lf) {
+        String splitted[] = lf.getTarget().split("@");
+        String sense = splitted[0];
+        lf.setTargetWrittenRep(sense);
+        lf.setTarget(sense);
     }
 
     public List<String> completeText(String sense) {
@@ -328,6 +390,10 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
 //        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
 //        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
 //        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
+    }
+
+    public void addEntryOfLexicalFunction(SenseData.LexicalFunction lf) {
+        info("todo.title", "todo.description");
     }
 
     public void addEntryOfSenseRelation(SenseData.ReifiedSenseRelation rsr) {
@@ -388,4 +454,36 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     public ArrayList<String> getTranslationCategories() {
         return propertyValue.getTranslationCategory();
     }
+
+    public boolean isMelchuckActive() {
+//        return (PropertyValue.getSyntagmaticLexicalFunctions().size() > 0 || PropertyValue.getParadigmaticLexicalFunctions().size() > 0);
+        return (MelchuckModelExtension.getParadigmaticLexicalFunctions().size() > 0 || MelchuckModelExtension.getSyntagmaticLexicalFunctions().size() > 0);
+    }
+
+    public ArrayList<SelectItem> getLexicalFunctions(LexicalFunction lf) {
+        if (lf.getType().isEmpty()) {
+            if (MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) != null) {
+//            if (contains(MelchuckModelExtension.getSyntagmaticLexicalFunctions(), lf.getLexFunName())) {
+                return MelchuckModelExtension.getSyntagmaticLexicalFunctions();
+            } else {
+                return MelchuckModelExtension.getParadigmaticLexicalFunctions();
+            }
+        } else {
+            if (lf.getType().equals("paradigmatic")) {
+                return MelchuckModelExtension.getParadigmaticLexicalFunctions();
+            } else {
+                return MelchuckModelExtension.getSyntagmaticLexicalFunctions();
+            }
+        }
+    }
+
+//    private boolean contains(ArrayList<SelectItem> lfList, String lfName) {
+//        for (SelectItem si : lfList) {
+//            if (si.getValue().equals(lfName)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
 }

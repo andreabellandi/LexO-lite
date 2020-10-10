@@ -26,7 +26,8 @@ public class LexicalQuery {
             + "PREFIX vartrans: <" + Namespace.VARTRANS + ">\n"
             + "PREFIX synsem: <" + Namespace.SYNSEM + ">\n"
             + "PREFIX extension: <" + Namespace.EXTENSION + ">\n"
-            + "PREFIX trcat: <" + Namespace.TRCAT + ">\n";
+            + "PREFIX trcat: <" + Namespace.TRCAT + ">\n"
+            + "PREFIX lexfun: <" + Namespace.LEXFUN + ">\n";
     //+ "PREFIX onto: <" + Namespace.DOMAIN_ONTOLOGY + ">\n";
 
     // queries to lexinfo for setting properties values
@@ -238,7 +239,7 @@ public class LexicalQuery {
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?lang) }";
 
-    public static final String TERMINOLOGICAL_SENSE_RELATION = "SELECT ?cat ?trglang ?entry WHERE {"
+    public static final String TERMINOLOGICAL_SENSE_RELATION = "SELECT ?cat ?trglang ?trgind WHERE {"
             + " DirectType(?senseRel, vartrans:" + OntoLexEntity.Class.TERMINOLOGICALRELATION.getLabel() + "), "
             + " PropertyValue(?senseRel, vartrans:source, lexicon:_SENSE_), "
             + " PropertyValue(?senseRel, vartrans:target, ?trgind), "
@@ -247,7 +248,7 @@ public class LexicalQuery {
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?trglang) }";
 
-    public static final String TRANSLATION_SENSE_RELATION = "SELECT ?cat ?trglang ?entry ?conf WHERE {"
+    public static final String TRANSLATION_SENSE_RELATION = "SELECT ?cat ?trglang ?trgind ?conf WHERE {"
             + " DirectType(?senseRel, vartrans:" + OntoLexEntity.Class.TRANSLATION.getLabel() + "), "
             + " PropertyValue(?senseRel, vartrans:source, lexicon:_SENSE_), "
             + " PropertyValue(?senseRel, vartrans:target, ?trgind), "
@@ -256,6 +257,11 @@ public class LexicalQuery {
             + " PropertyValue(?entry, ontolex:sense, ?trgind), "
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?trglang) }";
+    
+    // query for lexical functions
+    public static final String LEXICAL_FUNCTION = "SELECT ?sense ?lf WHERE {"
+            + " PropertyValue(lexicon:_SENSE_, ?lf, ?sense), "
+            + " PropertyValue(?entry, ontolex:sense, ?sense) }";
 
     // query for synsem module
     public static final String SYNTACTIC_FRAME = "SELECT ?frameName WHERE {"

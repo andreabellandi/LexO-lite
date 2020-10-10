@@ -494,6 +494,18 @@ html, body {
     margin-top: 12px;
 }
 
+.lexicalFunctionsTextBlock {
+    background-color: #EEEEEE;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #040404;
+    margin-top: 12px;
+}
+
 .noBorder > div {
     font-size: 12px !important;
     /*margin: 2px !important;   */
@@ -1035,6 +1047,10 @@ ontologyDetailView {
 
 .senseClass li {
     padding: 5px;
+}
+
+.lexicalFunctionClass {
+    padding-left: 5px;
 }
 
 .smallCapsClass {
