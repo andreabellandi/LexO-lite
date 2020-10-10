@@ -5,8 +5,8 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
-import it.cnr.ilc.lc.lexoimporter.ImporterFactory;
-import it.cnr.ilc.lc.lexoimporter.LexiconModel;
+//import it.cnr.ilc.lc.lexoimporter.ImporterFactory;
+//import it.cnr.ilc.lc.lexoimporter.LexiconModel;
 import it.cnr.ilc.lexolite.manager.LemmaData.SynArg;
 import it.cnr.ilc.lexolite.manager.LemmaData.SynFrame;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
