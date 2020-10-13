@@ -639,8 +639,8 @@ public class LexiconQuery extends BaseController {
     private void getSenseRelation(SenseData sd, SenseData senseCopy) {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.DIRECT_SENSE_RELATION.replace("_SENSE_", sd.getName()));
         for (Map<String, String> m : results) {
-            if (MelchuckModelExtension.getParadigmaticRenderingTable().get(m.get("rel")) == null &&
-                    MelchuckModelExtension.getSyntagmaticRenderingTable().get(m.get("rel")) == null) {
+            if (MelchuckModelExtension.getParadigmaticRenderingTable().get(m.get("rel")) == null
+                    && MelchuckModelExtension.getSyntagmaticRenderingTable().get(m.get("rel")) == null) {
                 if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.ONTOMAPPING.getLabel())) {
                     SenseData.SenseRelation sr = new SenseData.SenseRelation();
                     sr.setWrittenRep(m.get("sense"));
@@ -651,7 +651,6 @@ public class LexiconQuery extends BaseController {
             }
         }
     }
-
 
     private void getSenseReifiedRelation(SenseData sd, SenseData senseCopy) {
         List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.TERMINOLOGICAL_SENSE_RELATION.replace("_SENSE_", sd.getName()));
@@ -684,12 +683,15 @@ public class LexiconQuery extends BaseController {
         if (MelchuckModelExtension.getParadigmaticLexicalFunctions().size() > 0 || MelchuckModelExtension.getSyntagmaticLexicalFunctions().size() > 0) {
             List<Map<String, String>> results = processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEXICAL_FUNCTION.replace("_SENSE_", sd.getName()));
             for (Map<String, String> m : results) {
-                SenseData.LexicalFunction lf = new SenseData.LexicalFunction();
-                lf.setSource(sd.getName());
-                lf.setTarget(m.get("sense"));
-                lf.setLexFunName(m.get("lf"));
-                lf.setTargetWrittenRep(m.get("sense"));
-                senseCopy.getLexicalFunctions().add(lf);
+                if (MelchuckModelExtension.getParadigmaticRenderingTable().get(m.get("lf")) != null
+                        || MelchuckModelExtension.getSyntagmaticRenderingTable().get(m.get("lf")) != null) {
+                    SenseData.LexicalFunction lf = new SenseData.LexicalFunction();
+                    lf.setSource(sd.getName());
+                    lf.setTarget(m.get("sense"));
+                    lf.setLexFunName(m.get("lf"));
+                    lf.setTargetWrittenRep(m.get("sense"));
+                    senseCopy.getLexicalFunctions().add(lf);
+                }
             }
         }
     }
