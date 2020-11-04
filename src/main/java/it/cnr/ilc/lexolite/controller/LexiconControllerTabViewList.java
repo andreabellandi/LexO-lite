@@ -28,6 +28,7 @@ import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.manager.Document;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import java.util.HashMap;
 
@@ -93,6 +94,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private String ontologyField;
     private Integer ontoCounter = 0;
 
+    private final TreeNode textRoot = new DefaultTreeNode(new Document("Files", "-", Document.docType.FOLDER), null);
     private final TreeNode lemmaRoot = new DefaultTreeNode("Root", null);
     private final TreeNode formRoot = new DefaultTreeNode("Root", null);
     private final TreeNode senseRoot = new DefaultTreeNode("Root", null);
@@ -146,6 +148,10 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 
     public void setSenseField(String senseField) {
         this.senseField = senseField;
+    }
+
+    public TreeNode getTextRoot() {
+        return textRoot;
     }
 
     public TreeNode getLemmaRoot() {
@@ -223,6 +229,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             lexiconManager.deafult_loadLexicon();
             initLexicaMenu();
             setLexiconLanguage("All languages");
+            initDocumentTabView();
             initLemmaTabView("All languages");
             initFormTabView("All languages");
             setEnabledFilter(true);
@@ -319,6 +326,21 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             DataTreeNode dtn = new DataTreeNode(m, 0);
             senseRoot.getChildren().add(new DefaultTreeNode(dtn));
         }
+    }
+
+    public void initDocumentTabView() {
+        textRoot.getChildren().clear();
+         
+        TreeNode f1 = new DefaultTreeNode(new Document("Falisco", "-", Document.docType.FOLDER), textRoot);
+        TreeNode f2 = new DefaultTreeNode(new Document("Losco", "-", Document.docType.FOLDER), textRoot);
+         
+        TreeNode pa = new DefaultTreeNode(new Document("PA", "-", Document.docType.FOLDER), f1);
+        TreeNode pe = new DefaultTreeNode(new Document("PE", "-", Document.docType.FOLDER), f1);
+        
+        TreeNode pa1 = new DefaultTreeNode("document", new Document("PA1.xml", "30 KB", Document.docType.XML_EPIDOC), pa);
+        TreeNode pa2 = new DefaultTreeNode("document", new Document("PA2.xml", "10 KB", Document.docType.XML_EPIDOC), pa);
+        TreeNode pa3 = new DefaultTreeNode("document", new Document("PA3.xml", "40 KB", Document.docType.XML_EPIDOC), pa);
+        
     }
 
     public void initLemmaTabView(String lang) {
@@ -657,7 +679,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             return "";
         }
     }
-    
+
     public String getPosFromFormIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
@@ -666,7 +688,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             return "";
         }
     }
-    
 
     public static class DataTreeNode {
 
