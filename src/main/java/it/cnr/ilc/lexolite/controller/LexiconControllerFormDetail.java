@@ -107,8 +107,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 //    private final String ADMISSIBLE_WORD_REGEXP = "^[aA-zZ]+[0-9]*"; 
     //    private final String ADMISSIBLE_MULTIWORD_REGEXP = "^[aA-zZ]+";
     //private final String ADMISSIBLE_WORD_REGEXP = "^[^\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&0-9\\s]+[0-9]*$";
-    private final String ADMISSIBLE_WORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&\\d\\s]+\\d*$";
-    private final String ADMISSIBLE_MULTIWORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+\\-_\\\\\\?\\!\"%&\\d]+$";
+    private final String ADMISSIBLE_WORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+_\\\\\\?\\!\"%&\\d\\s]+\\d*$";
+    private final String ADMISSIBLE_MULTIWORD_REGEXP = "^[^\\^\\°\\|\\*\\.\\#\\(\\)\\[\\]\\{\\};:,\\/=\\+_\\\\\\?\\!\"%&\\d]+$";
     //writtenrep (pos)@lang
     private final String MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP = "([aA-zZ]+)\\s\\(([aA-zZ]+)\\)@([aA-zZ]+)";
 
