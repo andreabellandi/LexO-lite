@@ -43,8 +43,8 @@
                                        rendered="#{comp.writtenRep.contains('not found')}"/>
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
-                                         action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":systemMessage"
+                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(comp, 'Multiword component')}"
+                                         update=":systemMessage :breadCrumb :editViewTab"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>
@@ -74,8 +74,8 @@
 
                         <p:commandButton id="lexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{lexRel.viewButtonDisabled}"
                                          onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                         update=":systemMessage"
-                                         action="#{lexiconControllerVarTransFormDetail.addEntryOfLexicalRelation(lexRel)}"/> 
+                                         update=":systemMessage :breadCrumb :editViewTab"
+                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(lexRel, 'Lexical relation')}"/> 
 
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          disabled="#{lexRel.deleteButtonDisabled}"
@@ -117,8 +117,8 @@
 
                         <p:commandButton id="reifLexRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{reifLexRel.viewButtonDisabled}"
                                          onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                         update=":systemMessage"
-                                         action="#{lexiconControllerVarTransFormDetail.addEntryOfReifLexicalRelation(reifLexRel)}"/> 
+                                         update=":systemMessage :breadCrumb :editViewTab"
+                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(reifLexRel, 'Reified lexical relation')}"/> 
 
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          disabled="#{reifLexRel.deleteButtonDisabled}"

@@ -51,8 +51,8 @@
 
                             <p:commandButton id="senseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":systemMessage"
-                                             action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseRel)}"/>
+                                             update=":systemMessage :breadCrumb :editViewTab"
+                                             action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(senseRel, 'Sense relation')}"/>
 
                             <p:commandButton title="Delete relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                              disabled="#{senseRel.deleteButtonDisabled}"
@@ -96,8 +96,8 @@
 
                             <p:commandButton id="reifSenseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseReifRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":systemMessage"
-                                             action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseReifRel)}"/> 
+                                             update=":systemMessage :breadCrumb :editViewTab"
+                                             action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(senseReifRel, 'Translation reified relation')}"/> 
                             <p:commandButton title="Delete sense relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
                                              disabled="#{senseReifRel.deleteButtonDisabled}"
                                              update=":editViewTab"
@@ -141,13 +141,13 @@
                             </p:autoComplete>
                             <p:watermark class="filterLabel" for="SenseReifRelation" value="Type a sense"/>   
 
-                            <p:commandButton id="reifSenseRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseReifRel.viewButtonDisabled}"
+                            <p:commandButton id="reifTransRelShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{senseReifRel.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             update=":systemMessage"
-                                             action="#{lexiconControllerVarTransSenseDetail.addEntryOfSenseRelation(senseReifRel)}"/> 
+                                             update=":systemMessage :breadCrumb :editViewTab"
+                                             action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(senseReifRel, 'Reified sense relation')}"/> 
                             <p:commandButton title="Delete sense relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
                                              disabled="#{senseReifRel.deleteButtonDisabled}"
-                                             update=":editViewTab"
+                                             update=":editViewTab :breadCrumb :editViewTab"
                                              actionListener="#{lexiconControllerVarTransSenseDetail.removeReifSenseRelation(sense, senseReifRel)}"/> 
                         </h:panelGrid>
                     </h:panelGrid>
@@ -184,8 +184,8 @@
 
                             <p:commandButton id="LexicalFunctionShowLE" title="View the lexical entry" icon="fa fa-eye" disabled="#{lf.viewButtonDisabled}"
                                              onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                             action="#{lexiconControllerVarTransSenseDetail.addEntryOfLexicalFunction(lf)}"
-                                             update=":systemMessage"/>
+                                             action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(lf, 'Lexical function')}"
+                                             update=":systemMessage :breadCrumb :editViewTab"/>
                             <p:commandButton title="Delete lexical function" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
                                              disabled="#{lf.deleteButtonDisabled}"
                                              actionListener="#{lexiconControllerVarTransSenseDetail.removeLexicalFunction(sense, lf)}"

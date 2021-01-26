@@ -29,6 +29,9 @@ import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
+import it.cnr.ilc.lexolite.manager.LemmaData;
+import it.cnr.ilc.lexolite.manager.LemmaData.Word;
+import it.cnr.ilc.lexolite.manager.SenseData;
 import java.util.HashMap;
 
 /**
@@ -403,10 +406,19 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         switch (entryType) {
             case "Lemma":
                 lexiconCreationControllerFormDetail.addLemma(entry);
+                log(Level.INFO, loginController.getAccount(), "SELECT Lemma " + entry);
+                // set breadcrumb
+                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.LEMMA_LIST_VIEW);
                 break;
             case "Form":
                 log(Level.INFO, loginController.getAccount(), "SELECT Form " + entry);
                 lexiconCreationControllerFormDetail.addForm(entry);
+                // set breadcrumb
+                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, ((DataTreeNode) event.getTreeNode().getData()).getName(), Label.ClickProvenance.FORM_LIST_VIEW);
+                break;
+            case "Sense":
+                log(Level.INFO, loginController.getAccount(), "SELECT Sense " + entry);
+                lexiconCreationControllerFormDetail.addForms(entry);
                 break;
             default:
         }
@@ -423,7 +435,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
-        lexiconCreationControllerRelationDetail.setActiveTab(0);
+        lexiconCreationControllerFormDetail.setActiveTab(0);
         lexiconControllerLexicalAspect.setRendered(true);
 
         long endTime = System.currentTimeMillis();
@@ -657,7 +669,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             return "";
         }
     }
-    
+
     public String getPosFromFormIndividual(String individual, String lang) {
         String[] ret = individual.split("_" + lang + "_")[0].split("_");
         if (!ret[ret.length - 1].equals(Label.UNSPECIFIED_POS)) {
@@ -666,7 +678,175 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             return "";
         }
     }
-    
+
+    public void onDictionaryViewSelect(String entry, String entryType) {
+//        boolean verified = ((DataTreeNode) event.getTreeNode().getData()).getVerified().equals("true");
+//        lexiconCreationControllerFormDetail.setVerified(verified);
+//        lexiconCreationControllerSenseDetail.setVerified(verified);
+        resetPanels();
+        System.err.println("onDictionaryViewSelect Entry: " + entry);
+        lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
+        lexiconCreationControllerFormDetail.setNewAction(false);
+        lexiconCreationControllerFormDetail.setLemmaRendered(true);
+        lexiconCreationControllerFormDetail.setAddFormButtonDisabled(false);
+        lexiconCreationControllerFormDetail.setFormAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setLemmAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setIsAdmissibleLemma(true);
+        switch (entryType) {
+            case "Lemma":
+                lexiconCreationControllerFormDetail.addLemma(entry);
+                log(Level.INFO, loginController.getAccount(), "SELECT lemma " + entry + " on dictionary view");
+                break;
+            case "Form":
+                log(Level.INFO, loginController.getAccount(), "SELECT form " + entry + " on dictionary view");
+                lexiconCreationControllerFormDetail.addForm(entry);
+                break;
+            case "Sense":
+                log(Level.INFO, loginController.getAccount(), "SELECT sense " + entry + " on dictionary view");
+                lexiconCreationControllerFormDetail.addForms(entry);
+                break;
+            default:
+        }
+        lexiconCreationControllerSenseDetail.setSenseRendered(true);
+        lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
+        lexiconCreationControllerSenseDetail.setSenseToolbarRendered(true);
+        lexiconCreationControllerSenseDetail.addSense(entry, entryType);
+        lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        // for dicitonary view purposes
+        lexiconControllerVarTransSenseDetail.addSenseRelations();
+        // -----
+        lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        checkForLock(entry);
+        lexiconManager.getLexiconLocker().print();
+        // set breadcrumb
+        lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.DICTIONARY_VIEW);
+        // dictionary tab needs to be selected
+        lexiconCreationControllerFormDetail.setActiveTab(1);
+        lexiconControllerLexicalAspect.setRendered(true);
+
+    }
+
+    public void onBreadCrumbSelect(String entry, String entryType, String prov) {
+//        boolean verified = ((DataTreeNode) event.getTreeNode().getData()).getVerified().equals("true");
+//        lexiconCreationControllerFormDetail.setVerified(verified);
+//        lexiconCreationControllerSenseDetail.setVerified(verified);
+        resetPanels();
+        lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
+        lexiconCreationControllerFormDetail.setNewAction(false);
+        lexiconCreationControllerFormDetail.setLemmaRendered(true);
+        lexiconCreationControllerFormDetail.setAddFormButtonDisabled(false);
+        lexiconCreationControllerFormDetail.setFormAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setLemmAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setIsAdmissibleLemma(true);
+        switch (entryType) {
+            case "Lemma":
+                lexiconCreationControllerFormDetail.addLemma(entry);
+                log(Level.INFO, loginController.getAccount(), "SELECT lemma " + entry + " on dictionary view");
+                break;
+            case "Form":
+                log(Level.INFO, loginController.getAccount(), "SELECT form " + entry + " on dictionary view");
+                lexiconCreationControllerFormDetail.addForm(entry);
+                break;
+            case "Sense":
+                log(Level.INFO, loginController.getAccount(), "SELECT sense " + entry + " on dictionary view");
+                lexiconCreationControllerFormDetail.addForms(entry);
+                break;
+            default:
+        }
+        lexiconCreationControllerSenseDetail.setSenseRendered(true);
+        lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
+        lexiconCreationControllerSenseDetail.setSenseToolbarRendered(true);
+        lexiconCreationControllerSenseDetail.addSense(entry, entryType);
+        lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        // for dicitonary view purposes
+        lexiconControllerVarTransSenseDetail.addSenseRelations();
+        // -----
+        lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        checkForLock(entry);
+        lexiconManager.getLexiconLocker().print();
+        lexiconControllerLexicalAspect.setRendered(true);
+        if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW.name())) {
+            // dictionary tab needs to be selected
+            lexiconCreationControllerFormDetail.setActiveTab(1);
+        } else {
+            // edit tab needs to be selected
+            lexiconCreationControllerFormDetail.setActiveTab(0);
+        }
+    }
+
+    public void onLinkedEntryByRelationSelect(Object entry, String relType) {
+//        boolean verified = ((DataTreeNode) event.getTreeNode().getData()).getVerified().equals("true");
+//        lexiconCreationControllerFormDetail.setVerified(verified);
+//        lexiconCreationControllerSenseDetail.setVerified(verified);
+        resetPanels();
+        String _entry = "";
+        lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
+        lexiconCreationControllerFormDetail.setNewAction(false);
+        lexiconCreationControllerFormDetail.setLemmaRendered(true);
+        lexiconCreationControllerFormDetail.setAddFormButtonDisabled(false);
+        lexiconCreationControllerFormDetail.setFormAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setLemmAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setIsAdmissibleLemma(true);
+        switch (relType) {
+            case "Multiword component":
+                _entry = ((LemmaData.Word) (entry)).getOWLName().replace("_entry", "_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT multiword component " + _entry);
+                break;
+            case "See Also":
+                _entry = ((LemmaData.Word) (entry)).getOWLName().replace("_entry", "_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT see also " + _entry);
+                break;
+            case "Sense relation":
+                _entry = ((SenseData.SenseRelation) (entry)).getWrittenRep().split("_sense")[0].concat("_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT sense relation " + _entry);
+                break;
+            case "Reified sense relation":
+                _entry = ((SenseData.ReifiedSenseRelation) (entry)).getTarget().split("_sense")[0].concat("_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT reified sense relation " + _entry);
+                break;
+            case "Translation reified relation":
+                _entry = ((SenseData.ReifiedTranslationRelation) (entry)).getTarget().split("_sense")[0].concat("_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT reified translation " + _entry);
+                break;
+            case "Lexical relation":
+                _entry = ((LemmaData.LexicalRelation) (entry)).getOWLName().replace("_entry", "_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT lexical relation " + _entry);
+                break;
+            case "Reified lexical relation":
+                _entry = ((LemmaData.ReifiedLexicalRelation) (entry)).getTargetOWLName().replace("_entry", "_lemma");
+                log(Level.INFO, loginController.getAccount(), "SELECT reified lexical relation " + _entry);
+                break;
+//            case "Lexical function":
+//                log(Level.INFO, loginController.getAccount(), "SELECT lexical function " + entry);
+//                lexiconCreationControllerFormDetail.addForms(entry);
+//                break;
+            default:
+        }
+        lexiconCreationControllerFormDetail.addLemma(_entry);
+        lexiconCreationControllerSenseDetail.addSense(_entry, "Lemma");
+        lexiconCreationControllerSenseDetail.setSenseRendered(true);
+        lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
+        lexiconCreationControllerSenseDetail.setSenseToolbarRendered(true);
+        lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        // for dicitonary view purposes
+        lexiconControllerVarTransSenseDetail.addSenseRelations();
+        // -----
+        lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        checkForLock(_entry);
+        lexiconManager.getLexiconLocker().print();
+        lexiconCreationControllerFormDetail.setActiveTab(0);
+        lexiconControllerLexicalAspect.setRendered(true);
+
+        // set breadcrumb
+        lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.LEMMA_LIST_VIEW);
+
+    }
 
     public static class DataTreeNode {
 

@@ -29,6 +29,10 @@
                     <p:spacer width="5px"/>
                 </ui:repeat>
 
+                <p:remoteCommand name="rc" action="#{lexiconControllerDictionary.execute()}" 
+                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                    update=":editViewTab :breadCrumb :systemMessage"/>
+
             </p:panel>
 
             <p:panel class="seeAlsoClass" rendered="#{lexiconControllerFormDetail.lemma.seeAlso.size()>0}">

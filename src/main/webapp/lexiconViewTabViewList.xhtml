@@ -33,7 +33,7 @@
                                 selection="#{lexiconControllerTabViewList.selection}">
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
-                                    update=":editViewTab :systemMessage" >
+                                    update=":editViewTab :systemMessage :breadCrumb" >
                             </p:ajax>
                             <f:attribute name="LexicalEntryType" value="Lemma" />
                             <p:treeNode id="treeNodeLemma" >
@@ -70,7 +70,7 @@
                                 selection="#{lexiconControllerTabViewList.selection}">
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
-                                    update=":editViewTab :systemMessage"/>
+                                    update=":editViewTab :breadCrumb :systemMessage"/>
                             <f:attribute name="LexicalEntryType" value="Form" />
                             <p:treeNode>
                                 <span class="colorCircle" style="background-color:#7286ad" />

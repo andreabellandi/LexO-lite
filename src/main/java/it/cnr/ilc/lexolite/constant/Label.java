@@ -46,5 +46,9 @@ public class Label extends BaseController {
     public static final String MORPHO_TERM_TYPE_LABEL = "termType";
     public static final String MORPHO_VERB_FORM_MOOD_LABEL = "verbFormMood";
     public static final String MORPHO_VOICE_LABEL = "voice";
+    
+    public static enum ClickProvenance {
+        LEMMA_LIST_VIEW, FORM_LIST_VIEW, DICTIONARY_VIEW
+    }
 
 }

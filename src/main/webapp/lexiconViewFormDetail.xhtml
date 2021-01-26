@@ -59,8 +59,8 @@
                                        rendered="#{comp.writtenRep.contains('not found')}"/>
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
-                                         action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":systemMessage"
+                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(comp, 'Multiword component')}"
+                                         update=":systemMessage :breadCrumb :editViewTab"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>
@@ -137,8 +137,8 @@
                     <p:watermark class="filterLabel" for="seeAlsoInput" value="Type a lemma"/>   
                     <p:commandButton id="seeAlsoShowLE" title="View the lexical entry" icon="fa fa-eye"
                                      onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                     action="#{lexiconControllerFormDetail.addEntryOfLexicalRelation(reference, 'See Also')}"
-                                     update=":systemMessage"
+                                     action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(reference, 'See Also')}"
+                                     update=":systemMessage :breadCrumb :editViewTab"
                                      disabled="#{reference.viewButtonDisabled}"/> 
                     <p:commandButton title="Delete reference" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                      actionListener="#{lexiconControllerFormDetail.removeReference(reference)}" 

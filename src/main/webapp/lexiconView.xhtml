@@ -11,11 +11,11 @@
         <ui:define name="content">
 
             <ui:include src="/lexiconViewLanguageDetail.xhtml"/>
-            
+
             <ui:include src="/lexiconViewOntologyImportDialog.xhtml"/>
-            
+
             <ui:include src="/lexiconViewLexiconImportDialog.xhtml"/>
-           
+
 
             <p:layout id="lexiconViewLayout" styleClass="layout" style="overflow: auto;">
                 <p:layoutUnit styleClass="layoutUnit" size="30%"  minSize="370" position="west" resizable="true">
@@ -41,7 +41,12 @@
                         <p:layoutUnit id="LU_LAA" styleClass="layoutUnit" position="center"  style="overflow-y: hidden;">
                             <ui:include src="/lexiconViewSearchFilter.xhtml"/>
 
-                            <p:tabView id="editViewTab" activeIndex="#{lexiconControllerLinkedLexicalEntryDetail.activeTab}" styleClass="lexiconTabView" cache="false" >
+                            <h:form id="breadCrumb" >
+                                <p:breadCrumb styleClass="breadCrumbPanel" model="#{lexiconControllerFormDetail.breadCrumbModel}" 
+                                              rendered="#{lexiconControllerFormDetail.breadCrumbRenderable}"/>
+                            </h:form>
+
+                            <p:tabView id="editViewTab" activeIndex="#{lexiconControllerFormDetail.activeTab}" styleClass="lexiconTabView" cache="false" >
                                 <p:ajax event="tabClose" listener="#{lexiconControllerLinkedLexicalEntryDetail.unlockRelationalEntry}"/>
                                 <p:tab id="editTab" title="Edit" rendered="#{lexiconControllerTabViewList.editTabRendered}">
                                     <h:form id="lexEntryAspectForm" rendered="#{lexiconControllerLexicalAspect.rendered}">
@@ -60,7 +65,7 @@
                                     </p:scrollPanel>
                                 </p:tab>
                                 <p:tab id="graphicTab" title="Relational View" rendered="false">
-
+                                    <!-- TODO --> 
                                 </p:tab>
                                 <p:tab id="viewTab" title="Dictionary View">
                                     <p:scrollPanel id="dictViewTabScroll" mode="native" style="overflow-x: auto; overflow-y: auto;">
@@ -72,7 +77,7 @@
                                     <p:scrollPanel  id="scrollPaneldetailViewTab" mode="native"  style="overflow-y: auto">
                                         <ui:include src="/lexiconViewLinkedLexicalEntryDetail.xhtml"/>
                                     </p:scrollPanel>
-                                    
+
                                 </p:tab>
                             </p:tabView>
 

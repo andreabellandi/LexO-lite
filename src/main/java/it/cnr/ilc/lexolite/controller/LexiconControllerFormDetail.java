@@ -46,6 +46,7 @@ import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
 import org.primefaces.model.menu.DefaultSubMenu;
+import org.primefaces.model.menu.MenuElement;
 import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Separator;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
@@ -90,6 +91,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     private boolean lemmaRendered = false;
 
+    private int activeTab = 0;
+
     private boolean newAction = false;
     private boolean newFormAction = false;
     private boolean lemmAlreadyExists = false;
@@ -112,7 +115,79 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     //writtenrep (pos)@lang
     private final String MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP = "([aA-zZ]+)\\s\\(([aA-zZ]+)\\)@([aA-zZ]+)";
 
-    //private MenuModel addMenuModel = null;
+    private final MenuModel breadCrumbModel = new DefaultMenuModel();
+    private final int breadCrumbWindowSize = 15;
+
+    public int getBreadCrumbWindowSize() {
+        return breadCrumbWindowSize;
+    }
+
+    public MenuModel getBreadCrumbModel() {
+        return breadCrumbModel;
+    }
+
+    private void addItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov) {
+        DefaultMenuItem element = new DefaultMenuItem();
+        if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
+            element.setIcon("fa fa-file-text-o");
+        } else {
+            element.setIcon("fa fa-th-list");
+            if (prov.equals(Label.ClickProvenance.LEMMA_LIST_VIEW)) {
+                element.setStyle("color: #b74c4c;");
+            } else {
+                element.setStyle("color: #7286ad;");
+            }
+        }
+        element.setId(String.valueOf(id));
+        element.setValue(value);
+        element.setDisabled(disabled);
+        element.setUpdate(":editViewTab :breadCrumb");
+        element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
+        element.setOnstart("PF('loadingDialog').show();");
+        element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+        model.addElement(element);
+        model.generateUniqueIds();
+    }
+    
+    private void slideItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov) {
+        DefaultMenuItem element = new DefaultMenuItem();
+        if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
+            element.setIcon("fa fa-file-text-o");
+        } else {
+            element.setIcon("fa fa-th-list");
+            if (prov.equals(Label.ClickProvenance.LEMMA_LIST_VIEW)) {
+                element.setStyle("color: #b74c4c;");
+            } else {
+                element.setStyle("color: #7286ad;");
+            }
+        }
+        element.setId(String.valueOf(id));
+        element.setValue(value);
+        element.setDisabled(disabled);
+        element.setUpdate(":editViewTab :breadCrumb");
+        element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
+        element.setOnstart("PF('loadingDialog').show();");
+        element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+        model.addElement(element);
+        model.generateUniqueIds();
+        model.getElements().remove(0);
+        for(MenuElement me : model.getElements()) {
+            me.setId(String.valueOf(Integer.parseInt(me.getId()) - 1));
+        }
+    }
+
+    public void setBreadCrumb(String entryType, String entryUri, String entry, Enum prov) {
+        if (breadCrumbModel.getElements().size() < breadCrumbWindowSize) {
+            addItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov);
+        } else {
+            slideItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov);
+        }
+    }
+
+    public boolean isBreadCrumbRenderable() {
+        return (lemma.getFormWrittenRepr() != null);
+    }
+
     public boolean isUserEnable() {
         return loginController.getAccount().getType().getName().equals(AccountManager.ADMINISTRATOR);
     }
@@ -147,6 +222,14 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     public ArrayList<FormData> getFormsCopy() {
         return formsCopy;
+    }
+
+    public int getActiveTab() {
+        return activeTab;
+    }
+
+    public void setActiveTab(int activeTab) {
+        this.activeTab = activeTab;
     }
 
     public ArrayList<ExtensionAttribute> getExtensionAttributeList() {

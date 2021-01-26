@@ -485,5 +485,4 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
 //        }
 //        return false;
 //    }
-
 }

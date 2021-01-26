@@ -42,8 +42,8 @@
                                        rendered="#{comp.writtenRep.contains('not found')}"/>
                         <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                          onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
-                                         action="#{lexiconControllerFormDetail.addEntryOfMultiwordComponent(comp, 'Multiword component')}"
-                                         update=":systemMessage"
+                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(comp, 'Multiword component')}"
+                                         update=":systemMessage :breadCrumb :editViewTab"
                                          disabled="#{comp.viewButtonDisabled}"/> 
                     </h:panelGrid>
                 </ui:repeat>

@@ -1179,3 +1179,19 @@ tr.rowHeight:last-child>td {
     height: 100px !important;
 }
 
+.ui-breadcrumb ul li span
+{
+	display: inline-block !important;
+}
+
+.breadCrumbPanel {
+    font-size: 12px !important;
+    margin: 2px !important;
+    padding-left: 20px;
+    border:0 !important;
+}
+
+
+.ui-icon {
+    vertical-align: bottom !important;
+}

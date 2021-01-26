@@ -10,8 +10,10 @@ import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.SenseData;
+import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
 import static j2html.TagCreator.div;
+import static j2html.TagCreator.each;
 import static j2html.TagCreator.span;
 import static j2html.TagCreator.i;
 import static j2html.TagCreator.img;
@@ -27,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,6 +53,8 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     private LexiconControllerSenseDetail lexiconCreationControllerSenseDetail;
     @Inject
     private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
+    @Inject
+    private LexiconControllerTabViewList lexiconControllerTabViewList;
 
     // for handling numbers at the end of the forms
     Pattern patternLemma = Pattern.compile("(.+?)(\\d+\\*?)");
@@ -256,7 +262,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     public String getSense(List<String> sense, String id, String className, String smallCapsClass) {
-        Map<String, String> senseRelations = new HashMap<>();
+        Map<String, ArrayList<LinkedDictionaryEntry>> senseRelations = new HashMap<>();
         String senseIRI = sense.get(0);
         String name = sense.get(1);
         String def = sense.get(2);
@@ -273,32 +279,44 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         if (sd != null) {
             if (sd.getReifiedTranslationRels().size() > 0) {
                 for (SenseData.ReifiedTranslationRelation rtr : sd.getReifiedTranslationRels()) {
-                    mainDiv.with(div(span(join(rtr.getCategory() + ": ", getName(rtr.getTarget()) + " (" + rtr.getTargetLanguage() + ") "
-                            + (rtr.getConfidence() < 1.0 ? " - confidence " + rtr.getConfidence() : "")))));
+                    mainDiv.with(div(span(join(rtr.getCategory() + 
+                            (rtr.getConfidence() < 1.0 ? " (" + rtr.getConfidence() + ")" : "") +
+                            ": ",
+                            a(getName(rtr.getTargetWrittenRep()) + " (" + rtr.getTargetLanguage() + ")").attr("style", "text-decoration: underline;")
+                                    .attr("onclick", "rc([{name:'entry',value:'" + rtr.getTarget() + "'},{name:'type',value:'Sense'}]);")))));
                 }
             }
             if (sd.getSenseRels().size() > 0) {
                 for (SenseData.SenseRelation sr : sd.getSenseRels()) {
-                    String target = senseRelations.get(sr.getRelation());
-                    target = target != null ? ", " + target : "";
-                    senseRelations.put(sr.getRelation(), getName(sr.getWrittenRep()) + " (" + sr.getLanguage() + ")" + target);
+                    ArrayList<LinkedDictionaryEntry> target = senseRelations.get(sr.getRelation());
+                    if (target != null) {
+                        target.add(new LinkedDictionaryEntry(", " + getName(sr.getWrittenRep()) + " (" + sr.getLanguage() + ")", sr.getWrittenRep()));
+                        senseRelations.put(sr.getRelation(), target);
+                    } else {
+                        ArrayList<LinkedDictionaryEntry> alde = new ArrayList();
+                        alde.add(new LinkedDictionaryEntry(getName(sr.getWrittenRep()) + " (" + sr.getLanguage() + ")", sr.getWrittenRep()));
+                        senseRelations.put(sr.getRelation(), alde);
+                    }
                 }
-                for (Map.Entry<String, String> entry : senseRelations.entrySet()) {
-                    mainDiv.with(div(span(join(entry.getKey() + ": ", entry.getValue()))));
+                for (Map.Entry<String, ArrayList<LinkedDictionaryEntry>> entry : senseRelations.entrySet()) {
+                    mainDiv.with(div(span(join(entry.getKey() + ": ",
+                            each(entry.getValue(), e
+                                    -> a(e.getName()).attr("style", "text-decoration: underline;")
+                                    .attr("onclick", "rc([{name:'entry',value:'" + e.getUri() + "'},{name:'type',value:'Sense'}]);"))))));
                 }
             }
         }
-        
+
         // Melchuck's lexical function's
         if (sd != null) {
             if (sd.getLexicalFunctions().size() > 0) {
                 for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
                     if (MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) != null) {
-                        mainDiv.with(div(span(join(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "(" +
-                                getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
+                        mainDiv.with(div(span(join(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "("
+                                + getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
                     } else {
-                        mainDiv.with(div(span(join(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "(" +
-                                getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
+                        mainDiv.with(div(span(join(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "("
+                                + getName(lf.getSource()) + ") = ", getName(lf.getTarget())))).withClass("lexicalFunctionClass"));
                     }
                 }
             }
@@ -327,18 +345,55 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         }
         for (Iterator<LemmaData.Word> it = lexiconCreationControllerFormDetail.getLemma().getSeeAlso().iterator(); it.hasNext();) {
             LemmaData.Word word = it.next();
-            div.with(span(word.getWrittenRep() + ((it.hasNext() ? "; " : ""))));
+             div.with(span(join("",
+                     a(word.getWrittenRep()).attr("style", "text-decoration: underline;")
+                                    .attr("onclick", "rc([{name:'entry',value:'" + word.getOWLName() + "'},{name:'type',value:'Lemma'}]);"), 
+                     ((it.hasNext() ? "; " : "")))));
         }
         return div.renderFormatted();
     }
 
-    public List<Map.Entry<String, String>> getSeeAlsoList(String id, String seeAlsoClassName) {
-        ArrayList<Map.Entry<String, String>> ret = new ArrayList<>();
-        for (Iterator<LemmaData.Word> it = lexiconCreationControllerFormDetail.getLemma().getSeeAlso().iterator(); it.hasNext();) {
-            LemmaData.Word word = it.next();
-            ret.add(new AbstractMap.SimpleEntry<>(word.getOWLName(), word.getWrittenRep()));
+//    public List<Map.Entry<String, String>> getSeeAlsoList(String id, String seeAlsoClassName) {
+//        ArrayList<Map.Entry<String, String>> ret = new ArrayList<>();
+//        for (Iterator<LemmaData.Word> it = lexiconCreationControllerFormDetail.getLemma().getSeeAlso().iterator(); it.hasNext();) {
+//            LemmaData.Word word = it.next();
+//            ret.add(new AbstractMap.SimpleEntry<>(word.getOWLName(), word.getWrittenRep()));
+//        }
+//        return ret;
+//    }
+
+    public void execute() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Map<String, String> params = context.getExternalContext().getRequestParameterMap();
+        lexiconControllerTabViewList.onDictionaryViewSelect(params.get("entry"), params.get("type"));
+    }
+
+    private static class LinkedDictionaryEntry {
+
+        private String name;
+        private String uri;
+
+        public String getName() {
+            return name;
         }
-        return ret;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public LinkedDictionaryEntry(String name, String uri) {
+            this.name = name;
+            this.uri = uri;
+        }
+
     }
 
 }
