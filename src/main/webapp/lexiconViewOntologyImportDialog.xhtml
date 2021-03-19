@@ -19,7 +19,7 @@
 
             <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
                 <p:outputLabel styleClass="ontologyImportFieldStyle" value="#{label['ontologyImport.label']}"/>
-                <p:fileUpload fileUploadListener="#{lexiconControllerToolbar.handleOntologyUpload}"
+                <p:fileUpload listener="#{lexiconControllerToolbar.handleOntologyUpload}"
                               oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgOntologyUpload').hide();PF('loadingDialog').show();"
                               mode="advanced" dragDropSupport="false"
                               sizeLimit="50000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"

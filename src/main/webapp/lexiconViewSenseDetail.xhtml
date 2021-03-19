@@ -33,6 +33,24 @@
                     </p:inputTextarea>
                 </h:panelGrid>
 
+                <h:outputLabel styleClass="titleStyle" value="Image:" rendered="#{sense.images.size() > 0}"/>
+                <h:panelGrid columns="2" rendered="#{sense.images.size() > 0}">
+                    <p:commandLink onstart="PF('loadingDialog').show();" 
+                                   action="#{imageController.setClickedImage(sense.images.get(0))}"
+                                   oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
+                                   update="lexiconImagePanel">
+                        <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 1)}" stream="false"
+                                        width="100" height="100"/>
+                    </p:commandLink>
+                    <p:commandLink onstart="PF('loadingDialog').show();" rendered="#{sense.images.size() > 1}" 
+                                   action="#{imageController.setClickedImage(sense.images.get(1))}"
+                                   oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
+                                   update="lexiconImagePanel">
+                        <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 2)}" stream="false"
+                                        width="100" height="100"/>
+                    </p:commandLink>
+                </h:panelGrid>
+
                 <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
                 <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
                     <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" alt="#{sense.themeOWLClass.type}"
@@ -61,8 +79,7 @@
                 </h:panelGrid>
 
 
-
-                <h:panelGrid id = "senseButtons" columns="4" columnClasses="column" cellpadding="0" 
+                <h:panelGrid id = "senseButtons" columns="5" columnClasses="column" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                     <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexico-semantic relations"/>
@@ -71,6 +88,14 @@
                                     disabled="#{!sense.definition.equals('No entry found')}" 
                                     actionListener="#{lexiconControllerSenseDetail.addDefinition(sense)}"
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                        
+                        <p:menuitem styleClass="lexiconTabView" value="Add Image" icon="fa fa-plus" 
+                                    disabled="#{sense.images.size() > 1}" 
+                                    onstart="PF('loadingDialog').show();"
+                                    oncomplete="setHeight();PF('dlgLexiconUploadImage').show();PF('loadingDialog').hide();"
+                                    actionListener="#{lexiconControllerSenseDetail.imageUpload(sense)}"
+                                    update="lexiconImageUploadPanel"/>
+                        
                         <p:menuitem styleClass="lexiconTabView" value="Add reference" icon="fa fa-plus" 
                                     disabled="#{!lexiconControllerSenseDetail.ontologyEnabled}" 
                                     actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'reference')}"
@@ -85,12 +110,13 @@
                                      disabled="#{sense.saveButtonDisabled}">
                     </p:commandButton>
                     <p:commandButton title="Delete sense" icon="fa fa-trash" 
-                                     update="SenseDataList :editViewTab:lexiconRelationDetailForm :systemMessage" 
+                                     update="SenseDataList :systemMessage" 
                                      action="#{lexiconControllerSenseDetail.removeSense(sense)}" 
                                      onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                      disabled="#{sense.deleteButtonDisabled}">   
                         <p:confirm message="#{label['lexicon.creation.confirm.deleteSenseRelation']}" icon="ui-icon-alert" />                        
                     </p:commandButton>
+  
                 </h:panelGrid>
             </h:panelGrid>
             <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>

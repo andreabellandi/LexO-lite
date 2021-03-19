@@ -13,7 +13,7 @@
             </h:panelGrid>
             <h:panelGrid columns="2" columnClasses="column" style="padding-top: 20px;">
                 <p:outputLabel styleClass="lexiconImportFieldStyle" value="#{label['lexiconImport.label']}"/>
-                <p:fileUpload fileUploadListener="#{lexiconControllerToolbar.handleLexiconUpload}"
+                <p:fileUpload listener="#{lexiconControllerToolbar.handleLexiconUpload}"
                               oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgLexiconUpload').hide();PF('loadingDialog').show();"
                               mode="advanced" dragDropSupport="false"
                               sizeLimit="50000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"

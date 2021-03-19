@@ -26,6 +26,9 @@ public class FormData implements Serializable {
 
     private ArrayList<LemmaData.MorphoTrait> morphoTraits = new ArrayList();
 
+    // attribute extension
+    private ArrayList<LemmaData.ExtensionAttributeIstance> extensionAttributeInstances = new ArrayList();
+
     public FormData() {
         this.saveButtonDisabled = true;
         this.deleteButtonDisabled = false;
@@ -35,6 +38,14 @@ public class FormData implements Serializable {
         this.note = "";
         this.morphoTraits.clear();
         this.formPhoneticRep = "No entry found";
+    }
+
+    public ArrayList<LemmaData.ExtensionAttributeIstance> getExtensionAttributeInstances() {
+        return extensionAttributeInstances;
+    }
+
+    public void setExtensionAttributeInstances(ArrayList<LemmaData.ExtensionAttributeIstance> extensionAttributeInstances) {
+        this.extensionAttributeInstances = extensionAttributeInstances;
     }
 
     public ArrayList<LemmaData.MorphoTrait> getMorphoTraits() {

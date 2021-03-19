@@ -164,6 +164,9 @@ public class LexicalQuery {
 
     public static final String LEMMA_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, extension:_ATTRIBUTE_, ?val) } ";
+    
+    public static final String FORM_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
+            + " PropertyValue(lexicon:_FORM_, extension:_ATTRIBUTE_, ?val) } ";
 
     public static final String LEXICAL_RELATION_WORD = "SELECT ?individual WHERE {"
             + " PropertyValue(?l, lime:language, \"_LANG_\"), "

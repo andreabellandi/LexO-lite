@@ -13,11 +13,18 @@
     </properties>
 
     <dependencies>
-<!--        <dependency>
+        <!--        <dependency>
             <groupId>it.cnr.ilc.lc</groupId>
             <artifactId>LexO-lite-Importer</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
+        <dependency>
+            <groupId>org.primefaces.extensions</groupId>
+            <artifactId>primefaces-extensions</artifactId>
+            <version>8.0</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -67,7 +74,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>7.0</version>
+            <version>8.0</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>

@@ -21,6 +21,7 @@ public class Label extends BaseController {
     public static final String ONTOLOGY_NAMESPACE_KEY = "domainOntologyNamespace";
     public static final String LEXO_FOLDER = "/.LexO-lite/";
     public static final String MODELS_FOLDER = "models/";
+    public static final String IMAGES_FOLDER = "images/";
 //    public static final String LEXO_FOLDER = "/.LexO-lite-VQ/";
 //        public static final String LEXO_FOLDER = "/.LexO-lite-Theresa/";
     public static final String LEXO_PROPERTIES_FILE_NAME = "lexolite.properties";

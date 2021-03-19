@@ -16,12 +16,11 @@ import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.LexicalQuery;
-import it.cnr.ilc.lexolite.constant.Namespace;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.controller.BaseController;
 import it.cnr.ilc.lexolite.controller.LexiconComparator;
-import it.cnr.ilc.lexolite.controller.LexiconControllerTabViewList;
 import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
+import it.cnr.ilc.lexolite.domain.Image;
 import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
 import it.cnr.ilc.lexolite.manager.LemmaData.ReifiedLexicalRelation;
@@ -30,7 +29,6 @@ import it.cnr.ilc.lexolite.manager.OntologyData.LinguisticReference;
 import it.cnr.ilc.lexolite.manager.SenseData.OntoMap;
 import it.cnr.ilc.lexolite.manager.SenseData.Openable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -233,11 +231,11 @@ public class LexiconQuery extends BaseController {
     }
 
     // invoked in order to get a lemma attributes of a specific form
-    public LemmaData getLemmaEntry(String form, Set<String> morphoTraits) {
+    public LemmaData getLemmaEntry(String form, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
         LemmaData ld = new LemmaData();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_INSTANCE_OF_FORM.replace("_FORM_", form)));
         String lemma = results.get(0);
-        setLemmaData(lemma, ld, morphoTraits, null);
+        setLemmaData(lemma, ld, morphoTraits, alea);
         return ld;
     }
 
@@ -363,9 +361,9 @@ public class LexiconQuery extends BaseController {
             ld.setVerified(true);
         }
         ld.setValid(valid);
-        String pos = ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase";
+        String pos = !ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase";
         if (!pos.contains(Label.NO_ENTRY_FOUND)) {
-            ld.setPoS(ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
+            ld.setPoS(!ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
         } else {
             ld.setPoS(Label.UNSPECIFIED_POS);
         }
@@ -374,7 +372,7 @@ public class LexiconQuery extends BaseController {
 
         ld.setNote(getLemmaNote(lemma));
         ld.setSeeAlso(getLemmaReference(lemma));
-        if (!ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel())) {
             ld.setMultiword(getLemmaMultiword(lemma, ld.getFormWrittenRepr()));
         }
         String ontoClass = getDenotes(lemma);
@@ -388,15 +386,17 @@ public class LexiconQuery extends BaseController {
         if (alea != null) {
             ArrayList<ExtensionAttributeIstance> aleai = new ArrayList();
             for (ExtensionAttribute ea : alea) {
-                String val = getExtAtt(lemma, ea.getName());
-                if (!val.isEmpty()) {
-                    ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
-                    eai.setDisabled(true);
-                    eai.setLabel(ea.getLabel());
-                    eai.setValue(val);
-                    eai.setName(ea.getName());
-                    eai.setType(ExtensionAttributeIstance.DataType.STRING);
-                    aleai.add(eai);
+                if (ea.getDomain().equals("Lexical Entry")) {
+                    String val = getExtAtt(lemma, ea.getName());
+                    if (!val.isEmpty()) {
+                        ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+                        eai.setDisabled(true);
+                        eai.setLabel(ea.getLabel());
+                        eai.setValue(val);
+                        eai.setName(ea.getName());
+                        eai.setType(ExtensionAttributeIstance.DataType.STRING);
+                        aleai.add(eai);
+                    }
                 }
             }
             ld.setExtensionAttributeInstances(aleai);
@@ -408,6 +408,13 @@ public class LexiconQuery extends BaseController {
         String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
                 + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
                 + LexicalQuery.LEMMA_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_LEMMA_", lemma);
+        return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
+    }
+    
+    private String getFormExtAtt(String form, String attribute) {
+        String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
+                + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + LexicalQuery.FORM_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_FORM_", form);
         return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
     }
 
@@ -516,27 +523,46 @@ public class LexiconQuery extends BaseController {
         return w;
     }
 
-    public ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
+    public ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
         ArrayList<FormData> fdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.FORM_INSTANCES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String form : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 FormData fd = new FormData();
-                setFormData(form, lang, fd, morphoTraits);
+                setFormData(form, lang, fd, morphoTraits, alea);
                 fdList.add(fd);
             }
         }
         return fdList;
     }
 
-    private void setFormData(String form, String lang, FormData fd, Set<String> morphoTraits) {
+    private void setFormData(String form, String lang, FormData fd, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
         fd.setIndividual(form);
         fd.setLanguage(lang);
         fd.setFormWrittenRepr(getFormWrittenRep(form));
         fd.setFormPhoneticRep(getFormPhonetic(form));
         fd.setMorphoTraits(getFormMorphoTraits(form, morphoTraits));
         fd.setNote(getFormNote(form));
+        // check for attribute extensions *** let assume that the attribute is single value !!! ***
+        if (alea != null) {
+            ArrayList<ExtensionAttributeIstance> aleai = new ArrayList();
+            for (ExtensionAttribute ea : alea) {
+                if (ea.getDomain().equals("Lexical Entry") || ea.getDomain().equals("Form")) {
+                    String val = getFormExtAtt(form, ea.getName());
+                    if (!val.isEmpty()) {
+                        ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+                        eai.setDisabled(true);
+                        eai.setLabel(ea.getLabel());
+                        eai.setValue(val);
+                        eai.setName(ea.getName());
+                        eai.setType(ExtensionAttributeIstance.DataType.STRING);
+                        aleai.add(eai);
+                    }
+                }
+            }
+            fd.setExtensionAttributeInstances(aleai);
+        }
     }
 
     private String getFormNote(String form) {
@@ -544,13 +570,14 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    public ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {
+    public ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l, ImageManager imageManager) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
+                sd.setImages(getImages(imageManager.loadImages(sense)));
                 senseData(sense, sd, l);
                 sdList.add(sd);
             }
@@ -696,18 +723,33 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l) {
+    public ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l, ImageManager imageManager) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_FORM.replace("_FORM_", form)));
         Collections.sort(results);
         for (String sense : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
+                sd.setImages(getImages(imageManager.loadImages(sense)));
                 senseData(sense, sd, l);
                 sdList.add(sd);
             }
         }
         return sdList;
+    }
+
+    private ArrayList<ImageData> getImages(List<Image> imgs) {
+        ArrayList<ImageData> imgds = new ArrayList();
+        for (Image img : imgs) {
+            ImageData imgd = new ImageData();
+            imgd.setId(img.getId());
+            imgd.setDescription(img.getDescription());
+            imgd.setFileName(img.getFileName());
+            imgd.setOriginalFileName(img.getOriginalFileName());
+            imgd.setSource(img.getSource());
+            imgds.add(imgd);
+        }
+        return imgds;
     }
 
     private String getSenseNote(String sense) {
@@ -724,6 +766,7 @@ public class LexiconQuery extends BaseController {
         setFieldMaxLenght(sd.getName(), sd);
         setFieldMaxLenght(sd.getOWLClass(), sd);
         sd.setFiledMaxLenght((sd.getFiledMaxLenght() > FIELD_MAX_LENGHT) ? FIELD_MAX_LENGHT : sd.getFiledMaxLenght());
+
     }
 
     private void setFieldMaxLenght(List<Openable> lo, SenseData sd) {
@@ -746,13 +789,14 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getOtherSenses(String sense, List<ReferenceMenuTheme> l) {
+    public ArrayList<SenseData> getOtherSenses(String sense, List<ReferenceMenuTheme> l, ImageManager imageManager) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.OTHER_INSTANCES_OF_SENSES.replace("_SENSE_", sense)));
         Collections.sort(results);
         for (String s : results) {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
+                sd.setImages(getImages(imageManager.loadImages(sense)));
                 senseData(s, sd, l);
                 sdList.add(sd);
             }

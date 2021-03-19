@@ -147,8 +147,8 @@ public class LexiconServices {
         ArrayList<SenseData> sds;
         Matcher matcher = pattern.matcher(id);
         if (matcher.find()) {
-            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0]);
-            sds = lexiconManager.getSensesOfLemma(id, null);
+            fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0], null);
+            sds = lexiconManager.getSensesOfLemma(id, null, null);
         } else {
             fds = null;
             sds = null;
@@ -261,7 +261,7 @@ public class LexiconServices {
     // invocation: lexicon/lemmaByRel?entry=acorus&rel=translation
     public Response getLemmaByRel(@QueryParam("entry") String entry, @QueryParam("rel") String rel, @QueryParam("lang") String lang) {
         JsonObject senseNumber = new JsonObject();
-        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null);
+        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null, null);
         for (SenseData sense : senses) {
             JsonObject lemmas = new JsonObject();
             for (SenseRelation sr : sense.getSenseRels()) {
@@ -306,7 +306,7 @@ public class LexiconServices {
         for (Map<String, String> m : lemmaList) {
             String _pos = getPosFromIndividual(m.get("individual"), m.get("lang"));
             m.put("pos", _pos.isEmpty() ? Label.UNSPECIFIED_POS : _pos);
-            if (m.get("type").equals(OntoLexEntity.Class.WORD.getLabel())) {
+            if (m.get("type").equals(OntoLexEntity.Class.WORD.getLabel()) || m.get("type").equals(OntoLexEntity.Class.AFFIX.getLabel())) {
                 if (m.get("pos").equals("noun")) {
                     noun++;
                 } else {

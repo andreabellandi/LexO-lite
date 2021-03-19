@@ -31,8 +31,6 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
     @Inject
     private LexiconControllerFormDetail lexiconControllerFormDetail;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconControllerLinkedLexicalEntryDetail;
-    @Inject
     private LexiconManager lexiconManager;
     @Inject
     private LoginController loginController;
@@ -184,41 +182,12 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
         createLemmaCopy();
     }
 
-    // invoked by the lemma box in order to get the details of the lexical relation
-    public void addEntryOfLexicalRelation(LemmaData.LexicalRelation lr) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + lr.getWrittenRep() + " by " + lr.getRelation()
-                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(lr.getOWLName().replace("_entry", "_lemma"));
-        lexiconControllerFormDetail.checkForLock(lr.getOWLName().replace("_entry", "_lemma"));
-        lexiconManager.getLexiconLocker().print();
-        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(lr.getOWLName().replace("_entry", "_lemma"));
-        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
-    }
-
-    public void addEntryOfReifLexicalRelation(LemmaData.ReifiedLexicalRelation lr) {
-        info("todo.title", "todo.description");
-//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + lr.getSourceWrittenRep() + " by " + lr.getCategory()
-//                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-//        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-//        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-//        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(lr.getTargetOWLName().replace("_entry", "_lemma"));
-//        lexiconControllerFormDetail.checkForLock(lr.getTargetOWLName());
-//        lexiconManager.getLexiconLocker().print();
-//        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-//        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(lr.getTargetOWLName());
-//        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
-    }
-
     public void removeLexicalRelation(LemmaData.LexicalRelation lr) {
         log(Level.INFO, loginController.getAccount(), "REMOVE lexical relation " + (lr.getWrittenRep().isEmpty() ? " empty lexical relation" : lr.getWrittenRep())
                 + " from " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
         lemmaVarTrans.getLexRels().remove(lr);
         lemmaVarTrans.setSaveButtonDisabled(false);
         saveButtonDisabled = false;
-        lexiconControllerFormDetail.relationPanelCheck(lr.getOWLName());
     }
 
     public void removeReifLexicalRelation(LemmaData.ReifiedLexicalRelation rlr) {
@@ -227,7 +196,6 @@ public class LexiconControllerVarTransFormDetail extends BaseController implemen
         lemmaVarTrans.getReifiedLexRels().remove(rlr);
         lemmaVarTrans.setSaveButtonDisabled(false);
         saveButtonDisabled = false;
-        lexiconControllerFormDetail.relationPanelCheck(rlr.getTargetOWLName());
     }
     
     public void resetFormDetails() {

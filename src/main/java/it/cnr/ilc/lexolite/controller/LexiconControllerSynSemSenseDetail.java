@@ -37,8 +37,6 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
     @Inject
     private LexiconControllerTabViewList lexiconControllerTabViewList;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconControllerLinkedLexicalEntryDetail;
-    @Inject
     private LexiconControllerFormDetail lexiconControllerFormDetail;
     @Inject
     private LexiconManager lexiconManager;

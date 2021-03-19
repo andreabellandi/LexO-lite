@@ -42,7 +42,6 @@ public class PropertyValue {
 //        } catch (IOException ex) {
 //        }
 //    }
-
     //private LexiconManager lexiconManager = LexiconManager.getInstance();
     private ArrayList<String> lemmaInfo;
     private ArrayList<String> alphabet;
@@ -74,6 +73,7 @@ public class PropertyValue {
     private ArrayList<String> attributeTypes;
     private ArrayList<String> attributeCardinality;
     private ArrayList<String> attributeDomain;
+    private ArrayList<String> inputTextTypes;
 
     public ArrayList<String> getMorphoTrait(String s) {
         return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class)));
@@ -135,6 +135,12 @@ public class PropertyValue {
         return attributeCardinality;
     }
 
+    public ArrayList<String> getInputTextTypes() {
+        return inputTextTypes;
+    }
+
+    
+
     public ArrayList<String> getSynFrameType() {
         return synFrameType;
     }
@@ -168,7 +174,7 @@ public class PropertyValue {
     }
 
     public ArrayList<String> getPoS(String lemmaType) {
-        if (lemmaType.equals("Word")) {
+        if (lemmaType.equals("Word") || lemmaType.equals("Affix")) {
             return PoS;
         } else {
             return multiwordType;
@@ -432,6 +438,10 @@ public class PropertyValue {
         attributeDomain.add("Form");
         attributeDomain.add("Sense");
 
+        inputTextTypes = new ArrayList();
+        inputTextTypes.add("text row");
+        inputTextTypes.add("text area");
+
 //        loadLexicalFunctions();
     }
 
@@ -524,7 +534,6 @@ public class PropertyValue {
 //        syntagmaticLexicalFunctions.add("Excessn");
 //        syntagmaticLexicalFunctions.add("Symptn");
 //    }
-
     private void loadLexicalCategories() {
         lexicalCategory = new ArrayList<>();
         SelectItemGroup g1 = new SelectItemGroup("Dating");

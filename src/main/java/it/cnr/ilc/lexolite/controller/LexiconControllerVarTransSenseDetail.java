@@ -45,8 +45,6 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     @Inject
     private LexiconControllerTabViewList lexiconControllerTabViewList;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconControllerLinkedLexicalEntryDetail;
-    @Inject
     private LexiconControllerFormDetail lexiconControllerFormDetail;
     @Inject
     private LexiconManager lexiconManager;
@@ -284,7 +282,6 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         if (!sr.getWrittenRep().isEmpty()) {
             sd.setSaveButtonDisabled(false);
         }
-        lexiconControllerFormDetail.relationPanelCheck(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
     }
 
     public void removeReifSenseRelation(SenseData sd, SenseData.ReifiedSenseRelation rsr) {
@@ -294,7 +291,6 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         if (!rsr.getTarget().isEmpty()) {
             sd.setSaveButtonDisabled(false);
         }
-        lexiconControllerFormDetail.relationPanelCheck(rsr.getTarget().replace("_entry", "_lemma"));
     }
 
     public void removeTranslationSenseRelation(SenseData sd, SenseData.ReifiedTranslationRelation rsr) {
@@ -304,7 +300,6 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         if (!rsr.getTarget().isEmpty()) {
             sd.setSaveButtonDisabled(false);
         }
-        lexiconControllerFormDetail.relationPanelCheck(rsr.getTarget().replace("_entry", "_lemma"));
     }
 
     public void removeLexicalFunction(SenseData sd, SenseData.LexicalFunction lf) {
@@ -314,7 +309,6 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         if (!lf.getTarget().isEmpty()) {
             sd.setSaveButtonDisabled(false);
         }
-        lexiconControllerFormDetail.relationPanelCheck(lf.getTarget().replace("_entry", "_lemma"));
     }
 
     private void setSenseRelationEntry(SenseData.SenseRelation sr) {
@@ -378,48 +372,8 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         return filteredList;
     }
 
-    public void addEntryOfSenseRelation(SenseData.SenseRelation sr) {
-        info("todo.title", "todo.description");
-//        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + sr.getWrittenRep() + " by " + sr.getRelation()
-//                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-//        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-//        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-//        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-//        lexiconControllerFormDetail.checkForLock(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-//        lexiconManager.getLexiconLocker().print();
-//        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-//        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(sr.getWrittenRep().split("_sense")[0].concat("_lemma"));
-//        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
-    }
-
     public void addEntryOfLexicalFunction(SenseData.LexicalFunction lf) {
         info("todo.title", "todo.description");
-    }
-
-    public void addEntryOfSenseRelation(SenseData.ReifiedSenseRelation rsr) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + rsr.getTarget() + " by " + rsr.getCategory()
-                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconControllerFormDetail.checkForLock(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconManager.getLexiconLocker().print();
-        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
-    }
-
-    public void addEntryOfSenseRelation(SenseData.ReifiedTranslationRelation rsr) {
-        log(Level.INFO, loginController.getAccount(), "VIEW Deatils of " + rsr.getTarget() + " by " + rsr.getCategory()
-                + " relation of Lemma " + lexiconControllerFormDetail.getLemma().getFormWrittenRepr());
-        lexiconControllerLinkedLexicalEntryDetail.resetRelationDetails();
-        lexiconControllerLinkedLexicalEntryDetail.setAddButtonsDisabled(false);
-        lexiconControllerLinkedLexicalEntryDetail.setEntryOfLexicalRelation(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconControllerFormDetail.checkForLock(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconManager.getLexiconLocker().print();
-        lexiconControllerLinkedLexicalEntryDetail.setRelationLemmaRendered(true);
-        lexiconControllerLinkedLexicalEntryDetail.setCurrentLexicalEntry(rsr.getTarget().replace("_entry", "_lemma"));
-        lexiconControllerLinkedLexicalEntryDetail.setActiveTab(2);
     }
 
     public String getPropertyName(String s) {

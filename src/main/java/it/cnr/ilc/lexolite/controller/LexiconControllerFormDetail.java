@@ -14,6 +14,7 @@ import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.DomainManager;
 import it.cnr.ilc.lexolite.manager.ExtensionAttributeManager;
 import it.cnr.ilc.lexolite.manager.FormData;
+import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
 import it.cnr.ilc.lexolite.manager.LemmaData.LexicalRelation;
@@ -66,10 +67,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     @Inject
     private LexiconControllerSenseDetail lexiconCreationViewSenseDetail;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
-    @Inject
     private LexiconControllerVarTransFormDetail lexiconControllerVarTransFormDetail;
-
     @Inject
     private LexiconManager lexiconManager;
     @Inject
@@ -78,6 +76,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private AuthoringManager authoringManager;
     @Inject
     private ExtensionAttributeManager extensionAttributeManager;
+    @Inject
+    private ImageManager imageManager;
 
     private LemmaData lemma = new LemmaData();
     private LemmaData lemmaCopy = new LemmaData();
@@ -148,7 +148,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         model.addElement(element);
         model.generateUniqueIds();
     }
-    
+
     private void slideItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov) {
         DefaultMenuItem element = new DefaultMenuItem();
         if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
@@ -171,7 +171,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         model.addElement(element);
         model.generateUniqueIds();
         model.getElements().remove(0);
-        for(MenuElement me : model.getElements()) {
+        for (MenuElement me : model.getElements()) {
             me.setId(String.valueOf(Integer.parseInt(me.getId()) - 1));
         }
     }
@@ -310,7 +310,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public String getEntryErrorLabel() {
-        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) && (lemma.getFormWrittenRepr().contains(" "))) {
+        if ((lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel()))
+                && (lemma.getFormWrittenRepr().contains(" "))) {
             return "Word can not contain spaces";
         } else {
             if (!isAdmissibleLemma) {
@@ -339,7 +340,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     public boolean isRenderedEntryErrorLabel() {
         if ((lemmAlreadyExists)
-                || (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()))
+                || (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel()))
                 && (lemma.getFormWrittenRepr().contains(" "))
                 || (!isAdmissibleLemma)) {
             return true;
@@ -385,7 +386,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         } else {
             authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.FORM_NOTE, fd.getIndividual());
         }
-        info("template.message.saveFormNote.summary", "template.message.saveformNote.description");
+        info("template.message.saveFormNote.summary", "template.message.saveFormNote.description");
     }
 
     public void closeNote() {
@@ -400,7 +401,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     public void addLemma(String lemma) {
         this.lemma.clear();
         this.lemma = lexiconManager.getLemmaAttributes(lemma, propertyValue.getMorphoTrait(), getExtensionAttributeList());
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(lemma, this.lemma.getLanguage(), propertyValue.getMorphoTrait());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(lemma, this.lemma.getLanguage(), propertyValue.getMorphoTrait(), getExtensionAttributeList());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -446,6 +447,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             _eai.setType(eai.getType());
             _eai.setLabel(eai.getLabel());
             _eai.setValue(eai.getValue());
+            _eai.setDisabled(eai.isDisabled());
             _aleai.add(_eai);
         }
         return _aleai;
@@ -513,6 +515,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         _fd.setFormWrittenRepr(fd.getFormWrittenRepr());
         _fd.setFormPhoneticRep(fd.getFormPhoneticRep());
         _fd.setMorphoTraits(copyFormMorphoTraits(fd.getMorphoTraits()));
+        _fd.setExtensionAttributeInstances(copyExtensionAttributeInstances(fd.getExtensionAttributeInstances()));
         _fd.setNote(fd.getNote());
         _fd.setLanguage(fd.getLanguage());
         _fd.setIndividual(fd.getIndividual());
@@ -549,8 +552,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     // invoked by the controller after an user selected a form in the tabview
     public void addForm(String form) {
         this.lemma.clear();
-        this.lemma = lexiconManager.getLemmaEntry(form, propertyValue.getMorphoTrait());
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait());
+        this.lemma = lexiconManager.getLemmaEntry(form, propertyValue.getMorphoTrait(), getExtensionAttributeList());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait(), getExtensionAttributeList());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -562,7 +565,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     public void addForms(String sense) {
         this.lemma.clear();
         this.lemma = lexiconManager.getLemmaOfSense(sense, propertyValue.getMorphoTrait());
-        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait());
+        ArrayList<FormData> al = lexiconManager.getFormsOfLemma(getLemma().getIndividual(), this.lemma.getLanguage(), propertyValue.getMorphoTrait(), getExtensionAttributeList());
         forms.clear();
         forms.addAll(al);
         createLemmaCopy();
@@ -679,7 +682,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     private boolean isAdmissibleLemma(String w, String type) {
-        if (type.equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (type.equals(OntoLexEntity.Class.WORD.getLabel()) || type.equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             return isAdmissibleWord(w);
         } else {
             return isAdmissibleMultiwordWord(w);
@@ -687,7 +690,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     private boolean isAdmissibleWord(String w) {
-        if (w.matches(ADMISSIBLE_WORD_REGEXP) || w.isEmpty()) {
+//        if (w.matches(ADMISSIBLE_WORD_REGEXP) || w.isEmpty()) {
+        if (!w.contains(" ") || w.isEmpty()) {
             return true;
         } else {
             return false;
@@ -769,7 +773,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         List<Map<String, String>> lemmaList = lexiconManager.lemmasList(currentLanguage);
         lemmaListCached = lemmaList;
-        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             lemmaNameKeyupEvent(lemmaPart, lemmaList);
         } else {
             lemmaMultiwordKeyupEvent(lemmaPart, lemmaList);
@@ -861,7 +865,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 //        lemma.setFormWrittenRepr(lemmaPart);
 //    }
     private void ckeckLemmaSavability() {
-        if (!lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (!lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) && !lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             lemma.setSaveButtonDisabled(isSavableLemma() || (!lemma.getFormWrittenRepr().contains(" ")));
         } else {
             if (isSavableLemma()) {
@@ -949,6 +953,20 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         ckeckLemmaSavability();
     }
 
+    public void extensionFormAttributeKeyUpEvent(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        ExtensionAttributeIstance eai = (ExtensionAttributeIstance) component.getAttributes().get("extAtt");
+        String att = (String) e.getComponent().getAttributes().get("value");
+        FormData fd = (FormData) component.getAttributes().get("form");
+        log(Level.INFO, loginController.getAccount(), "UPDATE Form attribute extesion " + eai.getName() + " of " + fd.getFormWrittenRepr() + " to " + att);
+        for (LemmaData.ExtensionAttributeIstance _eai : fd.getExtensionAttributeInstances()) {
+            if (eai.getName().equals(_eai.getName())) {
+                _eai.setValue(att);
+            }
+        }
+        fd.setSaveButtonDisabled(isSavableForm(fd));
+    }
+
     public void phoneticFormKeyUpEvent(AjaxBehaviorEvent e) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String phonetic = (String) e.getComponent().getAttributes().get("value");
@@ -1001,7 +1019,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         addFormButtonDisabled = true;
         lexiconCreationViewSenseDetail.getSenses().clear();
         lexiconCreationViewSenseDetail.setAddSenseButtonDisabled(true);
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         lexiconCreationControllerTabViewList.initLemmaTabView(currentLanguage);
         lexiconCreationControllerTabViewList.initFormTabView(currentLanguage);
@@ -1065,16 +1082,21 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             log(Level.INFO, loginController.getAccount(), "SAVE new Lemma and its default sense " + lemma.getFormWrittenRepr());
             lexiconCreationViewSenseDetail.saveDefaultSense(lemma, OntoLexEntity.Class.WORD.getLabel());
         } else {
-            // multiword case
-            log(Level.INFO, loginController.getAccount(), "SAVE new Multiword and its default sense " + lemma.getFormWrittenRepr());
-            lexiconCreationViewSenseDetail.saveDefaultSense(lemma, OntoLexEntity.Class.MULTIWORD.getLabel());
+            if (lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
+                log(Level.INFO, loginController.getAccount(), "SAVE new Lemma and its default sense " + lemma.getFormWrittenRepr());
+                lexiconCreationViewSenseDetail.saveDefaultSense(lemma, OntoLexEntity.Class.AFFIX.getLabel());
+            } else {
+                // multiword case
+                log(Level.INFO, loginController.getAccount(), "SAVE new Multiword and its default sense " + lemma.getFormWrittenRepr());
+                lexiconCreationViewSenseDetail.saveDefaultSense(lemma, OntoLexEntity.Class.MULTIWORD.getLabel());
+            }
         }
         lexiconCreationViewSenseDetail.setSenseToolbarRendered(true);
         setNewAction(false);
     }
 
     private void saveForUpdateAction() throws IOException, OWLOntologyStorageException {
-        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             // word case
             log(Level.INFO, loginController.getAccount(), "UPDATE Lemma " + lemma.getFormWrittenRepr());
             lexiconManager.updateLemma(lemmaCopy, lemma);
@@ -1088,7 +1110,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     private void saveForUpdateWithRenameAction() throws IOException, OWLOntologyStorageException {
-        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (lemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || lemma.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             // word case
             log(Level.INFO, loginController.getAccount(), "SAVE updated Lemma with renaming from " + lemmaCopy.getFormWrittenRepr() + " to " + lemma.getFormWrittenRepr());
             lexiconManager.saveLemmaWithIRIRenaming(lemmaCopy, lemma);
@@ -1353,6 +1375,17 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.getExtensionAttributeInstances().add(eai);
     }
 
+    public void addExtensionAttribute(int index, String attName, String label) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty extension attribute " + attName + " to form " + forms.get(index).getFormWrittenRepr());
+        LemmaData.ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+        eai.setName(attName);
+        eai.setValue("");
+        eai.setLabel(label);
+        eai.setDisabled(true);
+        forms.get(index).getExtensionAttributeInstances().add(eai);
+        forms.get(index).setSaveButtonDisabled(false);
+    }
+
     public void addFormPhonetic(MenuActionEvent event) {
         DefaultMenuItem item = (DefaultMenuItem) event.getMenuItem();
         Map<String, List<String>> params = item.getParams();
@@ -1365,13 +1398,18 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "REMOVE reference (seeAlso) " + (reference.getWrittenRep().isEmpty() ? " empty see also" : reference.getWrittenRep()) + " from " + lemma.getFormWrittenRepr());
         lemma.getSeeAlso().remove(reference);
         lemma.setSaveButtonDisabled(false);
-        relationPanelCheck(reference.getOWLName());
     }
 
     public void removeExtensionAttribute(ExtensionAttributeIstance eai) {
         log(Level.INFO, loginController.getAccount(), "REMOVE extension attribute " + eai.getName() + " with value " + (eai.getValue().isEmpty() ? " empty" : eai.getValue()) + " from " + lemma.getFormWrittenRepr());
         lemma.getExtensionAttributeInstances().remove(eai);
         lemma.setSaveButtonDisabled(false);
+    }
+
+    public void removeExtensionAttribute(ExtensionAttributeIstance eai, FormData fd) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE extension attribute " + eai.getName() + " with value " + (eai.getValue().isEmpty() ? " empty" : eai.getValue()) + " from " + fd.getFormWrittenRepr());
+        fd.getExtensionAttributeInstances().remove(eai);
+        fd.setSaveButtonDisabled(false);
     }
 
     public void removePhonetic(FormData fd) {
@@ -1399,29 +1437,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lemma.setOWLClass(denote);
     }
 
-    public void relationPanelCheck(String OWLName) {
-        if (lexiconCreationControllerRelationDetail.getCurrentLexicalEntry().equals(OWLName)) {
-            lexiconCreationControllerRelationDetail.resetRelationDetails();
-            lexiconCreationControllerRelationDetail.setCurrentLexicalEntry("");
-        }
-    }
-
     public ArrayList<String> getPoS() {
         return propertyValue.getPoS(lemma.getType());
-    }
-
-    public void checkForLock(String entry) {
-        // check if the lexical entry is available and lock it
-        boolean locked = lexiconManager.checkForLock(entry);
-        if (locked) {
-            lexiconCreationControllerRelationDetail.setLocked(true);
-            lexiconCreationControllerRelationDetail.setLocker(lexiconManager.getLockingUser(entry) + " is working ... ");
-            log(Level.INFO, loginController.getAccount(), "ACCESS TO THE LOCKED lexical entry related to " + entry);
-        } else {
-            lexiconCreationControllerRelationDetail.setLocked(false);
-            lexiconCreationControllerRelationDetail.setLocker("");
-            log(Level.INFO, loginController.getAccount(), "LOCK the lexical entry related to " + entry);
-        }
     }
 
     public ArrayList<String> getMorphoTraitValues(String traitName) {
@@ -1512,25 +1529,57 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
     private void addExtensionAttributeElement(MenuModel addMenuModel) {
         if (getExtensionAttributeList().size() > 0) {
-            addMenuModel.addElement(new DefaultSeparator());
+//            addMenuModel.addElement(new DefaultSeparator());
             for (ExtensionAttribute ea : getExtensionAttributeList()) {
-                DefaultMenuItem dmi = new DefaultMenuItem();
-                dmi.setValue("Add " + ea.getLabel());
-                dmi.setStyleClass("lexiconTabView");
-                dmi.setIcon("fa fa-user-plus");
-                dmi.setDisabled(setDisabled(ea));
-                dmi.setUpdate("LemmaPanelGrid :systemMessage");
-                dmi.setCommand("#{lexiconControllerFormDetail.addExtensionAttribute('"
-                        + ea.getName() + "', '" + ea.getLabel() + "')}");
-                dmi.setOnstart("PF('loadingDialog').show();");
-                dmi.setOncomplete("setHeight();PF('loadingDialog').hide()");
-                addMenuModel.addElement(dmi);
+                if (ea.getDomain().equals("Lexical Entry")) {
+                    DefaultMenuItem dmi = new DefaultMenuItem();
+                    dmi.setValue("Add " + ea.getLabel());
+                    dmi.setStyleClass("lexiconTabView");
+                    dmi.setIcon("fa fa-user-plus");
+                    dmi.setDisabled(setDisabled(ea));
+                    dmi.setUpdate("LemmaPanelGrid :systemMessage");
+                    dmi.setCommand("#{lexiconControllerFormDetail.addExtensionAttribute('"
+                            + ea.getName() + "', '" + ea.getLabel() + "')}");
+                    dmi.setOnstart("PF('loadingDialog').show();");
+                    dmi.setOncomplete("setHeight();PF('loadingDialog').hide()");
+                    addMenuModel.addElement(dmi);
+                }
+            }
+        }
+    }
+
+    private void addFormExtensionAttributeElement(MenuModel addMenuModel, FormData fd, int index) {
+        if (getExtensionAttributeList().size() > 0) {
+//            addMenuModel.addElement(new DefaultSeparator());
+            for (ExtensionAttribute ea : getExtensionAttributeList()) {
+                if (ea.getDomain().equals("Lexical Entry") || ea.getDomain().equals("Form")) {
+                    DefaultMenuItem dmi = new DefaultMenuItem();
+                    dmi.setValue("Add " + ea.getLabel());
+                    dmi.setStyleClass("lexiconTabView");
+                    dmi.setIcon("fa fa-user-plus");
+                    dmi.setDisabled(setDisabled(ea, fd));
+                    dmi.setUpdate("FormDataList :systemMessage");
+                    dmi.setCommand("#{lexiconControllerFormDetail.addExtensionAttribute("
+                            + index + ", '" + ea.getName() + "', '" + ea.getLabel() + "')}");
+                    dmi.setOnstart("PF('loadingDialog').show();");
+                    dmi.setOncomplete("setHeight();PF('loadingDialog').hide()");
+                    addMenuModel.addElement(dmi);
+                }
             }
         }
     }
 
     private boolean setDisabled(ExtensionAttribute ea) {
         for (ExtensionAttributeIstance eai : lemma.getExtensionAttributeInstances()) {
+            if (eai.getName().equals(ea.getName())) {
+                return eai.isDisabled() || newAction;
+            }
+        }
+        return false;
+    }
+
+    private boolean setDisabled(ExtensionAttribute ea, FormData fd) {
+        for (ExtensionAttributeIstance eai : fd.getExtensionAttributeInstances()) {
             if (eai.getName().equals(ea.getName())) {
                 return eai.isDisabled() || newAction;
             }
@@ -1581,7 +1630,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     // dynamic form menu creation
-    public MenuModel getAddFormMenuModel(FormData fd) {
+    public MenuModel getAddFormMenuModel(FormData fd, int index) {
 
         MenuModel addFormMenuModel = new DefaultMenuModel();
         DefaultSubMenu morphoMenu = new DefaultSubMenu();
@@ -1603,6 +1652,9 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
 
         addFormMenuModel.addElement(phonetic);
         addFormMenuModel.getElements().add(morphoMenu);
+        addFormMenuModel.addElement(new DefaultSeparator());
+        addFormExtensionAttributeElement(addFormMenuModel, fd, index);
+
         addFormMenuModel.generateUniqueIds();
 
         return addFormMenuModel;

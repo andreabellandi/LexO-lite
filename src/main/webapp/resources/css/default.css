@@ -1179,9 +1179,18 @@ tr.rowHeight:last-child>td {
     height: 100px !important;
 }
 
+.extensionAttributeInputareaSize {
+    width: 300px;
+    height: 100px !important;
+}
+
+.extensionAttributeInputSize {
+    width: 300px;
+}
+
 .ui-breadcrumb ul li span
 {
-	display: inline-block !important;
+    display: inline-block !important;
 }
 
 .breadCrumbPanel {
@@ -1194,4 +1203,11 @@ tr.rowHeight:last-child>td {
 
 .ui-icon {
     vertical-align: bottom !important;
+}
+
+.imageControllersStyle {
+    border: 1px solid gainsboro !important;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    margin: auto;
 }

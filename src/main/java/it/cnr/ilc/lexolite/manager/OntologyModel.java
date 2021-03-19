@@ -36,7 +36,8 @@ import org.apache.log4j.Level;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
+//import org.primefaces.model.UploadedFile;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.dlsyntax.renderer.DLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
@@ -105,7 +106,7 @@ public class OntologyModel extends BaseController {
 
     public OntologyModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
-        try (InputStream inputStream = f.getFile().getInputstream()) {
+        try (InputStream inputStream = f.getFile().getInputStream()) {
             domainOntology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             reasonerFactory = new StructuralReasonerFactory();
@@ -638,7 +639,7 @@ public class OntologyModel extends BaseController {
 
     public synchronized void persist(UploadedFile f) throws IOException {
         System.out.println("[" + getTimestamp() + "] LexO-lite : persist imported ontology file " + f.getFileName());
-        InputStream input = f.getInputstream();
+        InputStream input = f.getInputStream();
         File targetFile = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + f.getFileName());
         FileUtils.copyInputStreamToFile(input, targetFile);
     }

@@ -245,7 +245,7 @@ public class LexiconManager extends BaseController implements Serializable {
 
     public synchronized void saveLemmaAndDefaultSense(SenseData sd, LemmaData ld, String wordType) throws IOException, OWLOntologyStorageException {
         String lexiconInstance = lexiconQuery.getLexicon(ld.getLanguage());
-        if (wordType.equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (wordType.equals(OntoLexEntity.Class.WORD.getLabel()) || wordType.equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             lexiconModel.addLemma(ld, lexiconInstance);
         } else {
             lexiconModel.addMultiwordLemma(ld, lexiconInstance);
@@ -330,8 +330,8 @@ public class LexiconManager extends BaseController implements Serializable {
     }
 
     // invoked in order to get a lemma and its attributes of a specific form
-    public synchronized LemmaData getLemmaEntry(String form, Set<String> morphoTraits) {
-        return lexiconQuery.getLemmaEntry(form, morphoTraits);
+    public synchronized LemmaData getLemmaEntry(String form, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getLemmaEntry(form, morphoTraits, alea);
     }
 
     // invoked in order to get a lemma and its attributes of a specific sense
@@ -343,24 +343,24 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getLemmaOfSense(sense);
     }
 
-    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits) {
-        return lexiconQuery.getFormsOfLemma(lemma, lang, morphoTraits);
+    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, Set<String> morphoTraits, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getFormsOfLemma(lemma, lang, morphoTraits, alea);
     }
 
-    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang) {
-        return lexiconQuery.getFormsOfLemma(lemma, lang, propertyValue.getMorphoTrait());
+    public synchronized ArrayList<FormData> getFormsOfLemma(String lemma, String lang, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getFormsOfLemma(lemma, lang, propertyValue.getMorphoTrait(), alea);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getSensesOfLemma(lemma, l);
+    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, ImageManager imageManager, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getSensesOfLemma(lemma, l, imageManager);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getSensesOfForm(form, l);
+    public synchronized ArrayList<SenseData> getSensesOfForm(String form, ImageManager imageManager, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getSensesOfForm(form, l, imageManager);
     }
 
-    public synchronized ArrayList<SenseData> getSenses(String sense, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getOtherSenses(sense, l);
+    public synchronized ArrayList<SenseData> getSenses(String sense, ImageManager imageManager, List<ReferenceMenuTheme> l) {
+        return lexiconQuery.getOtherSenses(sense, l, imageManager);
     }
 
     public synchronized List<SelectItem> getSensesByLanguage(String sense, String lang) {

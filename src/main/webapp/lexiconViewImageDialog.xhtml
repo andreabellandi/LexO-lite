@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="lexiconImagePanel" widgetVar="dlgLexiconImage" header="#{label['lexiconImage.header']} of #{imageController.lemma}" 
+              resizable="false" closable="true"  width="450"
+              modal="true">
+        <p:accordionPanel styleClass="lexiconTabView" widgetVar="basic">
+            <p:tab title="Metadata">
+                <p:scrollPanel mode="native"  style="height: 200px; overflow-x: auto; overflow-y: auto;">
+                    <h:panelGrid styleClass="generalFilterBox" columns="1">
+                        <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
+                            <h5>Source</h5>
+                            <p:inputText value="#{imageController.source}" size="45"/>
+                            <h5>Date</h5>
+                            <p:inputText  value="#{imageController.date}" size="20"/>
+                            <h5>Description</h5>
+                            <p:inputText value="#{imageController.description}" size="45"/>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:scrollPanel>
+            </p:tab>
+        </p:accordionPanel>
+        <div id="imageWrapper" style="margin:auto; overflow:scroll; position:relative; height: 400px; 
+             width: 400px; padding-top: 10px; padding-bottom: 10px;}">
+            <p:graphicImage id="lexImage" height="400" width="400" value="#{imageController.image}" stream="false"/>
+        </div>
+        <div id="imageControllers" style="border: 1px solid gainsboro !important; border-radius: 5px; padding: 2px 2px 2px 2px; margin: auto;">
+
+            <pe:imageAreaSelect id="areaSelect"
+                                for="lexImage"
+                                widgetVar="areaSelectWidget"
+                                autoHide="true"
+                                handles="false"
+                                movable="false"
+                                persistent="false"
+                                resizable="false"
+                                parentSelector="#imageWrapper">
+                <p:ajax event="selectEnd" listener="#{imageController.selectEndListener}"/>
+            </pe:imageAreaSelect>
+
+            <pe:imageRotateAndResize id="rotateAndResize" for="lexImage" widgetVar="rotateAndResizeWidget">
+                <p:ajax event="rotate" listener="#{imageController.rotateListener}"
+                        oncomplete="PF('areaSelectWidget').reload();"/>
+                <pe:javascript event="resize" execute="PF('areaSelectWidget').reload();"/>
+            </pe:imageRotateAndResize>
+
+            <p:commandButton styleClass="lexiconTabView" icon="ui-icon-arrowreturnthick-1-w" value="Rotate Left"
+                             onclick="PF('rotateAndResizeWidget').rotateLeft(90);return false;"/>
+            <p:commandButton styleClass="lexiconTabView" icon="ui-icon-arrowreturnthick-1-e" value="Rotate Right"
+                             onclick="PF('rotateAndResizeWidget').rotateRight(90);return false;"/>
+            <p:commandButton styleClass="lexiconTabView" icon="ui-icon-zoomin" value="Scale +"
+                             onclick="PF('rotateAndResizeWidget').scale(1.05);return false;"/>
+            <p:commandButton styleClass="lexiconTabView" icon="ui-icon-zoomout" value="Scale -"
+                             onclick="PF('rotateAndResizeWidget').scale(0.95);return false;"/>
+        </div>
+    </p:dialog>
+
+</ui:composition>

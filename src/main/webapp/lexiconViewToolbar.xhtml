@@ -22,12 +22,16 @@
                                     oncomplete="setHeight();"
                                     update=":editViewTab"/>
                         <p:menuitem value="Multiword" icon="fa fa-plus" styleClass="lexiconTabView" 
-                                    action="#{lexiconControllerToolbar.newLemma('Multiword')}"
+                                    action="#{lexiconControllerToolbar.newLemma('MultiwordExpression')}"
+                                    oncomplete="setHeight();"
+                                    update=":editViewTab"/>
+                        <p:menuitem value="Affix" icon="fa fa-plus" styleClass="lexiconTabView" 
+                                    action="#{lexiconControllerToolbar.newLemma('Affix')}"
                                     oncomplete="setHeight();"
                                     update=":editViewTab"/>
                     </p:submenu> 
                 </p:tieredMenu>
-                
+
                 <p:commandButton id="importButton" icon="ui-icon-triangle-1-s" value="Import" type="button" styleClass="lexiconToolbarButton" 
                                  disabled="#{!lexiconControllerToolbar.toolbarEnabled}"/>
                 <p:tieredMenu overlay="true" styleClass="lexiconTabView" trigger="importButton" my="left top" at="left top" style="width:120px">

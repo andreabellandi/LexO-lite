@@ -29,8 +29,6 @@ public class LexiconControllerQueryFilter extends BaseController implements Seri
 
     @Inject
     private LexiconControllerTabViewList lexiconCreationControllerTabViewList;
-    @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
      @Inject
     private LexiconManager lexiconManager;
     @Inject

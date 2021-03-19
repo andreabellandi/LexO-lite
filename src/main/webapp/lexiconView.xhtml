@@ -15,7 +15,10 @@
             <ui:include src="/lexiconViewOntologyImportDialog.xhtml"/>
 
             <ui:include src="/lexiconViewLexiconImportDialog.xhtml"/>
-
+            
+            <ui:include src="/lexiconViewImageDialog.xhtml"/>
+            
+            <ui:include src="/lexiconViewImageUploadDialog.xhtml"/>
 
             <p:layout id="lexiconViewLayout" styleClass="layout" style="overflow: auto;">
                 <p:layoutUnit styleClass="layoutUnit" size="30%"  minSize="370" position="west" resizable="true">
@@ -47,7 +50,6 @@
                             </h:form>
 
                             <p:tabView id="editViewTab" activeIndex="#{lexiconControllerFormDetail.activeTab}" styleClass="lexiconTabView" cache="false" >
-                                <p:ajax event="tabClose" listener="#{lexiconControllerLinkedLexicalEntryDetail.unlockRelationalEntry}"/>
                                 <p:tab id="editTab" title="Edit" rendered="#{lexiconControllerTabViewList.editTabRendered}">
                                     <h:form id="lexEntryAspectForm" rendered="#{lexiconControllerLexicalAspect.rendered}">
                                         <div align="center">
@@ -71,13 +73,6 @@
                                     <p:scrollPanel id="dictViewTabScroll" mode="native" style="overflow-x: auto; overflow-y: auto;">
                                         <ui:include src="/lexiconViewDictionary.xhtml"/>
                                     </p:scrollPanel>
-                                </p:tab>
-                                <p:tab  id="detailViewTab" title="#{'Detail view of '.concat(lexiconControllerLinkedLexicalEntryDetail.lemma.formWrittenRepr)}" 
-                                        rendered="#{lexiconControllerLinkedLexicalEntryDetail.relationLemmaRendered}" closable="true">
-                                    <p:scrollPanel  id="scrollPaneldetailViewTab" mode="native"  style="overflow-y: auto">
-                                        <ui:include src="/lexiconViewLinkedLexicalEntryDetail.xhtml"/>
-                                    </p:scrollPanel>
-
                                 </p:tab>
                             </p:tabView>
 

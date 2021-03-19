@@ -49,7 +49,7 @@ public class ExtensionAttributeManager implements Serializable {
         ea.setName("");
         ea.setDomain("Lexical entry");
         ea.setLabel("");
-        ea.setRelation("owl:Thing");
+        ea.setRelation("owl:topDataProperty");
         ea.setType("string");
         ea.setActive(false);
         domainManager.insert(ea);
@@ -69,7 +69,7 @@ public class ExtensionAttributeManager implements Serializable {
             ea.setDomain(value);
         } else if (fieldName.contains("attributeCardinality")) {
             ea.setCardinality(value);
-        }
+        } 
         domainManager.update(ea);
     }
 }

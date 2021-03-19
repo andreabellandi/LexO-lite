@@ -50,8 +50,6 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     @Inject
     private LexiconControllerSenseDetail lexiconCreationControllerSenseDetail;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
-    @Inject
     private LexiconControllerLanguageDetail lexiconControllerLanguageDetail;
     @Inject
     private LexiconControllerTabViewList lexiconCreationControllerTabViewList;
@@ -96,16 +94,19 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         // check if the lexical entry has to be saved
         resetLexicalEntry();
         lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
-        if (lemmaType.equals("Multiword")) {
+        if (lemmaType.equals("MultiwordExpression")) {
             lexiconCreationControllerFormDetail.getLemma().setType(OntoLexEntity.Class.MULTIWORD.getLabel());
         } else {
-            lexiconCreationControllerFormDetail.getLemma().setType(OntoLexEntity.Class.WORD.getLabel());
+            if (lemmaType.equals("Affix")) {
+                lexiconCreationControllerFormDetail.getLemma().setType(OntoLexEntity.Class.AFFIX.getLabel());
+            } else {
+                lexiconCreationControllerFormDetail.getLemma().setType(OntoLexEntity.Class.WORD.getLabel());
+            }
         }
         lexiconCreationControllerFormDetail.setNewAction(true);
     }
 
     public void resetLexicalEntry() {
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
         lexiconCreationControllerSenseDetail.resetSenseDetails();
         lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
         lexiconCreationControllerSenseDetail.setSenseToolbarRendered(false);

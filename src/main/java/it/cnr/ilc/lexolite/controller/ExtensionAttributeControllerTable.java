@@ -151,6 +151,7 @@ public class ExtensionAttributeControllerTable extends BaseController implements
             this.active = ea.isActive();
         }
 
+
         public Long getId() {
             return id;
         }

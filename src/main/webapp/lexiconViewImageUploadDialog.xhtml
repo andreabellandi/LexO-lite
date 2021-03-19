@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="lexiconImageUploadPanel" widgetVar="dlgLexiconUploadImage" header="#{label['lexiconImage.header']} of #{imageController.lemma}" 
+              resizable="false" closable="true"  width="450"
+              modal="true">
+        <p:panel styleClass="lexiconTabView" widgetVar="basic">
+            <h:panelGrid styleClass="generalFilterBox" columns="1">
+                <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
+                    <h5>Source</h5>
+                    <p:inputText value="#{imageController.source}" size="45"/>
+                    <h5>Date</h5>
+                    <p:inputText  value="#{imageController.date}" size="20"/>
+                    <h5>Description</h5>
+                    <p:inputText value="#{imageController.description}" size="45"/>
+                </h:panelGrid>
+            </h:panelGrid>
+        </p:panel>
+
+        <h:form enctype="multipart/form-data">
+            <p:fileUpload listener="#{imageController.handleFileUpload}" mode="advanced" dragDropSupport="false"
+                          onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide();PF('dlgLexiconUploadImage').hide()"
+                          sizeLimit="1000000" fileLimit="1" allowTypes="/(\.|\/)(png)$/" 
+                          update=":editViewTab:lexiconSenseDetailForm:SenseDataList :systemMessage"
+                          validateContentType="true" accept=".png">
+            </p:fileUpload>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

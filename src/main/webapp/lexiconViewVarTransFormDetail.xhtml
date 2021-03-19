@@ -80,8 +80,7 @@
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          disabled="#{lexRel.deleteButtonDisabled}"
                                          update=":editViewTab:lexiconVarTransFormDetailForm:LemmaVarTransPanelGrid 
-                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons
-                                         :editViewTab:lexiconRelationDetailForm"
+                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"
                                          actionListener="#{lexiconControllerVarTransFormDetail.removeLexicalRelation(lexRel)}"/> 
                     </h:panelGrid>
 
@@ -123,8 +122,7 @@
                         <p:commandButton title="Delete lexical relation" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          disabled="#{reifLexRel.deleteButtonDisabled}"
                                          update=":editViewTab:lexiconVarTransFormDetailForm:LemmaVarTransPanelGrid 
-                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons
-                                         :editViewTab:lexiconRelationDetailForm"
+                                         :editViewTab:lexiconVarTransFormDetailForm:lemmaVarTransButtons"
                                          actionListener="#{lexiconControllerVarTransFormDetail.removeReifLexicalRelation(reifLexRel)}"/> 
                     </h:panelGrid>
 

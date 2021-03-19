@@ -18,10 +18,13 @@ public class SenseData implements Serializable {
     private boolean deleteButtonDisabled;
     private String name;
     private String note;
+
+    // array of images
+    private ArrayList<ImageData> images;
+
     // if view button is true a reference has been specified, else it is false
     private Openable OWLClass;
     private ReferenceMenuTheme themeOWLClass;
-    // private ArrayList<Openable> scientificName;
     private String definition;
     private int filedMaxLenght;
 
@@ -36,6 +39,9 @@ public class SenseData implements Serializable {
 
     // Melchuk's lexical functions
     private ArrayList<SenseData.LexicalFunction> lexicalFunctions;
+
+    // attribute extension
+    private ArrayList<LemmaData.ExtensionAttributeIstance> extensionAttributeInstances = new ArrayList();
 
     public SenseData() {
         this.saveButtonDisabled = true;
@@ -53,6 +59,23 @@ public class SenseData implements Serializable {
         this.ontoMap = null;
         this.subOntoMap = new ArrayList();
         this.lexicalFunctions = new ArrayList();
+        this.images = new ArrayList<>();
+    }
+
+    public ArrayList<LemmaData.ExtensionAttributeIstance> getExtensionAttributeInstances() {
+        return extensionAttributeInstances;
+    }
+
+    public void setExtensionAttributeInstances(ArrayList<LemmaData.ExtensionAttributeIstance> extensionAttributeInstances) {
+        this.extensionAttributeInstances = extensionAttributeInstances;
+    }
+
+    public ArrayList<ImageData> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<ImageData> images) {
+        this.images = images;
     }
 
     public ReferenceMenuTheme getThemeOWLClass() {

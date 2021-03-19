@@ -51,8 +51,6 @@ public class StatisticsController extends BaseController implements Serializable
     @Inject
     private LexiconControllerSenseDetail lexiconCreationViewSenseDetail;
     @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
-    @Inject
     private LexiconControllerDictionary lexiconExplorationControllerDictionary;
     @Inject
     private LexiconManager lexiconManager;

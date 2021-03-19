@@ -28,6 +28,7 @@ import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LemmaData.Word;
@@ -56,8 +57,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
     @Inject
     private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
-    @Inject
-    private LexiconControllerLinkedLexicalEntryDetail lexiconCreationControllerRelationDetail;
 
     @Inject
     private LexiconManager lexiconManager;
@@ -383,7 +382,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
-        lexiconCreationControllerRelationDetail.setActiveTab(0);
     }
 
     public void onSelect(NodeSelectEvent event) {
@@ -462,13 +460,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             lexiconCreationControllerFormDetail.setLocked(false);
             lexiconCreationControllerSenseDetail.setLocked(false);
         }
-        // unlock the previous relational lexical entry
-        unlocked = lexiconManager.unlock();
-        if (unlocked) {
-            log(Level.INFO, loginController.getAccount(), "UNLOCK the lexical entry related to " + entry);
-            lexiconCreationControllerRelationDetail.setLocker("");
-            lexiconCreationControllerRelationDetail.setLocked(false);
-        }
         // check if the lexical entry is available and lock it
         boolean locked = lexiconManager.checkForLock(entry);
         if (locked) {
@@ -522,7 +513,6 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerFormDetail.setLemmaRendered(false);
         lexiconCreationControllerFormDetail.resetFormDetails();
         lexiconCreationControllerSenseDetail.resetSenseDetails();
-        lexiconCreationControllerRelationDetail.resetRelationDetails();
         lexiconCreationControllerSenseDetail.setSenseRendered(false);
         lexiconCreationOntologyDetailController.setOntologyClassRendered(false);
         lexiconCreationControllerVarTransFormDetail.setVarTransRendered(false);

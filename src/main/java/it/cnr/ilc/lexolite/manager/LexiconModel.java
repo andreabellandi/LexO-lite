@@ -89,7 +89,7 @@ public class LexiconModel extends BaseController {
 
     public LexiconModel(FileUploadEvent f) {
         manager = OWLManager.createOWLOntologyManager();
-        try (InputStream inputStream = f.getFile().getInputstream()) {
+        try (InputStream inputStream = f.getFile().getInputStream()) {
             ontology = manager.loadOntologyFromOntologyDocument(inputStream);
             factory = manager.getOWLDataFactory();
             setPrefixes();
@@ -172,7 +172,7 @@ public class LexiconModel extends BaseController {
     private void setMoprhology(OWLNamedIndividual le, OWLNamedIndividual cf, LemmaData ld) {
         addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), cf, ld.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         if (!ld.getPoS().equals(Label.UNSPECIFIED_POS)) {
-            if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+            if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || ld.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
                 addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", ld.getPoS());
             } else {
                 addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", getMultiwordPoS(ld.getPoS()));
@@ -377,7 +377,7 @@ public class LexiconModel extends BaseController {
     private void updateMorphology(OWLNamedIndividual entrySubject, OWLNamedIndividual subject, LemmaData oldLemma, LemmaData newLemma) {
         updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
 
-        if (oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", oldLemma.getPoS(), newLemma.getPoS(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         } else {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", getMultiwordPoS(oldLemma.getPoS()), getMultiwordPoS(newLemma.getPoS()), pm.getPrefixName2PrefixMap().get("lexinfo:"));
@@ -934,6 +934,7 @@ public class LexiconModel extends BaseController {
         OWLNamedIndividual subject = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + _subject));
         updateFormPhonetic(subject, oldForm.getFormPhoneticRep(), newForm.getFormPhoneticRep());
         updateMorphology(subject, oldForm, newForm);
+        updateExtensionAttribute(subject, oldForm.getExtensionAttributeInstances(), newForm.getExtensionAttributeInstances());
     }
 
     private void updateFormPhonetic(OWLNamedIndividual subject, String oldPhonetic, String newPhonetic) {
@@ -1058,7 +1059,7 @@ public class LexiconModel extends BaseController {
         String entryInstance = ld.getIndividual().replace("_lemma", "_entry");
         OWLNamedIndividual lemma = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + ld.getIndividual()));
         OWLNamedIndividual lexicalEntry = factory.getOWLNamedIndividual(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + entryInstance));
-        if (!ld.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
+        if (!ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) && !ld.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
             deleteMultiwordDecomposition(ld);
         }
         OWLEntityRemover remover = new OWLEntityRemover(Collections.singleton(ontology));

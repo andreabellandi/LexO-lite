@@ -104,7 +104,7 @@ public class AccountControllerTable extends BaseController implements Serializab
     }
 
     public void onFilter(FilterEvent event) {
-        log(Level.INFO, loginController.getAccount(), "filter account table by " + event.getFilters());
+        log(Level.INFO, loginController.getAccount(), "filter account table by " + event.getFilterBy());
     }
 
     public void cancelEditAction(AccountData accountData, String what) {
