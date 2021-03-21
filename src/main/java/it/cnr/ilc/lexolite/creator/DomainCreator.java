@@ -65,10 +65,7 @@ public class DomainCreator extends HttpServlet {
 
     private void preset() {
         createAccountType();
-        createAdmin("Falvia Sciolette","flavia","flavia");
-        createAdmin("Emiliano Giovannetti","emiliano","emiliano");
-        createAdmin("Davide Saponaro","davide","davide");
-        createAdmin("LexOAdmin","admin","passeuorde76");
+        createAdmin("LexOAdmin","admin","admin");
     }
 
     private void createAccountType() {

@@ -47,7 +47,7 @@ public class ExtensionAttributeManager implements Serializable {
         ea.setAccount(null);
         ea.setCardinality("single");
         ea.setName("");
-        ea.setDomain("Lexical entry");
+        ea.setDomain("Lexical Entry");
         ea.setLabel("");
         ea.setRelation("owl:topDataProperty");
         ea.setType("string");
