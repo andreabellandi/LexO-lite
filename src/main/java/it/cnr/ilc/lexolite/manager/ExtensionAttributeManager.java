@@ -60,7 +60,7 @@ public class ExtensionAttributeManager implements Serializable {
         if (fieldName.contains("attributeName")) {
             ea.setName(value);
         } else if (fieldName.contains("attributeLabel")) {
-            ea.setLabel(value);
+            ea.setLabel(value.replaceAll("\\s+", ""));
         } else if (fieldName.contains("attributeRelation")) {
             ea.setRelation(value);
         } else if (fieldName.contains("attributeDatatype")) {
