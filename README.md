@@ -23,6 +23,9 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 </li>
   </ul>
 <li>
+   <a href="#how-to-dockerize">How to dockerize LexO-lite</a>
+</li>
+<li>
     <a href="#how-to-use">How to use</a>
 </li>
 <ul>
@@ -147,7 +150,7 @@ Then you have to restart tomcat.
   </p>
 
 
-### How to dockerize LexO-lite
+<a name="how-to-dockerize"><h3>How to dockerize LexO-lite</h3></a>
 
 There is the possibility of being able to 'dockerize' the application through the use of a stack written in YAML language to create the suitable environment to host the application. To do this, you need to have docker and docker-compose installed on your machine in order to set up the environment. Below are the instructions to be able to carry out the steps correctly.
 
