@@ -146,6 +146,159 @@ Then you have to restart tomcat.
   
   </p>
 
+
+### How to dockerize LexO-lite
+
+There is the possibility of being able to 'dockerize' the application through the use of a stack written in YAML language to create the suitable environment to host the application. To do this, you need to have docker and docker-compose installed on your machine in order to set up the environment. Below are the instructions to be able to carry out the steps correctly.
+
+#### Folder items
+
+In the 'docker' folder there are the following files and folders:
+
+- docker-compose.yml: is the file that contains the instructions to pass to docker to pull up the environment to run the application
+- db (folder): contains an SQL file that creates the LexO user database and assigns the user 'admin' all the privileges on the operations on the db.
+- lexicon (folder): contains the configuration files to be copied to the docker machine
+- tomcat (folder): contains the application files to be copied into the tomcat docker container
+
+#### Step 1: Change the Hibernate settings
+
+The first thing to do is to change the Hibernate settings to reach the database. Since the docker db is not the same as the physical machine, you have to change the address for the jdbc driver to communicate with the mysql database. If you look at the docker-compose.yml file, you can see that the service for the database is defined according to these details:
+
+```
+db:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_DATABASE: LexO_users
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+     - ./db:/docker-entrypoint-initdb.d
+     - ./persistent-data:/var/lib/mysql
+```
+So, you need to change the settings present in the `hibernate.cfg.xml` file present in the `src/main/resources` path by modifying the following lines:
+
+```
+<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
+<property name="hibernate.connection.username">root</property>
+<property name="hibernate.connection.password">root</property>
+```
+
+Change these lines by inserting the data concerning the docker machine and the data concerning the db settings configured in the `docker-compose.yml` file:
+
+```
+<property name="hibernate.connection.url">jdbc:mysql://db:3306/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
+<property name="hibernate.connection.username">admin</property>
+<property name="hibernate.connection.password">admin</property>
+```
+
+In this way, Hibernate will have the correct coordinates to be able to reach the mysql database. At this point, you need to go back to the root path of the project (where is located the `pom.xml` file) and run the `mvn install` command to compile the project and get the new files in the path `/target/LexO-lite-1.0-SNAPSHOT`.
+
+#### Step 2: Copy the webapp files to tomcat folder
+
+After compiling the project, new files will be generated in the LexO-lite-1.0-SNAPSHOT folder. The next step is to copy the files present in the path `/target/LexO-lite-1.0-SNAPSHOT` into the path `/docker/tomcat/webapps/LexO-lite`.
+
+#### Step 3: Launch docker-compose command
+
+If you have done the previous steps, your next step is to finally run the `docker-compose up` command in the same folder where the` docker-compose.yml` file is located. With this command, docker will create two containers:
+
+- The first will be the Tomcat 9 container with version 1.8 of the Java JDK installed, with port 8080 exposed
+
+- The second container will be that of MySQL in version 5.7 (compatible with application requirements), with port 3306 exposed
+
+In addition to the containers, volumes will be created which will house the files stored in the `db`,` tomcat` and `lexicon` folders. It will also create an additional volume called `persistent-data` (the folder will be created automatically once the command is launched and once the containers are started correctly) which will take care of making the data persistent if you decide to delete the containers or make radical changes to the project.
+
+##### WARNING: POSSIBLE ERRORS
+
+Most likely, you will already have some version of MySQL installed on your machine, or you will have some application that occupies one of the two ports. You may run into one of these errors:
+
+```
+$ docker-compose up
+Creating network "docker_default" with the default driver
+Creating mysql_db ... 
+Creating mysql_db ... error
+
+ERROR: for mysql_db  Cannot start service db: driver failed programming external connectivity on endpoint mysql_db (3298c01b50e2b599bdecb16ea83e1b402467525b9d7c518e902d10eac9e318cc): Error starting userland proxy: listen tcp 0.0.0.0:3306: bind: address already in use
+
+ERROR: for db  Cannot start service db: driver failed programming external connectivity on endpoint mysql_db (3298c01b50e2b599bdecb16ea83e1b402467525b9d7c518e902d10eac9e318cc): Error starting userland proxy: listen tcp 0.0.0.0:3306: bind: address already in use
+ERROR: Encountered errors while bringing up the project.
+```
+
+This is because the version of MySQL that you have installed locally on your machine interferes with the creation of the MySQL container because port 3306 has already been assigned. The same could happen with port 8080, having an error like this:
+
+```
+$ docker-compose up
+Recreating mysql_db ... done
+Creating tomcat9    ... 
+Creating tomcat9    ... error
+
+ERROR: for tomcat9  Cannot start service web: driver failed programming external connectivity on endpoint tomcat9 (7c92edb759c0ffb61e679d403f6684ee7ab96e6a6d6191c533c55e08cebee4db): Error starting userland proxy: listen tcp 0.0.0.0:8080: bind: address already in use
+
+ERROR: for web  Cannot start service web: driver failed programming external connectivity on endpoint tomcat9 (7c92edb759c0ffb61e679d403f6684ee7ab96e6a6d6191c533c55e08cebee4db): Error starting userland proxy: listen tcp 0.0.0.0:8080: bind: address already in use
+ERROR: Encountered errors while bringing up the project.
+```
+
+This other error is due to a version of Tomcat you have installed on your machine that interferes with the creation of the container because port 8080 has already been assigned.
+
+To overcome this problem, just change the entry ports of the containers to be able to access them from the outside which have been defined in the file `docker-compose.yml`:
+- MySQL: modify the `ports` field by inserting the values `3307: 3306`
+- Tomcat: modify the `ports` field by inserting the values `8081: 8080`
+
+The final version of the `docker-compose.yml` file should look like this:
+
+```
+version: '3.7'
+
+services:
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    environment:
+      MYSQL_DATABASE: LexO_users
+      MYSQL_ROOT_PASSWORD: nimda
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3307:3306"
+    volumes:
+     - ./db:/docker-entrypoint-initdb.d
+     - ./persistent-data:/var/lib/mysql
+
+  web:
+    image: tomcat:9.0.44-jdk8-corretto
+    container_name: tomcat9
+    environment:
+      JDBC_USER: admin
+      JDBC_PASS: admin
+    ports:
+     - "8081:8080"
+    volumes:
+     - ./tomcat/webapps:/usr/local/tomcat/webapps
+     - ./lexicon/mylexicon.owl:/root/.LexO-lite/mylexicon.owl
+     - ./lexicon/lexolite.properties:/root/.LexO-lite/lexolite.properties
+    links:
+      - db
+    depends_on:
+      - db
+```
+
+Try to running the `docker-compose up` command again and you should have no more errors.
+
+#### Step 4: Run the servlet
+
+Once both containers are started, it will be necessary to launch the servlets needed to create the user tables to make the application work. To launch them, if you have changed the tomcat ports, you need to use the following url:
+
+`http://localhost:8081/LexO-lite/servlet/domainCreator?command=create`
+
+The same if you want to run the `preset` servlet:
+
+`http://localhost:8081/LexO-lite/servlet/domainCreator?command=preset`
+
+
 <a name="how-to-use"><h3>How to use</h3></a>
 <p>
 <a name="create-users"><h4>Create users</h4></a>
