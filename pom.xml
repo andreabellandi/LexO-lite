@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.cnr.ilc.lc</groupId>
     <artifactId>LexO-lite</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>war</packaging>
     <name>LexO-lite</name>
 
@@ -13,12 +13,6 @@
     </properties>
 
     <dependencies>
-        <!--        <dependency>
-            <groupId>it.cnr.ilc.lc</groupId>
-            <artifactId>LexO-lite-Importer</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>primefaces-extensions</artifactId>
