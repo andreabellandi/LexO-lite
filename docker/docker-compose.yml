@@ -6,30 +6,28 @@ services:
     image: mysql:5.7
     container_name: mysql_db
     environment:
-      MYSQL_DATABASE: LexO_users
+      #MYSQL_DATABASE: LexO_users
       MYSQL_ROOT_PASSWORD: nimda
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
      - ./db:/docker-entrypoint-initdb.d
-     - ./persistent-data:/var/lib/mysql
+     - ./mysql:/var/lib/mysql
 
   web:
-    image: tomcat:9.0.44-jdk8-corretto
+    image: tomcat:9.0-jdk8
     container_name: tomcat9
-    # Environment variables do not appear to be getting loaded the first time Tomcat starts!
     environment:
       JDBC_USER: admin
       JDBC_PASS: admin
+      #JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n --> for debug
     ports:
-     - "8080:8080"
+     - "8081:8080"
+     #- "8000:8000" --> for debug
     volumes:
      - ./tomcat/webapps:/usr/local/tomcat/webapps
-     - ./lexicon/mylexicon.owl:/root/.LexO-lite/mylexicon.owl
-     - ./lexicon/lexolite.properties:/root/.LexO-lite/lexolite.properties
-    links:
-      - db
+     - ./lexicon:/root/.LexO-lite/
     depends_on:
       - db
