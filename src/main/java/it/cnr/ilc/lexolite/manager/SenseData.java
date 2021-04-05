@@ -642,4 +642,5 @@ public class SenseData implements Serializable {
         }
 
     }
+
 }

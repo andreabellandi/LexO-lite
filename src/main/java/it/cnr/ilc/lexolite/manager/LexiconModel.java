@@ -20,6 +20,7 @@ import it.cnr.ilc.lexolite.manager.SenseData.ReifiedSenseRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.ReifiedTranslationRelation;
 import it.cnr.ilc.lexolite.manager.SenseData.SenseRelation;
 import it.cnr.ilc.lexolite.util.LexiconUtil;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,16 +29,22 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.singleton;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.primefaces.event.FileUploadEvent;
@@ -75,7 +82,7 @@ import org.semanticweb.owlapi.util.OWLEntityRenamer;
  *
  * @author andreabellandi
  */
-public class LexiconModel extends BaseController {
+public class LexiconModel extends BaseController implements Serializable {
 
     @Inject
     private OntologyManager ontologyManager;
@@ -241,7 +248,7 @@ public class LexiconModel extends BaseController {
     }
 
     // write all triples about lemma entry with RENAMING
-    public void updateLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
+    public AttestationRenaming updateLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
         String oldLemmaInstance = oldLemma.getIndividual();
         String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
         String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
@@ -251,13 +258,16 @@ public class LexiconModel extends BaseController {
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
         OWLNamedIndividual le = getIndividual(oldEntryInstance);
         // form individuals renaming
-        formRenaming(oldLemma, newLemma, le);
+        ArrayList<AttestationRenaming.AttestationFormUris> attestationFormUris = formRenaming(oldLemma, newLemma, le);
+        attestationFormUris.add(new AttestationRenaming.AttestationFormUris(oldLemmaInstance, newLemmaInstance, oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr()));
         // sense individuals renaming
-        senseRenaming(oldLemma, newLemma, le);
+        ArrayList<AttestationRenaming.AttestationSenseUris> attestationSenseUris = senseRenaming(oldLemma, newLemma, le);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
+        return (new AttestationRenaming(attestationFormUris, attestationSenseUris));
     }
 
-    private void formRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
+    private ArrayList<AttestationRenaming.AttestationFormUris> formRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
+        ArrayList<AttestationRenaming.AttestationFormUris> attestationFormUris = new ArrayList();
         OWLObjectProperty otherForm = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.ObjectProperty.OTHERFORM.getLabel());
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, otherForm, ontology).collect(Collectors.toList())) {
             String formInstance = i.toStringID().replace(pm.getPrefixName2PrefixMap().get("lexicon:"), "");
@@ -276,18 +286,24 @@ public class LexiconModel extends BaseController {
                 }
             }
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + formInstance));
+            attestationFormUris.add(new AttestationRenaming.AttestationFormUris(i.toStringID().split("#")[1], formInstance, null, null));
         }
+        return attestationFormUris;
     }
 
-    private void senseRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
+    private ArrayList<AttestationRenaming.AttestationSenseUris> senseRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
+        ArrayList<AttestationRenaming.AttestationSenseUris> attestationSenseUris = new ArrayList();
         OWLObjectProperty sense = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.ObjectProperty.SENSE.getLabel());
-        int senseNumb = 1;
+//        int senseNumb = 1;
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, sense, ontology).collect(Collectors.toList())) {
             String senseInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(),
                     newLemma.getPoS().isEmpty() ? Label.UNSPECIFIED_POS : newLemma.getPoS(), oldLemma.getLanguage(), "sense");
+            int senseNumb = Integer.parseInt(i.toStringID().split("_sense")[1]);
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + senseInstance + senseNumb));
-            senseNumb++;
+            attestationSenseUris.add(new AttestationRenaming.AttestationSenseUris(i.toStringID().split("#")[1], senseInstance + senseNumb));
+//            senseNumb++;
         }
+        return attestationSenseUris;
     }
 
     private void synsemRenaming(LemmaData oldLemma, LemmaData newLemma, OWLNamedIndividual le) {
@@ -873,13 +889,14 @@ public class LexiconModel extends BaseController {
     }
 
     // UPDATE multiwordLemma with renaming
-    public void updateMultiwordLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
+    public AttestationRenaming updateMultiwordLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
         // delete the old constituents
         deleteMultiwordDecomposition(oldLemma);
         // update the oppurtune lemma fields
-        updateLemmaWithRenaming(oldLemma, newLemma);
+        AttestationRenaming renamings = updateLemmaWithRenaming(oldLemma, newLemma);
         // create the new constituents
         createMultiwordDecomposition(newLemma);
+        return renamings;
     }
 
     private void deleteMultiwordDecomposition(LemmaData oldLemma) {
@@ -922,11 +939,12 @@ public class LexiconModel extends BaseController {
     }
 
     // write all triples about a form with RENAMING
-    public void addFormWithRenaming(FormData oldForm, FormData newForm, LemmaData ld) {
+    public String addFormWithRenaming(FormData oldForm, FormData newForm, LemmaData ld) {
         String oldFormInstance = oldForm.getIndividual();
         String newFormInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), newForm.getFormWrittenRepr(), "form");
         updateForm(oldForm, newForm, ld);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldFormInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newFormInstance));
+        return newFormInstance;
     }
 
     public void updateForm(FormData oldForm, FormData newForm, LemmaData ld) {
@@ -1104,6 +1122,7 @@ public class LexiconModel extends BaseController {
         }
         //saveOntologyReference(sbj, oldSense.getOWLClass(), newSense.getOWLClass());
         saveOntologyReference(sbj, oldSense.getThemeOWLClass(), newSense.getThemeOWLClass());
+        updateExtensionAttribute(sbj, oldSense.getExtensionAttributeInstances(), newSense.getExtensionAttributeInstances());
     }
 
     private void saveOntologyReference(OWLNamedIndividual sbj, Openable oldR, Openable newR) {
@@ -1239,8 +1258,16 @@ public class LexiconModel extends BaseController {
         } catch (OWLOntologyStorageException ex) {
             Logger.getLogger(LexiconModel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
-        return new DefaultStreamedContent(in, "application/txt", fileName);
+//        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
+//        return new DefaultStreamedContent(in, "application/txt", fileName);
+        return DefaultStreamedContent.builder()
+                .contentType("application/txt")
+                .name(fileName)
+                .stream(() -> {
+                    return new ByteArrayInputStream(baos.toByteArray());
+                })
+                .build();
+
     }
 
     public synchronized void persist() throws IOException, OWLOntologyStorageException {
@@ -1256,6 +1283,16 @@ public class LexiconModel extends BaseController {
                 + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY))) {
             manager.saveOntology(ontology, fos);
             Runtime.getRuntime().exec("gzip " + bkp.getAbsolutePath());
+            String[] cmd = {"/bin/sh", "-c", "grep \"rdf:Description\" " + System.getProperty("user.home") + Label.LEXO_FOLDER
+                + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY) + " -m1 "};
+            Process p = Runtime.getRuntime().exec(cmd);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            if (stdInput.readLine() != null) {
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.getExternalContext().getFlash().setKeepMessages(true);
+//                log(org.apache.log4j.Level.ERROR, loginController.getAccount(), "WRITER ERROR !!!");
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "NO UTF-8 Char inserted !!!", "Please, stop your work and contact LexO administrators !"));
+            }
         }
         System.out.println("[" + getTimestamp() + "] LexO-lite : persist end");
     }

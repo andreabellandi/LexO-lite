@@ -148,7 +148,7 @@ public class LexiconServices {
         Matcher matcher = pattern.matcher(id);
         if (matcher.find()) {
             fds = lexiconManager.getFormsOfLemma(id, matcher.group(1).split("_lemma")[0], null);
-            sds = lexiconManager.getSensesOfLemma(id, null, null);
+            sds = lexiconManager.getSensesOfLemma(id, null, null, null);
         } else {
             fds = null;
             sds = null;
@@ -261,7 +261,7 @@ public class LexiconServices {
     // invocation: lexicon/lemmaByRel?entry=acorus&rel=translation
     public Response getLemmaByRel(@QueryParam("entry") String entry, @QueryParam("rel") String rel, @QueryParam("lang") String lang) {
         JsonObject senseNumber = new JsonObject();
-        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null, null);
+        List<SenseData> senses = lexiconManager.getSensesOfLemma(entry + "_" + lang + "_lemma", null, null, null);
         for (SenseData sense : senses) {
             JsonObject lemmas = new JsonObject();
             for (SenseRelation sr : sense.getSenseRels()) {

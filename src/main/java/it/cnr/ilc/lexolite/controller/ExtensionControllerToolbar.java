@@ -32,7 +32,7 @@ public class ExtensionControllerToolbar extends BaseController implements Serial
     }
 
     public void removeExtension() {
-
+        
     }
 
 }

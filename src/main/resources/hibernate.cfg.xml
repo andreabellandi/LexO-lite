@@ -7,7 +7,7 @@
         <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_VQusers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
         <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_mellon_users?characterEncoding=UTF-8&amp;useSSL=false</property>-->
         <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
-         <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_Theresausers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
+        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_Theresausers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">root</property><!--(;qs(d#ez6oE-->
         <property name="hibernate.current_session_context_class">thread</property>
@@ -17,7 +17,7 @@
         <property name="hibernate.c3p0.max_statements">200</property>
         <property name="hibernate.c3p0.idle_test_period">3000</property>
         <property name="hibernate.show_sql">false</property>
-<!--        <property name="hibernate.hbm2ddl.auto">validate</property>-->
+        <!--        <property name="hibernate.hbm2ddl.auto">validate</property>-->
 
         <mapping class="it.cnr.ilc.lexolite.domain.SuperEntity"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Account"/>
@@ -26,6 +26,8 @@
         <mapping class="it.cnr.ilc.lexolite.domain.AccountType"/>
         <mapping class="it.cnr.ilc.lexolite.domain.LanguageColor"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Image"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.Attestation"/>
+        <mapping class="it.cnr.ilc.lexolite.domain.Document"/>
 
     </session-factory>
 </hibernate-configuration>

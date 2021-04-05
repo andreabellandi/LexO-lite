@@ -31,6 +31,8 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
     @Inject
     private LexiconControllerSenseDetail lexiconControllerSenseDetail;
     @Inject
+    private LexiconControllerAttestation lexiconControllerAttestation;
+    @Inject
     private LexiconControllerVarTransFormDetail lexiconControllerVarTransFormDetail;
     @Inject
     private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
@@ -43,7 +45,7 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
     @Inject
     private PropertyValue propertyValue;
 
-    // Possible values: Core, VarTrans, SynSem
+    // Possible values: Core, VarTrans, SynSem, Attestation
     private String lexicalAspectActive = "Core";
     private boolean rendered = true;
 
@@ -77,6 +79,7 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                     lexiconControllerSynSemFormDetail.setSynSemRendered(false);
                     lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
                     lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    lexiconControllerAttestation.setAttestationViewRendered(false);
                     break;
                 case "Variation and Translation":
                     lexiconControllerFormDetail.setLemmaRendered(false);
@@ -86,6 +89,7 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                     lexiconControllerSynSemFormDetail.setSynSemRendered(false);
                     lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
                     lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    lexiconControllerAttestation.setAttestationViewRendered(false);
                     setVarTransEntryAndCopy();
                     lexiconControllerVarTransFormDetail.addLexicalRelations();
                     lexiconControllerVarTransSenseDetail.addSenseRelations();
@@ -98,9 +102,18 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                     lexiconControllerSynSemFormDetail.setSynSemRendered(true);
                     lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(true);
                     lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    lexiconControllerAttestation.setAttestationViewRendered(false);
                     setSynSemEntryAndCopy();
                     lexiconControllerSynSemFormDetail.addSyntax();
                     lexiconControllerSynSemSenseDetail.addSemantics();
+                    break;
+                case "Attestation":
+                    lexiconControllerFormDetail.setLemmaRendered(false);
+                    lexiconControllerSenseDetail.setSenseRendered(false);
+                    lexiconControllerVarTransFormDetail.setVarTransRendered(false);
+                    lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+                    lexiconControllerOntologyDetail.setOntologyClassRendered(false);
+                    lexiconControllerAttestation.setAttestationViewRendered(true);
                     break;
                 default:
                     break;

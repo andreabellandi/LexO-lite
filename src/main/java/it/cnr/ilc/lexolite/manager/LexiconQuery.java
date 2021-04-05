@@ -417,6 +417,13 @@ public class LexiconQuery extends BaseController {
                 + LexicalQuery.FORM_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_FORM_", form);
         return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
     }
+    
+    private String getSenseExtAtt(String sense, String attribute) {
+        String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
+                + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
+                + LexicalQuery.SENSE_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_SENSE_", sense);
+        return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
+    }
 
     private String getLemmaNote(String lemma) {
         String note = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_NOTE, "_LEMMA_", lemma);
@@ -570,7 +577,7 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    public ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l, ImageManager imageManager) {
+    public ArrayList<SenseData> getSensesOfLemma(String lemma, List<ReferenceMenuTheme> l, ImageManager imageManager, ArrayList<ExtensionAttribute> alea) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_LEMMA.replace("_LEMMA_", lemma)));
         Collections.sort(results);
@@ -578,7 +585,7 @@ public class LexiconQuery extends BaseController {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
                 sd.setImages(getImages(imageManager.loadImages(sense)));
-                senseData(sense, sd, l);
+                senseData(sense, sd, l, alea);
                 sdList.add(sd);
             }
         }
@@ -723,7 +730,7 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l, ImageManager imageManager) {
+    public ArrayList<SenseData> getSensesOfForm(String form, List<ReferenceMenuTheme> l, ImageManager imageManager, ArrayList<ExtensionAttribute> alea) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSES_OF_FORM.replace("_FORM_", form)));
         Collections.sort(results);
@@ -731,7 +738,7 @@ public class LexiconQuery extends BaseController {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
                 sd.setImages(getImages(imageManager.loadImages(sense)));
-                senseData(sense, sd, l);
+                senseData(sense, sd, l, alea);
                 sdList.add(sd);
             }
         }
@@ -757,7 +764,7 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    private void senseData(String sense, SenseData sd, List<ReferenceMenuTheme> l) {
+    private void senseData(String sense, SenseData sd, List<ReferenceMenuTheme> l, ArrayList<ExtensionAttribute> alea) {
         sd.setName(sense);
         sd.setDefinition(getDefinition(sense));
         sd.setNote(getSenseNote(sense));
@@ -766,6 +773,25 @@ public class LexiconQuery extends BaseController {
         setFieldMaxLenght(sd.getName(), sd);
         setFieldMaxLenght(sd.getOWLClass(), sd);
         sd.setFiledMaxLenght((sd.getFiledMaxLenght() > FIELD_MAX_LENGHT) ? FIELD_MAX_LENGHT : sd.getFiledMaxLenght());
+        // check for attribute extensions *** let assume that the attribute is single value !!! ***
+        if (alea != null) {
+            ArrayList<ExtensionAttributeIstance> aleai = new ArrayList();
+            for (ExtensionAttribute ea : alea) {
+                if (ea.getDomain().equals("Lexical Entry") || ea.getDomain().equals("Sense")) {
+                    String val = getSenseExtAtt(sense, ea.getName());
+                    if (!val.isEmpty()) {
+                        ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+                        eai.setDisabled(true);
+                        eai.setLabel(ea.getLabel());
+                        eai.setValue(val);
+                        eai.setName(ea.getName());
+                        eai.setType(ExtensionAttributeIstance.DataType.STRING);
+                        aleai.add(eai);
+                    }
+                }
+            }
+            sd.setExtensionAttributeInstances(aleai);
+        }
 
     }
 
@@ -789,7 +815,7 @@ public class LexiconQuery extends BaseController {
         }
     }
 
-    public ArrayList<SenseData> getOtherSenses(String sense, List<ReferenceMenuTheme> l, ImageManager imageManager) {
+    public ArrayList<SenseData> getOtherSenses(String sense, List<ReferenceMenuTheme> l, ImageManager imageManager, ArrayList<ExtensionAttribute> alea) {
         ArrayList<SenseData> sdList = new ArrayList<>();
         ArrayList<String> results = getList(processQuery(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.OTHER_INSTANCES_OF_SENSES.replace("_SENSE_", sense)));
         Collections.sort(results);
@@ -797,7 +823,7 @@ public class LexiconQuery extends BaseController {
             if (!results.get(0).equals(Label.NO_ENTRY_FOUND)) {
                 SenseData sd = new SenseData();
                 sd.setImages(getImages(imageManager.loadImages(sense)));
-                senseData(s, sd, l);
+                senseData(s, sd, l, alea);
                 sdList.add(sd);
             }
         }
@@ -905,7 +931,7 @@ public class LexiconQuery extends BaseController {
         } catch (QueryEngineException ex) {
             LOG.fatal(ex);
         } catch (QueryParserException ex2) {
-            LOG.error("Error parsing {0}", ex2);
+            LOG.error("Error parsing " + q, ex2);
         }
         return getQueryResults(result);
     }

@@ -8,6 +8,8 @@ package it.cnr.ilc.lexolite.controller;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.domain.Authoring;
+import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
+import it.cnr.ilc.lexolite.manager.AttestationManager;
 import it.cnr.ilc.lexolite.manager.AuthoringManager;
 import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
@@ -34,6 +36,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
+import org.primefaces.event.MenuActionEvent;
+import org.primefaces.model.menu.DefaultMenuItem;
+import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.DefaultSeparator;
+import org.primefaces.model.menu.DefaultSubMenu;
+import org.primefaces.model.menu.MenuModel;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -47,9 +55,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
     @Inject
-    private LexiconControllerTabViewList lexiconControllerTabViewList;
-    @Inject
-    private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
+    private LexiconControllerAttestation lexiconControllerAttestation;
     @Inject
     private OntologyManager ontologyManager;
     @Inject
@@ -64,6 +70,8 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     private AuthoringManager authoringManager;
     @Inject
     private ImageController imageController;
+    @Inject
+    private AttestationManager attestationManager;
 
     private final List<SenseData> senses = new ArrayList<>();
     private final List<SenseData> sensesCopy = new ArrayList<>();
@@ -204,7 +212,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         _sd.setExtensionAttributeInstances(copyExtensionAttributeInstances(sd.getExtensionAttributeInstances()));
         return _sd;
     }
-    
+
     private ArrayList<LemmaData.ExtensionAttributeIstance> copyExtensionAttributeInstances(ArrayList<LemmaData.ExtensionAttributeIstance> aleai) {
         ArrayList<LemmaData.ExtensionAttributeIstance> _aleai = new ArrayList();
         for (LemmaData.ExtensionAttributeIstance eai : aleai) {
@@ -249,17 +257,23 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         senses.add(sd);
     }
 
-    public void addDefinition(SenseData sd) {
+    public void addDefinition() {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
         log(Level.INFO, loginController.getAccount(), "ADD empty definition to sense " + sd.getName());
         sd.setDefinition("");
     }
 
-    public void imageUpload(SenseData sd) {
+    public void imageUpload() {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
         log(Level.INFO, loginController.getAccount(), "OPEN image uploader for the sense " + sd.getName());
         imageController.setSelectedSense(sd);
     }
 
-    public void addSenseRelation(SenseData sd, String relType) {
+    public void addSenseRelation(String relType) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
         log(Level.INFO, loginController.getAccount(), "ADD empty " + relType + " relation to " + sd.getName());
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         rmt.setId(1);
@@ -273,6 +287,20 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             default:
         }
     }
+    
+    public void addAttestation() {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
+        log(Level.INFO, loginController.getAccount(), "ADD empty attestation to " + sd.getName());
+        lexiconControllerAttestation.setSelectedSense(sd);
+        lexiconControllerAttestation.setAttestation("");
+        lexiconControllerAttestation.setAttestedForm("");
+        lexiconControllerAttestation.setDictionaryPreferred(false);
+        lexiconControllerAttestation.setDocID("");
+        lexiconControllerAttestation.setForm("-1");
+        lexiconControllerAttestation.setPageNumber("");
+        lexiconControllerAttestation.setLineNumber("");
+    }
 
     public void addSense(String entry, String entryType) {
         senses.clear();
@@ -280,14 +308,17 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         ArrayList<SenseData> al = null;
         switch (entryType) {
             case "Lemma":
-                al = lexiconManager.getSensesOfLemma(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
+                al = lexiconManager.getSensesOfLemma(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities(),
+                        lexiconCreationControllerFormDetail.getExtensionAttributeList());
                 break;
             case "Form":
-                al = lexiconManager.getSensesOfForm(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
+                al = lexiconManager.getSensesOfForm(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities(),
+                        lexiconCreationControllerFormDetail.getExtensionAttributeList());
                 break;
             // it never happens because currently the "Sense" tab panel does not exist
             case "Sense":
-                al = lexiconManager.getSenses(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities());
+                al = lexiconManager.getSenses(entry, imageManager, ontologyManager.getOntologyModel() == null ? null : ontologyManager.ontologyEntities(),
+                        lexiconCreationControllerFormDetail.getExtensionAttributeList());
                 break;
         }
         senses.addAll(al);
@@ -304,6 +335,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
                 // it sets all sense relations as invalid (to be deleted)
                 log(Level.INFO, loginController.getAccount(), "DELETE Sense " + sd.getName());
                 lexiconManager.deleteSense(sd);
+                attestationManager.remove(sd.getName());
                 authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
                 info("template.message.deleteSense.summary", "template.message.deleteSense.description", sd.getName());
                 // remove the sense box
@@ -346,20 +378,6 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         info("template.message.saveSenseRelation.summary", "template.message.saveSenseRelation.description", sd.getName());
     }
 
-//    public void removeSenseRelation(SenseData sd, SenseData.Openable sdo, String relType) {
-//        switch (relType) {
-//            case "reference":
-//                log(Level.INFO, loginController.getAccount(), "REMOVE " + (sdo.getName().isEmpty() ? " empty reference" : sdo.getName()) + " (reference of " + sd.getName() + ")");
-//                sd.getOWLClass().setName("");
-//                sd.getOWLClass().setViewButtonDisabled(false);
-//                break;
-//            default:
-//        }
-//        if (!sdo.getName().isEmpty() || (relType.equals("reference"))) {
-//            sd.setSaveButtonDisabled(false);
-//        }
-//        relationPanelCheck(sdo.getName());
-//    }
     public void removeSenseRelation(SenseData sd, ReferenceMenuTheme rmt, String relType) {
         switch (relType) {
             case "reference":
@@ -458,4 +476,102 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         sd.getExtensionAttributeInstances().remove(eai);
         sd.setSaveButtonDisabled(false);
     }
+
+    // dynamic form menu creation
+    public MenuModel getAddSenseMenuModel(SenseData sd, int index) {
+
+        MenuModel addSenseMenuModel = new DefaultMenuModel();
+
+        DefaultMenuItem definition = new DefaultMenuItem();
+        definition.setValue("Add definition");
+        definition.setStyleClass("lexiconTabView");
+        definition.setIcon("fa fa-plus");
+        definition.setDisabled(!sd.getDefinition().equals(Label.NO_ENTRY_FOUND));
+        definition.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList");
+        definition.setCommand("#{lexiconControllerSenseDetail.addDefinition()}");
+        definition.setOnstart("PF('loadingDialog').show();");
+        definition.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        DefaultMenuItem image = new DefaultMenuItem();
+        image.setValue("Add image");
+        image.setStyleClass("lexiconTabView");
+        image.setIcon("fa fa-plus");
+        image.setDisabled(sd.getImages().size() > 1);
+        image.setUpdate("lexiconImageUploadPanel");
+        image.setCommand("#{lexiconControllerSenseDetail.imageUpload()}");
+        image.setOnstart("PF('loadingDialog').show();");
+        image.setOncomplete("setHeight();PF('dlgLexiconUploadImage').show();PF('loadingDialog').hide();");
+
+        DefaultMenuItem reference = new DefaultMenuItem();
+        reference.setValue("Add reference");
+        reference.setStyleClass("lexiconTabView");
+        reference.setIcon("fa fa-plus");
+        reference.setDisabled(!isOntologyEnabled() || !sd.getOWLClass().getName().isEmpty());
+        reference.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList");
+        reference.setCommand("#{lexiconControllerSenseDetail.addSenseRelation('reference')}");
+        reference.setOnstart("PF('loadingDialog').show();");
+        reference.setOncomplete("setHeight();PF('loadingDialog').hide()");
+
+        DefaultMenuItem attestation = new DefaultMenuItem();
+        attestation.setValue("Add attestation");
+        attestation.setStyleClass("lexiconTabView");
+        attestation.setIcon("fa fa-plus");
+        attestation.setDisabled(false);
+        attestation.setUpdate("newAttestationPanel");
+        attestation.setCommand("#{lexiconControllerSenseDetail.addAttestation()}");
+        attestation.setOnstart("PF('loadingDialog').show();");
+        attestation.setOncomplete("setHeight();PF('newAttestationDialog').show();PF('loadingDialog').hide();");
+        
+        addSenseMenuModel.getElements().add(definition);
+        addSenseMenuModel.getElements().add(image);
+        addSenseMenuModel.getElements().add(reference);
+        addSenseMenuModel.getElements().add(new DefaultSeparator());
+        addSenseMenuModel.getElements().add(attestation);
+        addSenseExtensionAttributeElement(addSenseMenuModel, sd, index);
+
+        addSenseMenuModel.generateUniqueIds();
+
+        return addSenseMenuModel;
+    }
+
+    private void addSenseExtensionAttributeElement(MenuModel addMenuModel, SenseData sd, int index) {
+        if (lexiconCreationControllerFormDetail.getExtensionAttributeList().size() > 0) {
+            for (ExtensionAttribute ea : lexiconCreationControllerFormDetail.getExtensionAttributeList()) {
+                if (ea.getDomain().equals("Lexical Entry") || ea.getDomain().equals("Sense")) {
+                    DefaultMenuItem dmi = new DefaultMenuItem();
+                    dmi.setValue("Add " + ea.getLabel());
+                    dmi.setStyleClass("lexiconTabView");
+                    dmi.setIcon("fa fa-user-plus");
+                    dmi.setDisabled(setDisabled(ea, sd));
+                    dmi.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList :systemMessage");
+                    dmi.setCommand("#{lexiconControllerSenseDetail.addExtensionAttribute("
+                            + index + ", '" + ea.getName() + "', '" + ea.getLabel() + "')}");
+                    dmi.setOnstart("PF('loadingDialog').show();");
+                    dmi.setOncomplete("setHeight();PF('loadingDialog').hide()");
+                    addMenuModel.getElements().add(dmi);
+                }
+            }
+        }
+    }
+
+    private boolean setDisabled(ExtensionAttribute ea, SenseData sd) {
+        for (ExtensionAttributeIstance eai : sd.getExtensionAttributeInstances()) {
+            if (eai.getName().equals(ea.getName())) {
+                return eai.isDisabled();
+            }
+        }
+        return false;
+    }
+
+    public void addExtensionAttribute(int index, String attName, String label) {
+        log(Level.INFO, loginController.getAccount(), "ADD empty extension attribute " + attName + " to sense " + senses.get(index).getName());
+        LemmaData.ExtensionAttributeIstance eai = new ExtensionAttributeIstance();
+        eai.setName(attName);
+        eai.setValue("");
+        eai.setLabel(label);
+        eai.setDisabled(true);
+        senses.get(index).getExtensionAttributeInstances().add(eai);
+        senses.get(index).setSaveButtonDisabled(false);
+    }
+
 }

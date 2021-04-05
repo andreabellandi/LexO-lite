@@ -74,6 +74,7 @@ public class PropertyValue {
     private ArrayList<String> attributeCardinality;
     private ArrayList<String> attributeDomain;
     private ArrayList<String> inputTextTypes;
+    
 
     public ArrayList<String> getMorphoTrait(String s) {
         return new ArrayList<String>(Arrays.asList(Arrays.copyOf(morphoTraitList.get(s).toArray(), morphoTraitList.get(s).toArray().length, String[].class)));
@@ -231,6 +232,7 @@ public class PropertyValue {
         lexicalAspects.add("Core");
         lexicalAspects.add("Variation and Translation");
         lexicalAspects.add("Syntax and Semantics");
+        lexicalAspects.add("Attestation");
 
         morphoTraitList = HashMultimap.create();
 

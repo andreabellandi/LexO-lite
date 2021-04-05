@@ -37,13 +37,13 @@ public class LexiconControllerTabViewToolbar extends BaseController implements S
     public void updateMenu(ArrayList<String> languages) {
         model = new DefaultMenuModel();
         for (String lang : languages) {
-            model.addElement(getLanguageItemMenu(lang));
+            model.getElements().add(getLanguageItemMenu(lang));
         }
 
     }
 
     private DefaultMenuItem getLanguageItemMenu(String lang) {
-        DefaultMenuItem item = new DefaultMenuItem(lang);
+        DefaultMenuItem item = new DefaultMenuItem();
         item.setIcon(lexiconCreationControllerTabViewList.getLexiconLanguage().equals(lang) ? "fa fa-check" : "fa fa-at");
         item.setStyleClass("lexiconTabViewLanguage");
         item.setValue(lang);

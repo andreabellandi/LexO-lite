@@ -83,7 +83,6 @@
                              rendered="#{!lexiconControllerFormDetail.locked}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaPoSChanged}" 
                         update="lemmaButtons editViewTab:lexiconFormDetailForm"/>
-                <!--                <f:selectItem itemLabel="No entry specified" itemValue="" />-->
                 <f:selectItems value="#{lexiconControllerFormDetail.poS}" />
             </p:selectOneMenu>
             <p:inputText styleClass="inputTextStyle" 
@@ -209,7 +208,7 @@
                 <p:commandButton id="lemmaSaveButton" title="Save Lemma" icon="fa fa-save" 
                                  update="LemmaPanelGrid :lexiconTabViewForm:tabView:lemmaTree :systemMessage
                                  :editViewTab:lexiconSenseDetailForm :lexiconTabViewForm:tabView:lemmaFilterLabel 
-                                 :lexiconTabViewForm:tabView:formTree :editViewTab:lexiconSenseDetailForm
+                                 :lexiconTabViewForm:tabView:formTree :editViewTab:lexiconSenseDetailForm :breadCrumb
                                  FormDataList :editViewTab:lexiconViewDictionaryForm :editViewTab:lexEntryAspectForm" 
                                  action="#{lexiconControllerFormDetail.saveLemma()}"
                                  onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
@@ -218,7 +217,7 @@
                 <p:commandButton title="Delete Lemma and all its entries" icon="fa fa-trash" 
                                  update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm 
                                  :lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:formTree 
-                                 :lexiconTabViewForm:tabView:formFilterLabel 
+                                 :lexiconTabViewForm:tabView:formFilterLabel :breadCrumb
                                  :lexiconTabViewForm:tabView:lemmaFilterLabel
                                  :systemMessage"  
                                  action="#{lexiconControllerFormDetail.removeLemma()}"
@@ -354,14 +353,14 @@
                         </p:tieredMenu>
 
                         <p:commandButton title="Save form" icon="fa fa-save" 
-                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage
+                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage :breadCrumb 
                                          :lexiconTabViewForm:tabView:formFilterLabel :editViewTab:lexiconViewDictionaryForm" 
                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                                          action="#{lexiconControllerFormDetail.saveForm(form)}"
                                          disabled="#{form.saveButtonDisabled}">
                         </p:commandButton>
                         <p:commandButton title="Delete form" icon="fa fa-trash"
-                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage 
+                                         update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage :breadCrumb 
                                          :lexiconTabViewForm:tabView:formFilterLabel" 
                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                                          action="#{lexiconControllerFormDetail.removeForm(form)}"

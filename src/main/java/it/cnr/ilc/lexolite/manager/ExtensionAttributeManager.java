@@ -58,7 +58,7 @@ public class ExtensionAttributeManager implements Serializable {
 
     public void updateExtensionAttribute(ExtensionAttribute ea, String fieldName, String value) {
         if (fieldName.contains("attributeName")) {
-            ea.setName(value);
+            ea.setName(value.replaceAll("\\s+", ""));
         } else if (fieldName.contains("attributeLabel")) {
             ea.setLabel(value.replaceAll("\\s+", ""));
         } else if (fieldName.contains("attributeRelation")) {

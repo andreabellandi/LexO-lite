@@ -8,99 +8,114 @@
     <h:form id="lexiconSenseDetailForm">
         <p:dataList id="SenseDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
                     value="#{lexiconControllerSenseDetail.senses}" emptyMessage="" rendered="#{lexiconControllerSenseDetail.senseRendered}">
-            <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">
-                <h:outputLabel styleClass="titleStyle" value="Name:" />
-                <h:panelGrid columns="3">
-                    <p:inputText id="Name" styleClass="inputTextStyleTranslationForm" readonly="true" size="#{sense.filedMaxLenght}"/>
-                    <p:watermark id="senseNameWatermark" class="filterLabel" for="Name" value="#{sense.name}"/>   
-                    <h:panelGrid id="senseNote" columns="1" columnClasses="column" cellpadding="0">
-                        <p:commandLink id="senseNoteLink" title="Comment to sense" action="#{lexiconControllerSenseDetail.openNote(sense.name)}"
-                                       update="senseNotePanel senseNote" disabled="#{lexiconControllerSenseDetail.newAction}"
-                                       oncomplete="PF('senseNotePanel').show('#{component.clientId}')">
-                            <span class="#{lexiconControllerSenseDetail.getCommentIcon(sense)}"></span>
+            <h:panelGrid styleClass="senseTextBlock" columns="1" cellpadding="5">
+                <h:panelGrid  columns="2" cellpadding="5">
+                    <h:outputLabel styleClass="titleStyle" value="Name:" />
+                    <h:panelGrid columns="3">
+                        <p:inputText id="Name" styleClass="inputTextStyleTranslationForm" readonly="true" size="#{sense.filedMaxLenght}"/>
+                        <p:watermark id="senseNameWatermark" class="filterLabel" for="Name" value="#{sense.name}"/>   
+                        <h:panelGrid id="senseNote" columns="1" columnClasses="column" cellpadding="0">
+                            <p:commandLink id="senseNoteLink" title="Comment to sense" action="#{lexiconControllerSenseDetail.openNote(sense.name)}"
+                                           update="senseNotePanel senseNote" disabled="#{lexiconControllerSenseDetail.newAction}"
+                                           oncomplete="PF('senseNotePanel').show('#{component.clientId}')">
+                                <span class="#{lexiconControllerSenseDetail.getCommentIcon(sense)}"></span>
+                            </p:commandLink>
+                        </h:panelGrid>
+                    </h:panelGrid>
+
+                    <h:outputLabel styleClass="titleStyle" value="Definition:"
+                                   rendered="#{!sense.definition.equals('No entry found')}"/>
+                    <h:panelGrid columns="1" rendered="#{!sense.definition.equals('No entry found')}">
+                        <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" 
+                                         readonly="#{lexiconControllerSenseDetail.locked}">
+                            <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
+                            <f:attribute name="sense" value="#{sense}" />
+                        </p:inputTextarea>
+                    </h:panelGrid>
+
+                    <h:outputLabel styleClass="titleStyle" value="Image:" rendered="#{sense.images.size() > 0}"/>
+                    <h:panelGrid columns="2" rendered="#{sense.images.size() > 0}">
+                        <p:commandLink onstart="PF('loadingDialog').show();" 
+                                       action="#{imageController.setClickedImage(sense.images.get(0))}"
+                                       oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
+                                       update="lexiconImagePanel">
+                            <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 1)}" stream="false"
+                                            width="100" height="100"/>
+                        </p:commandLink>
+                        <p:commandLink onstart="PF('loadingDialog').show();" rendered="#{sense.images.size() > 1}" 
+                                       action="#{imageController.setClickedImage(sense.images.get(1))}"
+                                       oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
+                                       update="lexiconImagePanel">
+                            <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 2)}" stream="false"
+                                            width="100" height="100"/>
                         </p:commandLink>
                     </h:panelGrid>
-                </h:panelGrid>
 
-                <h:outputLabel styleClass="titleStyle" value="Definition:"
-                               rendered="#{!sense.definition.equals('No entry found')}"/>
-                <h:panelGrid columns="1" rendered="#{!sense.definition.equals('No entry found')}">
-                    <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" 
-                                     readonly="#{lexiconControllerSenseDetail.locked}">
-                        <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
-                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
-                        <f:attribute name="sense" value="#{sense}" />
-                    </p:inputTextarea>
+                    <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
+                    <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
+                        <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" alt="#{sense.themeOWLClass.type}"
+                                        rendered="#{sense.themeOWLClass.name.length() > 1}"
+                                        height="#{sense.themeOWLClass.type.contains('Property') ? 11 : 15}"  width="15"/>
+                        <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" value="#{sense.themeOWLClass}" 
+                                        completeMethod="#{lexiconControllerSenseDetail.completeTheme}"
+                                        readonly="#{lexiconControllerSenseDetail.locked}"
+                                        var="theme" itemLabel="#{theme.name}" itemValue="#{theme}" converter="#{referenceMenuThemeConverter}" 
+                                        forceSelection="true" maxResults="10">
+                            <p:column>
+                                <h:graphicImage name="image/#{theme.type}Icon.png" alt="#{theme.name}" 
+                                                height="#{theme.type.contains('Property') ? 11 : 15}"  width="15" styleClass="ui-theme"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{theme.name}" />
+                            </p:column>
+                            <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onOntologyReferenceSelect(sense)}" 
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons" />
+                        </p:autoComplete>
+                        <p:watermark class="filterLabel" for="OntoRef" value="Type a semantic description"/>
+                        <p:commandButton title="Delete ontology reference relation" icon="fa fa-trash-o"
+                                         rendered="#{!lexiconControllerSenseDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.themeOWLClass, 'reference')}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
+                    </h:panelGrid>
                 </h:panelGrid>
+                <!-- EXTENSIONS -->
+                <!-- Attributes -->
+                <ui:repeat value="#{sense.extensionAttributeInstances}" var="extAtt" 
+                           rendered="#{sense.extensionAttributeInstances.size() > 0}">
 
-                <h:outputLabel styleClass="titleStyle" value="Image:" rendered="#{sense.images.size() > 0}"/>
-                <h:panelGrid columns="2" rendered="#{sense.images.size() > 0}">
-                    <p:commandLink onstart="PF('loadingDialog').show();" 
-                                   action="#{imageController.setClickedImage(sense.images.get(0))}"
-                                   oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
-                                   update="lexiconImagePanel">
-                        <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 1)}" stream="false"
-                                        width="100" height="100"/>
-                    </p:commandLink>
-                    <p:commandLink onstart="PF('loadingDialog').show();" rendered="#{sense.images.size() > 1}" 
-                                   action="#{imageController.setClickedImage(sense.images.get(1))}"
-                                   oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
-                                   update="lexiconImagePanel">
-                        <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 2)}" stream="false"
-                                        width="100" height="100"/>
-                    </p:commandLink>
-                </h:panelGrid>
+                    <h:panelGrid id="#{extAtt.label}Panel" columns="3" cellpadding="0" 
+                                 rendered="#{!lexiconControllerFormDetail.locked}">
+                        <h:outputLabel styleClass="titleStyle" value="#{extAtt.label}:"/>
 
-                <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
-                <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
-                    <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" alt="#{sense.themeOWLClass.type}"
-                                    rendered="#{sense.themeOWLClass.name.length() > 1}"
-                                    height="#{sense.themeOWLClass.type.contains('Property') ? 11 : 15}"  width="15"/>
-                    <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" value="#{sense.themeOWLClass}" 
-                                    completeMethod="#{lexiconControllerSenseDetail.completeTheme}"
-                                    readonly="#{lexiconControllerSenseDetail.locked}"
-                                    var="theme" itemLabel="#{theme.name}" itemValue="#{theme}" converter="#{referenceMenuThemeConverter}" 
-                                    forceSelection="true" maxResults="10">
-                        <p:column>
-                            <h:graphicImage name="image/#{theme.type}Icon.png" alt="#{theme.name}" 
-                                            height="#{theme.type.contains('Property') ? 11 : 15}"  width="15" styleClass="ui-theme"/>
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="#{theme.name}" />
-                        </p:column>
-                        <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onOntologyReferenceSelect(sense)}" 
-                                update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons" />
-                    </p:autoComplete>
-                    <p:watermark class="filterLabel" for="OntoRef" value="Type a semantic description"/>
-                    <p:commandButton title="Delete ontology reference relation" icon="fa fa-trash-o"
-                                     rendered="#{!lexiconControllerSenseDetail.locked}"
-                                     actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.themeOWLClass, 'reference')}" 
-                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
-                </h:panelGrid>
-
+                        <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false"
+                                         styleClass="extensionAttributeInputareaSize">
+                            <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.extensionSenseAttributeKeyUpEvent}"
+                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
+                            <f:attribute name="extAtt" value="#{extAtt}" />
+                            <f:attribute name="sense" value="#{sense}"/>
+                        </p:inputTextarea>
+                        <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                         actionListener="#{lexiconControllerSenseDetail.removeExtensionAttribute(extAtt, sense)}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
+                    </h:panelGrid>
+                    <p:inputText styleClass="inputTextStyle"  
+                                 readonly="true"
+                                 rendered="#{lexiconControllerFormDetail.locked}"/>
+                </ui:repeat>
+                <!-- End of Attributes -->
+                <!-- END OF EXTENSIONS -->
 
                 <h:panelGrid id = "senseButtons" columns="5" columnClasses="column" cellpadding="0" 
                              rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
+
                     <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexico-semantic relations"/>
-                    <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
-                        <p:menuitem styleClass="lexiconTabView" value="Add definition" icon="fa fa-plus" 
-                                    disabled="#{!sense.definition.equals('No entry found')}" 
-                                    actionListener="#{lexiconControllerSenseDetail.addDefinition(sense)}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                        
-                        <p:menuitem styleClass="lexiconTabView" value="Add Image" icon="fa fa-plus" 
-                                    disabled="#{sense.images.size() > 1}" 
-                                    onstart="PF('loadingDialog').show();"
-                                    oncomplete="setHeight();PF('dlgLexiconUploadImage').show();PF('loadingDialog').hide();"
-                                    actionListener="#{lexiconControllerSenseDetail.imageUpload(sense)}"
-                                    update="lexiconImageUploadPanel"/>
-                        
-                        <p:menuitem styleClass="lexiconTabView" value="Add reference" icon="fa fa-plus" 
-                                    disabled="#{!lexiconControllerSenseDetail.ontologyEnabled}" 
-                                    actionListener="#{lexiconControllerSenseDetail.addSenseRelation(sense, 'reference')}"
-                                    update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
-                    </p:menu>
+                    <p:tieredMenu overlay="true" trigger="menuButton" my="left top" at="left bottom"  
+                                  model="#{lexiconControllerSenseDetail.getAddSenseMenuModel(sense, lexiconControllerSenseDetail.senses.indexOf(sense))}">
+                        <f:attribute name="sense" value="#{sense}"/>
+                    </p:tieredMenu>
+
                     <p:commandButton title="Save sense" icon="fa fa-save" id="saveSense"
                                      update="SenseDataList
                                      :searchViewTab:lexiconViewAdavancedFilterForm:advancedFilterMorpho
@@ -116,7 +131,7 @@
                                      disabled="#{sense.deleteButtonDisabled}">   
                         <p:confirm message="#{label['lexicon.creation.confirm.deleteSenseRelation']}" icon="ui-icon-alert" />                        
                     </p:commandButton>
-  
+
                 </h:panelGrid>
             </h:panelGrid>
             <p:separator style="border: 0;clear: both;padding: 0.6%;background-color: white"/>

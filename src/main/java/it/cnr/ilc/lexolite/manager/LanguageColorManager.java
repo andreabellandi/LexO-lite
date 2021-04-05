@@ -7,18 +7,14 @@ package it.cnr.ilc.lexolite.manager;
 
 import it.cnr.ilc.lexolite.HibernateUtil;
 import it.cnr.ilc.lexolite.domain.Account;
-import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.LanguageColor;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 
 /**

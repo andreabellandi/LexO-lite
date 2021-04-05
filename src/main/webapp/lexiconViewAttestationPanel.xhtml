@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="newAttestationPanel" widgetVar="newAttestationDialog" header="#{label['newAttestation.header']}" resizable="false" closable="true"
+              modal="true">
+        <!-- idDoc; form; attestation; preferred for dictionary -->
+        <h:form>
+            <h:panelGrid columns="5" columnClasses="newLangCols, newLangCols, newLangCols, newLangCols, newLangCols">
+
+                <!--                <p:outputLabel styleClass="newLangTitleStyle" value="{label['newAttestation.idDoc']}"/>
+                                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                                <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="{lexiconControllerLanguageDetail.linguisticCatalog}">
+                                    <f:selectItems value="{lexiconControllerLanguageDetail.lingCatList}" />
+                                </p:selectOneMenu>
+                                <p:graphicImage id="name" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                                <p:tooltip for="name" value="{label['tooltip.dialog.newAtt.idDoc']}" position="right"/>-->
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.idDoc']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.docID}">
+                    <p:ajax event="keyup" listener="#{lexiconControllerAttestation.docIDKeyupEvent}" update="newAttButtons"/>
+                </p:inputText>
+                <p:graphicImage id="docID" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="docID" value="#{label['tooltip.dialog.newAtt.idDoc']}" position="right"/>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.form']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerAttestation.form}">
+                    <f:selectItems value="#{lexiconControllerAttestation.attestedForms}" var="f" itemLabel="#{f.form}" itemValue="#{f.index}" />
+                    <p:ajax event="valueChange" listener="#{lexiconControllerAttestation.formChanged}" 
+                            update="newAttButtons"/>
+                </p:selectOneMenu>
+                <p:graphicImage id="wr" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="wr" value="#{label['tooltip.dialog.newAtt.form']}" position="right"/>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.attestation']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputTextarea styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.attestation}" 
+                                 rows="5" cols="100">
+                    <p:ajax event="keyup" listener="#{lexiconControllerAttestation.attestationKeyupEvent}" update="newAttButtons"/>
+                </p:inputTextarea>
+                <p:graphicImage id="att" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="att" value="#{label['tooltip.dialog.newAtt.attestation']}" position="right"/>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.pageNumber']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.pageNumber}"/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.lineNumber']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.lineNumber}"/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+
+                <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.dictionary']}"/>
+                <p:outputLabel styleClass="newLangTitleStyle" value=""/>
+                <p:selectBooleanCheckbox value="#{lexiconControllerAttestation.dictionaryPreferred}">
+                    <p:ajax update="newAttButtons " listener="#{lexiconControllerAttestation.dictionaryPreferredChanged}" />
+                </p:selectBooleanCheckbox>
+                <p:graphicImage id="dict" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
+                <p:tooltip for="dict" value="#{label['tooltip.dialog.newAtt.dictionary']}" position="right"/>
+
+                <h:panelGrid id="newAttButtons" columns="3" style="padding-top: 10px;">
+                    <p:commandButton icon="fa fa-save"  disabled="#{!lexiconControllerAttestation.saveEnabled}"
+                                     actionListener="#{lexiconControllerAttestation.save()}"
+                                     onstart="PF('loadingDialog').show();"
+                                     oncomplete="PF('newAttestationDialog').hide(); PF('loadingDialog').hide();"
+                                     update=":systemMessage"/>
+                </h:panelGrid>
+
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

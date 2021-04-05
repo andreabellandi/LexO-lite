@@ -24,9 +24,9 @@
         <h:form enctype="multipart/form-data">
             <p:fileUpload listener="#{imageController.handleFileUpload}" mode="advanced" dragDropSupport="false"
                           onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide();PF('dlgLexiconUploadImage').hide()"
-                          sizeLimit="1000000" fileLimit="1" allowTypes="/(\.|\/)(png)$/" 
+                          sizeLimit="1000000" fileLimit="1" 
                           update=":editViewTab:lexiconSenseDetailForm:SenseDataList :systemMessage"
-                          validateContentType="true" accept=".png">
+                          accept=".png">
             </p:fileUpload>
         </h:form>
     </p:dialog>

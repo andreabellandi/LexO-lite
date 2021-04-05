@@ -164,9 +164,12 @@ public class LexicalQuery {
 
     public static final String LEMMA_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
             + " PropertyValue(lexicon:_LEMMA_, extension:_ATTRIBUTE_, ?val) } ";
-    
+
     public static final String FORM_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
             + " PropertyValue(lexicon:_FORM_, extension:_ATTRIBUTE_, ?val) } ";
+
+    public static final String SENSE_ATTRIBUTE_EXTENSION = "SELECT ?val WHERE {"
+            + " PropertyValue(lexicon:_SENSE_, extension:_ATTRIBUTE_, ?val) } ";
 
     public static final String LEXICAL_RELATION_WORD = "SELECT ?individual WHERE {"
             + " PropertyValue(?l, lime:language, \"_LANG_\"), "
@@ -260,7 +263,7 @@ public class LexicalQuery {
             + " PropertyValue(?entry, ontolex:sense, ?trgind), "
             + " PropertyValue(?lex, lime:entry, ?entry), "
             + " PropertyValue(?lex, lime:language, ?trglang) }";
-    
+
     // query for lexical functions
     public static final String LEXICAL_FUNCTION = "SELECT ?sense ?lf WHERE {"
             + " PropertyValue(lexicon:_SENSE_, ?lf, ?sense), "

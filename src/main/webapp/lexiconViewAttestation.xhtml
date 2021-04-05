@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="attestationForm" rendered="#{lexiconControllerAttestation.attestationViewRendered}">
+        <ui:repeat value="#{lexiconControllerAttestation.senses}" var="sense">
+            <p:accordionPanel  value="#{sense}" style="width: 100%;"
+                               rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}">
+                <p:tab title="#{sense.definition}">
+                    <p:scrollPanel mode="native" style="overflow-x: hidden; overflow-y: auto;">
+                        <ui:repeat value="#{lexiconControllerAttestation.getAttestations(sense)}" var="att">
+                            <h:panelGrid columns="4" styleClass="lexiconTabView">
+                                <h:outputText value="#{att.docID}"/>
+                                <h:selectBooleanCheckbox value="#{att.dictionaryPreferred}">
+                                    <p:ajax listener="#{lexiconControllerAttestation.checkDictionayPreferred(att)}" update="@this :systemMessage"
+                                            onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" />
+                                </h:selectBooleanCheckbox>
+                                <h:outputText style="color: gray;" value="#{att.attestation}" escape="false" />
+                                <p:commandButton title="Delete attestation" icon="fa fa-trash-o"
+                                                 update=":editViewTab:attestationForm"
+                                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                                 actionListener="#{lexiconControllerAttestation.deleteAttestations(att.formUri, att.form)}"/>
+                            </h:panelGrid>
+                        </ui:repeat>
+                    </p:scrollPanel>
+                </p:tab>
+            </p:accordionPanel>
+            <br/><br/>
+        </ui:repeat>
+    </h:form>
+
+
+</ui:composition>

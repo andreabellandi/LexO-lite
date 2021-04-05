@@ -19,3 +19,4 @@ public class LexiconApplication extends ResourceConfig {
         packages("it.cnr.ilc.lexolite.restapi");
     }
 }
+

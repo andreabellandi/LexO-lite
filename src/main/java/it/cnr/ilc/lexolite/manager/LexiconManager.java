@@ -155,14 +155,16 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
-    public synchronized void saveLemmaWithIRIRenaming(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
-        lexiconModel.updateLemmaWithRenaming(oldLemma, newLemma);
+    public synchronized AttestationRenaming saveLemmaWithIRIRenaming(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
+        AttestationRenaming renamings = lexiconModel.updateLemmaWithRenaming(oldLemma, newLemma);
         lexiconModel.persist();
+        return renamings;
     }
 
-    public synchronized void saveMultiwordLemmaWithIRIRenaming(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
-        lexiconModel.updateMultiwordLemmaWithRenaming(oldLemma, newLemma);
+    public synchronized AttestationRenaming saveMultiwordLemmaWithIRIRenaming(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
+        AttestationRenaming renamings = lexiconModel.updateMultiwordLemmaWithRenaming(oldLemma, newLemma);
         lexiconModel.persist();
+        return renamings;
     }
 
     public synchronized void updateLemma(LemmaData oldLemma, LemmaData newLemma) throws IOException, OWLOntologyStorageException {
@@ -223,9 +225,10 @@ public class LexiconManager extends BaseController implements Serializable {
         lexiconModel.persist();
     }
 
-    public synchronized void saveFormWithIRIRenaming(FormData oldForm, FormData newForm, LemmaData ld) throws IOException, OWLOntologyStorageException {
-        lexiconModel.addFormWithRenaming(oldForm, newForm, ld);
+    public synchronized String saveFormWithIRIRenaming(FormData oldForm, FormData newForm, LemmaData ld) throws IOException, OWLOntologyStorageException {
+        String newInstanceName = lexiconModel.addFormWithRenaming(oldForm, newForm, ld);
         lexiconModel.persist();
+        return newInstanceName;
     }
 
     public synchronized void updateForm(FormData oldForm, FormData newForm, LemmaData ld) throws IOException, OWLOntologyStorageException {
@@ -351,16 +354,16 @@ public class LexiconManager extends BaseController implements Serializable {
         return lexiconQuery.getFormsOfLemma(lemma, lang, propertyValue.getMorphoTrait(), alea);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, ImageManager imageManager, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getSensesOfLemma(lemma, l, imageManager);
+    public synchronized ArrayList<SenseData> getSensesOfLemma(String lemma, ImageManager imageManager, List<ReferenceMenuTheme> l, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getSensesOfLemma(lemma, l, imageManager, alea);
     }
 
-    public synchronized ArrayList<SenseData> getSensesOfForm(String form, ImageManager imageManager, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getSensesOfForm(form, l, imageManager);
+    public synchronized ArrayList<SenseData> getSensesOfForm(String form, ImageManager imageManager, List<ReferenceMenuTheme> l, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getSensesOfForm(form, l, imageManager, alea);
     }
 
-    public synchronized ArrayList<SenseData> getSenses(String sense, ImageManager imageManager, List<ReferenceMenuTheme> l) {
-        return lexiconQuery.getOtherSenses(sense, l, imageManager);
+    public synchronized ArrayList<SenseData> getSenses(String sense, ImageManager imageManager, List<ReferenceMenuTheme> l, ArrayList<ExtensionAttribute> alea) {
+        return lexiconQuery.getOtherSenses(sense, l, imageManager, alea);
     }
 
     public synchronized List<SelectItem> getSensesByLanguage(String sense, String lang) {
