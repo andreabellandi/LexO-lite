@@ -27,7 +27,7 @@
         <mapping class="it.cnr.ilc.lexolite.domain.LanguageColor"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Image"/>
         <mapping class="it.cnr.ilc.lexolite.domain.Attestation"/>
-        <mapping class="it.cnr.ilc.lexolite.domain.Document"/>
+        <!--<mapping class="it.cnr.ilc.lexolite.domain.Document"/>-->
 
     </session-factory>
 </hibernate-configuration>

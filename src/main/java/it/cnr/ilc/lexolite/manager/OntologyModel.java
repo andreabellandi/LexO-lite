@@ -371,17 +371,17 @@ public class OntologyModel extends BaseController {
         _printClasses(reasoner, clazz, 0, alClasses, 1);
         _printObjectProperties(reasoner, objProp, 0, alObjProps, 1);
         _printDataProperties(reasoner, dataProp, 0, alDataProps, 1);
-        //_printIndividuals(reasoner, clazz, alIndividuals, 1);
+        _printIndividuals(reasoner, clazz, alIndividuals, 1);
         reasoner.dispose();
-        idNumbering(alClasses, alObjProps, alDataProps);
+        idNumbering(alClasses, alObjProps, alDataProps, alIndividuals);
         ontoRefItems.addAll(alClasses);
         ontoRefItems.addAll(alObjProps);
         ontoRefItems.addAll(alDataProps);
-        //ontoRefItems.addAll(alIndividuals);
+        ontoRefItems.addAll(alIndividuals);
         return ontoRefItems;
     }
 
-    private void idNumbering(ArrayList<ReferenceMenuTheme> alc, ArrayList<ReferenceMenuTheme> alo, ArrayList<ReferenceMenuTheme> ald) {
+    private void idNumbering(ArrayList<ReferenceMenuTheme> alc, ArrayList<ReferenceMenuTheme> alo, ArrayList<ReferenceMenuTheme> ald, ArrayList<ReferenceMenuTheme> ali) {
         int id = 0;
         for (ReferenceMenuTheme _alc : alc) {
             _alc.setId(id);
@@ -395,10 +395,15 @@ public class OntologyModel extends BaseController {
             _ald.setId(id);
             id = id + 1;
         }
+        for (ReferenceMenuTheme _ali : ali) {
+            _ali.setId(id);
+            id = id + 1;
+        }
     }
 
     private List<ReferenceMenuTheme> _printClasses(OWLReasoner reasoner, OWLClass clazz, int level, ArrayList<ReferenceMenuTheme> al, int id) {
-        if (!clazz.getIRI().getShortForm().equals("Thing") && !clazz.getIRI().getShortForm().equals("Nothing")) {
+        if (!clazz.getIRI().getShortForm().equals("Thing") && !clazz.getIRI().getShortForm().equals("Nothing")
+                && !contains(al, clazz.getIRI().getShortForm())) {
             al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.clazz, clazz.getIRI().getShortForm()));
         }
         NodeSet<OWLClass> c = reasoner.getSubClasses(clazz, true);

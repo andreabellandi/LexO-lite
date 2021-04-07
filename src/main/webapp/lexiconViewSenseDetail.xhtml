@@ -35,7 +35,7 @@
                     </h:panelGrid>
 
                     <h:outputLabel styleClass="titleStyle" value="Image:" rendered="#{sense.images.size() > 0}"/>
-                    <h:panelGrid columns="2" rendered="#{sense.images.size() > 0}">
+                    <h:panelGrid columns="4" rendered="#{sense.images.size() > 0}">
                         <p:commandLink onstart="PF('loadingDialog').show();" 
                                        action="#{imageController.setClickedImage(sense.images.get(0))}"
                                        oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
@@ -43,6 +43,10 @@
                             <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 1)}" stream="false"
                                             width="100" height="100"/>
                         </p:commandLink>
+                        <p:commandButton title="Delete image" icon="fa fa-trash-o" onstart="PF('loadingDialog').show();" 
+                                         oncomplete="setHeight();PF('loadingDialog').hide();"
+                                         actionListener="#{lexiconControllerSenseDetail.removeImage(sense, sense.images.get(0))}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                         <p:commandLink onstart="PF('loadingDialog').show();" rendered="#{sense.images.size() > 1}" 
                                        action="#{imageController.setClickedImage(sense.images.get(1))}"
                                        oncomplete="setHeight();PF('dlgLexiconImage').show();PF('loadingDialog').hide();" 
@@ -50,6 +54,10 @@
                             <p:graphicImage styleClass="roundedBox" value="#{imageController.getImage(sense, 2)}" stream="false"
                                             width="100" height="100"/>
                         </p:commandLink>
+                        <p:commandButton title="Delete image" icon="fa fa-trash-o" onstart="PF('loadingDialog').show();" 
+                                         oncomplete="setHeight();PF('loadingDialog').hide();" rendered="#{sense.images.size() > 1}" 
+                                         actionListener="#{lexiconControllerSenseDetail.removeImage(sense, sense.images.get(1))}" 
+                                         update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                     </h:panelGrid>
 
                     <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>

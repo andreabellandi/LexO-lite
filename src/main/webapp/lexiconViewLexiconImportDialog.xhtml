@@ -16,7 +16,7 @@
                 <p:fileUpload listener="#{lexiconControllerToolbar.handleLexiconUpload}"
                               oncomplete="PF('loadingDialog').hide();"  onstart="PF('dlgLexiconUpload').hide();PF('loadingDialog').show();"
                               mode="advanced" dragDropSupport="false"
-                              sizeLimit="50000000" fileLimit="1" allowTypes="/(\.|\/)(owl|ttl|rdf)$/"
+                              sizeLimit="50000000" fileLimit="1"
                               update=":lexiconTabViewForm:tabView:lemmaGrid :lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:lemmaFilterPanel 
                               :lexiconTabViewForm:tabView:formGrid :lexiconTabViewForm:tabView:formTree :lexiconTabViewForm:tabView:formFilterPanel 
                               :editViewTab :systemMessage"/>    

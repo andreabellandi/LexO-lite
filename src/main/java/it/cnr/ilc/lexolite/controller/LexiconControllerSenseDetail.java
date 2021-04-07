@@ -11,6 +11,7 @@ import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
 import it.cnr.ilc.lexolite.manager.AttestationManager;
 import it.cnr.ilc.lexolite.manager.AuthoringManager;
+import it.cnr.ilc.lexolite.manager.ImageData;
 import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.LemmaData.ExtensionAttributeIstance;
@@ -21,6 +22,7 @@ import it.cnr.ilc.lexolite.manager.PropertyValue.Ontology;
 import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme.itemType;
 import it.cnr.ilc.lexolite.manager.SenseData;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,11 +38,9 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.log4j.Level;
-import org.primefaces.event.MenuActionEvent;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
-import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
@@ -244,6 +244,28 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         }
     }
 
+    public void removeImage(SenseData sd, ImageData image) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE image " + image.getFileName() + " of " + sd.getName());
+        imageManager.remove(image.getFileName());
+        sd.getImages().remove(image);
+        if (deleteImageFromFilesystem(image.getFileName())) {
+            info("template.message.deletedImage.summary", "template.message.deletedImage.description");
+        } else {
+            warn("template.message.deletedImage.summary", "template.message.NOdeletedImage.description");
+        }
+    }
+
+    private boolean deleteImageFromFilesystem(String imageName) {
+        File targetFile = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + imageName);
+        if (targetFile.delete()) {
+            log(org.apache.log4j.Level.INFO, loginController.getAccount(), "DELETE image " + imageName);
+            return true;
+        } else {
+            log(org.apache.log4j.Level.INFO, loginController.getAccount(), "DELETE image " + imageName + " failed");
+            return false;
+        }
+    }
+
     public void removeDefinition(SenseData sd) {
         log(Level.INFO, loginController.getAccount(), "REMOVE " + sd.getDefinition() + " (scientific name of " + sd.getName() + ")");
         sd.setDefinition("");
@@ -287,7 +309,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
             default:
         }
     }
-    
+
     public void addAttestation() {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         SenseData sd = (SenseData) component.getAttributes().get("sense");
@@ -506,7 +528,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         reference.setValue("Add reference");
         reference.setStyleClass("lexiconTabView");
         reference.setIcon("fa fa-plus");
-        reference.setDisabled(!isOntologyEnabled() || !sd.getOWLClass().getName().isEmpty());
+        reference.setDisabled(!isOntologyEnabled() || !sd.getThemeOWLClass().getName().isEmpty());
         reference.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList");
         reference.setCommand("#{lexiconControllerSenseDetail.addSenseRelation('reference')}");
         reference.setOnstart("PF('loadingDialog').show();");
@@ -521,7 +543,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         attestation.setCommand("#{lexiconControllerSenseDetail.addAttestation()}");
         attestation.setOnstart("PF('loadingDialog').show();");
         attestation.setOncomplete("setHeight();PF('newAttestationDialog').show();PF('loadingDialog').hide();");
-        
+
         addSenseMenuModel.getElements().add(definition);
         addSenseMenuModel.getElements().add(image);
         addSenseMenuModel.getElements().add(reference);

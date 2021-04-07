@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.manager.AttestationRenaming;
 import it.cnr.ilc.lexolite.manager.ImageData;
 import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.SenseData;
@@ -15,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -35,6 +37,8 @@ import org.primefaces.model.file.UploadedFile;
  *
  * @author andreabellandi
  */
+
+
 @Named
 @ViewScoped
 public class ImageController extends BaseController implements Serializable {
@@ -172,8 +176,6 @@ public class ImageController extends BaseController implements Serializable {
     }
 
     public synchronized void persistImage(UploadedFile f) throws IOException {
-//        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
-//        SenseData sd = (SenseData) component.getAttributes().get("sense");
         String fileName = selectedSense.getName() + "_" + f.getFileName();
         imageManager.insertImage(loginController.getAccount(), selectedSense.getName(), f.getFileName(), fileName, description, source, date);
         InputStream input = f.getInputStream();
@@ -194,4 +196,5 @@ public class ImageController extends BaseController implements Serializable {
         int senseIndex = lexiconControllerSenseDetail.getSenses().indexOf(selectedSense);
         lexiconControllerSenseDetail.getSenses().get(senseIndex).getImages().add(imgd);
     }
+
 }

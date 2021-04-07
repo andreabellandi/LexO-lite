@@ -26,6 +26,7 @@ import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import it.cnr.ilc.lexolite.util.LexiconUtil;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -44,6 +45,7 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.primefaces.event.MenuActionEvent;
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -230,11 +232,11 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         MenuModel _breadCrumbModel = new DefaultMenuModel();
         boolean found = false;
         for (MenuElement me : breadCrumbModel.getElements()) {
-                if (!((DefaultMenuItem) me).getCommand().contains(uri)) {
-                    _breadCrumbModel.getElements().add(me);
-                } else {
-                    found = true;
-                }
+            if (!((DefaultMenuItem) me).getCommand().contains(uri)) {
+                _breadCrumbModel.getElements().add(me);
+            } else {
+                found = true;
+            }
         }
         if (found) {
             breadCrumbModel.getElements().clear();
@@ -661,7 +663,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
                 // modification concerns also form written representation
                 log(Level.INFO, loginController.getAccount(), "SAVE updated Form with renaming from " + formsCopy.get(order).getFormWrittenRepr() + " to " + fd.getFormWrittenRepr());
                 String newInstanceName = lexiconManager.saveFormWithIRIRenaming(formsCopy.get(order), fd, lemma);
-                attestationManager.updateAttestatonFormUri(fd.getIndividual(), newInstanceName, fd.getFormWrittenRepr());
                 updateBreadCrumb("Form", fd.getFormWrittenRepr(), fd.getIndividual(), newInstanceName, false, Label.ClickProvenance.FORM_LIST_VIEW);
             }
         }
@@ -1038,7 +1039,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     public void removeLemma() throws IOException, OWLOntologyStorageException {
         log(Level.INFO, loginController.getAccount(), "DELETE Lemma " + lemma.getFormWrittenRepr());
         lexiconManager.deleteLemma(lemmaCopy, forms, lexiconCreationViewSenseDetail.getSenses());
-        for(SenseData sd : lexiconCreationViewSenseDetail.getSenses()) {
+        for (SenseData sd : lexiconCreationViewSenseDetail.getSenses()) {
             attestationManager.remove(sd.getName());
         }
         info("template.message.deleteLemma.summary", "template.message.deleteLemma.description", lemma.getFormWrittenRepr());
@@ -1151,16 +1152,28 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             log(Level.INFO, loginController.getAccount(), "SAVE updated Lemma with renaming from " + lemmaCopy.getFormWrittenRepr() + " to " + lemma.getFormWrittenRepr());
             AttestationRenaming renamings = lexiconManager.saveLemmaWithIRIRenaming(lemmaCopy, lemma);
             attestationManager.updateAttestationURIs(renamings);
+            HashMap<String, String> filesToRename = imageManager.update(renamings.getAttestationSenseUris());
+            renameImageFiles(filesToRename);
             lexiconCreationViewSenseDetail.addSense(lemma.getIndividual(), "Lemma");
         } else {
             // multiword case
             log(Level.INFO, loginController.getAccount(), "SAVE updated Multiword Lemma with renaming from " + lemmaCopy.getFormWrittenRepr() + " to " + lemma.getFormWrittenRepr());
             AttestationRenaming renamings = lexiconManager.saveMultiwordLemmaWithIRIRenaming(lemmaCopy, lemma);
             attestationManager.updateAttestationURIs(renamings);
+            HashMap<String, String> filesToRename = imageManager.update(renamings.getAttestationSenseUris());
+            renameImageFiles(filesToRename);
             lexiconCreationViewSenseDetail.addSense(lemma.getIndividual(), "Lemma");
         }
         updateBreadCrumb("Lemma", lemma.getFormWrittenRepr(), lemmaCopy.getIndividual(), lemma.getIndividual(), false, Label.ClickProvenance.LEMMA_LIST_VIEW);
 
+    }
+
+    private void renameImageFiles(HashMap<String, String> filesToRename) throws IOException {
+        for (Map.Entry<String, String> entry : filesToRename.entrySet()) {
+            File source = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + entry.getKey());
+            File target = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + entry.getValue());
+            FileUtils.moveFile(source, target);
+        }
     }
 
     private void updateTabViewLists() {
