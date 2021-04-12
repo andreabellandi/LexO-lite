@@ -216,7 +216,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
             }
         } else {
             att.setDictionaryPreferred(false);
-            info("Successfull", "attestation removed from dictionary");
+            info("template.attestation", "attestation.view.message.removedAttestation");
         }
     }
 
@@ -228,8 +228,8 @@ public class LexiconControllerAttestation extends BaseController implements Seri
         return attestationManager.loadAttestationsBySense(sd.getName());
     }
 
-    public void deleteAttestations(String formUri, String form) {
-        attestationManager.remove(formUri, form);
+    public void deleteAttestations(String senseUri, String formUri, String form, String att) {
+        attestationManager.remove(senseUri, formUri, form, att);
     }
 
     public static class AttestedForm {

@@ -26,14 +26,15 @@ public class AttestationManager implements Serializable {
     private DomainManager domainManager;
     
     private static final String DELETE_ATTESTATION_BY_SENSE = "delete from Attestation where senseUri = :senseUri";
-    private static final String DELETE_ATTESTATION_BY_FORM = "delete from Attestation where formUri = :formUri and form = :form";
+    private static final String DELETE_ATTESTATION_BY_FORM = "delete from Attestation where formUri = :formUri and form = :form "
+            + "and senseUri = :senseUri and attestation = :attestation";
 
     public boolean isDictionaryPreferreable(Attestation att) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
         criteria.add(Restrictions.eq("senseUri", att.getSenseUri()));
         criteria.add(Restrictions.eq("formUri", att.getFormUri()));
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
-        return (criteria.list().size() <= 2);
+        return (criteria.list().size() < 2);
     }
     
     public void setDictionaryPreferred(Attestation att, boolean value) {
@@ -47,10 +48,12 @@ public class AttestationManager implements Serializable {
         query.executeUpdate();
     }
     
-    public void remove(String formUri, String form) {
+    public void remove(String senseUri, String formUri, String form, String att) {
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(DELETE_ATTESTATION_BY_FORM);
+        query.setString("senseUri", senseUri);
         query.setString("formUri", formUri);
         query.setString("form", form);
+        query.setString("attestation", att);
         query.executeUpdate();
     }
 

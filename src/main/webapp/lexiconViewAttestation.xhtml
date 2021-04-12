@@ -21,7 +21,7 @@
                                 <p:commandButton title="Delete attestation" icon="fa fa-trash-o"
                                                  update=":editViewTab:attestationForm"
                                                  onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
-                                                 actionListener="#{lexiconControllerAttestation.deleteAttestations(att.formUri, att.form)}"/>
+                                                 actionListener="#{lexiconControllerAttestation.deleteAttestations(sense.name, att.formUri, att.form, att.attestation)}"/>
                             </h:panelGrid>
                         </ui:repeat>
                     </p:scrollPanel>
