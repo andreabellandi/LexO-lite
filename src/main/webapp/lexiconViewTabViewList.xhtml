@@ -86,6 +86,42 @@
                     </p:scrollPanel>
                 </p:tab>
 
+                <p:tab title="#{label['lexicon.tabviewlist.header.document']}" id="tabViewDocument">
+                    <h:panelGrid id="docGrid" columns="4" style="padding-top: 10px;" rendered="#{lexiconControllerDocument.documentTabEnabled}">
+                        <p:inputText id="docFilter" value="#{lexiconControllerTabViewList.docField}">
+                            <p:ajax event="keyup" listener="#{lexiconControllerTabViewList.docKeyupFilterEvent}"                                     
+                                    update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel
+                                    docFilterPanel docFilterPanel21 docFilterPanel22" />
+                        </p:inputText>
+                        <p:watermark id="docFilterWatermark" class="filterLabel" for="docFilter" value="Search for document"/>
+                        <p:commandButton icon="ui-icon-refresh" actionListener="#{lexiconControllerTabViewList.searchReset('Document')}"
+                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()" title="Refresh documents list"
+                                         update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docGrid
+                                         lexiconTabViewForm:tabView:docFilterLabel docFilterPanel docFilterPanel21 docFilterPanel22"/>
+                        <p:outputLabel id="docFilterLabel" value="#{lexiconControllerTabViewList.docCounter}" styleClass="filterLabel" for="docFilter"/>
+                    </h:panelGrid>
+                    <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
+                    <ui:include src="/lexiconViewDocumentFilter.xhtml"/>           
+                    <p:scrollPanel  id="scrollPanelDocTree" mode="native" style="overflow-x: hidden; overflow-y: auto;" styleClass="roundedBox">
+                        <p:tree id="docTree" value="#{lexiconControllerTabViewList.docRoot}" var="doc" selectionMode="single"
+                                selection="#{lexiconControllerTabViewList.selection}">
+                            <p:ajax event="select" listener="#{lexiconControllerTabViewList.onDocumentationSelect}"
+                                    onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
+                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconDocumentationDetailForm :editViewTab:lexiconSenseDetailForm
+                                    :systemMessage"/>
+                            <f:attribute name="Documentation" value="Document" />
+                            <p:treeNode>
+                                <span class="colorCircle" style="background-color:#248f24" />
+                                <h:outputText id="docNodeName" styleClass="colorCircleText" value="#{doc.abbreviation}"/>
+                                <span>
+                                    <h:outputText style="font-style: italic; color: darkgreen" value="#{'['.concat(doc.sourceType) }"/>
+                                    <h:outputText style="font-style: italic; font-weight: bold; color: darkgreen" value=" #{doc.type}]"/>
+                                </span>
+                            </p:treeNode>
+                        </p:tree>
+                    </p:scrollPanel>
+                </p:tab>
+                
                 <p:tab title="#{label['lexicon.tabviewlist.header.ontology']}" id="tabViewOntology" disabled="#{!lexiconControllerOntologyDetail.ontologyTabEnabled}">
                     <p:separator style="border: 0;clear: both;padding: 0.4%;background-color: white"/>
                     <ui:include src="/lexiconViewOntologyFilter.xhtml"/>

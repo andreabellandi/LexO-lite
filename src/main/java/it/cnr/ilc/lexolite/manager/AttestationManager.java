@@ -26,7 +26,7 @@ public class AttestationManager implements Serializable {
     private DomainManager domainManager;
     
     private static final String DELETE_ATTESTATION_BY_SENSE = "delete from Attestation where senseUri = :senseUri";
-    private static final String DELETE_ATTESTATION_BY_FORM = "delete from Attestation where formUri = :formnUri and form = :form";
+    private static final String DELETE_ATTESTATION_BY_FORM = "delete from Attestation where formUri = :formUri and form = :form";
 
     public boolean isDictionaryPreferreable(Attestation att) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);

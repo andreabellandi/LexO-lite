@@ -29,6 +29,7 @@ public class ImageManager implements Serializable {
 
     private static final String DELETE_IMAGES = "delete from Image where fileName = :fileName";
     private static final String UPDATE_FILENAME = "UPDATE Image SET fileName = :newFileName WHERE fileName = :oldFileName";
+    private static final String UPDATE_METADATA = "UPDATE Image SET description = :description, date = :date, source = :source WHERE fileName = :fileName";
     
     public void insertImage(Account account, String senseReference, String originalFileName, String fileName,
             String description, String source, String date) {
@@ -53,6 +54,15 @@ public class ImageManager implements Serializable {
     public void remove(String fileName) {
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(DELETE_IMAGES);
         query.setString("fileName", fileName);
+        query.executeUpdate();
+    }
+    
+    public void update(ImageData imageData) {
+        SQLQuery query = HibernateUtil.getSession().createSQLQuery(UPDATE_METADATA);
+        query.setString("fileName", imageData.getFileName());
+        query.setString("source", imageData.getSource());
+        query.setString("date", imageData.getDate());
+        query.setString("description", imageData.getDescription());
         query.executeUpdate();
     }
     

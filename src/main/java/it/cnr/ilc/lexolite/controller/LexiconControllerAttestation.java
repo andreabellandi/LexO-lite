@@ -6,7 +6,10 @@
 package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.domain.Attestation;
+import it.cnr.ilc.lexolite.domain.Document;
 import it.cnr.ilc.lexolite.manager.AttestationManager;
+import it.cnr.ilc.lexolite.manager.DocumentData;
+import it.cnr.ilc.lexolite.manager.DocumentationManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.IOException;
@@ -16,6 +19,8 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,9 +43,11 @@ public class LexiconControllerAttestation extends BaseController implements Seri
     private LexiconControllerFormDetail lexiconControllerFormDetail;
     @Inject
     private LexiconControllerSenseDetail lexiconControllerSenseDetail;
+    @Inject
+    private DocumentationManager documentationManager;
 
     private boolean attestationViewRendered = false;
-
+    
     private String formUri = "";
     private String form = "";
     private String attestedForm = "";
@@ -146,6 +153,28 @@ public class LexiconControllerAttestation extends BaseController implements Seri
 
     public void dictionaryPreferredChanged() {
         log(Level.INFO, loginController.getAccount(), "UPDATE attestation of " + selectedSense.getName() + " to " + dictionaryPreferred);
+    }
+    
+    public List<SelectItem> getDocuments() {
+        List<String> intDocs = documentationManager.getAbbreviationDocuments("Internal");
+        SelectItemGroup groupInt = new SelectItemGroup("Internal Documents");
+        List<SelectItem> internals = new ArrayList<SelectItem>();
+        for (String doc : intDocs) {
+            internals.add(new SelectItem(doc));
+        }
+        groupInt.setSelectItems(internals.toArray(new SelectItem[internals.size()]));
+        
+        List<String> extDocs = documentationManager.getAbbreviationDocuments("External");
+        SelectItemGroup groupExt = new SelectItemGroup("External Documents");
+        List<SelectItem> externals = new ArrayList<SelectItem>();
+        for (String doc : extDocs) {
+            externals.add(new SelectItem(doc));
+        }
+        groupExt.setSelectItems(externals.toArray(new SelectItem[externals.size()]));
+        List<SelectItem> docsList = new ArrayList();
+        docsList.add(groupInt);
+        docsList.add(groupExt);
+        return docsList;
     }
 
     public ArrayList<AttestedForm> getAttestedForms() {

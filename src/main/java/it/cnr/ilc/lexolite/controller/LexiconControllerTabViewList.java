@@ -28,6 +28,9 @@ import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.domain.Document;
+import it.cnr.ilc.lexolite.manager.DocumentData;
+import it.cnr.ilc.lexolite.manager.DocumentationManager;
 import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
@@ -86,10 +89,17 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerSynSemFormDetail lexiconControllerSynSemFormDetail;
     @Inject
     private LexiconControllerSynSemSenseDetail lexiconControllerSynSemSenseDetail;
+    @Inject
+    private LexiconControllerDocumentFilter lexiconControllerDocumentFilter;
+    @Inject
+    private LexiconControllerDocument lexiconControllerDocument;
+    @Inject
+    private DocumentationManager documentationManager;
 
     private String lemmaField;
     private String formField;
     private String senseField;
+    private String docField;
 
     private Integer activeTab = 0;
     private String ontologyField;
@@ -99,6 +109,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private final TreeNode formRoot = new DefaultTreeNode("Root", null);
     private final TreeNode senseRoot = new DefaultTreeNode("Root", null);
     private final TreeNode ontoRoot = new DefaultTreeNode("Root", null);
+    private final TreeNode docRoot = new DefaultTreeNode("Root", null);
     private TreeNode selection;
 
     private ArrayList<String> dynamicLexicaMenuItems = new ArrayList<>();
@@ -110,12 +121,30 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private List<Map<String, String>> cachedFormList = new ArrayList<Map<String, String>>();
     private List<Map<String, String>> cachedSenseList = new ArrayList<Map<String, String>>();
 
+    private List<DocumentData> cachedDocumentList = new ArrayList<DocumentData>();
+
+    public String getDocField() {
+        return docField;
+    }
+
+    public void setDocField(String docField) {
+        this.docField = docField;
+    }
+
     public Integer getActiveTab() {
         return activeTab;
     }
 
     public void setActiveTab(Integer activeTab) {
         this.activeTab = activeTab;
+    }
+
+    public TreeNode getDocRoot() {
+        return docRoot;
+    }
+
+    public String getDocCounter() {
+        return Integer.toString(docRoot.getChildCount());
     }
 
     public String getLemmaField() {
@@ -233,6 +262,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             ontologyManager.deafult_loadOntology();
             initDomainOntologyTabView();
         }
+        initDocumentTabView();
 
     }
 
@@ -426,6 +456,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
         lexiconControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconControllerDocument.setDocRendered(false);
         // for dicitonary view purposes
         lexiconControllerVarTransSenseDetail.addSenseRelations();
         // -----
@@ -523,6 +554,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSynSemFormDetail.resetFormDetails();
         lexiconCreationControllerSynSemSenseDetail.setSenseSynSemRendered(false);
         lexiconCreationControllerSynSemSenseDetail.resetSenseDetails();
+        lexiconControllerDocument.setDocRendered(false);
     }
 
     public void searchReset(String entryType) {
@@ -539,8 +571,22 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                 getFilteredList(formRoot, cachedFormList, "", "Form");
                 setFormField("");
                 break;
+            case "Document":
+                log(Level.INFO, loginController.getAccount(), "RESET Document Search Filter ");
+                updateDocumentationCache();
+                resetDocumentFilter();
+                getFilteredDocumentationList(docRoot, cachedDocumentList, "", true);
+                break;
             default:
         }
+    }
+
+    private void resetDocumentFilter() {
+        lexiconControllerDocumentFilter.setDocType("All");
+        lexiconControllerDocumentFilter.setAll(true);
+        lexiconControllerDocumentFilter.setExternal(false);
+        lexiconControllerDocumentFilter.setInternal(false);
+        setDocField("");
     }
 
     private void getFilteredList(TreeNode tn, List<Map<String, String>> list, String keyFilter, String type) {
@@ -703,6 +749,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
         lexiconControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconControllerDocument.setDocRendered(false);
         // for dicitonary view purposes
         lexiconControllerVarTransSenseDetail.addSenseRelations();
         // -----
@@ -751,6 +798,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.addSense(entry, entryType);
         lexiconControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconControllerDocument.setDocRendered(false);
         // for dicitonary view purposes
         lexiconControllerVarTransSenseDetail.addSenseRelations();
         // -----
@@ -823,6 +871,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerSenseDetail.setSenseToolbarRendered(true);
         lexiconControllerVarTransFormDetail.setVarTransRendered(false);
         lexiconControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconControllerDocument.setDocRendered(false);
         // for dicitonary view purposes
         lexiconControllerVarTransSenseDetail.addSenseRelations();
         // -----
@@ -836,6 +885,101 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         // set breadcrumb
         lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.LEMMA_LIST_VIEW);
 
+    }
+
+    // invoked when the user types a char
+    public void docKeyupFilterEvent(AjaxBehaviorEvent e) {
+        String keyFilter = (String) e.getComponent().getAttributes().get("value");
+        getFilteredDocumentationList(docRoot, cachedDocumentList, keyFilter.toLowerCase(), false);
+    }
+
+    private void getFilteredDocumentationList(TreeNode tn, List<DocumentData> ddList, String keyFilter, boolean reset) {
+        tn.getChildren().clear();
+        keyFilter = (keyFilter == null) ? "" : keyFilter;
+        if (lexiconControllerDocumentFilter.isStartWith()) {
+            for (DocumentData dd : ddList) {
+                if (dd.getAbbreviation().toLowerCase().startsWith(keyFilter) || keyFilter.equals("")) {
+                    if (isDocumentFilterable(dd) || reset) {
+                        DocTreeNode dtn = new DocTreeNode(dd.getDocId(), dd.getAbbreviation(), dd.getType(), dd.getTitle(), dd.getSourceType(), 0);
+                        tn.getChildren().add(new DefaultTreeNode(dtn));
+                    }
+                }
+            }
+        }
+        if (lexiconControllerDocumentFilter.isContains()) {
+            for (DocumentData dd : ddList) {
+                if (dd.getAbbreviation().toLowerCase().contains(keyFilter) || keyFilter.equals("")) {
+                    if (isDocumentFilterable(dd) || reset) {
+                        DocTreeNode dtn = new DocTreeNode(dd.getDocId(), dd.getAbbreviation(), dd.getType(), dd.getTitle(), dd.getSourceType(), 0);
+                        tn.getChildren().add(new DefaultTreeNode(dtn));
+                    }
+                }
+            }
+        }
+        log(Level.INFO, loginController.getAccount(), "SEARCH performed about document " + lexiconControllerDocumentFilter.getDocType() + " type - "
+                + "external: " + Boolean.toString(lexiconControllerDocumentFilter.isExternal()) + " - "
+                + "internal: " + Boolean.toString(lexiconControllerDocumentFilter.isInternal()) + " - "
+                + "all: " + Boolean.toString(lexiconControllerDocumentFilter.isAll()) + " - "
+                + (lexiconControllerDocumentFilter.isStartWith() ? "startsWith: " : "") + keyFilter
+                + (lexiconControllerDocumentFilter.isContains() ? "contains: " : "") + keyFilter);
+    }
+
+    private boolean isDocumentFilterable(DocumentData dd) {
+        if (lexiconControllerDocumentFilter.isAll()) {
+            // both internal and external documents are required
+            if (lexiconControllerDocumentFilter.getDocType().equals("All")) {
+                // all document types are required
+                return true;
+            } else {
+                return dd.getType().equals(lexiconControllerDocumentFilter.getDocType());
+            }
+        } else {
+            if (lexiconControllerDocumentFilter.getDocType().equals("All")) {
+                // all document types are required
+                if (lexiconControllerDocumentFilter.isExternal()) {
+                    return dd.getSourceType().equals("External");
+                } else {
+                    return dd.getSourceType().equals("Internal");
+                }
+            } else {
+                if (lexiconControllerDocumentFilter.isExternal()) {
+                    return dd.getSourceType().equals("External") && dd.getType().equals(lexiconControllerDocumentFilter.getDocType());
+                } else {
+                    return dd.getSourceType().equals("Internal") && dd.getType().equals(lexiconControllerDocumentFilter.getDocType());
+                }
+            }
+        }
+    }
+    
+     // invoked when the user select the filter mode (starts with or contains)
+    public void docKeyupFilterEvent(String keyFilter) {
+        getFilteredDocumentationList(docRoot, cachedDocumentList, keyFilter, false);
+    }
+    
+    private void updateDocumentationCache() {
+        cachedDocumentList.clear();
+        for (Document d : documentationManager.getDocuments()) {
+            cachedDocumentList.add(new DocumentData(d));
+        }
+    }
+
+    public void initDocumentTabView() {
+        docRoot.getChildren().clear();
+        updateDocumentationCache();
+        for (DocumentData d : cachedDocumentList) {
+            DocTreeNode dtn = new DocTreeNode(d.getDocId(), d.getAbbreviation(), d.getType(), d.getTitle(), d.getSourceType(), 0);
+            docRoot.getChildren().add(new DefaultTreeNode(dtn));
+        }
+    }
+    
+    public void onDocumentationSelect(NodeSelectEvent event) {
+        resetPanels();
+        DocTreeNode dtn = ((DocTreeNode) event.getTreeNode().getData());
+        lexiconControllerDocument.setNewAction(false);
+        lexiconControllerDocument.setDocRendered(true);
+        lexiconControllerDocument.setDocAlreadyExists(false);
+        lexiconControllerDocument.addDocument(dtn);
+        log(Level.INFO, loginController.getAccount(), "SELECT Document " + dtn.getAbbreviation());
     }
 
     public static class DataTreeNode {
@@ -925,6 +1069,84 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 
         public void setVerified(String verified) {
             this.verified = verified;
+        }
+
+    }
+    
+    public static class DocTreeNode {
+
+        private int hierarchyLevel;
+        private Long docId;
+        private String abbreviation;
+        private String type;
+        private String title;
+        private String sourceType;
+
+        public DocTreeNode(Long docId, String abbreviation, String type, String title, String sourceType, int hierarchyLevel) {
+            this.docId = docId;
+            this.abbreviation = abbreviation;
+            this.hierarchyLevel = hierarchyLevel;
+            this.sourceType = sourceType;
+            this.type = type;
+            this.title = title;
+        }
+
+        // only for manuscripts
+        public DocTreeNode(Long docId, String abbreviation, String title, int hierarchyLevel) {
+            this.docId = docId;
+            this.abbreviation = abbreviation;
+            this.hierarchyLevel = hierarchyLevel;
+            this.sourceType = "Internal";
+            this.type = "Manuscript";
+            this.title = title;
+        }
+
+        public Long getDocId() {
+            return docId;
+        }
+
+        public void setDocId(Long docId) {
+            this.docId = docId;
+        }
+
+        public int getHierarchyLevel() {
+            return hierarchyLevel;
+        }
+
+        public void setHierarchyLevel(int hierarchyLevel) {
+            this.hierarchyLevel = hierarchyLevel;
+        }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public void setAbbreviation(String abbreviation) {
+            this.abbreviation = abbreviation;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSourceType() {
+            return sourceType;
+        }
+
+        public void setSourceType(String sourceType) {
+            this.sourceType = sourceType;
         }
 
     }

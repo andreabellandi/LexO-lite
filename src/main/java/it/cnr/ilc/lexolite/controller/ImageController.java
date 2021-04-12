@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -59,6 +60,18 @@ public class ImageController extends BaseController implements Serializable {
     private SenseData selectedSense;
     private ImageData clickedImage;
 
+    private boolean metadataSaveButtonDisabled = true;
+
+    public boolean isMetadataSaveButtonDisabled() {
+        return metadataSaveButtonDisabled;
+    }
+
+    public void setMetadataSaveButtonDisabled(boolean metadataSaveButtonDisabled) {
+        this.metadataSaveButtonDisabled = metadataSaveButtonDisabled;
+    }
+    
+    
+    
     public ImageData getClickedImage() {
         return clickedImage;
     }
@@ -195,6 +208,37 @@ public class ImageController extends BaseController implements Serializable {
         imgd.setSource(source);
         int senseIndex = lexiconControllerSenseDetail.getSenses().indexOf(selectedSense);
         lexiconControllerSenseDetail.getSenses().get(senseIndex).getImages().add(imgd);
+    }
+    
+    public void saveMetadata() {
+        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATED metadata of " + clickedImage.getFileName());
+        clickedImage.setDate(date);
+        clickedImage.setDescription(description);
+        clickedImage.setSource(source);
+        imageManager.update(clickedImage);
+        info("template.message.updateMetadataImage.summary", "template.message.updateMetadataImage.description");
+        metadataSaveButtonDisabled = true;
+    }
+    
+    public void metadataSourceKeyUpEvent(AjaxBehaviorEvent e) {
+        String _source = (String) e.getComponent().getAttributes().get("value");
+        source = _source;
+        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE source metadata of " + clickedImage.getFileName());
+        metadataSaveButtonDisabled = false;
+    }
+    
+    public void metadataDateKeyUpEvent(AjaxBehaviorEvent e) {
+        String _date = (String) e.getComponent().getAttributes().get("value");
+        date = _date;
+        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE date metadata of " + clickedImage.getFileName());
+        metadataSaveButtonDisabled = false;
+    }
+    
+    public void metadataDescriptionKeyUpEvent(AjaxBehaviorEvent e) {
+        String _desc = (String) e.getComponent().getAttributes().get("value");
+        description = _desc;
+        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE description metadata of " + clickedImage.getFileName());
+        metadataSaveButtonDisabled = false;
     }
 
 }

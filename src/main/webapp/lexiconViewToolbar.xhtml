@@ -30,6 +30,14 @@
                                     oncomplete="setHeight();"
                                     update=":editViewTab"/>
                     </p:submenu> 
+                    <p:submenu styleClass="lexiconTabView" label="Documentation">
+                       <p:menuitem value="Internal" styleClass="lexiconTabView" icon="fa fa-plus" action="#{lexiconControllerToolbar.newDocument('Internal')}"
+                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm
+                                :editViewTab:lexiconDocumentationDetailForm"/>
+                        <p:menuitem value="External" icon="fa fa-plus" styleClass="lexiconTabView" action="#{lexiconControllerToolbar.newDocument('External')}"
+                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm
+                                :editViewTab:lexiconDocumentationDetailForm"/>
+                    </p:submenu>    
                 </p:tieredMenu>
 
                 <p:commandButton id="importButton" icon="ui-icon-triangle-1-s" value="Import" type="button" styleClass="lexiconToolbarButton" 

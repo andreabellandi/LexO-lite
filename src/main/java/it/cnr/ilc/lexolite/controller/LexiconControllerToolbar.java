@@ -61,6 +61,8 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
     private OntologyManager ontologyManager;
     @Inject
     private LoginController loginController;
+    @Inject
+    private LexiconControllerDocument lexiconControllerDocument;
 
     private boolean deleteLexiconReferences;
 
@@ -200,6 +202,39 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
 
         FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void newDocument(String docType) {
+        log(Level.INFO, loginController.getAccount(), "NEW " + docType + " document");
+        resetForNewDocument();
+        lexiconControllerDocument.cleanForm();
+        if (docType.equals("Internal")) {
+            lexiconControllerDocument.getDoc().setSourceType("Internal");
+        } else {
+            lexiconControllerDocument.getDoc().setSourceType("External");
+        }
+        lexiconControllerDocument.setNewAction(true);
+        lexiconControllerDocument.setDocRendered(true);
+        lexiconControllerDocument.setDocAlreadyExists(false);
+
+    }
+
+    public void resetForNewDocument() {
+        lexiconCreationControllerSenseDetail.resetSenseDetails();
+        lexiconCreationControllerSenseDetail.setAddSenseButtonDisabled(false);
+        lexiconCreationControllerSenseDetail.setSenseToolbarRendered(false);
+        lexiconCreationControllerFormDetail.resetFormDetails();
+        lexiconCreationControllerFormDetail.setFormAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setLemmAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setIsAdmissibleLemma(true);
+        lexiconCreationControllerFormDetail.setLemmaRendered(false);
+        lexiconCreationControllerFormDetail.setAddFormButtonDisabled(true);
+        lexiconCreationControllerFormDetail.getLemma().clear();
+        lexiconCreationControllerFormDetail.getLemmaCopy().clear();
+        lexiconCreationControllerFormDetail.getLemma().setIndividual("");
+        lexiconCreationControllerFormDetail.getLemmaCopy().setIndividual("");
+        lexiconControllerDocument.setDocRendered(true);
+        lexiconControllerDocument.setAddDocButtonDisabled(true);
     }
 
 }

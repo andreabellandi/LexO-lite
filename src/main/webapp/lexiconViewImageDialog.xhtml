@@ -8,22 +8,31 @@
     <p:dialog id="lexiconImagePanel" widgetVar="dlgLexiconImage" header="#{label['lexiconImage.header']} of #{imageController.lemma}" 
               resizable="false" closable="true"  width="450"
               modal="true">
-        <p:accordionPanel styleClass="lexiconTabView" widgetVar="basic">
-            <p:tab title="Metadata">
-                <p:scrollPanel mode="native"  style="height: 200px; overflow-x: auto; overflow-y: auto;">
-                    <h:panelGrid styleClass="generalFilterBox" columns="1">
-                        <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
-                            <h5>Source</h5>
-                            <p:inputText value="#{imageController.source}" size="45"/>
-                            <h5>Date</h5>
-                            <p:inputText  value="#{imageController.date}" size="20"/>
-                            <h5>Description</h5>
-                            <p:inputText value="#{imageController.description}" size="45"/>
-                        </h:panelGrid>
-                    </h:panelGrid>
-                </p:scrollPanel>
-            </p:tab>
-        </p:accordionPanel>
+        <h:panelGrid styleClass="generalFilterBox" columns="1">
+            <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
+                <h5>Source</h5>
+                <p:inputText styleClass="inputTextStyle" value="#{imageController.source}" size="45">
+                    <p:ajax event="keyup" listener="#{imageController.metadataSourceKeyUpEvent}"
+                            update="metadataButtons"/>
+                </p:inputText>
+                <h5>Date</h5>
+                <p:inputText styleClass="inputTextStyle" value="#{imageController.date}" size="15">
+                    <p:ajax event="keyup" listener="#{imageController.metadataDateKeyUpEvent}"
+                            update="metadataButtons"/>
+                </p:inputText>
+                <h5>Description</h5>
+                <p:inputText styleClass="inputTextStyle" value="#{imageController.description}" size="45">
+                    <p:ajax event="keyup" listener="#{imageController.metadataDescriptionKeyUpEvent}"
+                            update="metadataButtons"/>
+                </p:inputText>
+                <p:commandButton id="metadataButtons" title="Save metadata" icon="fa fa-save" 
+                                 update=":systemMessage"  
+                                 action="#{imageController.saveMetadata()}"
+                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
+                                 disabled="#{imageController.metadataSaveButtonDisabled}"/>
+            </h:panelGrid>
+        </h:panelGrid>
+
         <div id="imageWrapper" style="margin:auto; overflow:scroll; position:relative; height: 400px; 
              width: 400px; padding-top: 10px; padding-bottom: 10px;}">
             <p:graphicImage id="lexImage" height="400" width="400" value="#{imageController.image}" stream="false"/>

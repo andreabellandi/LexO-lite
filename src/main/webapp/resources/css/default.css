@@ -829,6 +829,25 @@ html, body {
     background-color: whitesmoke;
 }
 
+.filterDocBox {
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    padding: 2px 2px 2px 2px;
+    background-color: rgba(224,255,223, 0.4);
+}
+
+.docTextBlock {
+    background-color: #ebfaeb;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 3px;
+    line-height: 1.5;
+    border: 2px solid #248f24;
+    float: right;
+}
+
 .userStatsDetailTable {
     border: 1px solid gray;
     border-radius: 5px;

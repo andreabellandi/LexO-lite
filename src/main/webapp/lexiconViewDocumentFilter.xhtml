@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:panelGrid id="docFilterPanel" styleClass="filterBox" columns="4" rendered="#{lexiconControllerDocument.documentTabEnabled}">
+        <p:outputLabel styleClass="filterLabel" value="Starts with"/>
+        <h:selectBooleanCheckbox value="#{lexiconControllerDocumentFilter.startWith}">
+            <p:ajax listener="#{lexiconControllerDocumentFilter.startsWithChanged}" 
+                    update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel"/>
+        </h:selectBooleanCheckbox>
+        <p:outputLabel styleClass="filterLabel" value="Contains"/>
+        <h:selectBooleanCheckbox value="#{lexiconControllerDocumentFilter.contains}">
+            <p:ajax listener="#{lexiconControllerDocumentFilter.containsChanged}" 
+                    update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel"/>
+        </h:selectBooleanCheckbox>
+    </h:panelGrid>
+
+    <p:spacer height="10"/>
+
+    <h:panelGrid id="docFilterPanel2" styleClass="filterBox" columns="2" rendered="#{lexiconControllerDocument.documentTabEnabled}">
+
+        <h:panelGrid id="docFilterPanel21" columns="2" rendered="#{lexiconControllerDocument.documentTabEnabled}">
+            <p:selectOneMenu id="docType2" styleClass="menuBiblio"
+                             panelStyleClass="panelBiblio" value="#{lexiconControllerDocumentFilter.docType}" 
+                             appendTo="docType2">
+                <p:ajax event="valueChange" listener="#{lexiconControllerDocumentFilter.docTypeChanged}"
+                        update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel22"/>
+                <f:selectItem itemLabel="All" itemValue="All" />
+                <f:selectItem itemLabel="Text" itemValue="Text" />
+                <f:selectItem itemLabel="Book" itemValue="Book" />
+                <f:selectItem itemLabel="Article" itemValue="Article"/>
+                <f:selectItem itemLabel="Map" itemValue="Map"/>
+                <f:selectItem itemLabel="Dictionary" itemValue="Dictionary"/>
+            </p:selectOneMenu>
+        </h:panelGrid>
+
+        <h:panelGrid id="docFilterPanel22" styleClass="filterDocBox" columns="2" rendered="#{lexiconControllerDocument.documentTabEnabled}">
+            <p:outputLabel styleClass="filterLabel" value="Internal"/>
+            <h:selectBooleanCheckbox value="#{lexiconControllerDocumentFilter.internal}">
+                <p:ajax listener="#{lexiconControllerDocumentFilter.internalChanged}" 
+                        update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel22"/>
+            </h:selectBooleanCheckbox>
+            <p:outputLabel styleClass="filterLabel" value="External"/>
+            <h:selectBooleanCheckbox value="#{lexiconControllerDocumentFilter.external}">
+                <p:ajax listener="#{lexiconControllerDocumentFilter.externalChanged}" 
+                        update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel22"/>
+            </h:selectBooleanCheckbox>
+            <p:outputLabel styleClass="filterLabel" value="All"/>
+            <h:selectBooleanCheckbox value="#{lexiconControllerDocumentFilter.all}">
+                <p:ajax listener="#{lexiconControllerDocumentFilter.allChanged}" 
+                        update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel22"/>
+            </h:selectBooleanCheckbox>
+        </h:panelGrid>
+
+
+
+    </h:panelGrid>
+    <p:spacer height="10"/>
+
+</ui:composition>
