@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <h:form id="lexiconDocumentationDetailForm">
+    <h:form id="lexiconDocumentationDetailForm" rendered="#{lexiconControllerDocument.docRendered}">
 
         <h:panelGrid id="DocPanelGrid" styleClass="docTextBlock" columns="2" columnClasses="column" cellpadding="5" 
                      rendered="#{lexiconControllerDocument.docRendered}">

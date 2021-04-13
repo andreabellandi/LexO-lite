@@ -5,8 +5,34 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:form id="attestationForm" rendered="#{lexiconControllerAttestation.attestationViewRendered}">
-        <ui:repeat value="#{lexiconControllerAttestation.senses}" var="sense">
-            <p:accordionPanel  value="#{sense}" style="width: 100%;"
+        <ui:repeat id="AttestationFormRepeat" value="#{lexiconControllerAttestation.senses}" var="sense">
+
+            <p:dataTable id="AttestationsDT" value="#{lexiconControllerAttestation.getAttestations(sense)}" var="att" rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}"> 
+                <f:facet name="header">
+                    <h:outputLabel>Attestations for: <em>#{sense.name}</em></h:outputLabel>
+                    <h:outputLabel rendered="#{'No entry found' != sense.definition}"><br/>#{sense.definition}</h:outputLabel>
+                </f:facet>
+                <p:column headerText="Doc" width="8%">
+                    <h:outputText value="#{att.docID}" />
+                </p:column>
+                <p:column headerText="Dictionary" width="7%" style="text-align: center;">
+                    <h:selectBooleanCheckbox value="#{att.dictionaryPreferred}">
+                        <p:ajax listener="#{lexiconControllerAttestation.checkDictionayPreferred(att)}" update="@this :systemMessage"
+                                onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" />
+                    </h:selectBooleanCheckbox>
+                </p:column>
+                <p:column headerText="Attestation" width="80%" style="text-align: center;" >
+                    <h:outputText value="#{att.attestation}" />
+                </p:column>
+                <p:column headerText="Delete" width="5%" style="text-align: center;">
+                    <p:commandButton title="Delete attestation" icon="fa fa-trash-o"
+                                     update=":editViewTab:attestationForm"
+                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
+                                     actionListener="#{lexiconControllerAttestation.deleteAttestations(sense.name, att.formUri, att.form, att.attestation)}"/>
+                </p:column>
+            </p:dataTable>
+            <p:spacer height="20"/>
+            <!--p:accordionPanel  value="#{sense}" style="width: 100%;"
                                rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}">
                 <p:tab title="#{sense.definition}">
                     <p:scrollPanel mode="native" style="overflow-x: hidden; overflow-y: auto;">
@@ -26,8 +52,7 @@
                         </ui:repeat>
                     </p:scrollPanel>
                 </p:tab>
-            </p:accordionPanel>
-            <br/><br/>
+            </p:accordionPanel-->
         </ui:repeat>
     </h:form>
 

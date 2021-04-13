@@ -253,9 +253,12 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             } else {
                 row.add(null);
             }
-            row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
-            results.add(row);
-
+            if (sd.getThemeOWLClass() != null) {
+                row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+                results.add(row);
+            } else {
+                LOG.error("sd.getThemeOWLClass() is null!!");
+            }
         }
 
         return results;
@@ -279,9 +282,9 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         if (sd != null) {
             if (sd.getReifiedTranslationRels().size() > 0) {
                 for (SenseData.ReifiedTranslationRelation rtr : sd.getReifiedTranslationRels()) {
-                    mainDiv.with(div(span(join(rtr.getCategory() + 
-                            (rtr.getConfidence() < 1.0 ? " (" + rtr.getConfidence() + ")" : "") +
-                            ": ",
+                    mainDiv.with(div(span(join(rtr.getCategory()
+                            + (rtr.getConfidence() < 1.0 ? " (" + rtr.getConfidence() + ")" : "")
+                            + ": ",
                             a(getName(rtr.getTargetWrittenRep()) + " (" + rtr.getTargetLanguage() + ")").attr("style", "text-decoration: underline;")
                                     .attr("onclick", "rc([{name:'entry',value:'" + rtr.getTarget() + "'},{name:'type',value:'Sense'}]);")))));
                 }
@@ -345,10 +348,10 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         }
         for (Iterator<LemmaData.Word> it = lexiconCreationControllerFormDetail.getLemma().getSeeAlso().iterator(); it.hasNext();) {
             LemmaData.Word word = it.next();
-             div.with(span(join("",
-                     a(word.getWrittenRep()).attr("style", "text-decoration: underline;")
-                                    .attr("onclick", "rc([{name:'entry',value:'" + word.getOWLName() + "'},{name:'type',value:'Lemma'}]);"), 
-                     ((it.hasNext() ? "; " : "")))));
+            div.with(span(join("",
+                    a(word.getWrittenRep()).attr("style", "text-decoration: underline;")
+                            .attr("onclick", "rc([{name:'entry',value:'" + word.getOWLName() + "'},{name:'type',value:'Lemma'}]);"),
+                    ((it.hasNext() ? "; " : "")))));
         }
         return div.renderFormatted();
     }
@@ -361,7 +364,6 @@ public class LexiconControllerDictionary extends BaseController implements Seria
 //        }
 //        return ret;
 //    }
-
     public void execute() {
         FacesContext context = FacesContext.getCurrentInstance();
         Map<String, String> params = context.getExternalContext().getRequestParameterMap();

@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 
-    <h:form id="lexiconSynSemSenseDetailForm">
+    <h:form id="lexiconSynSemSenseDetailForm" rendered="#{lexiconControllerSynSemSenseDetail.senseSynSemRendered}">
         <p:dataList id="SenseSynSemDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
                     value="#{lexiconControllerSynSemSenseDetail.sensesSynSem}" emptyMessage="" 
                     rendered="#{lexiconControllerSynSemSenseDetail.senseSynSemRendered}">

@@ -4,7 +4,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <h:form id="lexiconSynSemFormDetailForm">
+    <h:form id="lexiconSynSemFormDetailForm" rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}">
 
         <h:panelGrid id="LemmaSynSemPanelGrid" styleClass="lemmaTextBlock" columns="2" columnClasses="column" cellpadding="5" 
                      rendered="#{lexiconControllerSynSemFormDetail.synSemRendered}">

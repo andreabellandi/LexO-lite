@@ -4,8 +4,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-
-    <h:form id="lexiconVarTransSenseDetailForm">
+    <h:form id="lexiconVarTransSenseDetailForm" rendered="#{lexiconControllerVarTransFormDetail.varTransRendered}">
         <p:dataList id="SenseVarTransDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
                     value="#{lexiconControllerVarTransSenseDetail.sensesVarTrans}" emptyMessage="" rendered="#{lexiconControllerVarTransSenseDetail.senseVarTransRendered}">
             <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">

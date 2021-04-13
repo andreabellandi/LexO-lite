@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 
-    <h:form id="lexiconSenseDetailForm">
+    <h:form id="lexiconSenseDetailForm" rendered="#{lexiconControllerSenseDetail.senseRendered}">
         <p:dataList id="SenseDataList" styleClass="noBorder" type="definition" var="sense"  varStatus="loop"
                     value="#{lexiconControllerSenseDetail.senses}" emptyMessage="" rendered="#{lexiconControllerSenseDetail.senseRendered}">
             <h:panelGrid styleClass="senseTextBlock" columns="1" cellpadding="5">

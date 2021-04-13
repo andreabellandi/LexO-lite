@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <h:form id="lexiconVarTransFormDetailForm">
+    <h:form id="lexiconVarTransFormDetailForm" rendered="#{lexiconControllerVarTransFormDetail.varTransRendered}">
 
         <h:panelGrid id="LemmaVarTransPanelGrid" styleClass="lemmaTextBlock" columns="2" columnClasses="column" cellpadding="5" 
                      rendered="#{lexiconControllerVarTransFormDetail.varTransRendered}">
