@@ -84,6 +84,9 @@ html, body {
 .lexiconTabView div .ui-widget-content {
     border: 0;
 }
+.rowBorderAdjustment {
+    border: 1px solid #D5D5D5 !important;
+}
 
 .lexiconTabViewLanguage {
     font-size: 11px !important;
