@@ -115,6 +115,7 @@ public class LexiconControllerLexicalAspect extends BaseController implements Se
                     lexiconControllerOntologyDetail.setOntologyClassRendered(false);
                     lexiconControllerAttestation.setAttestationViewRendered(true);
                     lexiconControllerSynSemFormDetail.setSynSemRendered(false);
+                    lexiconControllerSynSemSenseDetail.setSenseSynSemRendered(false);
                     break;
                 default:
                     break;
