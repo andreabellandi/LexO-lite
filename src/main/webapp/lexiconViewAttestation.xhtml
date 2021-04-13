@@ -7,7 +7,9 @@
     <h:form id="attestationForm" rendered="#{lexiconControllerAttestation.attestationViewRendered}">
         <ui:repeat id="AttestationFormRepeat" value="#{lexiconControllerAttestation.senses}" var="sense">
 
-            <p:dataTable id="AttestationsDT" value="#{lexiconControllerAttestation.getAttestations(sense)}" var="att" rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}"> 
+            <p:dataTable id="AttestationsDT" value="#{lexiconControllerAttestation.getAttestations(sense)}" 
+                         var="att" rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}"
+                         rowStyleClass="rowBorderAdjustment"> 
                 <f:facet name="header">
                     <h:outputLabel>Attestations for: <em>#{sense.name}</em></h:outputLabel>
                     <h:outputLabel rendered="#{'No entry found' != sense.definition}"><br/>#{sense.definition}</h:outputLabel>

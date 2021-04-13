@@ -12,7 +12,7 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>-->
-<!--    <context-param>  
+    <!--    <context-param>  
         <param-name>primefaces.THEME</param-name>
         <param-value>omega</param-value>  
     </context-param>-->
@@ -23,6 +23,10 @@
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>delta</param-value>
     </context-param>
     <context-param> <!-- Per abilitare la validazione dei campi di input sul client  -->
         <param-name>primefaces.CLIENT_SIDE_VALIDATION</param-name>
