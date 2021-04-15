@@ -57,7 +57,7 @@
 
                     <p:selectOneMenu id="lemmaLexRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
                                      panelStyleClass="panel" value="#{lexRel.relation}" 
-                                     appendTo="lemmaLexRel">
+                                     appendTo="lemmaLexRel" >
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
                         <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransFormDetail.lexicalRelationTypes}"
                                        var="lr" itemLabel="#{lr}" itemValue="#{lexiconControllerVarTransFormDetail.getPropertyName(lr)}"/>
@@ -134,7 +134,7 @@
                          rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
                                      or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                 <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical relations"/>
-                <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
+                <p:menu id="lexicalRelationMenu" overlay="true" trigger="menuButton" my="left top" at="left bottom" styleClass="custom-ui-menu-large" >
                     <p:menuitem styleClass="lexiconTabView" value="#{label['varTrans.lemmaButton.directLexicalRelation']}" icon="fa fa-plus" 
                                 disabled="#{lexiconControllerFormDetail.newAction}" 
                                 update="LemmaVarTransPanelGrid"  

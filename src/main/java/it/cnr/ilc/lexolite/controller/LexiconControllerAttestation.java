@@ -6,16 +6,15 @@
 package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.domain.Attestation;
-import it.cnr.ilc.lexolite.domain.Document;
 import it.cnr.ilc.lexolite.manager.AttestationManager;
-import it.cnr.ilc.lexolite.manager.DocumentData;
 import it.cnr.ilc.lexolite.manager.DocumentationManager;
-import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -47,7 +46,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
     private DocumentationManager documentationManager;
 
     private boolean attestationViewRendered = false;
-    
+
     private String formUri = "";
     private String form = "";
     private String attestedForm = "";
@@ -154,7 +153,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
     public void dictionaryPreferredChanged() {
         log(Level.INFO, loginController.getAccount(), "UPDATE attestation of " + selectedSense.getName() + " to " + dictionaryPreferred);
     }
-    
+
     public List<SelectItem> getDocuments() {
         List<String> intDocs = documentationManager.getAbbreviationDocuments("Internal");
         SelectItemGroup groupInt = new SelectItemGroup("Internal Documents");
@@ -163,7 +162,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
             internals.add(new SelectItem(doc));
         }
         groupInt.setSelectItems(internals.toArray(new SelectItem[internals.size()]));
-        
+
         List<String> extDocs = documentationManager.getAbbreviationDocuments("External");
         SelectItemGroup groupExt = new SelectItemGroup("External Documents");
         List<SelectItem> externals = new ArrayList<SelectItem>();
@@ -187,6 +186,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
     }
 
     public void save() throws IOException, OWLOntologyStorageException {
+        log(Level.INFO, loginController.getAccount(), "Attestation save() form: " + form);
         int formIndex = Integer.parseInt(form);
         if (formIndex == -1) {
             formUri = lexiconControllerFormDetail.getLemma().getIndividual();
@@ -232,6 +232,48 @@ public class LexiconControllerAttestation extends BaseController implements Seri
         attestationManager.remove(senseUri, formUri, form, att);
     }
 
+    public String getHighlightAttestations(String form, String text) {
+        log(Level.INFO, loginController.getAccount(), "Searching for: " + form + " on text: " + text);
+
+        String openMark = "<mark>";
+        String closeMark = "</mark>";
+        StringBuilder highlightedText = new StringBuilder();
+        Pattern pattern = Pattern.compile("\\b" + form + "\\b", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(text);
+        int prevEndMatch = 0;
+        int startMatch = 0;
+        int endMatch = 0;
+        while (matcher.find()) {
+            startMatch = matcher.start();
+            endMatch = matcher.end();
+            highlightedText.append(text.substring(prevEndMatch, startMatch))
+                    .append(openMark)
+                    .append(text.substring(startMatch, endMatch))
+                    .append(closeMark);
+            prevEndMatch = endMatch;
+//            System.err.println(matcher.group(0) + " start: " + matcher.start() + " end: " + matcher.end());
+//            System.err.println("highlightedText: " + highlightedText);
+        }
+        highlightedText.append(text.substring(prevEndMatch));
+        log(Level.INFO, loginController.getAccount(), "highlightedText: " + highlightedText);
+
+        return highlightedText.toString();
+    }
+    
+    
+    public String getAttestationForm() {
+
+        log(Level.INFO, loginController.getAccount(), "Attestation get attersted form: " + form);
+        int formIndex = Integer.parseInt(form);
+        if (formIndex == -1) {
+            attestedForm = lexiconControllerFormDetail.getLemma().getFormWrittenRepr();
+        } else {
+            attestedForm = lexiconControllerFormDetail.getForms().get(formIndex).getFormWrittenRepr();
+        }
+        
+       return attestedForm;
+    }
+    
     public static class AttestedForm {
 
         private String form;

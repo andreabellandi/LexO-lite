@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexolite.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -43,6 +44,7 @@ public class Attestation extends SuperEntity {
         this.formType = formType;
     }
 
+    @Column(length = 4096)
     public String getAttestation() {
         return attestation;
     }

@@ -7,7 +7,7 @@
     <p:dialog id="newAttestationPanel" widgetVar="newAttestationDialog" header="#{label['newAttestation.header']}" resizable="false" closable="true"
               modal="true">
         <!-- idDoc; form; attestation; preferred for dictionary -->
-        <h:form>
+        <h:form id="formAttestationId">
             <h:panelGrid columns="5" columnClasses="newLangCols, newLangCols, newLangCols, newLangCols, newLangCols">
 
                 <!--                <p:outputLabel styleClass="newLangTitleStyle" value="{label['newAttestation.idDoc']}"/>
@@ -25,15 +25,15 @@
                     <p:ajax event="valueChange" listener="#{lexiconControllerAttestation.docIDKeyupEvent}" 
                             update="newAttButtons"/>
                 </p:selectOneMenu>
-                
-                
-<!--                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="{lexiconControllerAttestation.docID}">
-                    <p:ajax event="keyup" listener="{lexiconControllerAttestation.docIDKeyupEvent}" update="newAttButtons"/>
-                </p:inputText>-->
-                
-                
-                
-                
+
+
+                <!--                <p:inputText styleClass="inputNewLangTextStyle" style="width: 100%;" value="{lexiconControllerAttestation.docID}">
+                                    <p:ajax event="keyup" listener="{lexiconControllerAttestation.docIDKeyupEvent}" update="newAttButtons"/>
+                                </p:inputText>-->
+
+
+
+
                 <p:graphicImage id="docID" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>
                 <p:tooltip for="docID" value="#{label['tooltip.dialog.newAtt.idDoc']}" position="right"/>
 
@@ -49,8 +49,8 @@
 
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.attestation']}"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:inputTextarea styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.attestation}" 
-                                 rows="5" cols="100">
+                <p:inputTextarea id="attestationTextID" styleClass="inputNewLangTextStyle" style="width: 100%;" value="#{lexiconControllerAttestation.attestation}" 
+                                 rows="5" cols="100" required="true">
                     <p:ajax event="keyup" listener="#{lexiconControllerAttestation.attestationKeyupEvent}" update="newAttButtons"/>
                 </p:inputTextarea>
                 <p:graphicImage id="att" value="/resources/image/iconTooltip.png" height="20px" width="20px"/>

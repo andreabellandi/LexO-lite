@@ -6,19 +6,19 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <p:dialog id="lexiconImageUploadPanel" widgetVar="dlgLexiconUploadImage" header="#{label['lexiconImage.header']} of #{imageController.lemma}" 
-              resizable="false" closable="true"  width="450"
+              resizable="false" closable="true"  width="auto"
               modal="true">
         <p:panel styleClass="lexiconTabView" widgetVar="basic">
-            <h:panelGrid styleClass="generalFilterBox" columns="1">
-                <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
-                    <h5>Source</h5>
-                    <p:inputText value="#{imageController.source}" size="45"/>
-                    <h5>Date</h5>
-                    <p:inputText  value="#{imageController.date}" size="20"/>
-                    <h5>Description</h5>
-                    <p:inputText value="#{imageController.description}" size="45"/>
-                </h:panelGrid>
+            <!--h:panelGrid styleClass="generalFilterBox" columns="1"-->
+            <h:panelGrid styleClass="advancedMainFilterBox" columns="2">             
+                <h:outputLabel styleClass="imageSelectorLabel">Source</h:outputLabel>
+                <p:inputText value="#{imageController.source}" size="45"/>
+                <h:outputLabel styleClass="imageSelectorLabel">Date</h:outputLabel>
+                <p:inputText value="#{imageController.date}" size="20"/>
+                <h:outputLabel styleClass="imageSelectorLabel">Description</h:outputLabel>
+                <p:inputText value="#{imageController.description}" size="45"/>
             </h:panelGrid>
+            <!--/h:panelGrid-->
         </p:panel>
 
         <h:form enctype="multipart/form-data">

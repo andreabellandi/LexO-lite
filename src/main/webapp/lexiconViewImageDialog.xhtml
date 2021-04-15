@@ -6,21 +6,21 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <p:dialog id="lexiconImagePanel" widgetVar="dlgLexiconImage" header="#{label['lexiconImage.header']} of #{imageController.lemma}" 
-              resizable="false" closable="true"  width="450"
+              resizable="false" closable="true"  width="auto"
               modal="true">
         <h:panelGrid styleClass="generalFilterBox" columns="1">
             <h:panelGrid styleClass="advancedMainFilterBox" columns="2">                            
-                <h5>Source</h5>
+                <h:outputLabel styleClass="imageSelectorLabel">Source</h:outputLabel>
                 <p:inputText styleClass="inputTextStyle" value="#{imageController.source}" size="45">
                     <p:ajax event="keyup" listener="#{imageController.metadataSourceKeyUpEvent}"
                             update="metadataButtons"/>
                 </p:inputText>
-                <h5>Date</h5>
+                <h:outputLabel styleClass="imageSelectorLabel">Data</h:outputLabel>
                 <p:inputText styleClass="inputTextStyle" value="#{imageController.date}" size="15">
                     <p:ajax event="keyup" listener="#{imageController.metadataDateKeyUpEvent}"
                             update="metadataButtons"/>
                 </p:inputText>
-                <h5>Description</h5>
+                <h:outputLabel styleClass="imageSelectorLabel">Description</h:outputLabel>
                 <p:inputText styleClass="inputTextStyle" value="#{imageController.description}" size="45">
                     <p:ajax event="keyup" listener="#{imageController.metadataDescriptionKeyUpEvent}"
                             update="metadataButtons"/>
@@ -33,7 +33,7 @@
             </h:panelGrid>
         </h:panelGrid>
 
-        <div id="imageWrapper" style="margin:auto; overflow:scroll; position:relative; height: 400px; 
+        <div id="imageWrapper" style="margin:auto; overflow:auto; position:relative; height: 400px; 
              width: 400px; padding-top: 10px; padding-bottom: 10px;}">
             <p:graphicImage id="lexImage" height="400" width="400" value="#{imageController.image}" stream="false"/>
         </div>

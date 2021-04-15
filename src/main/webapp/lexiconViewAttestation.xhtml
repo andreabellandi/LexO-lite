@@ -14,7 +14,7 @@
                     <h:outputLabel>Attestations for: <em>#{sense.name}</em></h:outputLabel>
                     <h:outputLabel rendered="#{'No entry found' != sense.definition}"><br/>#{sense.definition}</h:outputLabel>
                 </f:facet>
-                <p:column headerText="Doc" width="8%">
+                <p:column headerText="Doc" width="8%" sortBy="#{att.docID}" filterBy="#{att.docID}">
                     <h:outputText value="#{att.docID}" />
                 </p:column>
                 <p:column headerText="Dictionary" width="7%" style="text-align: center;">
@@ -23,8 +23,10 @@
                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" />
                     </h:selectBooleanCheckbox>
                 </p:column>
-                <p:column headerText="Attestation" width="80%" style="text-align: center;" >
-                    <h:outputText value="#{att.attestation}" />
+                <p:column headerText="Attestation" width="80%" style="text-align: justify;" 
+                          sortBy="#{att.attestation}" filterBy="#{att.attestation}" filterMatchMode="contains">
+                    <!--h:outputText value="#{att.attestation}" /-->
+                    <h:outputText value="#{lexiconControllerAttestation.getHighlightAttestations(att.form, att.attestation)}" escape="false"/>
                 </p:column>
                 <p:column headerText="Delete" width="5%" style="text-align: center;">
                     <p:commandButton title="Delete attestation" icon="fa fa-trash-o"

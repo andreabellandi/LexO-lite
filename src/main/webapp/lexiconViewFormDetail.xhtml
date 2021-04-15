@@ -70,7 +70,7 @@
 
             <h:outputLabel styleClass="titleStyle" rendered="#{lexiconControllerFormDetail.newAction}" value="Language (*):" for="lemmaLang"/>
             <h:panelGrid id="langPanel" columns="1" cellpadding="0" rendered="#{lexiconControllerFormDetail.newAction}">
-                <p:selectOneMenu id="lemmaLang" styleClass="menu" 
+                <p:selectOneMenu id="lemmaLang" styleClass="menu"  height="100%"
                                  panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.language}" 
                                  appendTo="lemmaLang">
                     <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.languageChanged}" update="lemmaButtons errorLemma"/>
@@ -79,7 +79,8 @@
             </h:panelGrid>
 
             <h:outputLabel styleClass="titleStyle" value="#{!lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression') ? 'Part of Speech:' : 'Type:'}" for="lemmaPoS"/>
-            <p:selectOneMenu id="lemmaPoS" appendTo="lemmaPoS" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.poS}" 
+            <p:selectOneMenu id="lemmaPoS" appendTo="@this"  styleClass="menu" panelStyleClass="panel" height="100%"
+                             value="#{lexiconControllerFormDetail.lemma.poS}" 
                              rendered="#{!lexiconControllerFormDetail.locked}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaPoSChanged}" 
                         update="lemmaButtons editViewTab:lexiconFormDetailForm"/>
@@ -113,7 +114,7 @@
                 <ui:repeat id="morphoTraits" value="#{lexiconControllerFormDetail.lemma.morphoTraits}" var="trait">
                     <h:panelGrid columns="3">
                         <h:outputLabel styleClass="titleStyle" value="#{trait.name}" />
-                        <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}">
+                        <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}" height="100%">
                             <f:selectItems value="#{lexiconControllerFormDetail.getMorphoTraitValues(trait.name)}" />
                             <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaMorphoTraitChanged}" 
                                     update="editViewTab:lexiconFormDetailForm:lemmaButtons"/>
@@ -172,7 +173,7 @@
                 <h:outputLabel styleClass="titleStyle" 
                                rendered="#{!lexiconControllerFormDetail.newAction}" 
                                value="#{extAtt.label}:"/>
-                <h:panelGrid id="#{extAtt.label}Panel" columns="2" cellpadding="0" 
+                <p:panelGrid id="#{extAtt.label}Panel" columns="2"  
                              rendered="#{!lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.locked}">
                     <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false"
                                      styleClass="extensionAttributeInputareaSize">
@@ -183,7 +184,7 @@
                     <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                      actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt)}" 
                                      update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid"/> 
-                </h:panelGrid>
+                </p:panelGrid>
                 <p:inputText styleClass="inputTextStyle"  
                              readonly="true"
                              rendered="#{lexiconControllerFormDetail.locked}"/>
@@ -297,7 +298,7 @@
                         <ui:repeat id="formMorphoTraits" value="#{form.morphoTraits}" var="trait">
                             <h:panelGrid columns="3">
                                 <h:outputLabel styleClass="titleStyle" value="#{trait.name}" />
-                                <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}">
+                                <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}" height="100%">
                                     <f:selectItems value="#{lexiconControllerFormDetail.getMorphoTraitValues(trait.name)}" />
                                     <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.formMorphoTraitChanged}" 
                                             update=":editViewTab:lexiconFormDetailForm:FormDataList:formButtons"/>

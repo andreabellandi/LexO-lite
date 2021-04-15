@@ -599,7 +599,13 @@ html, body {
     padding-top: 1px;
     padding-top: 5px;
 }
+.ui-selectonemenu.menu {
+    z-index: 1; /* to solve overlay problem */
+}
 
+.ui-selectonemenu-filter-container {
+    width: 98% !important;
+}
 .menuBiblio .ui-selectonemenu-label { 
     font-size:	10px;
     height: 3px;
@@ -615,25 +621,25 @@ html, body {
     font-size:	10px;
 }
 
-.ui-selectonemenu-panel .ui-selectonemenu-filter {
+.ui-selectonemenu-panel.ui-selectonemenu-filter { /* rimosso spazio tra le classi nel selector*/
     width: 100% !important;
     padding-right:30px !important;
     font-size: 12px;
 }
 
-.ui-selectonemenu-panel .ui-selectonemenu-filter-container {
+.ui-selectonemenu-panel.ui-selectonemenu-filter-container { /* rimosso spazio tra le classi nel selector*/
     position: relative;
     margin: 0;
     padding: 0.1em;
     display: inline-block;
 }
 
-.ui-selectonemenu-panel .ui-selectonemenu-filter-container .ui-icon {
+.ui-selectonemenu-panel.ui-selectonemenu-filter-container.ui-icon { /* rimosso spazio tra le classi nel selector*/
     position: absolute !important;
     right: -30px !important;
 }
 
-.ui-selectonemenu-panel .ui-selectonemenu-list-item {
+.ui-selectonemenu-panel.ui-selectonemenu-list-item { /* rimosso spazio tra le classi nel selector*/
     white-space: pre !important;
 }
 
@@ -1192,8 +1198,8 @@ tr.rowHeight:last-child>td {
 }
 
 .lexEntryAspects {
-    padding-top: 20px !important;
-    padding-bottom: 30px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
 }
 
 .senseDefinition {
@@ -1232,4 +1238,12 @@ tr.rowHeight:last-child>td {
     border-radius: 5px;
     padding: 2px 2px 2px 2px;
     margin: auto;
+}
+
+.custom-ui-menu-large {
+    width: 13em !important; /* overwrite .ui-menu {width:12.5em} */
+}
+
+.imageSelectorLabel {
+    font-weight: bold;
 }

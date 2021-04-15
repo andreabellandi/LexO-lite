@@ -24,7 +24,7 @@
         <h:panelGrid id="docFilterPanel21" columns="2" rendered="#{lexiconControllerDocument.documentTabEnabled}">
             <p:selectOneMenu id="docType2" styleClass="menuBiblio"
                              panelStyleClass="panelBiblio" value="#{lexiconControllerDocumentFilter.docType}" 
-                             appendTo="docType2">
+                             >
                 <p:ajax event="valueChange" listener="#{lexiconControllerDocumentFilter.docTypeChanged}"
                         update="lexiconTabViewForm:tabView:docTree lexiconTabViewForm:tabView:docFilterLabel docFilterPanel22"/>
                 <f:selectItem itemLabel="All" itemValue="All" />
