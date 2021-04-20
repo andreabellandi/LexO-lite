@@ -1262,17 +1262,22 @@ tr.rowHeight:last-child>td {
 
 .ui-treenode-label.ui-corner-all.ui-state-highlight {
     background: #386890 !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.39) !important;
+    outline: 0;
 }
 .ui-button , button.ui-button.ui-state-default , .ui-button.ui-state-default  {
     background: #386890 !important;
     border: #24425C !important;
     color: white;
-    box-shadow: 0 0 0 #24425C inset, 0 0 0 rgba(0,0,0,0.2) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
 }
-
+button.ui-state-disabled, button.ui-button.ui-state-disabled , .ui-button.ui-state-disabled {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
 button.ui-state-hover , button.ui-button.ui-state-hover , .ui-button.ui-state-hover {
     background: #047AA2 !important; 
 }
+
 
 button.ui-state-focus , button.ui-button.ui-state-focus , .ui-button.ui-state-focus {
     background: #047AA2 !important; 
