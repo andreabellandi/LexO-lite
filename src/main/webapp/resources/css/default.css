@@ -1247,3 +1247,40 @@ tr.rowHeight:last-child>td {
 .imageSelectorLabel {
     font-weight: bold;
 }
+
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background: steelblue;
+    color: white;
+}
+
+.ui-button, button.ui-button.ui-state-default, .ui-button.ui-state-default {
+    background: steelblue;
+    border: blue;
+    color: white;  
+}
+
+.ui-treenode-label.ui-corner-all.ui-state-highlight {
+    background: #386890 !important;
+}
+.ui-button , button.ui-button.ui-state-default , .ui-button.ui-state-default  {
+    background: #386890 !important;
+    border: #24425C !important;
+    color: white;
+    box-shadow: 0 0 0 #24425C inset, 0 0 0 rgba(0,0,0,0.2) !important;
+}
+
+button.ui-state-hover , button.ui-button.ui-state-hover , .ui-button.ui-state-hover {
+    background: #047AA2 !important; 
+}
+
+button.ui-state-focus , button.ui-button.ui-state-focus , .ui-button.ui-state-focus {
+    background: #047AA2 !important; 
+}
+.ui-button.ui-state-active {
+    background: #047AA2 !important; 
+
+}
+button.ui-state-active , button.ui-button.ui-state-active  {
+    background: #3695B5 !important; 
+}
