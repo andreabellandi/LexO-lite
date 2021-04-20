@@ -21,14 +21,13 @@ import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
 import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.rdf.rdfxml.renderer.OWLOntologyXMLNamespaceManager;
+import org.slf4j.event.Level;
 
 /**
  *

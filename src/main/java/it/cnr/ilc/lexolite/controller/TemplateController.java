@@ -4,7 +4,7 @@ import it.cnr.ilc.lexolite.domain.AccountType.Permission;
 import it.cnr.ilc.lexolite.manager.AccountManager;
 import java.io.Serializable;
 import javax.enterprise.context.SessionScoped;
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import javax.inject.Named;
 import javax.inject.Inject;
 

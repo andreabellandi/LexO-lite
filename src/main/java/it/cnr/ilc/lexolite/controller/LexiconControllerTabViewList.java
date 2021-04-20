@@ -21,22 +21,18 @@ import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import it.cnr.ilc.lexolite.LexOliteProperty;
 import it.cnr.ilc.lexolite.constant.Label;
-import it.cnr.ilc.lexolite.constant.OntoLexEntity;
 import it.cnr.ilc.lexolite.domain.Document;
 import it.cnr.ilc.lexolite.manager.DocumentData;
 import it.cnr.ilc.lexolite.manager.DocumentationManager;
-import it.cnr.ilc.lexolite.manager.ImageManager;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LemmaData;
-import it.cnr.ilc.lexolite.manager.LemmaData.Word;
 import it.cnr.ilc.lexolite.manager.SenseData;
-import java.util.HashMap;
 
 /**
  *
@@ -469,7 +465,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 
         long endTime = System.currentTimeMillis();
         System.out.println("DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
-        log(org.apache.log4j.Level.INFO, null, "DURATA QUERY LEMMA: " + (endTime - startTime));
+        log(Level.INFO, null, "DURATA QUERY LEMMA: " + (endTime - startTime));
 
     }
 

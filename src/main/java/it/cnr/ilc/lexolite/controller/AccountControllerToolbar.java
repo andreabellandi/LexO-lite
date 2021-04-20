@@ -13,10 +13,10 @@ import java.util.Stack;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -26,7 +26,7 @@ import org.hibernate.HibernateException;
 @Named
 public class AccountControllerToolbar extends BaseController implements Serializable {
 
-    private static final Logger LOG = LogManager.getLogger(AccountControllerToolbar.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccountControllerToolbar.class);
 
     @Inject
     private LoginController loginController;
@@ -80,7 +80,7 @@ public class AccountControllerToolbar extends BaseController implements Serializ
             redo.clear();
         } catch (ActionAbort ex) {
             //  log(Level.INFO, loginController.getAccount(), "on doAction() '" + accountControllerTable.getSelection().getUsername() + "'");
-            LOG.fatal("On doAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
+            LOG.error("On doAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
         } catch (HibernateException t) {
             LOG.error("On doAction() '" + accountControllerTable.getSelection().getUsername() + "'", t);
             HibernateUtil.getSession().getTransaction().rollback();
@@ -99,10 +99,10 @@ public class AccountControllerToolbar extends BaseController implements Serializ
             undo.pop();
             redo.push(action);
         } catch (ActionAbort ex) {
-            LOG.fatal("On undoAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
+            LOG.error("On undoAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
 
         } catch (HibernateException t) {
-            LOG.fatal("On undoAction() '" + accountControllerTable.getSelection().getUsername() + "'", t);
+            LOG.error("On undoAction() '" + accountControllerTable.getSelection().getUsername() + "'", t);
             HibernateUtil.getSession().getTransaction().rollback();
             HibernateUtil.getSession().beginTransaction();
             throw new ActionException(t);
@@ -118,9 +118,9 @@ public class AccountControllerToolbar extends BaseController implements Serializ
             redo.pop();
             undo.push(action);
         } catch (ActionAbort ex) {
-            LOG.fatal("On redoAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
+            LOG.error("On redoAction() '" + accountControllerTable.getSelection().getUsername() + "'", ex);
         } catch (HibernateException t) {
-            LOG.fatal("On redoAction() '" + accountControllerTable.getSelection().getUsername() + "'", t);
+            LOG.error("On redoAction() '" + accountControllerTable.getSelection().getUsername() + "'", t);
             HibernateUtil.getSession().getTransaction().rollback();
             HibernateUtil.getSession().beginTransaction();
             throw new ActionException(t);

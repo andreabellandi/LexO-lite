@@ -34,8 +34,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
@@ -45,7 +46,7 @@ import org.apache.logging.log4j.Logger;
 @Named
 public class LexiconControllerDictionary extends BaseController implements Serializable {
 
-    private static final Logger LOG = LogManager.getLogger(LexiconControllerDictionary.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LexiconControllerDictionary.class);
 
     @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;

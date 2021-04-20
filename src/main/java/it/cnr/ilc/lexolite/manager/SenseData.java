@@ -7,6 +7,10 @@ package it.cnr.ilc.lexolite.manager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -14,10 +18,15 @@ import java.util.ArrayList;
  */
 public class SenseData implements Serializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(SenseData.class);
+
     private boolean saveButtonDisabled;
     private boolean deleteButtonDisabled;
     private String name;
     private String note;
+
+    //Pattern to parse name 
+    Pattern pattern = Pattern.compile("(\\w+?)\\_(\\w+?)\\_(\\w{2})\\_sense(\\d+)");
 
     // array of images
     private ArrayList<ImageData> images;
@@ -172,6 +181,20 @@ public class SenseData implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNormalizedName() {
+        //es.  algebre_noun_it_sense1
+        logger.warn("getNormalizedName: {}", name);
+        Matcher matcher = pattern.matcher(name);
+        String normalizedName = null;
+        if (matcher.find()) {
+            normalizedName = matcher.group(1);
+            logger.info("Normalized name: {}", normalizedName);
+        } else {
+            normalizedName = name;
+        }
+        return normalizedName;
     }
 
     public String getNote() {

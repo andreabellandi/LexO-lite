@@ -1,5 +1,6 @@
 package it.cnr.ilc.lexolite;
 
+import it.cnr.ilc.lexolite.controller.AccountControllerToolbar;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -10,11 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,6 +21,8 @@ import org.hibernate.Session;
  */
 @WebFilter(urlPatterns = {"/faces/*", "/servlet/*"})
 public class LexOliteFilter implements Filter {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountControllerToolbar.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -33,7 +34,7 @@ public class LexOliteFilter implements Filter {
             logFile = new File(filterConfig.getServletContext().getRealPath("/"));
             logFile = new File(logFile.getParentFile().getParentFile(), "logs/lexolite.log");
         }
-        PatternLayout layout = new PatternLayout();
+        /*     PatternLayout layout = new PatternLayout();
         String conversionPattern = "%d %p %m\n";
         layout.setConversionPattern(conversionPattern);
         DailyRollingFileAppender rollingAppender = new DailyRollingFileAppender();
@@ -43,7 +44,7 @@ public class LexOliteFilter implements Filter {
         rollingAppender.activateOptions();
         Logger logger = Logger.getLogger("lexolite");
         logger.setLevel(Level.INFO);
-        logger.addAppender(rollingAppender);
+        logger.addAppender(rollingAppender);*/
         logger.info("LexO-lite start");
         System.out.println("log file " + logFile);
     }
@@ -57,9 +58,10 @@ public class LexOliteFilter implements Filter {
             try {
                 HibernateUtil.getSession().getTransaction().commit();
             } catch (Exception e) {
+                logger.error("On get hibernate session", e);
             }
         } catch (Throwable ex) {
-            Logger.getLogger("lexolite").error("", ex);
+            logger.error("doFilter()", ex);
             try {
                 HibernateUtil.getSession().getTransaction().rollback();
             } catch (Exception e) {

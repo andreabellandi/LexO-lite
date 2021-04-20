@@ -40,8 +40,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -77,6 +75,7 @@ import org.semanticweb.owlapi.search.Searcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.OWLEntityRenamer;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -101,7 +100,7 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (OWLOntologyCreationException | IOException ex) {
-            log(org.apache.log4j.Level.ERROR, loginController.getAccount(), "LOADING lexicon ", ex);
+            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon ", ex);
         }
     }
 
@@ -114,9 +113,9 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(LexiconModel.class.getName()).log(Level.SEVERE, null, ex);
+            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon", ex);
         } catch (IOException | OWLOntologyCreationException ex) {
-            Logger.getLogger(LexiconModel.class.getName()).log(Level.SEVERE, null, ex);
+            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon", ex);
         }
     }
 
@@ -1256,7 +1255,7 @@ public class LexiconModel extends BaseController implements Serializable {
                 }
             }
         } catch (OWLOntologyStorageException ex) {
-            Logger.getLogger(LexiconModel.class.getName()).log(Level.SEVERE, null, ex);
+            super.log(Level.ERROR, loginController.getAccount(), "On Export", ex);
         }
 //        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
 //        return new DefaultStreamedContent(in, "application/txt", fileName);

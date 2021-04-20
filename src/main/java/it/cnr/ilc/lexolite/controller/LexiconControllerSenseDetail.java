@@ -37,7 +37,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
@@ -258,10 +258,10 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     private boolean deleteImageFromFilesystem(String imageName) {
         File targetFile = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + imageName);
         if (targetFile.delete()) {
-            log(org.apache.log4j.Level.INFO, loginController.getAccount(), "DELETE image " + imageName);
+            log(Level.INFO, loginController.getAccount(), "DELETE image " + imageName);
             return true;
         } else {
-            log(org.apache.log4j.Level.INFO, loginController.getAccount(), "DELETE image " + imageName + " failed");
+            log(Level.INFO, loginController.getAccount(), "DELETE image " + imageName + " failed");
             return false;
         }
     }

@@ -16,7 +16,6 @@ import it.cnr.ilc.lexolite.manager.AccountManager.Access;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Level;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -24,6 +23,7 @@ import javax.inject.Named;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.data.FilterEvent;
 import org.primefaces.event.data.SortEvent;
+import org.slf4j.event.Level;
 
 /**
  *

@@ -6,14 +6,17 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  *
  * @author andrea
  */
 public abstract class BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountControllerToolbar.class);
 
     public void error(String summary, String... details) {
         String detail = buildDetail(details);
@@ -52,7 +55,7 @@ public abstract class BaseController {
         try {
             return resourceBundle.getString(key);
         } catch (MissingResourceException ex) {
-            Logger.getLogger("LexO-lite").log(Level.ERROR, ex.getStackTrace());
+            logger.error(" ", ex);
             return "???" + key + "???";
         }
     }
@@ -64,12 +67,31 @@ public abstract class BaseController {
 
     public void log(Level level, Account account, String message) {
         message = "(" + (account == null ? "null" : account.getUsername()) + ") " + message;
-        Logger.getLogger("LexO-lite").log(level, message);
+        log(level, account, message, null);
     }
 
     public void log(Level level, Account account, String message, Throwable t) {
         message = "(" + (account == null ? "null" : account.getUsername()) + ") " + message;
-        Logger.getLogger("LexO-lite").log(level, message, t);
+        switch (level) {
+            case ERROR:
+                logger.error(message, t);
+                break;
+            case WARN:
+                logger.warn(message, t);
+                break;
+            case INFO:
+                logger.info(message, t);
+                break;
+            case DEBUG:
+                logger.debug(message, t);
+                break;
+            case TRACE:
+                logger.trace(message, t);
+                break;
+            default:
+                logger.error("No logger for  {}", level);
+                break;
+        }
     }
 
     public String emptyMessage(String text, String emptyMessage) {

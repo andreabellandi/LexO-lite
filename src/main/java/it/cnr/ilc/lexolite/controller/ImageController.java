@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.event.Level;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -116,7 +115,7 @@ public class ImageController extends BaseController implements Serializable {
         try {
             persistImage(f.getFile());
         } catch (IOException ex) {
-            Logger.getLogger(ImageController.class.getName()).log(Level.SEVERE, null, ex);
+            log(Level.ERROR,  loginController.getAccount(), "on handleFileUpload", ex);
         }
     }
 
@@ -195,7 +194,7 @@ public class ImageController extends BaseController implements Serializable {
         File targetFile = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + fileName);
         FileUtils.copyInputStreamToFile(input, targetFile);
         // ---TODO: scale image to 400x400
-        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPLOADED image " + f.getFileName() + " to sense " + selectedSense.getName()
+        log(Level.INFO, loginController.getAccount(), "UPLOADED image " + f.getFileName() + " to sense " + selectedSense.getName()
                 + " (saved in " + System.getProperty("user.home") + Label.LEXO_FOLDER + Label.IMAGES_FOLDER + f.getFileName() + ")");
         info("template.message.saveSense.summary", "template.message.saveSense.description", selectedSense.getName());
 
@@ -211,7 +210,7 @@ public class ImageController extends BaseController implements Serializable {
     }
     
     public void saveMetadata() {
-        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATED metadata of " + clickedImage.getFileName());
+        log(Level.INFO, loginController.getAccount(), "UPDATED metadata of " + clickedImage.getFileName());
         clickedImage.setDate(date);
         clickedImage.setDescription(description);
         clickedImage.setSource(source);
@@ -223,21 +222,21 @@ public class ImageController extends BaseController implements Serializable {
     public void metadataSourceKeyUpEvent(AjaxBehaviorEvent e) {
         String _source = (String) e.getComponent().getAttributes().get("value");
         source = _source;
-        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE source metadata of " + clickedImage.getFileName());
+        log(Level.INFO, loginController.getAccount(), "UPDATE source metadata of " + clickedImage.getFileName());
         metadataSaveButtonDisabled = false;
     }
     
     public void metadataDateKeyUpEvent(AjaxBehaviorEvent e) {
         String _date = (String) e.getComponent().getAttributes().get("value");
         date = _date;
-        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE date metadata of " + clickedImage.getFileName());
+        log(Level.INFO, loginController.getAccount(), "UPDATE date metadata of " + clickedImage.getFileName());
         metadataSaveButtonDisabled = false;
     }
     
     public void metadataDescriptionKeyUpEvent(AjaxBehaviorEvent e) {
         String _desc = (String) e.getComponent().getAttributes().get("value");
         description = _desc;
-        log(org.apache.log4j.Level.INFO, loginController.getAccount(), "UPDATE description metadata of " + clickedImage.getFileName());
+        log(Level.INFO, loginController.getAccount(), "UPDATE description metadata of " + clickedImage.getFileName());
         metadataSaveButtonDisabled = false;
     }
 

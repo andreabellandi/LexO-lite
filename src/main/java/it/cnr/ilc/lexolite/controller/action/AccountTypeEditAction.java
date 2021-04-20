@@ -6,7 +6,7 @@ import it.cnr.ilc.lexolite.controller.LoginController;
 import it.cnr.ilc.lexolite.controller.converter.AccountTypeConverter.AccountTypeData;
 import it.cnr.ilc.lexolite.domain.Account;
 import it.cnr.ilc.lexolite.manager.AccountManager;
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 
 /**
  *

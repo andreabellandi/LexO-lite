@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Level;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -74,6 +73,7 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.slf4j.event.Level;
 
 /**
  *
