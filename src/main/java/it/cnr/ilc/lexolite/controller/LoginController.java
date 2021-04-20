@@ -18,8 +18,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.application.exceptionhandler.ExceptionInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
@@ -29,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 @SessionScoped
 public class LoginController extends BaseController implements Serializable {
 
-    private static final Logger LOG = LogManager.getLogger(LoginController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     public void keepAliveAction() {
 

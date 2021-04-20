@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -169,7 +170,7 @@ public class LexiconControllerQueryFilter extends BaseController implements Seri
             }
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("durata: " + (endTime - startTime));
+        log(Level.INFO, loginController.getAccount(),"ontoQueryGroup_1() durata: " + (endTime - startTime));
         lexiconCreationControllerTabViewList.cnlqFilterLemmaTabView(l);
         lexiconCreationControllerTabViewList.cnlqFilterSenseTabView(s);
         lexiconCreationControllerTabViewList.cnlqFilterFormTabView(f);

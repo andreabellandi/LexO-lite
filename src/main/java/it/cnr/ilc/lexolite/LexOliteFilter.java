@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 @WebFilter(urlPatterns = {"/faces/*", "/servlet/*"})
 public class LexOliteFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountControllerToolbar.class);
+    private static final Logger logger = LoggerFactory.getLogger(LexOliteFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -46,7 +46,7 @@ public class LexOliteFilter implements Filter {
         logger.setLevel(Level.INFO);
         logger.addAppender(rollingAppender);*/
         logger.info("LexO-lite start");
-        System.out.println("log file " + logFile);
+        logger.info("log file " + logFile);
     }
 
     @Override

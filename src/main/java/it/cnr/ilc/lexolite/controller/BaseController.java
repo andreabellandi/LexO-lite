@@ -16,7 +16,7 @@ import org.slf4j.event.Level;
  */
 public abstract class BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountControllerToolbar.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
 
     public void error(String summary, String... details) {
         String detail = buildDetail(details);

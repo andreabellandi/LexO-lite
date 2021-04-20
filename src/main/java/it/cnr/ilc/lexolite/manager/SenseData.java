@@ -185,9 +185,9 @@ public class SenseData implements Serializable {
 
     public String getNormalizedName() {
         //es.  algebre_noun_it_sense1
-        logger.warn("getNormalizedName: {}", name);
+        logger.info("getNormalizedName: {}", name);
         Matcher matcher = pattern.matcher(name);
-        String normalizedName = null;
+        String normalizedName;
         if (matcher.find()) {
             normalizedName = matcher.group(1);
             logger.info("Normalized name: {}", normalizedName);

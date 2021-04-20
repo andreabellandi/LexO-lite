@@ -383,7 +383,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public void navigationEntry(String entry) {
-        System.err.println("Entry " + entry);
+        log(Level.INFO, loginController.getAccount(), "navigationEntry() Entry " + entry);
+
         String entryType = "Lemma";
         resetPanels();
         lexiconCreationControllerFormDetail.setNewAction(false);
@@ -418,7 +419,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         resetPanels();
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String entry = ((DataTreeNode) event.getTreeNode().getData()).getOWLname();
-        System.err.println("onSelect Entry: " + entry);
+        log(Level.INFO, loginController.getAccount(), "nonSelect Entry:  " + entry);
         String entryType = (String) component.getAttributes().get("LexicalEntryType");
         lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
         lexiconCreationControllerFormDetail.setNewAction(false);
@@ -464,8 +465,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconControllerLexicalAspect.setRendered(true);
 
         long endTime = System.currentTimeMillis();
-        System.out.println("DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
-        log(Level.INFO, null, "DURATA QUERY LEMMA: " + (endTime - startTime));
+        log(Level.INFO, loginController.getAccount(),"DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
 
     }
 
@@ -716,7 +716,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
 //        lexiconCreationControllerFormDetail.setVerified(verified);
 //        lexiconCreationControllerSenseDetail.setVerified(verified);
         resetPanels();
-        System.err.println("onDictionaryViewSelect Entry: " + entry);
+        log(Level.INFO, loginController.getAccount(), "onDictionaryViewSelect Entry:  " + entry);
+
         lexiconControllerLexicalAspect.setLexicalAspectActive("Core");
         lexiconCreationControllerFormDetail.setNewAction(false);
         lexiconCreationControllerFormDetail.setLemmaRendered(true);
@@ -946,12 +947,12 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             }
         }
     }
-    
-     // invoked when the user select the filter mode (starts with or contains)
+
+    // invoked when the user select the filter mode (starts with or contains)
     public void docKeyupFilterEvent(String keyFilter) {
         getFilteredDocumentationList(docRoot, cachedDocumentList, keyFilter, false);
     }
-    
+
     private void updateDocumentationCache() {
         cachedDocumentList.clear();
         for (Document d : documentationManager.getDocuments()) {
@@ -967,7 +968,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             docRoot.getChildren().add(new DefaultTreeNode(dtn));
         }
     }
-    
+
     public void onDocumentationSelect(NodeSelectEvent event) {
         resetPanels();
         DocTreeNode dtn = ((DocTreeNode) event.getTreeNode().getData());
@@ -1068,7 +1069,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         }
 
     }
-    
+
     public static class DocTreeNode {
 
         private int hierarchyLevel;

@@ -17,8 +17,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 @WebServlet(urlPatterns = "/servlet/domainCreator")
 public class DomainCreator extends HttpServlet {
 
-    private static final Logger LOG = LogManager.getLogger(DomainCreator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DomainCreator.class);
 
     private final DomainManager manager = new DomainManager();
 

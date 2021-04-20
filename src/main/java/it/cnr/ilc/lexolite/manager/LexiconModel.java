@@ -1270,7 +1270,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     public synchronized void persist() throws IOException, OWLOntologyStorageException {
-        System.out.println("[" + getTimestamp() + "] LexO-lite : persist start");
+        log(Level.INFO, loginController.getAccount(),"[" + getTimestamp() + "] LexO-lite : persist start");
         File f = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
                 + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY));
         File bkp = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
@@ -1293,7 +1293,7 @@ public class LexiconModel extends BaseController implements Serializable {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "NO UTF-8 Char inserted !!!", "Please, stop your work and contact LexO administrators !"));
             }
         }
-        System.out.println("[" + getTimestamp() + "] LexO-lite : persist end");
+        log(Level.INFO, loginController.getAccount(),"[" + getTimestamp() + "] LexO-lite : persist end");
     }
 
     private String getTimestamp() {
