@@ -1266,7 +1266,7 @@ tr.rowHeight:last-child>td {
     outline: 0;
 }
 .ui-button , button.ui-button.ui-state-default , .ui-button.ui-state-default  {
-    background: #386890 !important;
+    background: #79a3bb !important;
     border: #24425C !important;
     color: white;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
