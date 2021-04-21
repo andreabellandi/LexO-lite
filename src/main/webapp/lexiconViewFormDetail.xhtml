@@ -79,7 +79,7 @@
             </h:panelGrid>
 
             <h:outputLabel styleClass="titleStyle" value="#{!lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression') ? 'Part of Speech:' : 'Type:'}" for="lemmaPoS"/>
-            <p:selectOneMenu id="lemmaPoS" appendTo="@this"  styleClass="menu" panelStyleClass="panel" height="100%"
+            <p:selectOneMenu id="lemmaPoS" appendTo="@this"  panelStyleClass="panel" height="100%" 
                              value="#{lexiconControllerFormDetail.lemma.poS}" 
                              rendered="#{!lexiconControllerFormDetail.locked}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaPoSChanged}" 
@@ -204,7 +204,7 @@
                 <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical entities and relations"
                                  disabled="#{lexiconControllerFormDetail.renderedEntryErrorLabel or lexiconControllerFormDetail.newAction}" />
                 <p:tieredMenu overlay="true" trigger="menuButton" my="left top" at="left bottom"  
-                              model="#{lexiconControllerFormDetail.addMenuModel}"/>
+                              model="#{lexiconControllerFormDetail.addMenuModel}" />
 
                 <p:commandButton id="lemmaSaveButton" title="Save Lemma" icon="fa fa-save" 
                                  update="LemmaPanelGrid :lexiconTabViewForm:tabView:lemmaTree :systemMessage

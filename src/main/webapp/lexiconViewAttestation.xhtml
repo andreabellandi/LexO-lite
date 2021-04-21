@@ -14,7 +14,7 @@
                     <h:outputLabel>Attestations for: <em>#{sense.normalizedName}</em></h:outputLabel>
                     <h:outputLabel rendered="#{'No entry found' != sense.definition}"><br/>#{sense.definition}</h:outputLabel>
                 </f:facet>
-                <p:column headerText="Doc" width="8%" sortBy="#{att.docID}" filterBy="#{att.docID}">
+                <p:column headerText="Doc" width="8%" sortBy="#{att.docID}" filterBy="#{att.docID}" >
                     <h:outputText value="#{att.docID}" />
                 </p:column>
                 <p:column headerText="Dictionary" width="7%" style="text-align: center;">

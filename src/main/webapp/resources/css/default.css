@@ -599,7 +599,7 @@ html, body {
     padding-top: 1px;
     padding-top: 5px;
 }
-.ui-selectonemenu.menu {
+.ui-selectonemenu.ui-state-focus {
     z-index: 1; /* to solve overlay problem */
 }
 
@@ -648,7 +648,7 @@ html, body {
 }
 
 .ui-inputfield {
-    height: 14px !important;
+   height: 1.2rem !important;
 }
 
 .ui-accordion .ui-accordion-header .ui-icon {
@@ -1288,4 +1288,18 @@ button.ui-state-focus , button.ui-button.ui-state-focus , .ui-button.ui-state-fo
 }
 button.ui-state-active , button.ui-button.ui-state-active  {
     background: #3695B5 !important; 
+}
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td, .ui-datatable tfoot th {
+    padding: 1rem 1rem !important;
+}
+
+.ui-datatable .ui-widget-header.ui-datatable-header, .ui-datatable .ui-datatable-footer {
+    padding: 1rem 1rem !important;
+}
+
+/*ui-column-filter ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all*/
+th .ui-column-filter {
+    padding: 1rem !important;
+    margin-top: 0.5rem !important;
 }
