@@ -34,7 +34,7 @@ public class AttestationManager implements Serializable {
         criteria.add(Restrictions.eq("senseUri", att.getSenseUri()));
         criteria.add(Restrictions.eq("formUri", att.getFormUri()));
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
-        return (criteria.list().size() < 2);
+        return (criteria.list().size() <= 2);
     }
     
     public void setDictionaryPreferred(Attestation att, boolean value) {
