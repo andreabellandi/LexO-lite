@@ -56,6 +56,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerSynSemFormDetail lexiconCreationControllerSynSemFormDetail;
     @Inject
     private LexiconControllerSynSemSenseDetail lexiconCreationControllerSynSemSenseDetail;
+    @Inject
+    private LexiconControllerAttestation lexiconControllerAttestation;
 
     @Inject
     private LexiconManager lexiconManager;
@@ -464,8 +466,10 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerFormDetail.setActiveTab(0);
         lexiconControllerLexicalAspect.setRendered(true);
 
+        lexiconControllerAttestation.setAttestationViewRendered(false);
+
         long endTime = System.currentTimeMillis();
-        log(Level.INFO, loginController.getAccount(),"DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
+        log(Level.INFO, loginController.getAccount(), "DURATA CONTROLLER CHE CONTIENE LE QUERIES: " + (endTime - startTime));
 
     }
 
@@ -811,6 +815,9 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             // edit tab needs to be selected
             lexiconCreationControllerFormDetail.setActiveTab(0);
         }
+        
+        lexiconControllerAttestation.setAttestationViewRendered(false);
+        
     }
 
     public void onLinkedEntryByRelationSelect(Object entry, String relType) {
