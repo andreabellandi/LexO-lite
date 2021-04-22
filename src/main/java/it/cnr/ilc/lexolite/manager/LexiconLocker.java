@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -23,7 +24,6 @@ public class LexiconLocker extends BaseController implements Serializable {
     // @key: uri
     // @value: user
     private Map<String, String> lexiconLockTable;
-    private static final Logger LOG = LoggerFactory.getLogger(LexiconLocker.class);
 
     public LexiconLocker() {
         lexiconLockTable = new HashMap<>();
@@ -36,7 +36,7 @@ public class LexiconLocker extends BaseController implements Serializable {
     public void lock(String user, String uri) {
 
         lexiconLockTable.put(uri, user);
-        LOG.info("Locked " + uri + " for user " + user);
+        log(Level.INFO, "Locked " + uri + " for user " + user);
     }
 
     // returns true if a resource has been unlock, false elsewhether
@@ -77,11 +77,11 @@ public class LexiconLocker extends BaseController implements Serializable {
 
     public void print() {
         Iterator it = lexiconLockTable.entrySet().iterator();
-        LOG.info("Lock Table:");
+        log(Level.INFO, "Lock Table:");
 
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
-            LOG.info("Entry: " + entry.getKey() + " - User: " + entry.getValue());
+            log(Level.INFO, "Entry: " + entry.getKey() + " - User: " + entry.getValue());
         }
     }
 
@@ -90,7 +90,7 @@ public class LexiconLocker extends BaseController implements Serializable {
     }
 
     public boolean isLocked(String uri) {
-        LOG.info("is " + uri + " Locked ? " + lexiconLockTable.containsKey(uri));
+        log(Level.INFO, "is " + uri + " Locked ? " + lexiconLockTable.containsKey(uri));
 
         return lexiconLockTable.containsKey(uri);
     }

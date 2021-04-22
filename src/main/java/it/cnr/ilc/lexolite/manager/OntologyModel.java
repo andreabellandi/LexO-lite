@@ -83,8 +83,6 @@ import org.slf4j.event.Level;
  */
 public class OntologyModel extends BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OntologyModel.class);
-
     @Inject
     private LoginController loginController;
 
@@ -118,7 +116,7 @@ public class OntologyModel extends BaseController {
             setPrefixes();
             persist(f.getFile());
         } catch (OWLOntologyCreationException | IOException ex) {
-            logger.error("LOADING domain ontology ", ex);
+            log(Level.ERROR, "LOADING domain ontology ", ex);
         }
     }
 
@@ -232,7 +230,7 @@ public class OntologyModel extends BaseController {
             OWLAnnotationValue value = ((OWLAnnotation) obj).getValue();
             if (value instanceof OWLLiteral) {
                 //System.out.println(cls + " labelled " + ((OWLLiteral) value).getLiteral());
-                logger.info(cls + " labelled " + ((OWLLiteral) value).getLiteral());
+                log(Level.INFO, cls + " labelled " + ((OWLLiteral) value).getLiteral());
                 return new Metadata(annotation.getIRI().getShortForm(), ((OWLLiteral) value).getLiteral());
             }
         }
@@ -244,7 +242,7 @@ public class OntologyModel extends BaseController {
             OWLAnnotationValue value = ((OWLAnnotation) obj).getValue();
             if (value instanceof OWLLiteral) {
                 // System.out.println(i + " labelled " + ((OWLLiteral) value).getLiteral());
-                logger.info( i + " labelled " + ((OWLLiteral) value).getLiteral());
+               log(Level.INFO, i + " labelled " + ((OWLLiteral) value).getLiteral());
 
                 return new Metadata(annotation.getIRI().getShortForm(), ((OWLLiteral) value).getLiteral());
             }
@@ -256,7 +254,7 @@ public class OntologyModel extends BaseController {
         int classCounter = 0;
         individualsNumber = 0;
         OWLClass clazz = factory.getOWLThing();
-        logger.debug( "Class       : " + clazz);
+        log(Level.DEBUG, "Class       : " + clazz);
         Set<OWLClass> set = domainOntology.classesInSignature().collect(Collectors.toSet());
         OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(domainOntology);
         printHierarchy(reasoner, clazz, 0, ontoRoot);
@@ -264,12 +262,12 @@ public class OntologyModel extends BaseController {
             classCounter++;
             individualsNumber = individualsNumber + getIndividualsNumberByClass(cl);
             if (!reasoner.isSatisfiable(cl)) {
-                logger.debug( "XXX: " + cl.getIRI().getShortForm());
+                log(Level.DEBUG, "XXX: " + cl.getIRI().getShortForm());
                 // System.out.println("XXX: " + cl.getIRI().getShortForm());
             }
         }
         reasoner.dispose();
-        logger.info( "getOntologyHierarchy(): total individuals: " + individualsNumber);
+        log(Level.INFO, "getOntologyHierarchy(): total individuals: " + individualsNumber);
         return classCounter;
     }
 
@@ -283,9 +281,9 @@ public class OntologyModel extends BaseController {
     private void printHierarchy(OWLReasoner reasoner, OWLClass clazz, int level, TreeNode tn) {
         if (reasoner.isSatisfiable(clazz)) {
             for (int i = 0; i < level * 3; i++) {
-                logger.debug( " ");
+                log(Level.DEBUG, " ");
             }
-            logger.debug( clazz.getIRI().getShortForm());
+            log(Level.DEBUG, clazz.getIRI().getShortForm());
             TreeNode n = null;
             if (!clazz.getIRI().getShortForm().equals("Thing")) {
                 LexiconControllerTabViewList.DataTreeNode dtn = new LexiconControllerTabViewList.DataTreeNode(clazz.getIRI().getShortForm(), clazz.getIRI().toString(), "", "", "false", "false", "", 0);
@@ -304,27 +302,27 @@ public class OntologyModel extends BaseController {
     public int getOntologyHierarchy(TreeNode ontoRoot, String nameToSelect) {
         int classCounter = 0;
         OWLClass clazz = manager.getOWLDataFactory().getOWLThing();
-        logger.info( "Class       : " + clazz);
+        log(Level.INFO, "Class       : " + clazz);
         Set<OWLClass> set = domainOntology.classesInSignature().collect(Collectors.toSet());
         OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(domainOntology);
         printHierarchy(reasoner, clazz, 0, ontoRoot, nameToSelect);
         for (OWLClass cl : set) {
             classCounter++;
             if (!reasoner.isSatisfiable(cl)) {
-                logger.debug( "XXX: " + cl.getIRI().getShortForm());
+                log(Level.DEBUG, "XXX: " + cl.getIRI().getShortForm());
             }
         }
         reasoner.dispose();
-        logger.info("getOntologyHierarchy() classCounter: ", classCounter);
+        log(Level.INFO, "getOntologyHierarchy() classCounter: " + classCounter);
         return classCounter;
     }
 
     private void printHierarchy(OWLReasoner reasoner, OWLClass clazz, int level, TreeNode tn, String nameToSelect) {
         if (reasoner.isSatisfiable(clazz)) {
             for (int i = 0; i < level * 3; i++) {
-                logger.info( " ");
+                log(Level.DEBUG, " ");
             }
-            logger.info( clazz.getIRI().getShortForm());
+            log(Level.DEBUG, clazz.getIRI().getShortForm());
             TreeNode n = null;
             if (!clazz.getIRI().getShortForm().equals("Thing")) {
                 DataTreeNode dtn = new LexiconControllerTabViewList.DataTreeNode(clazz.getIRI().getShortForm(), clazz.getIRI().toString(), "", "", "false", "false", "", 0);
@@ -383,7 +381,7 @@ public class OntologyModel extends BaseController {
         ontoRefItems.addAll(alObjProps);
         ontoRefItems.addAll(alDataProps);
         ontoRefItems.addAll(alIndividuals);
-        logger.info("getOntologyEntities() ontoRefItems: ", ontoRefItems);
+        log(Level.INFO, "getOntologyEntities() ontoRefItems: " + ontoRefItems);
         return ontoRefItems;
     }
 
@@ -523,7 +521,7 @@ public class OntologyModel extends BaseController {
         int classCounter = 0;
         individualsNumber = 0;
         OWLObjectProperty objProp = factory.getOWLTopObjectProperty();
-        logger.debug( "Class       : " + objProp);
+        log(Level.DEBUG, "Class       : " + objProp);
         Set<OWLObjectProperty> set = domainOntology.objectPropertiesInSignature().collect(Collectors.toSet());
         OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(domainOntology);
         printHierarchy(reasoner, objProp, 0, ontoRoot);
@@ -542,9 +540,9 @@ public class OntologyModel extends BaseController {
     private void printHierarchy(OWLReasoner reasoner, OWLObjectPropertyExpression objProp, int level, TreeNode tn) {
 
         for (int i = 0; i < level * 3; i++) {
-            logger.debug( " ");
+            log(Level.DEBUG, " ");
         }
-        logger.debug( objProp.getNamedProperty().getIRI().getShortForm());
+        log(Level.DEBUG, objProp.getNamedProperty().getIRI().getShortForm());
         TreeNode n = null;
 //        if (!objProp.getIRI().getShortForm().equals("topObjectProperty")) {
 //            LexiconControllerTabViewList.DataTreeNode dtn = new LexiconControllerTabViewList.DataTreeNode(clazz.getIRI().getShortForm(), clazz.getIRI().toString(), "", "", "false", "false", "", 0);
@@ -568,10 +566,10 @@ public class OntologyModel extends BaseController {
 
     public void getOntoDetails() {
         for (OWLClass oc : domainOntology.classesInSignature().collect(Collectors.toSet())) {
-            logger.debug( "Class: " + oc.toString());
+            log(Level.DEBUG, "Class: " + oc.toString());
             // get all axioms for each class
             for (OWLAxiom axiom : domainOntology.axioms(oc).collect(Collectors.toSet())) {
-                logger.debug( "\tAxiom: " + axiom.toString());
+                log(Level.DEBUG, "\tAxiom: " + axiom.toString());
                 // create an object visitor to get to the subClass restrictions
                 axiom.accept(new OWLObjectVisitor() {
                     // found the subClassOf axiom  
@@ -580,41 +578,41 @@ public class OntologyModel extends BaseController {
                         subClassAxiom.getSuperClass().accept(new OWLObjectVisitor() {
 
                             public void visit(OWLObjectSomeValuesFrom someValuesFromAxiom) {
-                                logger.debug("\t\tClass: " + oc.toString());
-                                logger.debug( "\t\tClassExpressionType: " + someValuesFromAxiom.getClassExpressionType().toString());
-                                logger.debug( "\t\tProperty: " + someValuesFromAxiom.getProperty().toString());
-                                logger.debug( "\t\tObject: " + someValuesFromAxiom.getFiller().toString());
+                                log(Level.DEBUG, "\t\tClass: " + oc.toString());
+                                log(Level.DEBUG, "\t\tClassExpressionType: " + someValuesFromAxiom.getClassExpressionType().toString());
+                                log(Level.DEBUG, "\t\tProperty: " + someValuesFromAxiom.getProperty().toString());
+                                log(Level.DEBUG, "\t\tObject: " + someValuesFromAxiom.getFiller().toString());
                             }
 
                             public void visit(OWLObjectExactCardinality exactCardinalityAxiom) {
-                                logger.debug( "\t\tClass: " + oc.toString());
-                                logger.debug( "\t\tClassExpressionType: " + exactCardinalityAxiom.getClassExpressionType().toString());
-                                logger.debug( "\t\tCardinality: " + exactCardinalityAxiom.getCardinality());
-                                logger.debug( "\t\tProperty: " + exactCardinalityAxiom.getProperty().toString());
-                                logger.debug( "\t\tObject: " + exactCardinalityAxiom.getFiller().toString());
+                                log(Level.DEBUG, "\t\tClass: " + oc.toString());
+                                log(Level.DEBUG, "\t\tClassExpressionType: " + exactCardinalityAxiom.getClassExpressionType().toString());
+                                log(Level.DEBUG, "\t\tCardinality: " + exactCardinalityAxiom.getCardinality());
+                                log(Level.DEBUG, "\t\tProperty: " + exactCardinalityAxiom.getProperty().toString());
+                                log(Level.DEBUG, "\t\tObject: " + exactCardinalityAxiom.getFiller().toString());
                             }
 
                             public void visit(OWLObjectMinCardinality minCardinalityAxiom) {
-                                logger.debug( "\t\tClass: " + oc.toString());
-                                logger.debug( "\t\tClassExpressionType: " + minCardinalityAxiom.getClassExpressionType().toString());
-                                logger.debug( "\t\tCardinality: " + minCardinalityAxiom.getCardinality());
-                                logger.debug( "\t\tProperty: " + minCardinalityAxiom.getProperty().toString());
-                                logger.debug( "\t\tObject: " + minCardinalityAxiom.getFiller().toString());
+                                log(Level.DEBUG, "\t\tClass: " + oc.toString());
+                                log(Level.DEBUG, "\t\tClassExpressionType: " + minCardinalityAxiom.getClassExpressionType().toString());
+                                log(Level.DEBUG, "\t\tCardinality: " + minCardinalityAxiom.getCardinality());
+                                log(Level.DEBUG, "\t\tProperty: " + minCardinalityAxiom.getProperty().toString());
+                                log(Level.DEBUG, "\t\tObject: " + minCardinalityAxiom.getFiller().toString());
                             }
 
                             public void visit(OWLObjectMaxCardinality maxCardinalityAxiom) {
-                                logger.debug( "\t\tClass: " + oc.toString());
-                                logger.debug( "\t\tClassExpressionType: " + maxCardinalityAxiom.getClassExpressionType().toString());
-                                logger.debug( "\t\tCardinality: " + maxCardinalityAxiom.getCardinality());
-                                logger.debug( "\t\tProperty: " + maxCardinalityAxiom.getProperty().toString());
-                                logger.debug( "\t\tObject: " + maxCardinalityAxiom.getFiller().toString());
+                                log(Level.DEBUG, "\t\tClass: " + oc.toString());
+                                log(Level.DEBUG, "\t\tClassExpressionType: " + maxCardinalityAxiom.getClassExpressionType().toString());
+                                log(Level.DEBUG, "\t\tCardinality: " + maxCardinalityAxiom.getCardinality());
+                                log(Level.DEBUG, "\t\tProperty: " + maxCardinalityAxiom.getProperty().toString());
+                                log(Level.DEBUG, "\t\tObject: " + maxCardinalityAxiom.getFiller().toString());
                             }
 
                             public void visit(OWLObjectAllValuesFrom allValuesFromAxiom) {
-                                logger.debug( "\t\tClass: " + oc.toString());
-                                logger.debug( "\t\tClassExpressionType: " + allValuesFromAxiom.getClassExpressionType().toString());
-                                logger.debug( "\t\tProperty: " + allValuesFromAxiom.getProperty().toString());
-                                logger.debug( "\t\tObject: " + allValuesFromAxiom.getFiller().toString());
+                                log(Level.DEBUG, "\t\tClass: " + oc.toString());
+                                log(Level.DEBUG, "\t\tClassExpressionType: " + allValuesFromAxiom.getClassExpressionType().toString());
+                                log(Level.DEBUG, "\t\tProperty: " + allValuesFromAxiom.getProperty().toString());
+                                log(Level.DEBUG, "\t\tObject: " + allValuesFromAxiom.getFiller().toString());
                             }
 
                         });
@@ -627,24 +625,24 @@ public class OntologyModel extends BaseController {
 
     public void getPropertyDetails() {
         for (OWLObjectProperty oc : domainOntology.objectPropertiesInSignature().collect(Collectors.toSet())) {
-            logger.debug( "Property: " + oc.toString());
+            log(Level.DEBUG, "Property: " + oc.toString());
             // get all axioms for each class
             for (OWLAxiom axiom : domainOntology.axioms(oc).collect(Collectors.toSet())) {
-                logger.debug( "\tAxiom: " + axiom.toString());
+                log(Level.DEBUG, "\tAxiom: " + axiom.toString());
             }
         }
         for (OWLDataProperty oc : domainOntology.dataPropertiesInSignature().collect(Collectors.toSet())) {
-            logger.debug( "Property: " + oc.toString());
+            log(Level.DEBUG, "Property: " + oc.toString());
             // get all axioms for each class
             for (OWLAxiom axiom : domainOntology.axioms(oc).collect(Collectors.toSet())) {
-                logger.debug( "\tAxiom: " + axiom.toString());
+                log(Level.DEBUG, "\tAxiom: " + axiom.toString());
             }
         }
 
     }
 
     public synchronized void persist(UploadedFile f) throws IOException {
-        logger.info( "[" + getTimestamp() + "] LexO-lite : persist imported ontology file " + f.getFileName());
+        log(Level.INFO, "[" + getTimestamp() + "] LexO-lite : persist imported ontology file " + f.getFileName());
         InputStream input = f.getInputStream();
         File targetFile = new File(System.getProperty("user.home") + Label.LEXO_FOLDER + f.getFileName());
         FileUtils.copyInputStreamToFile(input, targetFile);

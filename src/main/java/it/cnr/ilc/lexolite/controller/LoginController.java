@@ -7,7 +7,6 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.domain.Account;
 import it.cnr.ilc.lexolite.manager.AccountManager;
-import it.cnr.ilc.lexolite.manager.LexiconLocker;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,10 +16,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
-import org.primefaces.application.exceptionhandler.ExceptionInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.slf4j.event.Level;
 
 /**
  *
@@ -29,8 +25,6 @@ import org.slf4j.LoggerFactory;
 @Named
 @SessionScoped
 public class LoginController extends BaseController implements Serializable {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
     public void keepAliveAction() {
 
@@ -103,17 +97,16 @@ public class LoginController extends BaseController implements Serializable {
                 try {
                     Thread.sleep(FAIL_AUTHENTICATION_SLEEP);
                 } catch (InterruptedException ex) {
-                    LOG.error("On sleep " + ex.getLocalizedMessage());
+                    //LOG.error("On sleep " + ex.getLocalizedMessage());
+                    log(Level.ERROR, null, "On sleep " + ex.getLocalizedMessage());
 
                 }
                 dummyAccount.setUsername(username);
-                LOG.info("access denied for " + dummyAccount + " from " + userAgent + " on " + address);
-                // log(Level.INFO, dummyAccount, "access denied from " + userAgent + " on " + address);
+                log(Level.INFO, dummyAccount, "access denied from " + userAgent + " on " + address);
                 warn("login.header", "login.message.accessDenied");
                 return null;
             } else {
-                LOG.info(account.getUsername() + " is logged in from " + userAgent + " on " + address);
-                // log(Level.INFO, account, "logged in from " + userAgent + " on " + address);
+                log(Level.INFO, account, "logged in from " + userAgent + " on " + address);
                 username = null;
                 password = null;
                 return "homeView?faces-redirect=true";
@@ -139,10 +132,8 @@ public class LoginController extends BaseController implements Serializable {
     @PreDestroy
     public void _exitAction() {
         lexiconManager.getLexiconLocker().unlockAll(account.getUsername());
-        LOG.info("All resources released for account " + account);
-        LOG.info(account.getUsername() + " logged out from " + userAgent + " on " + address);
-        //log(Level.INFO, account, "All resources released ");
-        //log(Level.INFO, account, "logged out from " + userAgent + " on " + address);
+        log(Level.INFO, account, "All resources released ");
+        log(Level.INFO, account, "logged out from " + userAgent + " on " + address);
         account = null;
         sessionId = null;
         address = null;
@@ -158,18 +149,11 @@ public class LoginController extends BaseController implements Serializable {
     public void checkLogin(boolean internal) throws IOException {
         String contextPath = FacesContext.getCurrentInstance().getExternalContext().getApplicationContextPath();
         if (internal && account == null) {
-            LOG.info("checkLogin: redirect loginView.xhtml");
+          //  log(Level.INFO, "checkLogin: redirect loginView.xhtml");
             FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + "/faces/loginView.xhtml");
         } else if (!internal && account != null) {
-            LOG.info("checkLogin: redirect home.xhtml");
+            log(Level.INFO, account, "checkLogin: redirect home.xhtml");
             FacesContext.getCurrentInstance().getExternalContext().redirect(contextPath + "/faces/homeView.xhtml");
-        }
-    }
-
-    public void logError(ExceptionInfo error) {
-        if (error != null) {
-            LOG.error("Error for account " + account.getUsername() + " Exception: " + error.getMessage());
-            //log(Level.ERROR, account, "", error.getException());
         }
     }
 

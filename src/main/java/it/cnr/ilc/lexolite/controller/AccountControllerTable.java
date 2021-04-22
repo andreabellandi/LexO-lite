@@ -100,7 +100,7 @@ public class AccountControllerTable extends BaseController implements Serializab
     }
 
     public void onSort(SortEvent event) {
-        log(Level.INFO, loginController.getAccount(), "sort account table by " + event.getSortColumn().getHeaderText());
+        //log(Level.INFO, loginController.getAccount(), "sort account table by " + event.getSortColumn().getHeaderText());
     }
 
     public void onFilter(FilterEvent event) {

@@ -47,6 +47,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -56,8 +57,6 @@ public class LexiconQuery extends BaseController {
 
     @Inject
     private PropertyValue propertyValue;
-
-    private static final Logger LOG = LoggerFactory.getLogger(LexiconQuery.class);
 
     private OWLOntologyManager ontologyManager;
     private OWLOntology ontology;
@@ -929,9 +928,9 @@ public class LexiconQuery extends BaseController {
             query = Query.create(q);
             result = engine.execute(query);
         } catch (QueryEngineException ex) {
-            LOG.error("",ex);
+            log(Level.ERROR, null, "On processQuery()", ex);
         } catch (QueryParserException ex2) {
-            LOG.error("Error parsing " + q, ex2);
+           log(Level.ERROR, null, "Error parsing " + q, ex2);
         }
         return getQueryResults(result);
     }

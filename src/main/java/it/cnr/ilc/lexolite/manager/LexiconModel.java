@@ -100,7 +100,7 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (OWLOntologyCreationException | IOException ex) {
-            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon ", ex);
+            super.log(Level.ERROR,  "LOADING lexicon ", ex);
         }
     }
 
@@ -113,9 +113,9 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (FileNotFoundException ex) {
-            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon", ex);
+            super.log(Level.ERROR,  "LOADING lexicon", ex);
         } catch (IOException | OWLOntologyCreationException ex) {
-            super.log(Level.ERROR, loginController.getAccount(), "LOADING lexicon", ex);
+            super.log(Level.ERROR,  "LOADING lexicon", ex);
         }
     }
 
@@ -1255,7 +1255,7 @@ public class LexiconModel extends BaseController implements Serializable {
                 }
             }
         } catch (OWLOntologyStorageException ex) {
-            super.log(Level.ERROR, loginController.getAccount(), "On Export", ex);
+            super.log(Level.ERROR,  "On Export", ex);
         }
 //        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
 //        return new DefaultStreamedContent(in, "application/txt", fileName);
@@ -1270,7 +1270,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     public synchronized void persist() throws IOException, OWLOntologyStorageException {
-        log(Level.INFO, loginController.getAccount(),"[" + getTimestamp() + "] LexO-lite : persist start");
+        log(Level.INFO, "[" + getTimestamp() + "] LexO-lite : persist start");
         File f = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
                 + LexOliteProperty.getProperty(Label.LEXICON_FILE_NAME_KEY));
         File bkp = new File(System.getProperty("user.home") + Label.LEXO_FOLDER
@@ -1289,11 +1289,11 @@ public class LexiconModel extends BaseController implements Serializable {
             if (stdInput.readLine() != null) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.getExternalContext().getFlash().setKeepMessages(true);
-//                log(org.apache.log4j.Level.ERROR, loginController.getAccount(), "WRITER ERROR !!!");
+//                log(org.apache.log4j.Level.ERROR,  "WRITER ERROR !!!");
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "NO UTF-8 Char inserted !!!", "Please, stop your work and contact LexO administrators !"));
             }
         }
-        log(Level.INFO, loginController.getAccount(),"[" + getTimestamp() + "] LexO-lite : persist end");
+        log(Level.INFO, "[" + getTimestamp() + "] LexO-lite : persist end");
     }
 
     private String getTimestamp() {

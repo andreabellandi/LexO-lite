@@ -6,6 +6,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -16,7 +17,8 @@ import org.slf4j.event.Level;
  */
 public abstract class BaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+    // private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public void error(String summary, String... details) {
         String detail = buildDetail(details);
@@ -65,13 +67,54 @@ public abstract class BaseController {
         return context.getExternalContext().getRequestLocale();
     }
 
+    public void log(Level level, String message) {
+        String newMessage = String.format("(Unknown user) %s", message);
+        printLog(level, newMessage);
+    }
+
     public void log(Level level, Account account, String message) {
-        message = "(" + (account == null ? "null" : account.getUsername()) + ") " + message;
-        log(level, account, message, null);
+        String newMessage = String.format("(%s) %s", (account == null)?"Unknown user":account.getUsername(), message);
+        printLog(level, newMessage);
+    }
+
+    public void log(Level level, String message, Throwable t) {
+        String newMessage = String.format("(Unknown user) %s", message);
+        printLog(level, newMessage, t);
     }
 
     public void log(Level level, Account account, String message, Throwable t) {
-        message = "(" + (account == null ? "null" : account.getUsername()) + ") " + message;
+        String newMessage = String.format("(%s) %s", (account == null)?"Unknown user":account.getUsername(), message);
+        printLog(level, newMessage, t);
+    }
+
+    private void printLog(Level level, String msg) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        //String callerClass = stackTraceElements[3].getClassName();
+        String callerLine = String.format("%d", stackTraceElements[3].getLineNumber());
+        String message = callerLine + " - " + msg;
+        switch (level) {
+            case ERROR:
+                logger.error(message);
+                break;
+            case WARN:
+                logger.warn(message);
+                break;
+            case INFO:
+                logger.info(message);
+                break;
+            case DEBUG:
+                logger.debug(message);
+                break;
+            case TRACE:
+                logger.trace(message);
+                break;
+            default:
+                logger.error("No logger for level {}", level);
+                break;
+        }
+    }
+
+    private void printLog(Level level, String message, Throwable t) {
         switch (level) {
             case ERROR:
                 logger.error(message, t);
@@ -89,7 +132,7 @@ public abstract class BaseController {
                 logger.trace(message, t);
                 break;
             default:
-                logger.error("No logger for  {}", level);
+                logger.error("No logger for level {}", level);
                 break;
         }
     }

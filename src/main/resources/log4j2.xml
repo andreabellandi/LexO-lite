@@ -2,7 +2,8 @@
 <Configuration status="DEBUG">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{-4}:%L - %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{-4}:%msg%n"/>
+            <!--PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{-4}:"/-->
         </Console>
     </Appenders>
     <Loggers>
