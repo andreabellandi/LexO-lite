@@ -25,8 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.slf4j.event.Level;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -35,8 +33,6 @@ import org.slf4j.LoggerFactory;
 @ViewScoped
 @Named
 public class LexiconControllerAttestation extends BaseController implements Serializable {
-
-    private static final Logger logger = LoggerFactory.getLogger(LexiconControllerAttestation.class);
 
     @Inject
     private LoginController loginController;
@@ -237,7 +233,7 @@ public class LexiconControllerAttestation extends BaseController implements Seri
     }
 
     public String getHighlightAttestations(String form, String text) {
-        logger.debug(loginController.getAccount().getUsername() + " Searching for: " + form + " on text: " + String.format("%.30s ...",text));
+        log(Level.DEBUG, loginController.getAccount().getUsername() + " Searching for: " + form + " on text: " + String.format("%.30s ...",text));
 
         String openMark = "<mark>";
         String closeMark = "</mark>";
@@ -257,14 +253,14 @@ public class LexiconControllerAttestation extends BaseController implements Seri
             prevEndMatch = endMatch;
         }
         highlightedText.append(text.substring(prevEndMatch));
-        logger.debug(loginController.getAccount().getUsername() + " highlightedText: " + highlightedText);
+        log(Level.DEBUG, loginController.getAccount().getUsername() + " highlightedText: " + highlightedText);
 
         return highlightedText.toString();
     }
 
     public String getAttestationForm() {
 
-        logger.info(loginController.getAccount().getUsername() + " Attestation get attersted form: " + form);
+        log(Level.INFO, loginController.getAccount().getUsername() + " Attestation get attersted form: " + form);
         int formIndex = Integer.parseInt(form);
         if (formIndex == -1) {
             attestedForm = lexiconControllerFormDetail.getLemma().getFormWrittenRepr();

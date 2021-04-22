@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 
 /**
@@ -45,8 +46,6 @@ import org.slf4j.LoggerFactory;
 @ViewScoped
 @Named
 public class LexiconControllerDictionary extends BaseController implements Serializable {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LexiconControllerDictionary.class);
 
     @Inject
     private LexiconControllerFormDetail lexiconCreationControllerFormDetail;
@@ -90,7 +89,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 return ret;
             }
         }
-        LOG.error("Lemma not found!");
+        log(Level.ERROR, "Lemma not found!");
         return "unknown";
     }
 
@@ -102,7 +101,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 return ret;
             }
         }
-        LOG.error("Lemma not found!");
+        log(Level.ERROR, "Lemma not found!");
         return "unknown";
     }
 
@@ -132,9 +131,9 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             if (matcher.find()) {
                 lemma = matcher.group(1);
                 esponente = matcher.group(2);
-                LOG.info("lemma " + lemma + ", esponente " + esponente);
+                log(Level.INFO, "lemma " + lemma + ", esponente " + esponente);
             }
-            LOG.info("lemma " + lemma + ", NO esponente");
+            log(Level.INFO,"lemma " + lemma + ", NO esponente");
         }
         ContainerTag div = div(attrs("#" + lemmaId));
         ContainerTag spanLemma = span(lemma).withClass(lemmaClassName);
@@ -146,7 +145,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         div.with(span(getTraits()).withClass(gramGrpClassName));
 //        div.with(img().withSrc(getClass().getResource("resources/image/ilccnr.png").getPath()).withClass(verifiedClass));
         div.with(img().withSrc(isVerified() ? "resources/image/locked.png" : "resources/image/unlocked.png").withClass(verifiedClass));
-        LOG.debug("div.renderFormatted() " + div.renderFormatted());
+        log(Level.DEBUG,"div.renderFormatted() " + div.renderFormatted());
         return div.renderFormatted();
     }
 
@@ -164,7 +163,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         if (isRendableLemmaComment()) {
             ret = lexiconCreationControllerFormDetail.getLemma().getNote();
         }
-        LOG.debug("getLemmaComment() (" + ret + ")");
+        log(Level.DEBUG,"getLemmaComment() (" + ret + ")");
         return ret;
     }
 
@@ -185,7 +184,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             }
             divVariants.with(div);
         }
-        LOG.debug(divVariants.renderFormatted());
+        log(Level.DEBUG, divVariants.renderFormatted());
         return divVariants.renderFormatted();
 
     }
@@ -215,7 +214,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     public String getVariantAttributes(List<String> variant) {
-        LOG.info("variant: " + variant);
+        log(Level.INFO, "variant: " + variant);
         StringBuilder sb = new StringBuilder();
         for (int i = 3; i < variant.size(); i++) {
             sb.append(variant.get(i));
@@ -258,7 +257,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
                 results.add(row);
             } else {
-                LOG.error("sd.getThemeOWLClass() is null!!");
+                log(Level.ERROR, "sd.getThemeOWLClass() is null!!");
             }
         }
 
