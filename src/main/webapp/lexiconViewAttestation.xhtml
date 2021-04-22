@@ -5,30 +5,30 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:form id="attestationForm" rendered="#{lexiconControllerAttestation.attestationViewRendered}">
-        <ui:repeat id="AttestationFormRepeat" value="#{lexiconControllerAttestation.senses}" var="sense">
+        <ui:repeat id="AttestationFormRepeat" value="#{lexiconControllerAttestation.senses}" var="sense" rendered="#{lexiconControllerAttestation.attestationViewRendered}">
 
             <p:dataTable id="AttestationsDT" value="#{lexiconControllerAttestation.getAttestations(sense)}" 
                          var="att" rendered="#{lexiconControllerAttestation.getAttestations(sense).size() > 0}"
                          rowStyleClass="rowBorderAdjustment"> 
                 <f:facet name="header">
-                    <h:outputLabel>Attestations for: <em>#{sense.normalizedName}</em></h:outputLabel>
-                    <h:outputLabel rendered="#{'No entry found' != sense.definition}"><br/>#{sense.definition}</h:outputLabel>
+                    <h:outputLabel>Attestations for: <em>#{sense.normalizedName}</em> <em>#{sense.senseNumber}</em></h:outputLabel>
+                    <h:outputLabel rendered="#{'No entry found' != sense.definition}" style="display: block; text-align: justify; padding: 0.5rem 2rem 0 2rem;">#{sense.definition}</h:outputLabel>
                 </f:facet>
-                <p:column headerText="Doc" width="8%" sortBy="#{att.docID}" filterBy="#{att.docID}" >
+                <p:column headerText="Doc" width="8%" sortBy="#{att.docID}" filterBy="#{att.docID}"  >
                     <h:outputText value="#{att.docID}" />
                 </p:column>
-                <p:column headerText="Dictionary" width="7%" style="text-align: center;">
+                <p:column headerText="Dictionary" width="9%" style="text-align: center;">
                     <h:selectBooleanCheckbox value="#{att.dictionaryPreferred}">
                         <p:ajax listener="#{lexiconControllerAttestation.checkDictionayPreferred(att)}" update="@this :systemMessage"
                                 onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" />
                     </h:selectBooleanCheckbox>
                 </p:column>
-                <p:column headerText="Attestation" width="80%" style="text-align: justify;" 
+                <p:column headerText="Attestation" width="76%" style="text-align: justify;" 
                           sortBy="#{att.attestation}" filterBy="#{att.attestation}" filterMatchMode="contains">
                     <!--h:outputText value="#{att.attestation}" /-->
                     <h:outputText value="#{lexiconControllerAttestation.getHighlightAttestations(att.form, att.attestation)}" escape="false"/>
                 </p:column>
-                <p:column headerText="Delete" width="5%" style="text-align: center;">
+                <p:column headerText="Delete" width="7%" style="text-align: center;">
                     <p:commandButton title="Delete attestation" icon="fa fa-trash-o"
                                      update=":editViewTab:attestationForm"
                                      onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()" 
