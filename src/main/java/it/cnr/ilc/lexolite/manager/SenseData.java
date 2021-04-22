@@ -189,14 +189,27 @@ public class SenseData implements Serializable {
         Matcher matcher = pattern.matcher(name);
         String normalizedName;
         if (matcher.find()) {
-            normalizedName = matcher.group(1);
+            normalizedName = matcher.group(1); 
             logger.info("Normalized name: {}", normalizedName);
         } else {
             normalizedName = name;
         }
         return normalizedName;
     }
-
+    
+    public String getSenseNumber() {
+        //es.  algebre_noun_it_sense1
+        logger.info("getSenseNumber: {}", name);
+        Matcher matcher = pattern.matcher(name);
+        String senseNumber;
+        if (matcher.find()) {
+            senseNumber = matcher.group(4); 
+            logger.info("sense number: {}", senseNumber);
+        } else {
+            senseNumber = "";
+        }
+        return senseNumber;
+    }
     public String getNote() {
         return note;
     }
