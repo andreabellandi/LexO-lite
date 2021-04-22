@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
+import it.cnr.ilc.lexolite.domain.Attestation;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
 import it.cnr.ilc.lexolite.manager.SenseData;
@@ -56,6 +57,8 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     private LexiconControllerVarTransSenseDetail lexiconControllerVarTransSenseDetail;
     @Inject
     private LexiconControllerTabViewList lexiconControllerTabViewList;
+    @Inject
+    private LexiconControllerAttestation lexiconControllerAttestation;
 
     // for handling numbers at the end of the forms
     Pattern patternLemma = Pattern.compile("(.+?)(\\d+\\*?)");
@@ -277,6 +280,10 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         }
         if (null != def) {
             mainDiv.with(div(span(join(i("definition: "), def))));
+        }
+        
+         for (Attestation att : lexiconControllerAttestation.getAttestationsForDictionary(senseIRI)) {
+            mainDiv.with(div(span(join(i("usage example: "), att.getAttestation()))));
         }
 
         SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);

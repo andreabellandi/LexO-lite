@@ -70,6 +70,14 @@ public class AttestationManager implements Serializable {
         List<Attestation> list = criteria.list();
          return list.isEmpty() ? new ArrayList() : list;
     }
+    
+     public List<Attestation> loadAttestationsForDictionaryBySense(String senseUri) {
+        Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
+        criteria.add(Restrictions.eq("senseUri", senseUri));
+        criteria.add(Restrictions.eq("dictionaryPreferred", true));
+        List<Attestation> list = criteria.list();
+        return list.isEmpty() ? new ArrayList() : list;
+    }
 
     public List<Attestation> loadAttetationsForDictionary(String senseUri) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
