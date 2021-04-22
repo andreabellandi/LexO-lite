@@ -79,7 +79,7 @@
             </h:panelGrid>
 
             <h:outputLabel styleClass="titleStyle" value="#{!lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression') ? 'Part of Speech:' : 'Type:'}" for="lemmaPoS"/>
-            <p:selectOneMenu id="lemmaPoS" appendTo="@this"  panelStyleClass="panel" height="100%" 
+            <p:selectOneMenu id="lemmaPoS" appendTo="@this"  panelStyleClass="panel" height="100%" style="z-index: 1;"
                              value="#{lexiconControllerFormDetail.lemma.poS}" 
                              rendered="#{!lexiconControllerFormDetail.locked}">
                 <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.lemmaPoSChanged}" 
@@ -298,7 +298,7 @@
                         <ui:repeat id="formMorphoTraits" value="#{form.morphoTraits}" var="trait">
                             <h:panelGrid columns="3">
                                 <h:outputLabel styleClass="titleStyle" value="#{trait.name}" />
-                                <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}" height="100%">
+                                <p:selectOneMenu value="#{trait.value}" disabled="#{lexiconControllerFormDetail.locked}" height="100%" appendTo="@this">
                                     <f:selectItems value="#{lexiconControllerFormDetail.getMorphoTraitValues(trait.name)}" />
                                     <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.formMorphoTraitChanged}" 
                                             update=":editViewTab:lexiconFormDetailForm:FormDataList:formButtons"/>
