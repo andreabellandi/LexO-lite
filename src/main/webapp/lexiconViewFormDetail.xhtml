@@ -73,7 +73,7 @@
                 <p:selectOneMenu id="lemmaLang" styleClass="menu"  height="100%"
                                  panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.language}" 
                                  appendTo="lemmaLang">
-                    <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.languageChanged}" update="lemmaButtons errorLemma"/>
+                    <p:ajax event="valueChange" listener="#{lexiconControlexiconFormDetailFormllerFormDetail.languageChanged}" update="lemmaButtons errorLemma"/>
                     <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerFormDetail.lexicaLanguages}" />
                 </p:selectOneMenu>
             </h:panelGrid>
@@ -173,17 +173,23 @@
                 <h:outputLabel styleClass="titleStyle" 
                                rendered="#{!lexiconControllerFormDetail.newAction}" 
                                value="#{extAtt.label}:"/>
-                <p:panelGrid id="#{extAtt.label}Panel" columns="2"  
+                <p:panelGrid id="#{extAtt.label}Panel"   style="width: 100%; height: 100%; background: inherit;" 
                              rendered="#{!lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.locked}">
-                    <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false"
-                                     styleClass="extensionAttributeInputareaSize">
-                        <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.extensionAttributeKeyUpEvent}"
-                                update="editViewTab:lexiconFormDetailForm:lemmaSaveButton"/>
-                        <f:attribute name="extAtt" value="#{extAtt}" />
-                    </p:inputTextarea>
-                    <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
-                                     actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt)}" 
-                                     update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid"/> 
+                    <p:row style="background: inherit;">
+                        <p:column style="padding-left: 0">
+                            <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false" 
+                                             styleClass="notResizebleTextArea" >
+                                <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.extensionAttributeKeyUpEvent}"
+                                        update="editViewTab:lexiconFormDetailForm:lemmaSaveButton"/>
+                                <f:attribute name="extAtt" value="#{extAtt}" />
+                            </p:inputTextarea>
+                        </p:column>
+                        <p:column styleClass="columnMiddleCenterAligned" style="padding-right: 0">
+                            <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                             actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt)}"  
+                                             update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid"/> 
+                        </p:column>
+                    </p:row>
                 </p:panelGrid>
                 <p:inputText styleClass="inputTextStyle"  
                              readonly="true"
