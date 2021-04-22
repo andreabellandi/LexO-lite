@@ -228,6 +228,10 @@ public class LexiconControllerAttestation extends BaseController implements Seri
         return attestationManager.loadAttestationsBySense(sd.getName());
     }
 
+    public List<Attestation> getAttestationsForDictionary(String sense) {
+        return attestationManager.loadAttestationsForDictionaryBySense(sense);
+    }
+    
     public void deleteAttestations(String senseUri, String formUri, String form, String att) {
         attestationManager.remove(senseUri, formUri, form, att);
     }

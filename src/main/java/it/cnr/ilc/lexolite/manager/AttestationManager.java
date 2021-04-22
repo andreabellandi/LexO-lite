@@ -34,7 +34,7 @@ public class AttestationManager implements Serializable {
         criteria.add(Restrictions.eq("senseUri", att.getSenseUri()));
         criteria.add(Restrictions.eq("formUri", att.getFormUri()));
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
-        return (criteria.list().size() < 2);
+        return (criteria.list().size() <= 2);
     }
     
     public void setDictionaryPreferred(Attestation att, boolean value) {
@@ -69,6 +69,14 @@ public class AttestationManager implements Serializable {
         criteria.add(Restrictions.eq("formUri", formUri));
         List<Attestation> list = criteria.list();
          return list.isEmpty() ? new ArrayList() : list;
+    }
+    
+     public List<Attestation> loadAttestationsForDictionaryBySense(String senseUri) {
+        Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
+        criteria.add(Restrictions.eq("senseUri", senseUri));
+        criteria.add(Restrictions.eq("dictionaryPreferred", true));
+        List<Attestation> list = criteria.list();
+        return list.isEmpty() ? new ArrayList() : list;
     }
 
     public List<Attestation> loadAttetationsForDictionary(String senseUri) {
