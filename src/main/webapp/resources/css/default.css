@@ -1303,3 +1303,7 @@ th .ui-column-filter {
     padding: 1rem !important;
     margin-top: 0.5rem !important;
 }
+
+.ui-column-title{
+    font-weight: 700;
+}
