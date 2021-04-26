@@ -101,6 +101,12 @@ html, body {
     width: 100px;
 }
 
+.outputLabelStyle {
+    font-size:12px; 
+    font-weight:bold;
+    display: block;
+}
+
 .attTitleStyle {
     font-size:12px; 
     font-weight:bold;
@@ -347,6 +353,7 @@ html, body {
     line-height: 1.5;
     border: 2px solid #990000;
     margin-top: 12px;
+    width: 100%;
 }
 
 .lemmaBoxBackground {
@@ -368,6 +375,7 @@ html, body {
     line-height: 1.5;
     border: 2px solid #7286ad;
     /*float: right;*/
+    width: 100%;
 }
 
 .typeFormTextBlock {
@@ -1037,6 +1045,8 @@ ontologyDetailView {
 }
 .variantFormClass {
     font-family: "Times New Roman", Times, serif;
+        padding: 10px;
+
 }
 
 .variantFormMorphoClass {
@@ -1209,8 +1219,8 @@ tr.rowHeight:last-child>td {
 }
 
 .notResizebleTextArea {
-    width:100%; 
     height: 8em !important; 
+    width: 95%;
     resize: none;
 }
 
@@ -1313,4 +1323,8 @@ th .ui-column-filter {
 
 .ui-column-title{
     font-weight: 700;
+}
+
+.noPaddingTd {
+    padding: 0px;
 }

@@ -92,12 +92,12 @@
                 <ui:repeat value="#{sense.extensionAttributeInstances}" var="extAtt" 
                            rendered="#{sense.extensionAttributeInstances.size() > 0}">
 
-                    <h:panelGrid id="#{extAtt.label}Panel" columns="3" cellpadding="0" 
+                    <h:panelGrid id="#{extAtt.label}Panel" columns="3" cellpadding="0"  style="width:100%;"
                                  rendered="#{!lexiconControllerFormDetail.locked}">
                         <h:outputLabel styleClass="titleStyle" value="#{extAtt.label}:"/>
 
                         <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false"
-                                         styleClass="extensionAttributeInputareaSize">
+                                         styleClass="notResizebleTextArea">
                             <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.extensionSenseAttributeKeyUpEvent}"
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
                             <f:attribute name="extAtt" value="#{extAtt}" />

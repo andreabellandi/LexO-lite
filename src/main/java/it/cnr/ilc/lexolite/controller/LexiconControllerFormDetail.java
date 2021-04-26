@@ -988,7 +988,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         ExtensionAttributeIstance eai = (ExtensionAttributeIstance) component.getAttributes().get("extAtt");
         String att = (String) e.getComponent().getAttributes().get("value");
         FormData fd = (FormData) component.getAttributes().get("form");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form attribute extesion " + eai.getName() + " of " + fd.getFormWrittenRepr() + " to " + att);
+        log(Level.DEBUG, loginController.getAccount(), "UPDATE Form attribute extesion " + eai.getName() + " of " + fd.getFormWrittenRepr() + " to " + att);
         for (LemmaData.ExtensionAttributeIstance _eai : fd.getExtensionAttributeInstances()) {
             if (eai.getName().equals(_eai.getName())) {
                 _eai.setValue(att);
@@ -1001,7 +1001,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String phonetic = (String) e.getComponent().getAttributes().get("value");
         FormData fd = (FormData) component.getAttributes().get("form");
-        log(Level.INFO, loginController.getAccount(), "UPDATE Form phonetic of " + fd.getFormWrittenRepr() + " to " + phonetic);
+        log(Level.DEBUG, loginController.getAccount(), "UPDATE Form phonetic of " + fd.getFormWrittenRepr() + " to " + phonetic);
         fd.setSaveButtonDisabled(isSavableForm(fd));
     }
 

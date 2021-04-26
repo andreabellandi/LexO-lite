@@ -11,69 +11,74 @@
                      rendered="#{lexiconControllerFormDetail.lemmaRendered}">
 
             <h:outputLabel id="lemmaLabel" styleClass="titleStyle" value="Lemma (*):"/>
-            <h:panelGrid columns="4" cellpadding="0" cellspacing="0">
+            <h:panelGroup >
                 <p:keyboard id="lemmaName" styleClass="inputTextStyle" readonly="#{lexiconControllerFormDetail.locked}" 
                             size="#{lexiconControllerFormDetail.lemma.formWrittenRepr.length() == 0 ? 20 : lexiconControllerFormDetail.lemma.formWrittenRepr.length()}"
                             value="#{lexiconControllerFormDetail.lemma.formWrittenRepr}"   
                             layoutTemplate="אבגדהוזחט,יכךלמםנןס,עפףצץקרשת,-space-space-space-space-space-space-space-space-space,اأإآءبتثج,حخدذرزسشص,ضطظعغفقكل,منهةوؤيىئ"
                             showMode="button" buttonImageOnly="true" buttonImage="/resources/image/keyboardpencil.png">
                     <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.lemmaNameKeyupEvent}"
-                            update="errorLemma lemmaButtons ComponentGroup_1 ComponentGroup_2"/>
+                            update="errorLemma lemmaButtons componentLabel_1 ComponentGroup_2"/>
                     <p:ajax event="change" listener="#{lexiconControllerFormDetail.lemmaNameKeyupEvent}"
-                            update="errorLemma lemmaButtons ComponentGroup_1 ComponentGroup_2"/>
+                            update="errorLemma lemmaButtons componentLabel_1 ComponentGroup_2"/>
                 </p:keyboard>
-                <h:panelGrid id="lemmaNote" columns="1" columnClasses="column" cellpadding="0">
-                    <p:commandLink id="lemmaNoteLink" title="Comment to lemma" action="#{lexiconControllerFormDetail.openNote}"
-                                   disabled="#{lexiconControllerFormDetail.newAction}"
-                                   update=":editViewTab:lexiconFormDetailForm:lemmaNotePanel lemmaNote" 
-                                   oncomplete="PF('lemmaNotePanel').show('#{component.clientId}')">
-                        <span class="#{lexiconControllerFormDetail.commentIcon}"></span>
-                    </p:commandLink>
-                </h:panelGrid>
+                <!--h:panelGrid id="lemmaNote" columns="1" columnClasses="column" cellpadding="0"-->
+                <p:commandLink id="lemmaNoteLink" title="Comment to lemma" action="#{lexiconControllerFormDetail.openNote}"
+                               disabled="#{lexiconControllerFormDetail.newAction}"  style="margin-left: 1rem;"
+                               update=":editViewTab:lexiconFormDetailForm:lemmaNotePanel @this" 
+                               oncomplete="PF('lemmaNotePanel').show('#{component.clientId}')">
+                    <span class="#{lexiconControllerFormDetail.commentIcon}"></span>
+                </p:commandLink>
+                <!--/h:panelGrid-->
                 <h:panelGrid id="userLock" columns="1" columnClasses="column" cellpadding="0" rendered="#{lexiconControllerFormDetail.locked}">
                     <p:graphicImage id="permission" value="/resources/image/permission.png" height="20px" width="20px"/>
                     <p:tooltip for="permission" value="#{lexiconControllerFormDetail.locker}" position="top"/>
                 </h:panelGrid>
-            </h:panelGrid>
+            </h:panelGroup>
 
-            <h:panelGrid id="ComponentGroup_1" columns="1" cellpadding="0" 
+            <h:outputLabel id="componentLabel_1" styleClass="multiwordTitleStyle" value="Words:"
+                           rendered="#{(lexiconControllerFormDetail.newAction and lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression')) or lexiconControllerFormDetail.lemma.multiword.size() > 0}" />
+            <!--            <h:panelGrid id="ComponentGroup_2" 
+                                     rendered="#{(lexiconControllerFormDetail.newAction and lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression')) 
+                        or lexiconControllerFormDetail.lemma.multiword.size() > 0}"
+            styleClass="#{lexiconControllerFormDetail.lemma.multiword.size() > 0 ? 'typeLemmaTextBlock' : 'multiwordTitleStyle'}" columns="2">-->
+            <h:dataTable id="ComponentGroup_2" value="#{lexiconControllerFormDetail.lemma.multiword}" var="comp" columnClasses="noPaddingTd"
                          rendered="#{(lexiconControllerFormDetail.newAction and lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression')) 
                                      or lexiconControllerFormDetail.lemma.multiword.size() > 0}">
-                <h:outputLabel id="componentLabel_1" styleClass="multiwordTitleStyle" value="Words:"/>
-            </h:panelGrid>
-            <h:panelGrid id="ComponentGroup_2" 
-                         rendered="#{(lexiconControllerFormDetail.newAction and lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression')) 
-                                     or lexiconControllerFormDetail.lemma.multiword.size() > 0}"
-                         styleClass="#{lexiconControllerFormDetail.lemma.multiword.size() > 0 ? 'typeLemmaTextBlock' : 'multiwordTitleStyle'}" columns="2">
-                <ui:repeat value="#{lexiconControllerFormDetail.lemma.multiword}" var="comp">
-                    <h:panelGrid columns="4">
-                        <p:graphicImage style="padding-right: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
-                                        height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
-                        <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true" size="#{comp.label.length()}"
-                                        value="#{comp.label}" forceSelection="true" readonly="#{lexiconControllerFormDetail.locked}"
-                                        rendered="#{!comp.writtenRep.contains('not found')}"
-                                        completeMethod="#{lexiconControllerFormDetail.completeComponents}">
-                            <f:attribute name="currentComponent" value="#{comp}"/>
-                            <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
-                                    update="lemmaWord lexicalEntryViewButtons :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
-                        </p:autoComplete>
-                        <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
-                                       rendered="#{comp.writtenRep.contains('not found')}"/>
-                        <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
-                                         onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
-                                         action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(comp, 'Multiword component')}"
-                                         update=":systemMessage :breadCrumb :editViewTab"
-                                         disabled="#{comp.viewButtonDisabled}"/> 
-                    </h:panelGrid>
-                </ui:repeat>
-            </h:panelGrid>
+                <h:column>
+                    <p:autoComplete id="lemmaWord" maxResults="10" dropdown="true"  
+                                    value="#{comp.label}" forceSelection="true" readonly="#{lexiconControllerFormDetail.locked}"
+                                    rendered="#{!comp.writtenRep.contains('not found')}"
+                                    completeMethod="#{lexiconControllerFormDetail.completeComponents}">
+                        <f:attribute name="currentComponent" value="#{comp}"/>
+                        <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
+                                update="lemmaWord lexicalEntryViewButtons :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
+                    </p:autoComplete>
+                </h:column>
+                <h:column>
+                    <p:graphicImage style="padding-left: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
+                                    height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
+                </h:column>
+                <h:column>   
+                    <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
+                                   rendered="#{comp.writtenRep.contains('not found')}"/>
+                </h:column>
+                <h:column>              
+                    <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
+                                     onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
+                                     action="#{lexiconControllerTabViewList.onLinkedEntryByRelationSelect(comp, 'Multiword component')}"
+                                     update=":systemMessage :breadCrumb :editViewTab"
+                                     disabled="#{comp.viewButtonDisabled}"/> 
+                </h:column>
+            </h:dataTable>
+            <!--            </h:panelGrid>-->
 
             <h:outputLabel styleClass="titleStyle" rendered="#{lexiconControllerFormDetail.newAction}" value="Language (*):" for="lemmaLang"/>
             <h:panelGrid id="langPanel" columns="1" cellpadding="0" rendered="#{lexiconControllerFormDetail.newAction}">
                 <p:selectOneMenu id="lemmaLang" styleClass="menu"  height="100%"
                                  panelStyleClass="panel" value="#{lexiconControllerFormDetail.lemma.language}" 
                                  appendTo="lemmaLang">
-                    <p:ajax event="valueChange" listener="#{lexiconControlexiconFormDetailFormllerFormDetail.languageChanged}" update="lemmaButtons errorLemma"/>
+                    <p:ajax event="valueChange" listener="#{lexiconControllerFormDetail.languageChanged}" update="lemmaButtons errorLemma"/>
                     <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerFormDetail.lexicaLanguages}" />
                 </p:selectOneMenu>
             </h:panelGrid>
@@ -253,7 +258,7 @@
                 </f:facet>
                 <p:ajax event="save" listener="#{lexiconControllerFormDetail.saveNote()}" onstart="PF('loadingDialog').show()" 
                         oncomplete="setHeight();PF('loadingDialog').hide()"
-                        update=":editViewTab:lexiconFormDetailForm:lemmaNote :editViewTab:lexiconViewDictionaryForm :systemMessage"/>
+                        update=" :editViewTab:lexiconViewDictionaryForm :systemMessage"/>
                 <p:ajax event="cancel" listener="#{lexiconControllerFormDetail.closeNote()}"/>
             </p:inplace>
         </p:overlayPanel>
@@ -261,7 +266,7 @@
         <p:dataList id="FormDataList" styleClass="noBorder" type="definition" var="form" 
                     value="#{lexiconControllerFormDetail.forms}" emptyMessage="" 
                     rendered="#{lexiconControllerFormDetail.lemmaRendered}">
-            <h:panelGrid styleClass="formTextBlock" columns="1" cellpadding="5">
+            <h:panelGrid styleClass="formTextBlock"  cellpadding="5">
                 <h:panelGrid  columns="2" cellpadding="5">
                     <h:outputLabel styleClass="titleStyle" value="Variant (*):" />
                     <h:panelGrid columns="2" cellpadding="0" cellspacing="0">
@@ -273,14 +278,14 @@
                             <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.formNameKeyupEvent}" update="formButtons errorForm" />
                             <f:attribute name="form" value="#{form}" />
                         </p:keyboard>
-                        <h:panelGrid id="formNote" columns="1" columnClasses="column" cellpadding="0">
-                            <p:commandLink id="formNoteLink" title="Comment to variant" action="#{lexiconControllerFormDetail.openNote(form.formWrittenRepr)}"
-                                           update="formNotePanel formNote" 
-                                           oncomplete="PF('formNotePanel').show('#{component.clientId}')">
-                                <span class="#{lexiconControllerFormDetail.getCommentIcon(form)}"></span>
-                            </p:commandLink>
-                        </h:panelGrid>
+                        <!--                        <h:panelGrid id="formNote" columns="1" columnClasses="column" cellpadding="0">-->
+                        <p:commandLink id="formNoteLink" title="Comment to variant" action="#{lexiconControllerFormDetail.openNote(form.formWrittenRepr)}"
+                                       update="formNotePanel @this" style="margin-left: 1rem;"
+                                       oncomplete="PF('formNotePanel').show('#{component.clientId}')">
+                            <span class="#{lexiconControllerFormDetail.getCommentIcon(form)}"></span>
+                        </p:commandLink>
                     </h:panelGrid>
+                    <!--                    </h:panelGrid>-->
 
                     <h:outputLabel styleClass="titleStyle" 
                                    rendered="#{!lexiconControllerFormDetail.newFormAction and !form.formPhoneticRep.equals('No entry found')}" 
@@ -316,33 +321,36 @@
                             </h:panelGrid>
                         </ui:repeat>
                     </h:panelGrid>
-
                 </h:panelGrid>
+
 
                 <!-- EXTENSIONS -->
                 <!-- Attributes -->
-                <ui:repeat value="#{form.extensionAttributeInstances}" var="extAtt" 
-                           rendered="#{form.extensionAttributeInstances.size() > 0}">
-
-                    <h:panelGrid id="#{extAtt.label}Panel" columns="3" cellpadding="0" 
-                                 rendered="#{!lexiconControllerFormDetail.newAction and !lexiconControllerFormDetail.locked}">
-                        <h:outputLabel styleClass="titleStyle" value="#{extAtt.label}:"/>
-
-                        <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false"
-                                         styleClass="extensionAttributeInputareaSize">
+                <h:dataTable value="#{form.extensionAttributeInstances}" var="extAtt"  width="100%"
+                             rendered="#{form.extensionAttributeInstances.size() > 0}">
+                    <h:column>
+                        <h:outputLabel styleClass="outputLabelStyle" value="#{extAtt.label}:"/>
+                    </h:column>
+                    <h:column>
+                        <p:inputTextarea id="#{extAtt.label}Field" value="#{extAtt.value}" autoResize="false" style="width: 95%;"
+                                         styleClass="notResizebleTextArea">
                             <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.extensionFormAttributeKeyUpEvent}"
                                     update=":editViewTab:lexiconFormDetailForm:FormDataList:formButtons"/>
                             <f:attribute name="extAtt" value="#{extAtt}" />
                             <f:attribute name="form" value="#{form}"/>
                         </p:inputTextarea>
-                        <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                    </h:column>
+                    <h:column>
+                       <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt, form)}" 
                                          update=":editViewTab:lexiconFormDetailForm:FormDataList"/>
-                    </h:panelGrid>
-                    <p:inputText styleClass="inputTextStyle"  
-                                 readonly="true"
-                                 rendered="#{lexiconControllerFormDetail.locked}"/>
-                </ui:repeat>
+                        <p:inputText styleClass="inputTextStyle"  
+                                     readonly="true"
+                                     rendered="#{lexiconControllerFormDetail.locked}"/>
+                    </h:column>
+
+                </h:dataTable>
+
                 <!-- End of Attributes -->
                 <!-- END OF EXTENSIONS -->
 
@@ -395,7 +403,7 @@
                     </f:facet>
                     <p:ajax event="save" listener="#{lexiconControllerFormDetail.saveNote(form)}" onstart="PF('loadingDialog').show()" 
                             oncomplete="PF('loadingDialog').hide()"
-                            update="formNote :editViewTab:lexiconViewDictionaryForm :systemMessage"/>
+                            update="formNoteLink :editViewTab:lexiconViewDictionaryForm :systemMessage"/>
                     <p:ajax event="cancel" listener="#{lexiconControllerFormDetail.closeNote(form.formWrittenRepr)}"/>
                 </p:inplace>
             </p:overlayPanel>
