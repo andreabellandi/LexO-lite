@@ -997,8 +997,8 @@ ontologyDetailView {
 
 .verifiedClass {
     float: right;
-    height: 32px;
-    width: 20px;
+    height: 24px;
+    width: 15px;
 }
 
 .lemmaClass {
