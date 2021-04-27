@@ -596,4 +596,9 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         senses.get(index).setSaveButtonDisabled(false);
     }
 
+    public boolean hasAttestation(String senseUri) {
+        
+        return !attestationManager.loadAttestationsBySense(senseUri).isEmpty();
+        
+    }
 }
