@@ -22,7 +22,6 @@
                             </p:commandLink>
                         </h:panelGrid>
                     </h:panelGrid>
-
                     <h:outputLabel styleClass="titleStyle" value="Definition:"
                                    rendered="#{!sense.definition.equals('No entry found')}"/>
                     <h:panelGrid columns="1" rendered="#{!sense.definition.equals('No entry found')}">
@@ -86,6 +85,17 @@
                                          actionListener="#{lexiconControllerSenseDetail.removeSenseRelation(sense, sense.themeOWLClass, 'reference')}" 
                                          update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
                     </h:panelGrid>
+                    <h:outputLabel styleClass="titleStyle" value="Attestation:"/>
+                    <p:outputLabel  value="#{lexiconControllerSenseDetail.hasAttestation(sense.name)}" 
+                                   rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) > 0  }">
+                        <i class="fa fa-fw fa-file-text fa-2"  style="font-size: 1.5em; vertical-align: middle;"
+                           onclick="PF('lexicalAspectsTabVar').tabindex=3" onmouseover="console.log(PF('lexicalAspectsTabVar').tabindex)"/>
+                    </p:outputLabel>
+                    <p:outputLabel value="#{lexiconControllerSenseDetail.hasAttestation(sense.name)}" 
+                                   rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) == 0  }">
+                        <i class="fa fa-fw fa-file-text-o" style="font-size: 1.5em; vertical-align: middle;" />
+                    </p:outputLabel>
+
                 </h:panelGrid>
                 <!-- EXTENSIONS -->
                 <!-- Attributes -->

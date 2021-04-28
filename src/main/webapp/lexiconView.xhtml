@@ -11,7 +11,7 @@
         <ui:define name="content">
 
             <ui:include src="/lexiconViewAttestationPanel.xhtml"/>
-            
+
             <ui:include src="/lexiconViewLanguageDetail.xhtml"/>
 
             <ui:include src="/lexiconViewOntologyImportDialog.xhtml"/>
@@ -56,7 +56,7 @@
                                     <h:form id="lexEntryAspectForm" rendered="#{lexiconControllerLexicalAspect.rendered}">
                                         <div align="center">
                                             <p:selectOneButton id="lexicalAspectsTab" styleClass="lexEntryAspects" disabled="#{lexiconControllerFormDetail.newAction}" 
-                                                               value="#{lexiconControllerLexicalAspect.lexicalAspectActive}">
+                                                               value="#{lexiconControllerLexicalAspect.lexicalAspectActive}"  tabindex="2" widgetVar="lexicalAspectsTabVar">
                                                 <f:selectItems value="#{lexiconControllerLexicalAspect.lexicalAspects}"/>
                                                 <p:ajax event="change" listener="#{lexiconControllerLexicalAspect.lexicalAspectChangeEvent}" 
                                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
