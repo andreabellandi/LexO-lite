@@ -52,6 +52,8 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
     private LoginController loginController;
     @Inject
     private PropertyValue propertyValue;
+    @Inject
+    private LexiconControllerDictionary lexiconControllerDictionary;
 
     private boolean senseVarTransRendered = false;
 
@@ -185,6 +187,9 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         log(Level.INFO, loginController.getAccount(), "SAVE updated Sense vartrans part");
         lexiconManager.updateSenseVarTrans(sensesVarTransCopy, sensesVarTrans);
         createSensesCopy();
+        if(lexiconControllerDictionary != null) {
+            lexiconControllerDictionary.clearCaches();
+        }
     }
 
     public void addSenseDirectRelation(SenseData sd) {
