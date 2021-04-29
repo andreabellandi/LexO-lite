@@ -10,6 +10,7 @@ import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.domain.Attestation;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.LemmaData;
+import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
@@ -22,7 +23,6 @@ import static j2html.TagCreator.join;
 import static j2html.TagCreator.sup;
 import j2html.tags.ContainerTag;
 import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,15 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-
 
 /**
  *
@@ -58,10 +54,24 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     private LexiconControllerTabViewList lexiconControllerTabViewList;
     @Inject
     private LexiconControllerAttestation lexiconControllerAttestation;
+    //results cache
+    private HashMap<String,ArrayList> senseLexicalFunctionC;
+
+    public ArrayList getSenseLexicalFunctionC(String s) {
+        return senseLexicalFunctionC.get(s);
+    }
+
+    public void setSenseLexicalFunctionC(String s , ArrayList senseLexicalFunctionC) {
+        this.senseLexicalFunctionC.put(s, senseLexicalFunctionC);
+    }
 
     // for handling numbers at the end of the forms
     Pattern patternLemma = Pattern.compile("(.+?)(\\d+\\*?)");
     Pattern patternSense = Pattern.compile("(.+)_([a-zA-Z]+)_(sense\\d+)");
+
+    public LexiconControllerDictionary() {
+        this.senseLexicalFunctionC = new HashMap<>();
+    }
 
     private String getMorphoTraits(String pos, String gender, String number, String person, String mood, String voice) {
         StringBuilder morpho = new StringBuilder();
@@ -136,7 +146,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 esponente = matcher.group(2);
                 log(Level.INFO, "lemma " + lemma + ", esponente " + esponente);
             }
-            log(Level.INFO,"lemma " + lemma + ", NO esponente");
+            log(Level.INFO, "lemma " + lemma + ", NO esponente");
         }
         ContainerTag div = div(attrs("#" + lemmaId));
         ContainerTag spanLemma = span(lemma).withClass(lemmaClassName);
@@ -148,7 +158,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         div.with(span(getTraits()).withClass(gramGrpClassName));
 //        div.with(img().withSrc(getClass().getResource("resources/image/ilccnr.png").getPath()).withClass(verifiedClass));
         div.with(img().withSrc(isVerified() ? "resources/image/locked.png" : "resources/image/unlocked.png").withClass(verifiedClass));
-        log(Level.DEBUG,"div.renderFormatted() " + div.renderFormatted());
+        log(Level.DEBUG, "div.renderFormatted() " + div.renderFormatted());
         return div.renderFormatted();
     }
 
@@ -166,8 +176,17 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         if (isRendableLemmaComment()) {
             ret = lexiconCreationControllerFormDetail.getLemma().getNote();
         }
-        log(Level.DEBUG,"getLemmaComment() (" + ret + ")");
+        log(Level.DEBUG, "getLemmaComment() (" + ret + ")");
         return ret;
+    }
+
+    public List<String> getVariants() {
+
+        ArrayList variants = new ArrayList();
+        for (FormData fd : lexiconCreationControllerFormDetail.getForms()) {
+            variants.add(fd.getFormWrittenRepr());
+        }
+        return variants;
     }
 
     public String getVariants(String variantFormFrameClass, String variantClass, String variantFormClass, String variantFormMorphoClass, String variantAttestationClass, String variantNoteClass) {
@@ -187,7 +206,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             }
             divVariants.with(div);
         }
-        log(Level.DEBUG, divVariants.renderFormatted());
+        log(Level.INFO, divVariants.renderFormatted());
         return divVariants.renderFormatted();
 
     }
@@ -257,7 +276,13 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 row.add(null);
             }
             if (sd.getThemeOWLClass() != null) {
-                row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+                log(Level.INFO, "getThemeOWLClass(): " + sd.getThemeOWLClass().getType());
+                log(Level.INFO, "getThemeOWLClass(): " + ReferenceMenuTheme.itemType.none.equals(sd.getThemeOWLClass().getType()));
+                if (!ReferenceMenuTheme.itemType.none.toString().equals(sd.getThemeOWLClass().getType())) {
+                    row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+                } else {
+                    row.add(null);
+                }
                 results.add(row);
             } else {
                 log(Level.ERROR, "sd.getThemeOWLClass() is null!!");
@@ -265,6 +290,37 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         }
 
         return results;
+    }
+
+    public List<String> getSenseExamples(String senseIRI) {
+        ArrayList ret = new ArrayList();
+        log(Level.INFO, senseIRI);
+        for (Attestation att : lexiconControllerAttestation.getAttestationsForDictionary(senseIRI)) {
+            log(Level.INFO, "attestation: " + att.getAttestation());
+            ret.add(att.getAttestation());
+        }
+        return ret;
+    }
+
+    public List<String> getSenseLexicalFunction(String senseIRI) {
+        ArrayList ret = getSenseLexicalFunctionC(senseIRI);
+        if (ret == null) {
+            ret = new ArrayList();
+            log(Level.INFO, senseIRI);
+            SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
+
+            for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
+                if (MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) != null) {
+                    ret.add(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "("
+                            + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
+                } else {
+                    ret.add(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "("
+                            + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
+                }
+            }
+            setSenseLexicalFunctionC(senseIRI,ret);
+        }
+        return ret;
     }
 
     public String getSense(List<String> sense, String id, String className, String smallCapsClass) {
@@ -280,8 +336,8 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         if (null != def) {
             mainDiv.with(div(span(join(i("definition: "), def))));
         }
-        
-         for (Attestation att : lexiconControllerAttestation.getAttestationsForDictionary(senseIRI)) {
+
+        for (Attestation att : lexiconControllerAttestation.getAttestationsForDictionary(senseIRI)) {
             mainDiv.with(div(span(join(i("usage example: "), att.getAttestation()))));
         }
 
@@ -332,10 +388,11 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             }
         }
 
-        if (onto.length() > 0) {
-            mainDiv.with(div(span("semantic reference: " + onto)).withClass(smallCapsClass));
+        if (null != onto) {
+            if (onto.length() > 0) {
+                mainDiv.with(div(span("semantic reference: " + onto)).withClass(smallCapsClass));
+            }
         }
-
         return mainDiv.renderFormatted();
     }
 
@@ -405,4 +462,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
 
     }
 
+    public void clearCaches () {
+        this.senseLexicalFunctionC = new HashMap<>();
+    }
 }
