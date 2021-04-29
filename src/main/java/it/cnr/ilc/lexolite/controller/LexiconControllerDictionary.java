@@ -148,7 +148,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             }
             log(Level.INFO, "lemma " + lemma + ", NO esponente");
         }
-        ContainerTag div = div(attrs("#" + lemmaId));
+        ContainerTag div = div(attrs("#" + lemmaId)).withStyle("position: relative;");
         ContainerTag spanLemma = span(lemma).withClass(lemmaClassName);
         if (esponente != null) {
             spanLemma.with(sup(esponente).withClass(expClassName));
