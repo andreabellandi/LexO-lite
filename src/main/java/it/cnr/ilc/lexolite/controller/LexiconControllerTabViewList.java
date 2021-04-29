@@ -437,13 +437,15 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                 lexiconCreationControllerFormDetail.addLemma(entry);
                 log(Level.INFO, loginController.getAccount(), "SELECT Lemma " + entry);
                 // set breadcrumb
-                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.LEMMA_LIST_VIEW);
+                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(),
+                        Label.ClickProvenance.LEMMA_LIST_VIEW, event.getTreeNode().getRowKey());
                 break;
             case "Form":
                 log(Level.INFO, loginController.getAccount(), "SELECT Form " + entry);
                 lexiconCreationControllerFormDetail.addForm(entry);
                 // set breadcrumb
-                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, ((DataTreeNode) event.getTreeNode().getData()).getName(), Label.ClickProvenance.FORM_LIST_VIEW);
+                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, ((DataTreeNode) event.getTreeNode().getData()).getName(), 
+                        Label.ClickProvenance.FORM_LIST_VIEW, event.getTreeNode().getRowKey());
                 break;
             case "Sense":
                 log(Level.INFO, loginController.getAccount(), "SELECT Sense " + entry);
@@ -762,7 +764,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
         // set breadcrumb
-        lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.DICTIONARY_VIEW);
+        lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), 
+                Label.ClickProvenance.DICTIONARY_VIEW, "");
         // dictionary tab needs to be selected
         lexiconCreationControllerFormDetail.setActiveTab(1);
         lexiconControllerLexicalAspect.setRendered(true);
@@ -890,7 +893,8 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconControllerLexicalAspect.setRendered(true);
 
         // set breadcrumb
-        lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), Label.ClickProvenance.LEMMA_LIST_VIEW);
+        lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), 
+                Label.ClickProvenance.LEMMA_LIST_VIEW, "");
 
     }
 

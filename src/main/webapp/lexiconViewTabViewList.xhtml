@@ -29,7 +29,7 @@
                     <ui:include src="/lexiconViewLemmaFilter.xhtml"/>
                     <p:scrollPanel  id="scrollPanelLemmaTree" mode="native"  styleClass="roundedBox">
                         <p:tree id="lemmaTree" value="#{lexiconControllerTabViewList.lemmaRoot}" 
-                                var="lemma" selectionMode="single" style="width: 100%;"
+                                var="lemma" selectionMode="single" style="width: 100%;" widgetVar="lemmaTreeVar"
                                 selection="#{lexiconControllerTabViewList.selection}">
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onSelect}"
                                     onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"

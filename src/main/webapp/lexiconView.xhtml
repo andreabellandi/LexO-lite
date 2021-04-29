@@ -47,7 +47,7 @@
                             <ui:include src="/lexiconViewSearchFilter.xhtml"/>
 
                             <h:form id="breadCrumb" >
-                                <p:breadCrumb styleClass="breadCrumbPanel" model="#{lexiconControllerFormDetail.breadCrumbModel}" 
+                                <p:breadCrumb styleClass="breadCrumbPanel" model="#{lexiconControllerFormDetail.breadCrumbModel}"
                                               rendered="#{lexiconControllerFormDetail.breadCrumbRenderable}" homeDisplay="text"/>
                             </h:form>
 
@@ -56,7 +56,7 @@
                                     <h:form id="lexEntryAspectForm" rendered="#{lexiconControllerLexicalAspect.rendered}">
                                         <div align="center">
                                             <p:selectOneButton id="lexicalAspectsTab" styleClass="lexEntryAspects" disabled="#{lexiconControllerFormDetail.newAction}" 
-                                                               value="#{lexiconControllerLexicalAspect.lexicalAspectActive}"  tabindex="2" widgetVar="lexicalAspectsTabVar">
+                                                               value="#{lexiconControllerLexicalAspect.lexicalAspectActive}"  widgetVar="lexicalAspectsTabVar">
                                                 <f:selectItems value="#{lexiconControllerLexicalAspect.lexicalAspects}"/>
                                                 <p:ajax event="change" listener="#{lexiconControllerLexicalAspect.lexicalAspectChangeEvent}" 
                                                         onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"

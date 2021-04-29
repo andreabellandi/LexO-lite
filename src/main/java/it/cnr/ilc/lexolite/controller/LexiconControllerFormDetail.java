@@ -133,7 +133,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         return breadCrumbModel;
     }
 
-    private void addItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov) {
+    private void addItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov, String rowKey) {
         if (!isInBreadCrumb(model, uri)) {
             DefaultMenuItem element = new DefaultMenuItem();
             if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
@@ -151,8 +151,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             element.setDisabled(disabled);
             element.setUpdate(":editViewTab :breadCrumb");
             element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
-            element.setOnstart("PF('loadingDialog').show();");
-            element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+            //element.setOnstart("PF('loadingDialog').show();");
+            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" +rowKey+ ")\"))");
+            //element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+            element.setOncomplete("setHeight();");
             model.getElements().add(element);
             model.generateUniqueIds();
         }
@@ -169,7 +171,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         return found;
     }
 
-    private void slideItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov) {
+    private void slideItemToBreadCrumbModel(MenuModel model, String type, String value, String uri, boolean disabled, int id, Enum prov, String rowKey) {
         DefaultMenuItem element = new DefaultMenuItem();
         if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
             element.setIcon("fa fa-file-text-o");
@@ -196,11 +198,19 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         }
     }
 
-    public void setBreadCrumb(String entryType, String entryUri, String entry, Enum prov) {
+    /**
+     * 
+     * @param entryType
+     * @param entryUri
+     * @param entry
+     * @param prov
+     * @param rowKey the number of the treenode selected
+     */
+    public void setBreadCrumb(String entryType, String entryUri, String entry, Enum prov, String rowKey) {
         if (breadCrumbModel.getElements().size() < breadCrumbWindowSize) {
-            addItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov);
+            addItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov, rowKey);
         } else {
-            slideItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov);
+            slideItemToBreadCrumbModel(breadCrumbModel, entryType, entry, entryUri, false, breadCrumbModel.getElements().size(), prov, rowKey);
         }
     }
 
