@@ -219,15 +219,15 @@
 
                 <p:commandButton id="lemmaSaveButton" title="Save Lemma" icon="fa fa-save" 
                                  update="LemmaPanelGrid :lexiconTabViewForm:tabView:lemmaTree :systemMessage
-                                 :editViewTab:lexiconSenseDetailForm :lexiconTabViewForm:tabView:lemmaFilterLabel 
-                                 :lexiconTabViewForm:tabView:formTree :editViewTab:lexiconSenseDetailForm :breadCrumb
-                                 FormDataList :editViewTab:lexiconViewDictionaryForm :editViewTab:lexEntryAspectForm" 
+                                 :editViewTab :lexiconTabViewForm:tabView:lemmaFilterLabel 
+                                 :lexiconTabViewForm:tabView:formTree :breadCrumb
+                                 FormDataList" 
                                  action="#{lexiconControllerFormDetail.saveLemma()}"
                                  onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
                                  disabled="#{lexiconControllerFormDetail.lemma.saveButtonDisabled}">
                 </p:commandButton>
                 <p:commandButton title="Delete Lemma and all its entries" icon="fa fa-trash" 
-                                 update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconSenseDetailForm 
+                                 update=":editViewTab 
                                  :lexiconTabViewForm:tabView:lemmaTree :lexiconTabViewForm:tabView:formTree 
                                  :lexiconTabViewForm:tabView:formFilterLabel :breadCrumb
                                  :lexiconTabViewForm:tabView:lemmaFilterLabel
@@ -369,7 +369,7 @@
 
                         <p:commandButton title="Save form" icon="fa fa-save" 
                                          update="FormDataList :lexiconTabViewForm:tabView:formTree :systemMessage :breadCrumb 
-                                         :lexiconTabViewForm:tabView:formFilterLabel :editViewTab:lexiconViewDictionaryForm" 
+                                         :lexiconTabViewForm:tabView:formFilterLabel :editViewTab" 
                                          onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
                                          action="#{lexiconControllerFormDetail.saveForm(form)}"
                                          disabled="#{form.saveButtonDisabled}">

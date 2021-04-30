@@ -133,6 +133,8 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconCreationControllerSynSemFormDetail.resetFormDetails();
         lexiconCreationControllerSynSemSenseDetail.setSenseSynSemRendered(false);
         lexiconCreationControllerSynSemSenseDetail.resetSenseDetails();
+        
+        lexiconControllerDocument.setDocRendered(false);
     }
 
     public void openLexicon(FileUploadEvent event) {
@@ -216,6 +218,7 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconControllerDocument.setNewAction(true);
         lexiconControllerDocument.setDocRendered(true);
         lexiconControllerDocument.setDocAlreadyExists(false);
+        lexiconCreationControllerFormDetail.setNewAction(true);
 
     }
 
@@ -233,6 +236,17 @@ public class LexiconControllerToolbar extends BaseController implements Serializ
         lexiconCreationControllerFormDetail.getLemmaCopy().clear();
         lexiconCreationControllerFormDetail.getLemma().setIndividual("");
         lexiconCreationControllerFormDetail.getLemmaCopy().setIndividual("");
+        
+        lexiconCreationOntologyDetailController.setOntologyClassRendered(false);
+        lexiconCreationControllerVarTransFormDetail.setVarTransRendered(false);
+        lexiconCreationControllerVarTransFormDetail.resetFormDetails();
+        lexiconCreationControllerVarTransSenseDetail.setSenseVarTransRendered(false);
+        lexiconCreationControllerVarTransSenseDetail.resetSenseDetails();
+        lexiconCreationControllerSynSemFormDetail.setSynSemRendered(false);
+        lexiconCreationControllerSynSemFormDetail.resetFormDetails();
+        lexiconCreationControllerSynSemSenseDetail.setSenseSynSemRendered(false);
+        lexiconCreationControllerSynSemSenseDetail.resetSenseDetails();
+        
         lexiconControllerDocument.setDocRendered(true);
         lexiconControllerDocument.setAddDocButtonDisabled(true);
     }
