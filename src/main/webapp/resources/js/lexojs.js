@@ -17,7 +17,10 @@ function setHeight() {
 
 }
 ;
-
+ 
+function scrollToSelectedNode(pos) {
+    document.getElementById("lexiconTabViewForm:tabView:lemmaTree:"+pos).scrollIntoView();
+}
 //window.addEventListener('resize', setHeight);
 window.onresize = setHeight;
 window.onload = setHeight;
