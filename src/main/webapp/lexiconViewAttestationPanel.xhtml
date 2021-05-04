@@ -20,7 +20,8 @@
 
                 <p:outputLabel styleClass="newLangTitleStyle" value="#{label['newAttestation.idDoc']}"/>
                 <p:outputLabel styleClass="newLangTitleStyle" value=""/>
-                <p:selectOneMenu styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerAttestation.docID}" >
+                <p:selectOneMenu id="selectOneMenuDocId" styleClass="menu" panelStyleClass="panel" value="#{lexiconControllerAttestation.docID}" >
+                    <f:selectItem itemLabel="Select one ..." itemValue="#{null}" />      
                     <f:selectItems value="#{lexiconControllerAttestation.documents}"/>
                     <p:ajax event="valueChange" listener="#{lexiconControllerAttestation.docIDKeyupEvent}" 
                             update="newAttButtons"/>
