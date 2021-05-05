@@ -13,25 +13,58 @@
             <p:panel class="radiusBox lemmaCommentFrameClass" 
                      rendered="#{lexiconControllerDictionary.rendableLemmaComment}">
                 <h:outputText escape="false"  class="lemmaCommentClass"
-                              value="#{lexiconControllerDictionary.getLemmaComment('id', 'lemmaCommentClass')}"
-                              />
+                              value="#{lexiconControllerDictionary.getLemmaComment('id', 'lemmaCommentClass')}" />
             </p:panel>
+
             <!-- FORMS -->
-            <h:outputText escape="false"
-                          value="#{lexiconControllerDictionary.getVariants('variantFormFrameClass','variantClass','variantFormClass','variantFormMorphoClass','variantAttestationsClass', 'variantNoteClass')}" />
+            <!--            <h:outputText escape="false"
+                                      value="#{lexiconControllerDictionary.getVariants('variantFormFrameClass','variantClass','variantFormClass','variantFormMorphoClass','variantAttestationsClass', 'variantNoteClass')}" />-->
+            <ui:repeat value="#{lexiconControllerDictionary.getVariants()}" var="variant">
+                <h:outputText escape="false" class="variantFormClass" value="#{variant}" />
+            </ui:repeat>
 
             <!-- SENSES -->
             <p:panel id="sensePanelId"  class="radiusBox senseFrameClass" rendered="#{lexiconControllerDictionary.rendable}">
-                <ui:repeat value="#{lexiconControllerDictionary.sensesList}"
+                <!-- OLD VIEW: start -->
+<!--                <ui:repeat value="#{lexiconControllerDictionary.sensesList}"
                            var="sense" rendered="#{lexiconControllerDictionary.sensesList.size() > 0}">
                     <h:outputText escape="false"
                                   value="#{lexiconControllerDictionary.getSense(sense, 'id', 'senseClass', 'smallCapsClass')}" />
-                    <p:spacer width="5px"/>
-                </ui:repeat>
+                    <p:spacer width="0.5em"/>
+                </ui:repeat>-->
+                <!-- OLD VIEW: end -->
+                <ui:repeat value="#{lexiconControllerDictionary.sensesList}" varStatus="status"
+                           var="sense" rendered="#{lexiconControllerDictionary.sensesList.size() > 0}">
+                    <p:outputPanel style="background-color: #FFFFEE; " id="senseEntry" >
+                        <h:outputText escape="false"  style="font-weight:bold"
+                                      value="#{status.index + 1}. " />
+                        <h:outputText escape="false"
+                                      value="#{sense[2]}" />
+                        <ui:repeat value="#{lexiconControllerDictionary.getSenseExamples(sense[0])}" varStatus="status"
+                                   var="example" rendered="#{lexiconControllerDictionary.getSenseExamples(sense[0]).size() > 0}">
+                            #{status.first ? ' ': ''}
+                            <h:outputText escape="false"  style="font-style: italic;"
+                                          value="#{example}" />#{not status.last ? ' ' : ''}
+                        </ui:repeat>
+                        <h:panelGroup layout="block" id="SenseReference"  rendered="#{not empty sense[3]}">
+                            <h:outputText escape="false" styleClass=""
+                                          value="This refers: #{sense[3]}" />
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" id="LexicalFunctions"  rendered="#{not empty lexiconControllerDictionary.getSenseLexicalFunction(sense[0])}">
+                            <ui:repeat value="#{lexiconControllerDictionary.getSenseLexicalFunction(sense[0])}" varStatus="status"
+                                       var="lf">
+                                <h:outputText escape="false"  style="font-style: italic;"
+                                              value="#{status.first ? ' ': ''}#{lf}#{not status.last ? ', ' : ''}" />
+                            </ui:repeat>
+                        </h:panelGroup>
 
+                    </p:outputPanel>
+                    <p:spacer width="0.5em"/>
+
+                </ui:repeat>
                 <p:remoteCommand name="rc" action="#{lexiconControllerDictionary.execute()}" 
                                  onstart="PF('loadingDialog').show()" oncomplete="setHeight();PF('loadingDialog').hide()"
-                                    update=":editViewTab :breadCrumb :systemMessage"/>
+                                 update=":editViewTab :breadCrumb :systemMessage"/>
 
             </p:panel>
 
