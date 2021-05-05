@@ -13,7 +13,6 @@ import it.cnr.ilc.lexolite.manager.AccountManager;
 import it.cnr.ilc.lexolite.manager.AttestationManager;
 import it.cnr.ilc.lexolite.manager.AttestationRenaming;
 import it.cnr.ilc.lexolite.manager.AuthoringManager;
-import it.cnr.ilc.lexolite.manager.DomainManager;
 import it.cnr.ilc.lexolite.manager.ExtensionAttributeManager;
 import it.cnr.ilc.lexolite.manager.FormData;
 import it.cnr.ilc.lexolite.manager.ImageManager;
@@ -54,7 +53,6 @@ import org.primefaces.model.menu.DefaultSeparator;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuElement;
 import org.primefaces.model.menu.MenuModel;
-import org.primefaces.model.menu.Separator;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 /**
@@ -71,8 +69,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private LexiconControllerTabViewList lexiconCreationControllerTabViewList;
     @Inject
     private LexiconControllerSenseDetail lexiconCreationViewSenseDetail;
-    @Inject
-    private LexiconControllerVarTransFormDetail lexiconControllerVarTransFormDetail;
     @Inject
     private LexiconManager lexiconManager;
     @Inject
@@ -152,7 +148,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             element.setUpdate(":editViewTab :breadCrumb");
             element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
             //element.setOnstart("PF('loadingDialog').show();");
-            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" +rowKey+ ")\"))");
+            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
             //element.setOncomplete("setHeight();PF('loadingDialog').hide()");
             element.setOncomplete("setHeight();");
             model.getElements().add(element);
@@ -199,7 +195,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     /**
-     * 
+     *
      * @param entryType
      * @param entryUri
      * @param entry
@@ -441,9 +437,9 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lexiconManager.saveLemmaNote(lemma, lemmaCopy.getNote());
         lemmaCopy.setNote(lemma.getNote());
         if (lemma.getNote().isEmpty()) {
-            authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_ENTRY_NOTE, lemma.getIndividual());
+            authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_ENTRY_NOTE, lemmaCopy.getIndividual());
         } else {
-            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY_NOTE, lemma.getIndividual());
+            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY_NOTE, lemmaCopy.getIndividual());
         }
         info("template.message.saveLemmaNote.summary", "template.message.saveLemmaNote.description");
     }
@@ -454,9 +450,9 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         lexiconManager.saveFormNote(fd, formsCopy.get(order).getNote());
         formsCopy.get(order).setNote(fd.getNote());
         if (fd.getNote().isEmpty()) {
-            authoringManager.removeAuthoring(Authoring.IRIType.FORM_NOTE, fd.getIndividual());
+            authoringManager.removeAuthoring(Authoring.IRIType.FORM_NOTE, formsCopy.get(order).getIndividual());
         } else {
-            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.FORM_NOTE, fd.getIndividual());
+            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.FORM_NOTE, formsCopy.get(order).getIndividual());
         }
         info("template.message.saveFormNote.summary", "template.message.saveFormNote.description");
     }
@@ -642,12 +638,13 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public void removeForm(FormData fd) throws IOException, OWLOntologyStorageException {
-        log(Level.INFO, loginController.getAccount(), "DELETE Form " + fd.getFormWrittenRepr());
-        lexiconManager.deleteForm(fd);
-        authoringManager.removeAuthoring(Authoring.IRIType.FORM, fd.getIndividual());
-        info("template.message.deleteForm.summary", "template.message.deleteForm.description", fd.getFormWrittenRepr());
-        // remove the form from forms and copyForms
         int order = forms.indexOf(fd);
+        log(Level.INFO, loginController.getAccount(), "DELETE Form " + formsCopy.get(order).getFormWrittenRepr());
+        lexiconManager.deleteForm(formsCopy.get(order));
+        authoringManager.removeAuthoring(Authoring.IRIType.FORM, 
+                formsCopy.get(order).getIndividual().isEmpty() ? fd.getIndividual() : formsCopy.get(order).getIndividual());
+        info("template.message.deleteForm.summary", "template.message.deleteForm.description", formsCopy.get(order).getFormWrittenRepr());
+        // remove the form from forms and copyForms
         forms.remove(fd);
         removeFormCopy(order);
         removeFromBreadCrumb(fd.getIndividual());
@@ -663,6 +660,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             // saving due to new form action
             log(Level.INFO, loginController.getAccount(), "SAVE new Form " + fd.getFormWrittenRepr());
             lexiconManager.saveForm(fd, lemma);
+            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.FORM,
+                    formsCopy.get(order).getIndividual().isEmpty() ? fd.getIndividual() : formsCopy.get(order).getIndividual());
         } else {
             // saving due to a form modification action
             if (isSameWrittenRep(fd.getFormWrittenRepr(), order)) {
@@ -673,15 +672,17 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
                 // modification concerns also form written representation
                 log(Level.INFO, loginController.getAccount(), "SAVE updated Form with renaming from " + formsCopy.get(order).getFormWrittenRepr() + " to " + fd.getFormWrittenRepr());
                 String newInstanceName = lexiconManager.saveFormWithIRIRenaming(formsCopy.get(order), fd, lemma);
+                attestationManager.updateAttestationURIs(formsCopy.get(order).getIndividual(), newInstanceName);
+                authoringManager.updateURIs(formsCopy.get(order).getIndividual(), newInstanceName);
                 updateBreadCrumb("Form", fd.getFormWrittenRepr(), fd.getIndividual(), newInstanceName, false, Label.ClickProvenance.FORM_LIST_VIEW);
+                fd.setIndividual(newInstanceName);
             }
         }
         info("template.message.saveForm.summary", "template.message.saveForm.description", fd.getFormWrittenRepr());
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         lexiconCreationControllerTabViewList.initFormTabView(currentLanguage);
-        updateFormCopy(fd, order);
         setNewFormAction(false);
-        authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.FORM, fd.getIndividual());
+        updateFormCopy(fd, order);
     }
 
     private boolean isSameWrittenRep(String wr, int order) {
@@ -1053,11 +1054,16 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             attestationManager.remove(sd.getName());
         }
         info("template.message.deleteLemma.summary", "template.message.deleteLemma.description", lemma.getFormWrittenRepr());
-        authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_ENTRY, lemma.getIndividual());
+        authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_ENTRY, lemmaCopy.getIndividual());
         removeFromBreadCrumb(lemma.getIndividual());
         for (FormData fd : forms) {
             removeFromBreadCrumb(fd.getIndividual());
+            authoringManager.removeAuthoring(Authoring.IRIType.FORM, fd.getIndividual());
         }
+        for (SenseData sd : lexiconCreationViewSenseDetail.getSenses()) {
+            authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
+        }
+        
         forms.clear();
         formsCopy.clear();
         lemma.clear();
@@ -1091,6 +1097,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             setLocked(false);
             lexiconCreationViewSenseDetail.setLocked(false);
             log(Level.INFO, loginController.getAccount(), "LOCK the lexical entry related to " + entry);
+            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY,
+                lemmaCopy.getIndividual().isEmpty() ? lemma.getIndividual() : lemmaCopy.getIndividual());
         } else {
             // saving due to a lemma modification action
             if (lemma.getFormWrittenRepr().equals(lemmaCopy.getFormWrittenRepr())) {
@@ -1106,7 +1114,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         String currentLanguage = lexiconCreationControllerTabViewList.getLexiconLanguage();
         lexiconCreationControllerTabViewList.initLemmaTabView(currentLanguage);
         lexiconCreationViewSenseDetail.setSenseRendered(true);
-        authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY, lemma.getIndividual());
     }
 
     private void saveLemma(boolean renaming, boolean newAction) throws IOException, OWLOntologyStorageException {
@@ -1162,6 +1169,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             log(Level.INFO, loginController.getAccount(), "SAVE updated Lemma with renaming from " + lemmaCopy.getFormWrittenRepr() + " to " + lemma.getFormWrittenRepr());
             AttestationRenaming renamings = lexiconManager.saveLemmaWithIRIRenaming(lemmaCopy, lemma);
             attestationManager.updateAttestationURIs(renamings);
+            authoringManager.updateURIs(renamings);
             HashMap<String, String> filesToRename = imageManager.update(renamings.getAttestationSenseUris());
             renameImageFiles(filesToRename);
             lexiconCreationViewSenseDetail.addSense(lemma.getIndividual(), "Lemma");
@@ -1170,6 +1178,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             log(Level.INFO, loginController.getAccount(), "SAVE updated Multiword Lemma with renaming from " + lemmaCopy.getFormWrittenRepr() + " to " + lemma.getFormWrittenRepr());
             AttestationRenaming renamings = lexiconManager.saveMultiwordLemmaWithIRIRenaming(lemmaCopy, lemma);
             attestationManager.updateAttestationURIs(renamings);
+            authoringManager.updateURIs(renamings);
             HashMap<String, String> filesToRename = imageManager.update(renamings.getAttestationSenseUris());
             renameImageFiles(filesToRename);
             lexiconCreationViewSenseDetail.addSense(lemma.getIndividual(), "Lemma");
