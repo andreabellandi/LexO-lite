@@ -30,8 +30,8 @@
                         <h:outputLabel styleClass="titleStyle" value="@" for="entryLang"/>
                         <h:panelGrid columns="1" cellpadding="0">
                             <p:selectOneMenu id="entryLang" styleClass="menu" 
-                                             panelStyleClass="panel" value="#{lexiconControllerAdvancedFilter.language}" 
-                                             appendTo="entryLang">
+                                             panelStyleClass="selectOneMenuComboBox" value="#{lexiconControllerAdvancedFilter.language}" 
+                                             appendTo="entryLang"> 
                                 <f:selectItem itemLabel="All languages" itemValue="All languages" />
                                 <f:selectItems value="#{lexiconControllerFormDetail.lexicaLanguages}" />
                             </p:selectOneMenu>

@@ -621,6 +621,10 @@ html, body {
     padding-bottom: 1px;
 }
 
+.selectOneMenuComboBox {
+    z-index: 1;
+}
+
 .panel .ui-selectonemenu-list { 
     font-size:	12px;
 }
