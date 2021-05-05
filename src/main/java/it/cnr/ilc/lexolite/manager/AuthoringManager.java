@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.manager;
 
 import it.cnr.ilc.lexolite.HibernateUtil;
 import it.cnr.ilc.lexolite.domain.Account;
+import it.cnr.ilc.lexolite.domain.Attestation;
 import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.Authoring.IRIType;
 import java.io.Serializable;
@@ -40,17 +41,20 @@ public class AuthoringManager implements Serializable {
     }
 
     public void removeAuthoring(IRIType type, String iri) {
-        Authoring authoring = loadAuthoringByResource(type, iri);
+        List<Authoring> authoring = loadAuthoringByResource(type, iri);
         if (authoring != null) {
-            domainManager.delete(authoring);
+            for (Authoring auth : authoring) {
+                domainManager.delete(auth);
+            }
         }
     }
 
-    private Authoring loadAuthoringByResource(IRIType type, String iri) {
+    private List<Authoring> loadAuthoringByResource(IRIType type, String iri) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Authoring.class);
-        criteria.add(Restrictions.eq("type", type)).add(Restrictions.eq("IRI", iri));
+//        criteria.add(Restrictions.eq("type", type)).add(Restrictions.eq("IRI", iri));
+        criteria.add(Restrictions.eq("IRI", iri));
         List<Authoring> list = criteria.list();
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list;
     }
 
     private static final String CHECK_IRI_PRESENCE = "select count(*) from Authoring where status = 1 and IRI = ':iri' and type = ':type'";
@@ -70,9 +74,9 @@ public class AuthoringManager implements Serializable {
         return query.list();
     }
 
-    private static final String USER_STAT_DETAILS = "SELECT aut.IRI, aut.time "
+    private static final String USER_STAT_DETAILS = "SELECT aut.IRI, aut.time, aut.status "
             + "FROM Authoring aut join Account acc on aut.account_id = acc.id "
-            + "WHERE acc.status = 1 and aut.status = 1 and acc.username = ':username' "
+            + "WHERE acc.status = 1 and acc.username = ':username' "
             + "ORDER BY aut.IRI";
 
     public List<Object[]> getStatDetails(String username) {
@@ -81,4 +85,27 @@ public class AuthoringManager implements Serializable {
         return query.list();
     }
 
+    private static final String UPDATE_URIs = "UPDATE Authoring SET IRI = :newIRI WHERE IRI = :oldIRI";
+
+    public void updateURIs(String oldFormUri, String newFormUri) {
+        SQLQuery query = HibernateUtil.getSession().createSQLQuery(UPDATE_URIs);
+        query.setString("newIRI", newFormUri);
+        query.setString("oldIRI", oldFormUri);
+        query.executeUpdate();
+    }
+
+    public void updateURIs(AttestationRenaming renamings) {
+        for (AttestationRenaming.AttestationFormUris iriForm : renamings.getAttestationFormUris()) {
+            SQLQuery query = HibernateUtil.getSession().createSQLQuery(UPDATE_URIs);
+            query.setString("newIRI", iriForm.getNewFormUri());
+            query.setString("oldIRI", iriForm.getOldFormUri());
+            query.executeUpdate();
+        }
+        for (AttestationRenaming.AttestationSenseUris iriSense : renamings.getAttestationSenseUris()) {
+            SQLQuery query = HibernateUtil.getSession().createSQLQuery(UPDATE_URIs);
+            query.setString("newIRI", iriSense.getNewSenseUri());
+            query.setString("oldIRI", iriSense.getOldSenseUri());
+            query.executeUpdate();
+        }
+    }
 }

@@ -103,7 +103,7 @@
                     <p:scrollPanel  id="scrollPanelUserStatDetail" mode="native"  styleClass="roundedBox" style="height: 100px !important;">
                         <h:panelGrid id="userStatsDetailTable" columns="1" styleClass="userStatsDetailTable">
                             <ui:repeat value="#{statisticsController.usd}" var="usd">
-                                <h:outputText style="display: block;" value="#{usd.IRI} created on #{usd.creation}" />
+                                <h:outputText style="display: block;" value="#{usd.IRI} #{usd.status == 1 ? ' created on ' : ' deleted on '} #{usd.date}" />
                             </ui:repeat>
                         </h:panelGrid>
                     </p:scrollPanel>

@@ -334,13 +334,13 @@ public class StatisticsController extends BaseController implements Serializable
             int leNumber = 0, formNumber = 0, senseNumber = 0;
             for (Object[] o : stats) {
                 if (user.equals(o[1])) {
-                    if (0 == Integer.parseInt(o[0].toString())) {
+                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
                         leNumber++;
                     } else {
-                        if (1 == Integer.parseInt(o[0].toString())) {
+                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
                             formNumber++;
                         } else {
-                            if (2 == Integer.parseInt(o[0].toString())) {
+                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
                                 senseNumber++;
                             }
                         }
@@ -352,13 +352,13 @@ public class StatisticsController extends BaseController implements Serializable
                     senseNumber = 0;
                     user = o[1].toString();
                     role = o[2].toString();
-                    if (0 == Integer.parseInt(o[0].toString())) {
+                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
                         leNumber++;
                     } else {
-                        if (1 == Integer.parseInt(o[0].toString())) {
+                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
                             formNumber++;
                         } else {
-                            if (2 == Integer.parseInt(o[0].toString())) {
+                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
                                 senseNumber++;
                             }
                         }
@@ -382,11 +382,12 @@ public class StatisticsController extends BaseController implements Serializable
     }
 
     public void onRowToggle(ToggleEvent event) {
-        // 0=iri; 1=creation
+        // 0=iri; 1=creation; 2=status
         usd.clear();
         for (Object[] o : authoringManager.getStatDetails(((UserStatistics) event.getData()).username)) {
             UserStatisticsDetail _usd = new UserStatisticsDetail();
-            _usd.setCreation(o[1].toString());
+            _usd.setDate(o[1].toString());
+            _usd.setStatus(Integer.parseInt(o[2].toString()));
             _usd.setIRI(o[0].toString());
             usd.add(_usd);
         }
@@ -454,7 +455,8 @@ public class StatisticsController extends BaseController implements Serializable
     public static class UserStatisticsDetail {
 
         private String IRI;
-        private String creation;
+        private String date;
+        private int status;
 
         public String getIRI() {
             return IRI;
@@ -464,12 +466,20 @@ public class StatisticsController extends BaseController implements Serializable
             this.IRI = IRI;
         }
 
-        public String getCreation() {
-            return creation;
+        public String getDate() {
+            return date;
         }
 
-        public void setCreation(String creation) {
-            this.creation = creation;
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
         }
 
     }

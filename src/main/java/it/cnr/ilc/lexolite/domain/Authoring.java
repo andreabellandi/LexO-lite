@@ -6,6 +6,7 @@
 package it.cnr.ilc.lexolite.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -30,7 +31,7 @@ public class Authoring extends SuperEntity {
     private IRIType type;
     private Account account;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     public IRIType getType() {
         return type;
     }

@@ -24,7 +24,7 @@ public class AttestationManager implements Serializable {
 
     @Inject
     private DomainManager domainManager;
-    
+
     private static final String DELETE_ATTESTATION_BY_SENSE = "delete from Attestation where senseUri = :senseUri";
     private static final String DELETE_ATTESTATION_BY_FORM = "delete from Attestation where formUri = :formUri and form = :form "
             + "and senseUri = :senseUri and attestation = :attestation";
@@ -36,18 +36,18 @@ public class AttestationManager implements Serializable {
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
         return (criteria.list().size() <= 2);
     }
-    
+
     public void setDictionaryPreferred(Attestation att, boolean value) {
         att.setDictionaryPreferred(value);
         domainManager.update(att);
     }
-    
+
     public void remove(String senseUri) {
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(DELETE_ATTESTATION_BY_SENSE);
         query.setString("senseUri", senseUri);
         query.executeUpdate();
     }
-    
+
     public void remove(String senseUri, String formUri, String form, String att) {
         SQLQuery query = HibernateUtil.getSession().createSQLQuery(DELETE_ATTESTATION_BY_FORM);
         query.setString("senseUri", senseUri);
@@ -68,10 +68,10 @@ public class AttestationManager implements Serializable {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
         criteria.add(Restrictions.eq("formUri", formUri));
         List<Attestation> list = criteria.list();
-         return list.isEmpty() ? new ArrayList() : list;
+        return list.isEmpty() ? new ArrayList() : list;
     }
-    
-     public List<Attestation> loadAttestationsForDictionaryBySense(String senseUri) {
+
+    public List<Attestation> loadAttestationsForDictionaryBySense(String senseUri) {
         Criteria criteria = HibernateUtil.getSession().createCriteria(Attestation.class);
         criteria.add(Restrictions.eq("senseUri", senseUri));
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
@@ -84,7 +84,14 @@ public class AttestationManager implements Serializable {
         criteria.add(Restrictions.eq("senseUri", senseUri));
         criteria.add(Restrictions.eq("dictionaryPreferred", true));
         List<Attestation> list = criteria.list();
-         return list.isEmpty() ? new ArrayList() : list;
+        return list.isEmpty() ? new ArrayList() : list;
+    }
+
+    public void updateAttestationURIs(String oldFormUri, String newFormUri) {
+        for (Attestation att : loadAttestationsByForm(oldFormUri)) {
+            att.setFormUri(newFormUri);
+            domainManager.update(att);
+        }
     }
 
     public void updateAttestationURIs(AttestationRenaming renamings) {
