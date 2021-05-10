@@ -100,13 +100,24 @@
                 </p:column>
 
                 <p:rowExpansion id="userStatDetail">
-                    <p:scrollPanel  id="scrollPanelUserStatDetail" mode="native"  styleClass="roundedBox" style="height: 100px !important;">
-                        <h:panelGrid id="userStatsDetailTable" columns="1" styleClass="userStatsDetailTable">
-                            <ui:repeat value="#{statisticsController.usd}" var="usd">
-                                <h:outputText style="display: block;" value="#{usd.IRI} #{usd.status == 1 ? ' created on ' : ' deleted on '} #{usd.date}" />
-                            </ui:repeat>
-                        </h:panelGrid>
-                    </p:scrollPanel>
+                    <!--                    <p:scrollPanel  id="scrollPanelUserStatDetail" mode="native"  styleClass="roundedBox" style="height: 100px !important;">
+                                            <h:panelGrid id="userStatsDetailTable" columns="1" styleClass="userStatsDetailTable">
+                                                <ui:repeat value="#{statisticsController.usd}" var="usd">
+                                                    <h:outputText style="display: block;" value="#{usd.IRI} #{usd.status == 1 ? ' created on ' : ' deleted on '} #{usd.date}" />
+                                                </ui:repeat>
+                                            </h:panelGrid>
+                                        </p:scrollPanel>-->
+                    <p:dataTable  id="userStatsDetailTable"  value="#{statisticsController.usd}" var="usd"  scrollable="true" scrollHeight="300" >
+                        <p:column headerText="IRI" >
+                            <h:outputText value="#{usd.IRI}"/>
+                        </p:column>
+                        <p:column headerText="Date">
+                            <h:outputText value="#{usd.date}"/>
+                        </p:column>
+                        <p:column headerText="Status" >
+                            <h:outputText value="#{usd.status}"/>
+                        </p:column>
+                    </p:dataTable>
                 </p:rowExpansion>
             </p:dataTable>
 
