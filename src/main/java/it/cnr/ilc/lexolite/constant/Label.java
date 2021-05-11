@@ -6,6 +6,12 @@
 package it.cnr.ilc.lexolite.constant;
 
 import it.cnr.ilc.lexolite.controller.BaseController;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  *
@@ -13,13 +19,30 @@ import it.cnr.ilc.lexolite.controller.BaseController;
  */
 public class Label extends BaseController {
 
+    static {
+        Logger logger = LoggerFactory.getLogger("Label");
+
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream input = classLoader.getResourceAsStream("app.properties");
+        Properties properties = new Properties();
+        try {
+            properties.load(input);
+            input.close();
+            logger.info("app.properties: " + properties.toString());
+            LEXO_FOLDER = properties.getProperty("lexo.directory");
+
+        } catch (IOException ex) {
+            logger.error(ex.getLocalizedMessage());
+        }
+
+    }
     public static final String NO_ENTRY_FOUND = "No entry found";
     public static final String UNSPECIFIED_POS = "unspecified";
     public static final String LEXICON_FILE_NAME_KEY = "lexiconFileName";
     public static final String LEXICON_NAMESPACE_KEY = "lexiconNamespace";
     public static final String ONTOLOGY_FILE_NAME_KEY = "domainOntologyFileName";
     public static final String ONTOLOGY_NAMESPACE_KEY = "domainOntologyNamespace";
-    public static final String LEXO_FOLDER = "${lexo-directory}";
+    public static String LEXO_FOLDER;
 //    public static final String LEXO_FOLDER = "/.LexO-lite/";
 //    public static final String LEXO_FOLDER = "/.LexO-mellon/";
 //    public static final String LEXO_FOLDER = "/.LexO-lite-VQ/";
