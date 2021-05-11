@@ -4,12 +4,14 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_VQusers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
-        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_mellon_users?characterEncoding=UTF-8&amp;useSSL=false</property>-->
+<!--        <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_VQusers?characterEncoding=UTF-8&amp;useSSL=false</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_mellon_users?characterEncoding=UTF-8&amp;useSSL=false</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_users?characterEncoding=UTF-8&amp;useSSL=false</property>
-        <!--<property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_Theresausers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
-        <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">root</property><!--(;qs(d#ez6oE-->
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/LexO_Theresausers?characterEncoding=UTF-8&amp;useSSL=false</property>-->
+        
+        <property name="hibernate.connection.url">${db.jdbcUrl}</property>
+        <property name="hibernate.connection.username">${db.user}</property>
+        <property name="hibernate.connection.password">${db.password}</property><!--(;qs(d#ez6oE-->
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.c3p0.min_size">5</property>
         <property name="hibernate.c3p0.max_size">20</property>
