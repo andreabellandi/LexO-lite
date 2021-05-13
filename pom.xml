@@ -178,11 +178,6 @@
                             <directory>src/main/resources</directory>
                             <filtering>true</filtering>
                         </resource>
-                        <resource>                            
-                            <directory>src/main/java/</directory>
-                            <filtering>true</filtering>
-                            <targetPath>../processed-source/java</targetPath>
-                        </resource>
                     </resources>
                 </configuration>
             </plugin>
@@ -246,7 +241,7 @@
                 <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellons</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
-                <lexo.directory>/.LexO-mellons/</lexo.directory>
+                <lexo.directory>/.LexO-mellon/</lexo.directory>
             </properties>
         </profile>
         <profile>
@@ -260,6 +255,19 @@
                 <lexo.directory>/.LexO-PRIN/</lexo.directory>
             </properties>
         </profile>
+        <profile>
+            <id>flavia-students</id>
+            <properties>
+                <envClassifier>flavia-students</envClassifier>
+                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_flavia_students</db.jdbcUrl>
+                <db.user>root</db.user>
+                <db.password>root</db.password>
+                <lexo.directory>/.LexO-flavia-students/</lexo.directory>
+            </properties>
+        </profile>
+        
+        
     </profiles>
 
 </project>
