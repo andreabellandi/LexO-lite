@@ -47,13 +47,17 @@ public class AccountManager implements Serializable {
     private static final Map<String, AccountType> accountTypesByName = new HashMap<>();
 
     static {
-        accountTypes = HibernateUtil.getSession().createCriteria(AccountType.class).list();
-        for (AccountType accountType : accountTypes) {
-            accountTypesByColor.put(accountType.getColor(), accountType);
-            accountTypesByName.put(accountType.getName(), accountType);
-            if (accountType.getName().equals(DEFAULT_TYPE_NAME)) {
-                defaultType = accountType;
+        try {
+            accountTypes = HibernateUtil.getSession().createCriteria(AccountType.class).list();
+            for (AccountType accountType : accountTypes) {
+                accountTypesByColor.put(accountType.getColor(), accountType);
+                accountTypesByName.put(accountType.getName(), accountType);
+                if (accountType.getName().equals(DEFAULT_TYPE_NAME)) {
+                    defaultType = accountType;
+                }
             }
+        } catch (Exception e) {
+            System.err.println(e);
         }
     }
 
