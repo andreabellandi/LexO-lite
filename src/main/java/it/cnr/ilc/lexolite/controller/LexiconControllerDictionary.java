@@ -55,13 +55,13 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     @Inject
     private LexiconControllerAttestation lexiconControllerAttestation;
     //results cache
-    private HashMap<String,ArrayList> senseLexicalFunctionC;
+    private HashMap<String, ArrayList> senseLexicalFunctionC;
 
     public ArrayList getSenseLexicalFunctionC(String s) {
         return senseLexicalFunctionC.get(s);
     }
 
-    public void setSenseLexicalFunctionC(String s , ArrayList senseLexicalFunctionC) {
+    public void setSenseLexicalFunctionC(String s, ArrayList senseLexicalFunctionC) {
         this.senseLexicalFunctionC.put(s, senseLexicalFunctionC);
     }
 
@@ -308,17 +308,18 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             ret = new ArrayList();
             log(Level.INFO, senseIRI);
             SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
-
-            for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
-                if (MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) != null) {
-                    ret.add(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "("
-                            + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
-                } else {
-                    ret.add(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "("
-                            + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
+            if (null != sd) {
+                for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
+                    if (MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) != null) {
+                        ret.add(MelchuckModelExtension.getParadigmaticRenderingTable().get(lf.getLexFunName()) + "("
+                                + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
+                    } else {
+                        ret.add(MelchuckModelExtension.getSyntagmaticRenderingTable().get(lf.getLexFunName()) + "("
+                                + getName(lf.getSource()) + ") = " + getName(lf.getTarget()));
+                    }
                 }
+                setSenseLexicalFunctionC(senseIRI, ret);
             }
-            setSenseLexicalFunctionC(senseIRI,ret);
         }
         return ret;
     }
@@ -462,7 +463,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
 
     }
 
-    public void clearCaches () {
+    public void clearCaches() {
         this.senseLexicalFunctionC = new HashMap<>();
     }
 }
