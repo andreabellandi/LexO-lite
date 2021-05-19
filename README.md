@@ -281,8 +281,7 @@ services:
      - "8081:8080"
     volumes:
      - ./tomcat/webapps:/usr/local/tomcat/webapps
-     - ./lexicon/mylexicon.owl:/root/.LexO-lite/mylexicon.owl
-     - ./lexicon/lexolite.properties:/root/.LexO-lite/lexolite.properties
+     - ./lexicon:/root/.LexO-lite/
     links:
       - db
     depends_on:
