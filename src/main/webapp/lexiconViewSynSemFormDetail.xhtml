@@ -50,7 +50,7 @@
             </h:panelGrid>
 
             <h:panelGrid id="lemmaSynSemButtons" columns="4" columnClasses="column" cellpadding="0" 
-                         rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                         rendered="#{!lexiconControllerFormDetail.locked and lexiconControllerFormDetail.userEnable and (!lexiconControllerFormDetail.verified 
                                      or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                 <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add syntactic frames"/>
                 <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">
@@ -119,7 +119,7 @@
                 </ui:repeat>
 
                 <h:panelGrid id="synFrameButtons" columns="4" columnClasses="column" cellpadding="0" 
-                             rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                             rendered="#{!lexiconControllerFormDetail.locked and lexiconControllerFormDetail.userEnable and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                     <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add syntactic argument"/>
                     <p:menu overlay="true" trigger="menuButton" my="left top" at="left bottom">

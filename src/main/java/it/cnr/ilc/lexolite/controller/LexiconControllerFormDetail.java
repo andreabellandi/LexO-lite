@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.controller;
 
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.constant.OntoLexEntity;
+import it.cnr.ilc.lexolite.domain.AccountType;
 import it.cnr.ilc.lexolite.domain.Authoring;
 import it.cnr.ilc.lexolite.domain.ExtensionAttribute;
 import it.cnr.ilc.lexolite.manager.AccountManager;
@@ -63,6 +64,8 @@ import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 @Named
 public class LexiconControllerFormDetail extends BaseController implements Serializable {
 
+    @Inject
+    private AccountManager accountManager;
     @Inject
     private PropertyValue propertyValue;
     @Inject
@@ -257,7 +260,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public boolean isUserEnable() {
-        return loginController.getAccount().getType().getName().equals(AccountManager.ADMINISTRATOR);
+         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
 
     public boolean isLocked() {
@@ -1772,5 +1775,6 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         item.setOncomplete("setHeight();PF('loadingDialog').hide()");
         return item;
     }
+    
 
 }

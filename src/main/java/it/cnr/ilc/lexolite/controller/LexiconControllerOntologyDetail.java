@@ -65,7 +65,7 @@ public class LexiconControllerOntologyDetail extends BaseController implements S
     }
 
     public boolean isOntologyTabEnabled() {
-        return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
+        return accountManager.hasPermission(AccountType.Permission.READ_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
     
     public boolean isOntologyImported() {

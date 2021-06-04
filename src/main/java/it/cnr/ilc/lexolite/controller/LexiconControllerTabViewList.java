@@ -244,7 +244,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public boolean isEditTabRendered() {
-        return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
+        return accountManager.hasPermission(AccountType.Permission.READ_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
 
     @PostConstruct

@@ -129,8 +129,8 @@
                 <!-- End of Attributes -->
                 <!-- END OF EXTENSIONS -->
 
-                <h:panelGrid id = "senseButtons" columns="5" columnClasses="column" cellpadding="0" 
-                             rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                <h:panelGrid id = "senseButtons" columns="5" columnClasses="column" cellpadding="0"
+                             rendered="#{!lexiconControllerFormDetail.locked and lexiconControllerFormDetail.userEnable and lexiconControllerFormDetail.userEnable and (!lexiconControllerFormDetail.verified 
                                          or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
 
                     <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexico-semantic relations"/>

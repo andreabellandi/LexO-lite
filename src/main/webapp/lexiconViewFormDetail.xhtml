@@ -210,7 +210,7 @@
             </p:selectBooleanCheckbox>
 
             <h:panelGrid id="lemmaButtons" columns="4" columnClasses="column" cellpadding="0" 
-                         rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                         rendered="#{!lexiconControllerFormDetail.locked and lexiconControllerFormDetail.userEnable and (!lexiconControllerFormDetail.verified 
                                      or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
                 <p:commandButton id="menuButton" type="button" icon="fa fa-plus" title="Add lexical entities and relations"
                                  disabled="#{lexiconControllerFormDetail.renderedEntryErrorLabel or lexiconControllerFormDetail.newAction}" />
@@ -357,7 +357,7 @@
                 <h:panelGrid  columns="2" cellpadding="5">
 
                     <h:panelGrid id="formButtons" columns="4" cellpadding="0"
-                                 rendered="#{!lexiconControllerFormDetail.locked and (!lexiconControllerFormDetail.verified 
+                                 rendered="#{!lexiconControllerFormDetail.locked and lexiconControllerFormDetail.userEnable and (!lexiconControllerFormDetail.verified 
                                              or (lexiconControllerFormDetail.verified and lexiconControllerFormDetail.userEnable))}">
 
                         <p:commandButton id="menuButtonForm" type="button" icon="fa fa-plus" title="Add relations" 
