@@ -21,6 +21,7 @@ public class ReferenceMenuTheme {
     private int id;
     private itemType type;
     private String name;
+    private String namespace;
 
     public ReferenceMenuTheme() {
         this.id = 0;

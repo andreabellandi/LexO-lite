@@ -363,6 +363,7 @@ public class OntologyModel extends BaseController {
     }
 
     public List<ReferenceMenuTheme> getOntologyEntities() {
+        ontoRefItems.clear();
         ArrayList<ReferenceMenuTheme> alClasses = new ArrayList();
         ArrayList<ReferenceMenuTheme> alObjProps = new ArrayList();
         ArrayList<ReferenceMenuTheme> alDataProps = new ArrayList();

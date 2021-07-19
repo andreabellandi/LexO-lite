@@ -154,11 +154,11 @@ public class OntologyManager extends BaseController implements Serializable {
 
     public List<ReferenceMenuTheme> ontologyEntities() {
         if (ontologyModel != null) {
-            if (ontologyModel.getOntoRefItems().size() > 0) {
-                return ontologyModel.getOntoRefItems();
-            } else {
+//            if (ontologyModel.getOntoRefItems().size() > 0) {
+//                return ontologyModel.getOntoRefItems();
+//            } else {
                 return ontologyModel.getOntologyEntities();
-            }
+//            }
         }
         return new ArrayList<>();
     }

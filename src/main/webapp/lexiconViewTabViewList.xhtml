@@ -107,8 +107,7 @@
                                 selection="#{lexiconControllerTabViewList.selection}">
                             <p:ajax event="select" listener="#{lexiconControllerTabViewList.onDocumentationSelect}"
                                     onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"
-                                    update=":editViewTab:lexiconFormDetailForm :editViewTab:lexiconDocumentationDetailForm :editViewTab:lexiconSenseDetailForm
-                                    :systemMessage"/>
+                                    update=":editViewTab :systemMessage"/>
                             <f:attribute name="Documentation" value="Document" />
                             <p:treeNode>
                                 <span class="colorCircle" style="background-color:#248f24" />

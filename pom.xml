@@ -229,7 +229,7 @@
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
                 <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
                 <db.user>root</db.user>
-                <db.password></db.password>
+                <db.password>root</db.password>
                 <lexo.directory>/.LexO-lite/</lexo.directory>
             </properties>
         </profile>

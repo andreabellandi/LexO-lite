@@ -915,6 +915,8 @@ public class LexiconQuery extends BaseController {
         ArrayList<String> r = getList(processQuery(q.replace(t, e)));
         return r.get(0);
     }
+    
+    
 
     private ArrayList<String> getEntryAttributeList(String q, String t, String e) {
         return getList(processQuery(q.replace(t, e)));
