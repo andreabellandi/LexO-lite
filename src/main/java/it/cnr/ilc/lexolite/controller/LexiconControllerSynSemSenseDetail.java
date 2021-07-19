@@ -102,6 +102,7 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
             ReferenceMenuTheme rmt = new ReferenceMenuTheme();
             rmt.setId(sd.getThemeOWLClass().getId());
             rmt.setName(sd.getThemeOWLClass().getName());
+            rmt.setNamespace(sd.getThemeOWLClass().getNamespace());
          rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
             _sd.setThemeOWLClass(rmt);
             _sd.setDefinition(sd.getDefinition());
@@ -228,6 +229,7 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         rmt.setId(sd.getThemeOWLClass().getId());
         rmt.setName(sd.getThemeOWLClass().getName());
+        rmt.setNamespace(sd.getThemeOWLClass().getNamespace());
         rmt.setType((sd.getThemeOWLClass().getName().isEmpty()) ? null : ReferenceMenuTheme.itemType.valueOf(sd.getThemeOWLClass().getType()));
         _sd.setThemeOWLClass(rmt);
         _sd.setDefinition(sd.getDefinition());

@@ -884,7 +884,7 @@ public class LexiconQuery extends BaseController {
 
     private ReferenceMenuTheme getOntoClass(String sense, List<ReferenceMenuTheme> l) {
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
-        String ontoClass = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
+        String ontoClass = getOntologyElement(LexicalQuery.PREFIXES + "PREFIX onto: <" + LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY) + ">\n"
                 + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_REFERENCE, "_SENSE_", sense);
         if (!ontoClass.equals(Label.NO_ENTRY_FOUND)) {
             if (l != null) {
@@ -897,8 +897,9 @@ public class LexiconQuery extends BaseController {
     private ReferenceMenuTheme getReferenceItem(List<ReferenceMenuTheme> l, String entity) {
         ReferenceMenuTheme _rmt = new ReferenceMenuTheme();
         for (ReferenceMenuTheme rmt : l) {
-            if (rmt.getName().equals(entity)) {
+            if (rmt.getNamespace().equals(entity)) {
                 _rmt.setName(rmt.getName());
+                _rmt.setNamespace(rmt.getNamespace());
                 _rmt.setId(rmt.getId());
                 _rmt.setType(ReferenceMenuTheme.itemType.valueOf(rmt.getType()));
                 return _rmt;
@@ -916,7 +917,10 @@ public class LexiconQuery extends BaseController {
         return r.get(0);
     }
     
-    
+    private String getOntologyElement(String q, String t, String e) {
+        ArrayList<String> r = getList(processOntologyQuery(q.replace(t, e)));
+        return r.get(0);
+    }
 
     private ArrayList<String> getEntryAttributeList(String q, String t, String e) {
         return getList(processQuery(q.replace(t, e)));
@@ -953,6 +957,50 @@ public class LexiconQuery extends BaseController {
                                 break;
                             case "URI":
                                 map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsIRI().getShortForm());
+                                break;
+                            default:
+                        }
+                    }
+                    resultsList.add(map);
+                }
+            } else {
+            }
+        } else {
+        }
+        return resultsList;
+    }
+    
+    public List<Map<String, String>> processOntologyQuery(String q) {
+        QueryResult result = null;
+        QueryEngine engine = QueryEngine.create(ontologyManager, reasoner);
+        Query query;
+        try {
+            query = Query.create(q);
+            result = engine.execute(query);
+        } catch (QueryEngineException ex) {
+            log(Level.ERROR, null, "On processQuery()", ex);
+        } catch (QueryParserException ex2) {
+           log(Level.ERROR, null, "Error parsing " + q, ex2);
+        }
+        return getOntologyQueryResults(result);
+    }
+
+    private List<Map<String, String>> getOntologyQueryResults(QueryResult qr) {
+        List<Map<String, String>> resultsList = new ArrayList<>();
+        if (qr != null) {
+            Iterator<QueryBinding> itr = qr.iterator();
+            if (itr.hasNext()) {
+                while (itr.hasNext()) {
+                    QueryBinding qb = itr.next();
+                    Set<QueryArgument> keys = qb.getBoundArgs();
+                    Map<String, String> map = new HashMap<>();
+                    for (QueryArgument key : keys) {
+                        switch (qb.get(key).getType().name()) {
+                            case "LITERAL":
+                                map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsLiteral().getLiteral());
+                                break;
+                            case "URI":
+                                map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsIRI().getIRIString());
                                 break;
                             default:
                         }

@@ -1151,17 +1151,27 @@ public class LexiconModel extends BaseController implements Serializable {
             if (!newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
                 // they are not empty
                 removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
-                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+//                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
+                        factory.getOWLNamedIndividual(oldR.getNamespace())
+                );
                 addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
-                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+//                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
+                        factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()), 
+                        pm.getPrefixName2PrefixMap().get("ontolex:")
+                );
             } else {
                 if (newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
                     removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
-                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName()));
+//                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
+                            factory.getOWLNamedIndividual(oldR.getNamespace())
+                    );
                 }
                 if (!newR.getName().isEmpty() && oldR.getName().isEmpty()) {
                     addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
-                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), pm.getPrefixName2PrefixMap().get("ontolex:"));
+//                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
+                            factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()), 
+                            pm.getPrefixName2PrefixMap().get("ontolex:")
+                    );
                 }
             }
         }

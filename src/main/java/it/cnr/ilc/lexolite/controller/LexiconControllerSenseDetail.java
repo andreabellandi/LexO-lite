@@ -204,6 +204,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         ReferenceMenuTheme rmt = new ReferenceMenuTheme();
         rmt.setId(sd.getThemeOWLClass().getId());
         rmt.setName(sd.getThemeOWLClass().getName());
+        rmt.setNamespace(sd.getThemeOWLClass().getNamespace());
         rmt.setType(itemType.valueOf(sd.getThemeOWLClass().getType()));
         _sd.setThemeOWLClass(rmt);
         _sd.setDefinition(sd.getDefinition());

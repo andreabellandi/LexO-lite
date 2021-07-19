@@ -279,7 +279,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 log(Level.INFO, "getThemeOWLClass(): " + sd.getThemeOWLClass().getType());
                 log(Level.INFO, "getThemeOWLClass(): " + ReferenceMenuTheme.itemType.none.equals(sd.getThemeOWLClass().getType()));
                 if (!ReferenceMenuTheme.itemType.none.toString().equals(sd.getThemeOWLClass().getType())) {
-                    row.add(sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+                    row.add("[" + sd.getThemeOWLClass().getNamespace().split("#")[0] + "] " + sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
                 } else {
                     row.add(null);
                 }
