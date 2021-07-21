@@ -100,7 +100,7 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (OWLOntologyCreationException | IOException ex) {
-            super.log(Level.ERROR,  "LOADING lexicon ", ex);
+            super.log(Level.ERROR, "LOADING lexicon ", ex);
         }
     }
 
@@ -113,9 +113,9 @@ public class LexiconModel extends BaseController implements Serializable {
             factory = manager.getOWLDataFactory();
             setPrefixes();
         } catch (FileNotFoundException ex) {
-            super.log(Level.ERROR,  "LOADING lexicon", ex);
+            super.log(Level.ERROR, "LOADING lexicon", ex);
         } catch (IOException | OWLOntologyCreationException ex) {
-            super.log(Level.ERROR,  "LOADING lexicon", ex);
+            super.log(Level.ERROR, "LOADING lexicon", ex);
         }
     }
 
@@ -701,7 +701,11 @@ public class LexiconModel extends BaseController implements Serializable {
         if (!synFrame.getExample().isEmpty()) {
             addDataPropertyAxiom("example", sf, synFrame.getExample(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
         }
-        return sf.getIRI().getShortForm();
+        if (sf.getIRI().getIRIString().contains("-")) {
+            return sf.getIRI().getIRIString().split("#")[1];
+        } else {
+            return sf.getIRI().getShortForm();
+        }
     }
 
     public void updateSyntacticFrame(LemmaData.SynFrame oldSynFrame, LemmaData.SynFrame newSynFrame) {
@@ -1070,6 +1074,11 @@ public class LexiconModel extends BaseController implements Serializable {
         OWLNamedIndividual s = getSense(senseInstance, senseNumber + 1);
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SENSE.getLabel(), le, s, pm.getPrefixName2PrefixMap().get("ontolex:"));
         sd.setName(s.getIRI().getShortForm());
+        if (s.getIRI().getIRIString().contains("-")) {
+             sd.setName(s.getIRI().getIRIString().split("#")[1]);
+        } else {
+             sd.setName(s.getIRI().getShortForm());
+        }
     }
 
     public void deleteLemma(LemmaData ld) {
@@ -1151,25 +1160,25 @@ public class LexiconModel extends BaseController implements Serializable {
             if (!newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
                 // they are not empty
                 removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
-//                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
+                        //                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
                         factory.getOWLNamedIndividual(oldR.getNamespace())
                 );
                 addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
-//                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
-                        factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()), 
+                        //                        factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
+                        factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()),
                         pm.getPrefixName2PrefixMap().get("ontolex:")
                 );
             } else {
                 if (newR.getName().isEmpty() && !oldR.getName().isEmpty()) {
                     removeObjectPropertyAxiom("ontolex", sbj, OntoLexEntity.ObjectProperty.REFERENCE.getLabel(),
-//                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
+                            //                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), oldR.getName())
                             factory.getOWLNamedIndividual(oldR.getNamespace())
                     );
                 }
                 if (!newR.getName().isEmpty() && oldR.getName().isEmpty()) {
                     addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.REFERENCE.getLabel(), sbj,
-//                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
-                            factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()), 
+                            //                            factory.getOWLNamedIndividual(LexOliteProperty.getProperty(Label.ONTOLOGY_NAMESPACE_KEY), newR.getName()), 
+                            factory.getOWLNamedIndividual(newR.getNamespace().split("#")[0] + "#", newR.getName()),
                             pm.getPrefixName2PrefixMap().get("ontolex:")
                     );
                 }
@@ -1265,7 +1274,7 @@ public class LexiconModel extends BaseController implements Serializable {
                 }
             }
         } catch (OWLOntologyStorageException ex) {
-            super.log(Level.ERROR,  "On Export", ex);
+            super.log(Level.ERROR, "On Export", ex);
         }
 //        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
 //        return new DefaultStreamedContent(in, "application/txt", fileName);

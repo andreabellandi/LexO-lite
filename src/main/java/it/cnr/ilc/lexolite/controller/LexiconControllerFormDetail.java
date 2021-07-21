@@ -1512,7 +1512,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public ArrayList<String> getPoS() {
-        return propertyValue.getPoS(lemma.getType());
+        return propertyValue.getPoS("Word");
+//        return propertyValue.getPoS(lemma.getType());
     }
 
     public ArrayList<String> getMorphoTraitValues(String traitName) {

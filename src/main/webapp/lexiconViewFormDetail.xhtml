@@ -54,15 +54,17 @@
                         <p:ajax event="itemSelect" listener="#{lexiconControllerFormDetail.onWordSelect(comp)}" 
                                 update="lemmaWord lexicalEntryViewButtons :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
                     </p:autoComplete>
+                    <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
+                                   rendered="#{comp.writtenRep.contains('not found')}"/>
                 </h:column>
                 <h:column>
                     <p:graphicImage style="padding-left: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
                                     height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
                 </h:column>
-                <h:column>   
-                    <h:outputLabel styleClass="noLemmaFoundMessage" value="#{comp.writtenRep}" 
-                                   rendered="#{comp.writtenRep.contains('not found')}"/>
-                </h:column>
+<!--                <h:column>   
+                    <h:outputLabel styleClass="noLemmaFoundMessage" value="{comp.writtenRep}" 
+                                   rendered="{comp.writtenRep.contains('not found')}"/>
+                </h:column>-->
                 <h:column>              
                     <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                      onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
@@ -83,7 +85,9 @@
                 </p:selectOneMenu>
             </h:panelGrid>
 
-            <h:outputLabel styleClass="titleStyle" value="#{!lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression') ? 'Part of Speech:' : 'Type:'}" for="lemmaPoS"/>
+            <h:outputLabel styleClass="titleStyle" 
+                           value="#{!lexiconControllerFormDetail.lemma.type.equals('MultiwordExpression') ? 'Part of Speech:' : 'Type:'}" 
+                           for="lemmaPoS"/>
             <p:selectOneMenu id="lemmaPoS" appendTo="@this"  panelStyleClass="selectOneMenuComboBox" height="100%"
                              value="#{lexiconControllerFormDetail.lemma.poS}" 
                              rendered="#{!lexiconControllerFormDetail.locked}">

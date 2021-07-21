@@ -360,9 +360,9 @@ public class LexiconQuery extends BaseController {
             ld.setVerified(true);
         }
         ld.setValid(valid);
-        String pos = !ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase";
+        String pos = !ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma);// + "Phrase";
         if (!pos.contains(Label.NO_ENTRY_FOUND)) {
-            ld.setPoS(!ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma) + "Phrase");
+            ld.setPoS(!ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel()) ? getLemmaPoS(lemma) : getLemmaPoS(lemma));// + "Phrase");
         } else {
             ld.setPoS(Label.UNSPECIFIED_POS);
         }
@@ -409,14 +409,14 @@ public class LexiconQuery extends BaseController {
                 + LexicalQuery.LEMMA_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_LEMMA_", lemma);
         return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
     }
-    
+
     private String getFormExtAtt(String form, String attribute) {
         String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
                 + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
                 + LexicalQuery.FORM_ATTRIBUTE_EXTENSION.replace("_ATTRIBUTE_", attribute), "_FORM_", form);
         return val.equals(Label.NO_ENTRY_FOUND) ? "" : val;
     }
-    
+
     private String getSenseExtAtt(String sense, String attribute) {
         String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
                 + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
@@ -916,7 +916,7 @@ public class LexiconQuery extends BaseController {
         ArrayList<String> r = getList(processQuery(q.replace(t, e)));
         return r.get(0);
     }
-    
+
     private String getOntologyElement(String q, String t, String e) {
         ArrayList<String> r = getList(processOntologyQuery(q.replace(t, e)));
         return r.get(0);
@@ -936,7 +936,7 @@ public class LexiconQuery extends BaseController {
         } catch (QueryEngineException ex) {
             log(Level.ERROR, null, "On processQuery()", ex);
         } catch (QueryParserException ex2) {
-           log(Level.ERROR, null, "Error parsing " + q, ex2);
+            log(Level.ERROR, null, "Error parsing " + q, ex2);
         }
         return getQueryResults(result);
     }
@@ -956,7 +956,11 @@ public class LexiconQuery extends BaseController {
                                 map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsLiteral().getLiteral());
                                 break;
                             case "URI":
-                                map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsIRI().getShortForm());
+                                if (qb.get(key).getValueAsIRI().getIRIString().contains("-")) {
+                                    map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsIRI().getIRIString().split("#")[1]);
+                                } else {
+                                    map.put(key.getValueAsVar().getName(), qb.get(key).getValueAsIRI().getShortForm());
+                                }
                                 break;
                             default:
                         }
@@ -969,7 +973,7 @@ public class LexiconQuery extends BaseController {
         }
         return resultsList;
     }
-    
+
     public List<Map<String, String>> processOntologyQuery(String q) {
         QueryResult result = null;
         QueryEngine engine = QueryEngine.create(ontologyManager, reasoner);
@@ -980,7 +984,7 @@ public class LexiconQuery extends BaseController {
         } catch (QueryEngineException ex) {
             log(Level.ERROR, null, "On processQuery()", ex);
         } catch (QueryParserException ex2) {
-           log(Level.ERROR, null, "Error parsing " + q, ex2);
+            log(Level.ERROR, null, "Error parsing " + q, ex2);
         }
         return getOntologyQueryResults(result);
     }

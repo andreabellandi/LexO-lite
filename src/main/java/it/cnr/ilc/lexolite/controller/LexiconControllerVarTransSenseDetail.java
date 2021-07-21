@@ -187,7 +187,7 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         log(Level.INFO, loginController.getAccount(), "SAVE updated Sense vartrans part");
         lexiconManager.updateSenseVarTrans(sensesVarTransCopy, sensesVarTrans);
         createSensesCopy();
-        if(lexiconControllerDictionary != null) {
+        if (lexiconControllerDictionary != null) {
             lexiconControllerDictionary.clearCaches();
         }
     }
@@ -385,13 +385,9 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         String ret = s.trim();
         if (ret.contains(" ")) {
             String[] _ret = ret.split(" ");
-            ret = "";
-            for (int i = 0; i < _ret.length; i++) {
-                String upper = "";
-                if (i != 0) {
-                    upper = _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
-                }
-                ret = ret + upper;
+            ret = _ret[0];
+            for (int i = 1; i < _ret.length; i++) {
+                ret = ret + _ret[i].substring(0, 1).toUpperCase() + _ret[i].substring(1);
             }
         }
         return ret;
