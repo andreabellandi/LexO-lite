@@ -236,9 +236,9 @@
         <profile>
             <id>prin-melloni</id>
             <properties>
-                <envClassifier>MELLONI</envClassifier>
+                <envClassifier>PRIN</envClassifier>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellons</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellon_users</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <lexo.directory>/.LexO-mellon/</lexo.directory>
