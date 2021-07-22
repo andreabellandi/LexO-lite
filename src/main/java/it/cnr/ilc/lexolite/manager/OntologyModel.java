@@ -363,6 +363,7 @@ public class OntologyModel extends BaseController {
     }
 
     public List<ReferenceMenuTheme> getOntologyEntities() {
+        ontoRefItems.clear();
         ArrayList<ReferenceMenuTheme> alClasses = new ArrayList();
         ArrayList<ReferenceMenuTheme> alObjProps = new ArrayList();
         ArrayList<ReferenceMenuTheme> alDataProps = new ArrayList();
@@ -407,8 +408,8 @@ public class OntologyModel extends BaseController {
 
     private List<ReferenceMenuTheme> _printClasses(OWLReasoner reasoner, OWLClass clazz, int level, ArrayList<ReferenceMenuTheme> al, int id) {
         if (!clazz.getIRI().getShortForm().equals("Thing") && !clazz.getIRI().getShortForm().equals("Nothing")
-                && !contains(al, clazz.getIRI().getShortForm())) {
-            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.clazz, clazz.getIRI().getShortForm()));
+                && !contains(al, clazz.getIRI().getIRIString())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.clazz, clazz.getIRI().getShortForm(), clazz.getIRI().getIRIString()));
         }
         NodeSet<OWLClass> c = reasoner.getSubClasses(clazz, true);
         id = id + 1;
@@ -422,8 +423,8 @@ public class OntologyModel extends BaseController {
 
     private List<ReferenceMenuTheme> _printObjectProperties(OWLReasoner reasoner, OWLObjectProperty objProp, int level, ArrayList<ReferenceMenuTheme> al, int id) {
         if (!objProp.getIRI().getShortForm().equals("topObjectProperty") && !objProp.getIRI().getShortForm().equals("bottomObjectProperty")
-                && !contains(al, objProp.getIRI().getShortForm())) {
-            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.objectProperty, objProp.getIRI().getShortForm()));
+                && !contains(al, objProp.getIRI().getIRIString())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.objectProperty, objProp.getIRI().getShortForm(), objProp.getIRI().getIRIString()));
         }
         NodeSet<OWLObjectPropertyExpression> op = reasoner.getSubObjectProperties(objProp, true);
         id = id + 1;
@@ -437,8 +438,8 @@ public class OntologyModel extends BaseController {
 
     private List<ReferenceMenuTheme> _printDataProperties(OWLReasoner reasoner, OWLDataProperty dataProp, int level, ArrayList<ReferenceMenuTheme> al, int id) {
         if (!dataProp.getIRI().getShortForm().equals("topDataProperty") && !dataProp.getIRI().getShortForm().equals("bottomDataProperty")
-                && !contains(al, dataProp.getIRI().getShortForm())) {
-            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.dataProperty, dataProp.getIRI().getShortForm()));
+                && !contains(al, dataProp.getIRI().getIRIString())) {
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.dataProperty, dataProp.getIRI().getShortForm(), dataProp.getIRI().getIRIString()));
         }
         NodeSet<OWLDataProperty> op = reasoner.getSubDataProperties(dataProp, true);
         id = id + 1;
@@ -453,7 +454,7 @@ public class OntologyModel extends BaseController {
     private List<ReferenceMenuTheme> _printIndividuals(OWLReasoner reasoner, OWLClass clazz, ArrayList<ReferenceMenuTheme> al, int id) {
         NodeSet<OWLNamedIndividual> individuals = reasoner.getInstances(clazz, InferenceDepth.ALL);
         for (OWLNamedIndividual i : individuals.entities().collect(Collectors.toList())) {
-            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.instance, i.getIRI().getShortForm()));
+            al.add(new ReferenceMenuTheme(id, ReferenceMenuTheme.itemType.instance, i.getIRI().getShortForm(), i.getIRI().getIRIString()));
             id = id + 1;
         }
         return al;
@@ -461,7 +462,7 @@ public class OntologyModel extends BaseController {
 
     private boolean contains(ArrayList<ReferenceMenuTheme> al, String objProp) {
         for (ReferenceMenuTheme rmt : al) {
-            if (rmt.getName().equals(objProp)) {
+            if (rmt.getNamespace().equals(objProp)) {
                 return true;
             }
         }

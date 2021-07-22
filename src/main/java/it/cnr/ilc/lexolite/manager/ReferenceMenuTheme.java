@@ -21,6 +21,7 @@ public class ReferenceMenuTheme {
     private int id;
     private itemType type;
     private String name;
+    private String namespace;
 
     public ReferenceMenuTheme() {
         this.id = 0;
@@ -28,10 +29,19 @@ public class ReferenceMenuTheme {
         this.type = itemType.none;
     }
 
-    public ReferenceMenuTheme(int id, itemType type, String name) {
+    public ReferenceMenuTheme(int id, itemType type, String name, String namepsace) {
         this.id = id;
         this.type = type;
         this.name = name;
+        this.namespace = namepsace;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getType() {
@@ -57,6 +67,5 @@ public class ReferenceMenuTheme {
     public void setId(int id) {
         this.id = id;
     }
-
 
 }

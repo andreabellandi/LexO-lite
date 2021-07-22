@@ -61,7 +61,7 @@
 
                     <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
                     <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
-                        <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" alt="#{sense.themeOWLClass.type}"
+                        <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" title="#{sense.themeOWLClass.type} - #{sense.themeOWLClass.namespace}"
                                         rendered="#{sense.themeOWLClass.name.length() > 1}"
                                         height="#{sense.themeOWLClass.type.contains('Property') ? 11 : 15}"  width="15"/>
                         <p:autoComplete id="OntoRef" size="#{sense.filedMaxLenght}" value="#{sense.themeOWLClass}" 
@@ -76,6 +76,9 @@
                             <p:column>
                                 <h:outputText value="#{theme.name}" />
                             </p:column>
+                            <f:facet name="itemtip">
+                                <h:outputLabel value="Complete IRI #{theme.namespace}"/>
+                            </f:facet>
                             <p:ajax event="itemSelect" listener="#{lexiconControllerSenseDetail.onOntologyReferenceSelect(sense)}" 
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons" />
                         </p:autoComplete>
@@ -90,16 +93,16 @@
                                      value="#{lexiconControllerSenseDetail.hasAttestation(sense.name)}"
                                      disabled="#{lexiconControllerSenseDetail.hasAttestation(sense.name) == 0}"
                                      onclick="PF('lexicalAspectsTabVar').buttons[3].click();"
-                                      />
+                                     />
 <!--                     <p:outputLabel  value="#{lexiconControllerSenseDetail.hasAttestation(sense.name)}" 
-                                    rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) > 0  }">
-                        <i class="fa fa-fw fa-file-text fa-2"  style="font-size: 1.5em; vertical-align: middle;" 
-                           onclick="PF('lexicalAspectsTabVar').buttons[3].click();" />
-                    </p:outputLabel>-->
+                                   rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) > 0  }">
+                       <i class="fa fa-fw fa-file-text fa-2"  style="font-size: 1.5em; vertical-align: middle;" 
+                          onclick="PF('lexicalAspectsTabVar').buttons[3].click();" />
+                   </p:outputLabel>-->
 <!--                    <p:outputLabel value="#{lexiconControllerSenseDetail.hasAttestation(sense.name)}" 
-                                   rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) == 0  }">
-                        <i class="fa fa-fw fa-file-text-o" style="font-size: 1.5em; vertical-align: middle;" />
-                    </p:outputLabel>-->
+                                  rendered="#{lexiconControllerSenseDetail.hasAttestation(sense.name) == 0  }">
+                       <i class="fa fa-fw fa-file-text-o" style="font-size: 1.5em; vertical-align: middle;" />
+                   </p:outputLabel>-->
 
                 </h:panelGrid>
                 <!-- EXTENSIONS -->

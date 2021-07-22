@@ -57,6 +57,8 @@ public class LexiconUtil {
         instance = instance.replaceAll("\\‘", "");
         instance = instance.replaceAll("\\s+", "_");
         instance = instance.replaceAll("/", "_");
+        instance = instance.replaceAll("<", "OSB_");
+        instance = instance.replaceAll(">", "_CSB");
         instance = instance.replaceAll(" ", " ");
         instance = instance.replaceAll(" +(\\d)", "$1");
         return instance;
