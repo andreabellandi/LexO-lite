@@ -28,16 +28,17 @@
                 <ui:repeat value="#{sense.senseRels}" var="senseRel" 
                            rendered="#{sense.senseRels.size() > 0}">
                     <h:panelGrid id="SenseRelation" columns="1" styleClass="senseSenseRelTextBlock">
+                        <h:panelGrid id="senseRelInput2" columns="4">
 
-                        <p:selectOneMenu id="senseSenseRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
-                                         panelStyleClass="panel" value="#{senseRel.relation}" 
-                                         appendTo="senseSenseRel">
-                            <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
-                            <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransSenseDetail.senseRelationTypes}"
-                                           var="srt" itemLabel="#{srt}" itemValue="#{lexiconControllerVarTransSenseDetail.getPropertyName(srt)}"/>
+                            <p:selectOneMenu id="senseSenseRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
+                                             panelStyleClass="panel" value="#{senseRel.relation}" 
+                                             appendTo="senseSenseRel">
+                                <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
+                                <f:selectItems itemDisabled="#{lexiconControllerFormDetail.locked}" value="#{lexiconControllerVarTransSenseDetail.senseRelationTypes}"
+                                               var="srt" itemLabel="#{srt}" itemValue="#{lexiconControllerVarTransSenseDetail.getPropertyName(srt)}"/>
 
-                        </p:selectOneMenu>
-
+                            </p:selectOneMenu>
+                        </h:panelGrid>
                         <h:panelGrid id="senseRelInput" columns="4">
                             <p:autoComplete  maxResults="10" value="#{senseRel.writtenRep}" forceSelection="true"
                                              readonly="#{lexiconControllerFormDetail.locked}" 
@@ -152,7 +153,7 @@
                     </h:panelGrid>
                     <p:separator style="border: 0;"/>
                 </ui:repeat>
-                
+
                 <!-- Melchuck's lexical functions -->
                 <h:outputLabel styleClass="titleStyle" value="Lexical function:" rendered="#{sense.lexicalFunctions.size() > 0}"/>
                 <ui:repeat value="#{sense.lexicalFunctions}" var="lf" 
