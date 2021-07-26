@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="HOME_LOG" value="${catalina.home}/logs/lexo-lite${postfix}.log"/>
+    <property name="STAT_LOG" value="${catalina.home}/logs/lexo-lite-stat${postfix}.log"/>
+
+     <!-- Main log appender -->
+   <appender name="MAIN-FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG}</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${HOME_LOG}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>20</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d [%t] %p %c{1.}:%m%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Statistic log appender -->
+    <appender name="STAT-FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${STAT_LOG}</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${STAT_LOG}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>1GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>20</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d %p %c{1.}:%L [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+    
+<!--    <logger name="org.apache.http.headers" level="debug" additivity="false">
+        <appender-ref ref="FILE-ROLLING"/>
+    </logger>-->
+    
+    <!-- Change log level for included packages -->
+    <logger name="org.reflections.Reflections" level="info"/>
+    <logger name="org.apache.http.headers" level="info"/>
+    <logger name="org.apache.http.wire" level="info" />
+    <logger name="io.swagger" level="info" />
+    <logger name="com.mchange.v2.log.MLog" level="info" />
+    
+    <logger name="statistics" level="DEBUG" additivity="false">
+        <appender-ref ref="STAT-FILE-ROLLING"/>
+    </logger>
+    <root level="info">
+        <appender-ref ref="MAIN-FILE-ROLLING"/>
+    </root>
+
+</configuration>
