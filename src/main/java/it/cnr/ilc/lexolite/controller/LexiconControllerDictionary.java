@@ -206,7 +206,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             }
             divVariants.with(div);
         }
-        log(Level.INFO, divVariants.renderFormatted());
+        log(Level.DEBUG, divVariants.renderFormatted());
         return divVariants.renderFormatted();
 
     }
@@ -236,7 +236,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     public String getVariantAttributes(List<String> variant) {
-        log(Level.INFO, "variant: " + variant);
+        log(Level.DEBUG, "variant: " + variant);
         StringBuilder sb = new StringBuilder();
         for (int i = 3; i < variant.size(); i++) {
             sb.append(variant.get(i));
@@ -325,9 +325,9 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     /**
-     * 
+     * Retrieve all the relations about the specified <i>senseIri</i>
      * @param senseIRI
-     * @return 
+     * @return for each senseRel there is an array consisting of three values : the name of relation, the written representation, the language.
      */
     public List<List<String>> getSenseRels(String senseIRI) {
         ArrayList ret = new ArrayList();
@@ -351,7 +351,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     /**
-     * @deprecated old method to create and render al the information about sense.
+     * @deprecated old method used to create and render all the information about senses.
      * @param sense
      * @param id
      * @param className
