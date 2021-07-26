@@ -234,6 +234,17 @@
             </properties>
         </profile>
         <profile>
+            <id>devel-simone</id> 
+            <properties>
+                <envClassifier>lite</envClassifier>
+                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
+                <db.user>root</db.user>
+                <db.password></db.password>
+                <lexo.directory>/.LexO-lite/</lexo.directory>
+            </properties>
+        </profile>       
+        <profile>
             <id>Theresa</id> 
             <properties>
                 <envClassifier></envClassifier>
