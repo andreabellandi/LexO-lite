@@ -382,7 +382,7 @@ public class OntologyModel extends BaseController {
         ontoRefItems.addAll(alObjProps);
         ontoRefItems.addAll(alDataProps);
         ontoRefItems.addAll(alIndividuals);
-        log(Level.INFO, "getOntologyEntities() ontoRefItems: " + ontoRefItems);
+        log(Level.DEBUG, "getOntologyEntities() ontoRefItems: " + ontoRefItems);
         return ontoRefItems;
     }
 
