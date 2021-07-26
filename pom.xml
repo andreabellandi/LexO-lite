@@ -258,12 +258,12 @@
         <profile>
             <id>prin-quochi</id>
             <properties>
-                <envClassifier>PRIN</envClassifier>
+                <envClassifier>lite</envClassifier>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_VQusers</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
                 <db.user>root</db.user>
-                <db.password>root</db.password>
-                <lexo.directory>/.LexO-PRIN/</lexo.directory>
+                <db.password>nimda</db.password>
+                <lexo.directory>/.LexO-lite/</lexo.directory>
             </properties>
         </profile>
         <profile>
