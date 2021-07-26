@@ -55,7 +55,7 @@
                        rendered="#{lexiconControllerVarTransFormDetail.lemmaVarTrans.lexRels.size() > 0}">
                 <h:panelGrid id="LexicalRelation" columns="1" styleClass="lemmaLexRelTextBlock">
 
-                    <p:selectOneMenu id="lemmaLexRel" styleClass="menu" filter="true" filterMatchMode="startsWith"
+                    <p:selectOneMenu id="lemmaLexRel" styleClass="selectOneMenuComboBox" filter="true" filterMatchMode="startsWith"
                                      panelStyleClass="panel" value="#{lexRel.relation}" 
                                      appendTo="lemmaLexRel" >
                         <f:selectItem itemDisabled="#{lexiconControllerFormDetail.locked}" itemLabel="No entry specified" itemValue="" />
