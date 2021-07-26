@@ -57,7 +57,14 @@
                                               value="#{status.first ? ' ': ''}#{lf}#{not status.last ? ', ' : ''}" />
                             </ui:repeat>
                         </h:panelGroup>
+                        <h:panelGrid>
+                            <ui:repeat value="#{lexiconControllerDictionary.getSenseRels(sense[0])}" 
+                                       varStatus="status" var="lf">
+                                <h:outputText escape="false"  style="font-style: italic;"
+                                              value="#{status.first ? ' ': ''}#{lf}#{not status.last ? ', ' : ''}" />
+                            </ui:repeat>
 
+                        </h:panelGrid>
                     </p:outputPanel>
                     <p:spacer width="0.5em"/>
 
