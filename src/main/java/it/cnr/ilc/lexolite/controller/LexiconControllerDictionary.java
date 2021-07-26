@@ -276,8 +276,8 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 row.add(null);
             }
             if (sd.getThemeOWLClass() != null) {
-                log(Level.INFO, "getThemeOWLClass(): " + sd.getThemeOWLClass().getType());
-                log(Level.INFO, "getThemeOWLClass(): " + ReferenceMenuTheme.itemType.none.equals(sd.getThemeOWLClass().getType()));
+                log(Level.DEBUG, "getThemeOWLClass(): " + sd.getThemeOWLClass().getType());
+                log(Level.DEBUG, "getThemeOWLClass(): " + ReferenceMenuTheme.itemType.none.equals(sd.getThemeOWLClass().getType()));
                 if (!ReferenceMenuTheme.itemType.none.toString().equals(sd.getThemeOWLClass().getType())) {
                     row.add("[" + sd.getThemeOWLClass().getNamespace().split("#")[0] + "] " + sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
                 } else {
@@ -294,9 +294,9 @@ public class LexiconControllerDictionary extends BaseController implements Seria
 
     public List<String> getSenseExamples(String senseIRI) {
         ArrayList ret = new ArrayList();
-        log(Level.INFO, senseIRI);
+        log(Level.DEBUG, senseIRI);
         for (Attestation att : lexiconControllerAttestation.getAttestationsForDictionary(senseIRI)) {
-            log(Level.INFO, "attestation: " + att.getAttestation());
+            log(Level.DEBUG, "attestation: " + att.getAttestation());
             ret.add(att.getAttestation());
         }
         return ret;
@@ -306,7 +306,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         ArrayList ret = getSenseLexicalFunctionC(senseIRI);
         if (ret == null) {
             ret = new ArrayList();
-            log(Level.INFO, senseIRI);
+            log(Level.DEBUG, senseIRI);
             SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
             if (null != sd) {
                 for (SenseData.LexicalFunction lf : sd.getLexicalFunctions()) {
@@ -324,6 +324,40 @@ public class LexiconControllerDictionary extends BaseController implements Seria
         return ret;
     }
 
+    /**
+     * 
+     * @param senseIRI
+     * @return 
+     */
+    public List<List<String>> getSenseRels(String senseIRI) {
+        ArrayList ret = new ArrayList();
+        log(Level.DEBUG, senseIRI);
+
+        SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
+        if (sd != null) {
+
+            if (sd.getSenseRels().size() > 0) {
+                for (SenseData.SenseRelation sr : sd.getSenseRels()) {
+                    ArrayList row = new ArrayList();
+                    row.add(sr.getRelation());
+                    row.add(sr.getWrittenRep());
+                    row.add(sr.getLanguage());
+                    log(Level.DEBUG, "sense information: " + row);
+                    ret.add(row);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * @deprecated old method to create and render al the information about sense.
+     * @param sense
+     * @param id
+     * @param className
+     * @param smallCapsClass
+     * @return 
+     */
     public String getSense(List<String> sense, String id, String className, String smallCapsClass) {
         Map<String, ArrayList<LinkedDictionaryEntry>> senseRelations = new HashMap<>();
         String senseIRI = sense.get(0);
