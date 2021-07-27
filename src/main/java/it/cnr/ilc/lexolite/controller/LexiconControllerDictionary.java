@@ -25,10 +25,12 @@ import static j2html.TagCreator.sup;
 import j2html.tags.ContainerTag;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
@@ -327,25 +329,33 @@ public class LexiconControllerDictionary extends BaseController implements Seria
 
     /**
      * Retrieve all the relations about the specified <i>senseIri</i>
+     *
      * @param senseIRI
-     * @return for each senseRel there is an array consisting of three values : the name of relation, the written representation, the language.
+     * @return for each senseRel there is an array consisting of three values :
+     * the name of relation, the written representation, the language.
      */
     public List<List<String>> getSenseRels(String senseIRI) {
         ArrayList ret = new ArrayList();
         log(Level.DEBUG, senseIRI);
-        
-        //***SIMONE***//
-        
 
         SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
         if (sd != null) {
-
             if (sd.getSenseRels().size() > 0) {
+                Map<Integer, List<List<String>>> relations = new TreeMap<>();
+                List<List<String>> relationList = new ArrayList<>();
+
                 for (SenseData.SenseRelation sr : sd.getSenseRels()) {
+                    int position = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getPosition();
+                    String label = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel();
+                    relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage()));
+
+                }
+
+                for (Map.Entry<Integer, List<List<String>>> entry : relations.entrySet()) {
                     ArrayList row = new ArrayList();
-                    row.add(DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel());
-                    row.add(sr.getWrittenRep());
-                    row.add(sr.getLanguage());
+                    row.add(entry.getKey());
+                    row.addAll(entry.getValue());
+
                     log(Level.DEBUG, "sense information: " + row);
                     ret.add(row);
                 }
@@ -355,12 +365,13 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     }
 
     /**
-     * @deprecated old method used to create and render all the information about senses.
+     * @deprecated old method used to create and render all the information
+     * about senses.
      * @param sense
      * @param id
      * @param className
      * @param smallCapsClass
-     * @return 
+     * @return
      */
     public String getSense(List<String> sense, String id, String className, String smallCapsClass) {
         Map<String, ArrayList<LinkedDictionaryEntry>> senseRelations = new HashMap<>();
