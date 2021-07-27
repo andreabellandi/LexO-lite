@@ -6,23 +6,23 @@
 package it.cnr.ilc.lexolite;
 
 import it.cnr.ilc.lexolite.constant.Label;
-import it.cnr.ilc.lexolite.controller.LexicalFunctionComparator;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import javax.faces.model.SelectItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author andrea
  */
 public class DictionaryRender {
+
+    private static final Logger logger = LoggerFactory.getLogger(DictionaryRender.class);
 
     private static final Map<String, DictFeature> dictionaryFetauresTable = new HashMap<>();
 
@@ -41,12 +41,14 @@ public class DictionaryRender {
     }
 
     public static void load() {
-        try (InputStream input = new FileInputStream(System.getProperty("user.home") + Label.LEXO_FOLDER + Label.DICTIONARY_FEATURES_FOLDER + Label.DICTIONARY_FEATURES_FILE_NAME)) {
+        String filename = System.getProperty("user.home") + Label.LEXO_FOLDER + Label.DICTIONARY_FEATURES_FOLDER + Label.DICTIONARY_FEATURES_FILE_NAME;
+        try (InputStream input = new FileInputStream(filename)) {
             properties.load(input);
             input.close();
             setUp();
         } catch (IOException ex) {
             // Dictionary features file is not present
+            logger.error("Dictionary file %s not found ", filename);
         }
     }
 
