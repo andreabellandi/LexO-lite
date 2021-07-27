@@ -152,7 +152,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
             //element.setOnstart("PF('loadingDialog').show();");
             element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
-            //element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+//            element.setOncomplete("setHeight();PF('loadingDialog').hide()");
             element.setOncomplete("scrollToSelectedNode(" +rowKey+ ");setHeight();");
             model.getElements().add(element);
             model.generateUniqueIds();

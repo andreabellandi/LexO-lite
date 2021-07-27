@@ -7,6 +7,7 @@ package it.cnr.ilc.lexolite.manager;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import it.cnr.ilc.lexolite.DictionaryRender;
 import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.controller.LexicalFunctionComparator;
@@ -227,6 +228,7 @@ public class PropertyValue {
 
 //        loadLFs();
         MelchuckModelExtension.load();
+        DictionaryRender.load();
 
         lexicalAspects = new ArrayList();
         lexicalAspects.add("Core");

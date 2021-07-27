@@ -244,7 +244,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     }
 
     public boolean isEditTabRendered() {
-        return accountManager.hasPermission(AccountType.Permission.READ_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
+        return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
 
     @PostConstruct
@@ -767,7 +767,11 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), 
                 Label.ClickProvenance.DICTIONARY_VIEW, "");
         // dictionary tab needs to be selected
-        lexiconCreationControllerFormDetail.setActiveTab(1);
+         if (loginController.getAccount().getType().getName().equals("Viewer")) {
+            lexiconCreationControllerFormDetail.setActiveTab(0);
+        } else {
+            lexiconCreationControllerFormDetail.setActiveTab(1);
+        }
         lexiconControllerLexicalAspect.setRendered(true);
 
     }

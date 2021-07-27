@@ -48,7 +48,9 @@ public class Label extends BaseController {
 //    public static final String LEXO_FOLDER = "/.LexO-lite-Theresa/";
     public static final String MODELS_FOLDER = "models/";
     public static final String IMAGES_FOLDER = "images/";
+    public static final String DICTIONARY_FEATURES_FOLDER = "dictionary/";
     public static final String LEXO_PROPERTIES_FILE_NAME = "lexolite.properties";
+    public static final String DICTIONARY_FEATURES_FILE_NAME = "dict.label";
     public static final String LEXICAL_FUNCTIONS_FILE_NAME = "melchuck.lexicalFunctions";
 
     // morpho menu items label

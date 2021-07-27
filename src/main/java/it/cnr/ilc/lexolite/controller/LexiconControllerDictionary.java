@@ -5,6 +5,7 @@
  */
 package it.cnr.ilc.lexolite.controller;
 
+import it.cnr.ilc.lexolite.DictionaryRender;
 import it.cnr.ilc.lexolite.MelchuckModelExtension;
 import it.cnr.ilc.lexolite.constant.Label;
 import it.cnr.ilc.lexolite.domain.Attestation;
@@ -332,6 +333,9 @@ public class LexiconControllerDictionary extends BaseController implements Seria
     public List<List<String>> getSenseRels(String senseIRI) {
         ArrayList ret = new ArrayList();
         log(Level.DEBUG, senseIRI);
+        
+        //***SIMONE***//
+        
 
         SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
         if (sd != null) {
@@ -339,7 +343,7 @@ public class LexiconControllerDictionary extends BaseController implements Seria
             if (sd.getSenseRels().size() > 0) {
                 for (SenseData.SenseRelation sr : sd.getSenseRels()) {
                     ArrayList row = new ArrayList();
-                    row.add(sr.getRelation());
+                    row.add(DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel());
                     row.add(sr.getWrittenRep());
                     row.add(sr.getLanguage());
                     log(Level.DEBUG, "sense information: " + row);
