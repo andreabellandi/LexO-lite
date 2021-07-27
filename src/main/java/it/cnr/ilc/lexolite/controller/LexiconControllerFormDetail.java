@@ -122,7 +122,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     private final String MULTIWORD_COMPONENT_INDIVIDUAL_REGEXP = "([aA-zZ]+)\\s\\(([aA-zZ]+)\\)@([aA-zZ]+)";
 
     private final MenuModel breadCrumbModel = new DefaultMenuModel();
-    private final int breadCrumbWindowSize = 15;
+    private final int breadCrumbWindowSize = 5;
 
     public int getBreadCrumbWindowSize() {
         return breadCrumbWindowSize;
@@ -150,10 +150,10 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             element.setDisabled(disabled);
             element.setUpdate(":editViewTab :breadCrumb");
             element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
-            //element.setOnstart("PF('loadingDialog').show();");
-            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
-//            element.setOncomplete("setHeight();PF('loadingDialog').hide()");
-            element.setOncomplete("scrollToSelectedNode(" +rowKey+ ");setHeight();");
+            element.setOnstart("PF('loadingDialog').show();");
+//            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
+            element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+//            element.setOncomplete("scrollToSelectedNode(" +rowKey+ ");setHeight();");
             model.getElements().add(element);
             model.generateUniqueIds();
         }

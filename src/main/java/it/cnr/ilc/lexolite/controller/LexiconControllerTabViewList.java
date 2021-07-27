@@ -60,7 +60,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
     private LexiconControllerAttestation lexiconControllerAttestation;
     @Inject
     private LexiconControllerDictionary lexiconControllerDictionary;
-    
+
     @Inject
     private LexiconManager lexiconManager;
     @Inject
@@ -444,7 +444,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
                 log(Level.INFO, loginController.getAccount(), "SELECT Form " + entry);
                 lexiconCreationControllerFormDetail.addForm(entry);
                 // set breadcrumb
-                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, ((DataTreeNode) event.getTreeNode().getData()).getName(), 
+                lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, ((DataTreeNode) event.getTreeNode().getData()).getName(),
                         Label.ClickProvenance.FORM_LIST_VIEW, event.getTreeNode().getRowKey());
                 break;
             case "Sense":
@@ -764,10 +764,10 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
         // set breadcrumb
-        lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), 
+        lexiconCreationControllerFormDetail.setBreadCrumb(entryType, entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(),
                 Label.ClickProvenance.DICTIONARY_VIEW, "");
         // dictionary tab needs to be selected
-         if (loginController.getAccount().getType().getName().equals("Viewer")) {
+        if (loginController.getAccount().getType().getName().equals("Viewer")) {
             lexiconCreationControllerFormDetail.setActiveTab(0);
         } else {
             lexiconCreationControllerFormDetail.setActiveTab(1);
@@ -818,14 +818,18 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         checkForLock(entry);
         lexiconManager.getLexiconLocker().print();
         lexiconControllerLexicalAspect.setRendered(true);
-        if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW.name())) {
-            // dictionary tab needs to be selected
-            lexiconCreationControllerFormDetail.setActiveTab(1);
-        } else {
-            // edit tab needs to be selected
+        
+        if (loginController.getAccount().getType().getName().equals("Viewer")) {
             lexiconCreationControllerFormDetail.setActiveTab(0);
+        } else {
+            if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW.name())) {
+                // dictionary tab needs to be selected
+                lexiconCreationControllerFormDetail.setActiveTab(1);
+            } else {
+                // edit tab needs to be selected
+                lexiconCreationControllerFormDetail.setActiveTab(0);
+            }
         }
-
         lexiconControllerAttestation.setAttestationViewRendered(false);
 
     }
@@ -897,7 +901,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
         lexiconControllerLexicalAspect.setRendered(true);
 
         // set breadcrumb
-        lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(), 
+        lexiconCreationControllerFormDetail.setBreadCrumb("Lemma", _entry, lexiconCreationControllerFormDetail.getLemma().getFormWrittenRepr(),
                 Label.ClickProvenance.LEMMA_LIST_VIEW, "");
 
     }
