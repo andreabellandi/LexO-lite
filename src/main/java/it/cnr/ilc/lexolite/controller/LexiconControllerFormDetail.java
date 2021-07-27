@@ -137,6 +137,8 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             DefaultMenuItem element = new DefaultMenuItem();
             if (prov.equals(Label.ClickProvenance.DICTIONARY_VIEW)) {
                 element.setIcon("fa fa-file-text-o");
+                element.setOnstart("PF('loadingDialog').show();");
+                element.setOncomplete("setHeight();PF('loadingDialog').hide()");
             } else {
                 element.setIcon("fa fa-th-list");
                 if (prov.equals(Label.ClickProvenance.LEMMA_LIST_VIEW)) {
@@ -144,16 +146,21 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
                 } else {
                     element.setStyle("color: #7286ad;");
                 }
+                element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
+                element.setOncomplete("scrollToSelectedNode(" + rowKey + ");setHeight();");
             }
+            
             element.setId(String.valueOf(id));
             element.setValue(value);
             element.setDisabled(disabled);
             element.setUpdate(":editViewTab :breadCrumb");
             element.setCommand("#{lexiconControllerTabViewList.onBreadCrumbSelect('" + uri + "', '" + type + "', '" + prov + "')}");
-            element.setOnstart("PF('loadingDialog').show();");
-//            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
-            element.setOncomplete("setHeight();PF('loadingDialog').hide()");
-//            element.setOncomplete("scrollToSelectedNode(" +rowKey+ ");setHeight();");
+            /*
+             * element.setOnstart("PF('loadingDialog').show();");
+             * element.setOncomplete("setHeight();PF('loadingDialog').hide()");
+             */
+            //            element.setOnclick("PF('lemmaTreeVar').unselectAllNodes(); PF('lemmaTreeVar').selectNode(PF('lemmaTreeVar').container.children(\"li:eq(" + rowKey + ")\"))");
+            //            element.setOncomplete("scrollToSelectedNode(" +rowKey+ ");setHeight();");
             model.getElements().add(element);
             model.generateUniqueIds();
         }
@@ -260,7 +267,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
     }
 
     public boolean isUserEnable() {
-         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
+        return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
 
     public boolean isLocked() {
@@ -644,7 +651,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         int order = forms.indexOf(fd);
         log(Level.INFO, loginController.getAccount(), "DELETE Form " + formsCopy.get(order).getFormWrittenRepr());
         lexiconManager.deleteForm(formsCopy.get(order));
-        authoringManager.removeAuthoring(Authoring.IRIType.FORM, 
+        authoringManager.removeAuthoring(Authoring.IRIType.FORM,
                 formsCopy.get(order).getIndividual().isEmpty() ? fd.getIndividual() : formsCopy.get(order).getIndividual());
         info("template.message.deleteForm.summary", "template.message.deleteForm.description", formsCopy.get(order).getFormWrittenRepr());
         // remove the form from forms and copyForms
@@ -1066,7 +1073,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         for (SenseData sd : lexiconCreationViewSenseDetail.getSenses()) {
             authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
         }
-        
+
         forms.clear();
         formsCopy.clear();
         lemma.clear();
@@ -1101,7 +1108,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
             lexiconCreationViewSenseDetail.setLocked(false);
             log(Level.INFO, loginController.getAccount(), "LOCK the lexical entry related to " + entry);
             authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_ENTRY,
-                lemmaCopy.getIndividual().isEmpty() ? lemma.getIndividual() : lemmaCopy.getIndividual());
+                    lemmaCopy.getIndividual().isEmpty() ? lemma.getIndividual() : lemmaCopy.getIndividual());
         } else {
             // saving due to a lemma modification action
             if (lemma.getFormWrittenRepr().equals(lemmaCopy.getFormWrittenRepr())) {
@@ -1776,6 +1783,5 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         item.setOncomplete("setHeight();PF('loadingDialog').hide()");
         return item;
     }
-    
 
 }
