@@ -46,10 +46,7 @@
                             <h:outputText escape="false"  style="font-style: italic;"
                                           value="#{example}" />#{not status.last ? ' ' : ''}
                         </ui:repeat>
-                        <h:panelGroup layout="block" id="SenseReference"  rendered="#{not empty sense[3]}">
-                            <h:outputText escape="false" styleClass=""
-                                          value="This refers: #{sense[3]}" />
-                        </h:panelGroup>
+                        
                         <h:panelGroup layout="block" id="LexicalFunctions"  rendered="#{not empty lexiconControllerDictionary.getSenseLexicalFunction(sense[0])}">
                             <ui:repeat value="#{lexiconControllerDictionary.getSenseLexicalFunction(sense[0])}" varStatus="status"
                                        var="lf">
@@ -58,13 +55,24 @@
                             </ui:repeat>
                         </h:panelGroup>
                         <h:panelGrid>
-                            <ui:repeat value="#{lexiconControllerDictionary.getSenseRels(sense[0])}" 
+<!--                            <ui:repeat value="#{lexiconControllerDictionary.getSenseRels(sense[0])}" 
                                        varStatus="status" var="lf">
                                 <h:outputText escape="false"  style="font-style: italic;"
                                               value="#{status.first ? ' ': ''}#{lf}#{not status.last ? ', ' : ''}" />
+                            </ui:repeat>-->
+                            <br/>
+                             <ui:repeat value="#{lexiconControllerDictionary.getSenseRels(sense[0])}" 
+                                       varStatus="status" var="lf">
+                                <h:outputText escape="false"
+                                              value="#{lf}" />
                             </ui:repeat>
 
                         </h:panelGrid>
+                        <h:panelGroup layout="block" id="SenseReference"  rendered="#{not empty sense[3]}">
+                            <br/>
+                            <h:outputText escape="false" styleClass=""
+                                          value="Conceptual reference: #{sense[3]}" />
+                        </h:panelGroup>
                     </p:outputPanel>
                     <p:spacer width="0.5em"/>
 

@@ -25,7 +25,7 @@
                     <h:outputLabel styleClass="titleStyle" value="Definition:"
                                    rendered="#{!sense.definition.equals('No entry found')}"/>
                     <h:panelGrid columns="1" rendered="#{!sense.definition.equals('No entry found')}">
-                        <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" 
+                        <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" autoResize="true"
                                          readonly="#{lexiconControllerSenseDetail.locked}">
                             <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.senseDefinitionKeyupEvent}"
                                     update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>

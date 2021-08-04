@@ -15,6 +15,7 @@ import it.cnr.ilc.lexolite.manager.ReferenceMenuTheme;
 import it.cnr.ilc.lexolite.manager.SenseData;
 import static j2html.TagCreator.a;
 import static j2html.TagCreator.attrs;
+import static j2html.TagCreator.b;
 import static j2html.TagCreator.div;
 import static j2html.TagCreator.each;
 import static j2html.TagCreator.span;
@@ -276,13 +277,14 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 sb.append(sd.getDefinition());
                 row.add(sb.toString());
             } else {
-                row.add(null);
+                row.add("no definition given.");
             }
             if (sd.getThemeOWLClass() != null) {
                 log(Level.DEBUG, "getThemeOWLClass(): " + sd.getThemeOWLClass().getType());
                 log(Level.DEBUG, "getThemeOWLClass(): " + ReferenceMenuTheme.itemType.none.equals(sd.getThemeOWLClass().getType()));
                 if (!ReferenceMenuTheme.itemType.none.toString().equals(sd.getThemeOWLClass().getType())) {
-                    row.add("[" + sd.getThemeOWLClass().getNamespace().split("#")[0] + "] " + sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+//                    row.add("[" + sd.getThemeOWLClass().getNamespace().split("#")[0] + "] " + sd.getThemeOWLClass().getName() + " (" + sd.getThemeOWLClass().getType().replace("zz", "ss") + ")"); //ontology class 2
+                    row.add(sd.getThemeOWLClass().getName()); //ontology class 2
                 } else {
                     row.add(null);
                 }
@@ -334,8 +336,38 @@ public class LexiconControllerDictionary extends BaseController implements Seria
      * @return for each senseRel there is an array consisting of three values :
      * the name of relation, the written representation, the language.
      */
-    public List<List<String>> getSenseRels(String senseIRI) {
-        ArrayList ret = new ArrayList();
+//    public List<List<String>> getSenseRels(String senseIRI) {
+//        ArrayList ret = new ArrayList();
+//        log(Level.DEBUG, senseIRI);
+//
+//        SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
+//        if (sd != null) {
+//            if (sd.getSenseRels().size() > 0) {
+//                Map<Integer, List<List<String>>> relations = new TreeMap<>();
+//                List<List<String>> relationList = new ArrayList<>();
+//
+//                for (SenseData.SenseRelation sr : sd.getSenseRels()) {
+//                    int position = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getPosition();
+//                    String label = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel();
+//                    relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage()));
+//
+//                }
+//
+//                for (Map.Entry<Integer, List<List<String>>> entry : relations.entrySet()) {
+//                    ArrayList row = new ArrayList();
+//                    row.add(entry.getKey());
+//                    row.addAll(entry.getValue());
+//
+//                    log(Level.DEBUG, "sense information: " + row);
+//                    ret.add(row);
+//                }
+//            }
+//        }
+//        return ret;
+//    }
+    public String getSenseRels(String senseIRI) {
+        String ret = "";
+        ContainerTag div = div();
         log(Level.DEBUG, senseIRI);
 
         SenseData sd = lexiconControllerVarTransSenseDetail.getSenseVarTrans(senseIRI);
@@ -347,21 +379,35 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 for (SenseData.SenseRelation sr : sd.getSenseRels()) {
                     int position = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getPosition();
                     String label = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel();
+                    if (label.contains("ersetzung")) {
+                        label = "Übersetzung";
+                    } else if (label.contains("t auch")) {
+                        label = "...heißt auch";
+                    }
                     relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage()));
 
                 }
 
                 for (Map.Entry<Integer, List<List<String>>> entry : relations.entrySet()) {
-                    ArrayList row = new ArrayList();
-                    row.add(entry.getKey());
-                    row.addAll(entry.getValue());
-
-                    log(Level.DEBUG, "sense information: " + row);
-                    ret.add(row);
+                    ContainerTag div2 = div();
+                    String relation = entry.getValue().get(0).get(0);
+                    div2.with(span(b(relation)));
+                    String value = "";
+                    for (int i = 0; i < entry.getValue().size(); i++) {
+                        String item = entry.getValue().get(i).get(1);
+                        String lang = entry.getValue().get(i).get(2);
+                        div2.with(span(join("",
+                                a(item.substring(0, item.split("_" + lang + "_")[0].lastIndexOf("_"))
+                                        .replaceAll("_APOS_", "'").replaceAll("_", " "))
+                                        .attr("style", "text-decoration: underline;")
+                                        .attr("onclick", "rc([{name:'entry',value:'" + item + "'},{name:'type',value:'Sense'}]);"),
+                                (((i + 1 < entry.getValue().size()) ? "; " : "")))));
+                    }
+                    div.with(div2);
                 }
             }
         }
-        return ret;
+        return div.renderFormatted();
     }
 
     /**

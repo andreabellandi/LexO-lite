@@ -360,6 +360,7 @@ public class LexiconControllerTabViewList extends BaseController implements Seri
             m.put("pos", getPosFromIndividual(m.get("individual"), lang));
             DataTreeNode dtn = new DataTreeNode(m, 0);
             lemmaRoot.getChildren().add(new DefaultTreeNode(dtn));
+            System.out.println(m.get("writtenRep"));
         }
     }
 

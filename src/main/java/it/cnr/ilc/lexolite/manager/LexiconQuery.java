@@ -332,6 +332,7 @@ public class LexiconQuery extends BaseController {
         if (!m.get("rel").equals(OntoLexEntity.ObjectProperty.CANONICALFORM.getLabel())
                 && !m.get("rel").equals(OntoLexEntity.ObjectProperty.OTHERFORM.getLabel())
                 && !m.get("rel").equals(OntoLexEntity.ObjectProperty.SENSE.getLabel())
+                && !m.get("rel").equals("seeAlso")
                 && !m.get("rel").equals("valid")) {
             LexicalRelation lr = new LexicalRelation();
             lr.setRelation(m.get("rel"));
