@@ -42,8 +42,6 @@ public class LexiconControllerDocument extends BaseController implements Seriali
 
     private DocumentData doc = new DocumentData();
 
-    private boolean documentTabEnabled = true;
-
     public boolean isDocumentTabEnabled() {
         return accountManager.hasPermission(AccountType.Permission.WRITE_ALL, AccountManager.Access.LEXICON_EDITOR, loginController.getAccount());
     }
