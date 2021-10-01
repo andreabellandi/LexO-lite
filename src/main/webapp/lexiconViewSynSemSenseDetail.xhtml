@@ -11,7 +11,8 @@
                     rendered="#{lexiconControllerSynSemSenseDetail.senseSynSemRendered}">
             <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">
                 <h:outputLabel styleClass="titleStyle" value="Name:" />
-                <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" size="#{sense.filedMaxLenght}"/>
+                <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" 
+                             size="#{lexiconControllerSynSemSenseDetail.getSize(sense.name)}"/>
 
                 <h:outputLabel styleClass="titleStyle" value="Definition:" rendered="#{!sense.definition.equals('No entry found')}"/>
                 <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" readonly="true"

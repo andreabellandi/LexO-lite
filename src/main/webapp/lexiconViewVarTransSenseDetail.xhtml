@@ -9,7 +9,7 @@
                     value="#{lexiconControllerVarTransSenseDetail.sensesVarTrans}" emptyMessage="" rendered="#{lexiconControllerVarTransSenseDetail.senseVarTransRendered}">
             <h:panelGrid  styleClass="senseTextBlock" columns="2" columnClasses="column" rowClasses="rowHeight">
                 <h:outputLabel styleClass="titleStyle" value="Name:" />
-                <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" size="#{sense.filedMaxLenght}"/>
+                <p:inputText styleClass="inputTextStyleTranslationForm" readonly="true" value="#{sense.name}" size="#{lexiconControllerVarTransSenseDetail.getSize(sense.name)}"/>
 
                 <h:outputLabel styleClass="titleStyle" value="Definition:" rendered="#{!sense.definition.equals('No entry found')}"/>
                 <p:inputTextarea id="definition" styleClass="senseDefinition" value="#{sense.definition}" readonly="true"
@@ -41,7 +41,7 @@
                         </h:panelGrid>
                         <h:panelGrid id="senseRelInput" columns="4">
                             <p:autoComplete  maxResults="10" value="#{senseRel.writtenRep}" forceSelection="true"
-                                             readonly="#{lexiconControllerFormDetail.locked}" 
+                                             readonly="#{lexiconControllerFormDetail.locked}"  size="#{lexiconControllerVarTransSenseDetail.getSize(senseRel.writtenRep)}"
                                              completeMethod="#{lexiconControllerVarTransSenseDetail.completeText}">
                                 <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransSenseDetail.onSenseRelSelect(sense, senseRel)}" 
                                         update="senseRelInput :editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
@@ -86,7 +86,7 @@
                         <h:outputLabel styleClass="titleStyle" value="Target:"/>
                         <h:panelGrid id="ReifSenseRelInput" columns="4">
                             <p:autoComplete  maxResults="10" value="#{senseReifRel.target}" forceSelection="true"
-                                             readonly="#{lexiconControllerSenseDetail.locked}" 
+                                             readonly="#{lexiconControllerSenseDetail.locked}" size="#{lexiconControllerVarTransSenseDetail.getSize(senseReifRel.target)}"
                                              completeMethod="#{lexiconControllerVarTransSenseDetail.completeText}">
                                 <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransSenseDetail.onTranslationRelationSelect(sense, senseReifRel)}" 
                                         update="ReifSenseRelInput :editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
@@ -133,7 +133,7 @@
                         <h:outputLabel styleClass="titleStyle" value="Target:"/>
                         <h:panelGrid id="ReifSenseRelInput" columns="4">
                             <p:autoComplete  maxResults="10" value="#{senseReifRel.target}" forceSelection="true"
-                                             readonly="#{lexiconControllerSenseDetail.locked}" 
+                                             readonly="#{lexiconControllerSenseDetail.locked}" size="#{lexiconControllerVarTransSenseDetail.getSize(senseReifRel.target)}"
                                              completeMethod="#{lexiconControllerVarTransSenseDetail.completeText}">
                                 <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransSenseDetail.onTerminologicalRelationSelect(sense, senseReifRel)}" 
                                         update="ReifSenseRelInput :editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>
@@ -174,7 +174,7 @@
                         <h:outputLabel styleClass="titleStyle" value="Target:"/>
                         <h:panelGrid id="lfInput" columns="4">
                             <p:autoComplete  maxResults="10" value="#{lf.target}" forceSelection="true"
-                                             readonly="#{lexiconControllerSenseDetail.locked}" 
+                                             readonly="#{lexiconControllerSenseDetail.locked}" size="#{lexiconControllerVarTransSenseDetail.getSize(lf.target)}"
                                              completeMethod="#{lexiconControllerVarTransSenseDetail.completeText}">
                                 <p:ajax event="itemSelect" listener="#{lexiconControllerVarTransSenseDetail.onLexicalFunctionSelect(sense, lf)}" 
                                         update="lfInput :editViewTab:lexiconVarTransSenseDetailForm:SenseVarTransDataList:senseVarTransButtons"/>

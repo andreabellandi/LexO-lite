@@ -384,24 +384,26 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                     } else if (label.contains("t auch")) {
                         label = "...heißt auch";
                     }
-                    relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage()));
+                    relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage(), sr.getRelation()));
 
                 }
 
                 for (Map.Entry<Integer, List<List<String>>> entry : relations.entrySet()) {
                     ContainerTag div2 = div();
-                    String relation = entry.getValue().get(0).get(0);
-                    div2.with(span(b(relation)));
+                    String relationLabel = entry.getValue().get(0).get(0);
+                    div2.with(span(b(relationLabel)));
                     String value = "";
                     for (int i = 0; i < entry.getValue().size(); i++) {
                         String item = entry.getValue().get(i).get(1);
                         String lang = entry.getValue().get(i).get(2);
+                        String relation = entry.getValue().get(0).get(3);
                         div2.with(span(join("",
                                 a(item.substring(0, item.split("_" + lang + "_")[0].lastIndexOf("_"))
-                                        .replaceAll("_APOS_", "'").replaceAll("_", " "))
+                                        .replaceAll("_APOS_", "'").replaceAll("_", ""))
                                         .attr("style", "text-decoration: underline;")
                                         .attr("onclick", "rc([{name:'entry',value:'" + item + "'},{name:'type',value:'Sense'}]);"),
-                                (((i + 1 < entry.getValue().size()) ? "; " : "")))));
+                                (((relation.equals("translation") ? ((i + 1 < entry.getValue().size()) ? "@" + lang + "; " : "@" + lang)
+                                : ((i + 1 < entry.getValue().size()) ? "; " : "")))))));
                     }
                     div.with(div2);
                 }

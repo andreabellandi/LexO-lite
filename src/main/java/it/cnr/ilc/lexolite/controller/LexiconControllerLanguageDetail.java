@@ -8,11 +8,13 @@ package it.cnr.ilc.lexolite.controller;
 import it.cnr.ilc.lexolite.manager.LanguageColorManager;
 import it.cnr.ilc.lexolite.manager.LexiconManager;
 import it.cnr.ilc.lexolite.manager.PropertyValue;
+import java.awt.Color;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -125,8 +127,9 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
             lexiconManager.saveNewLanguage(langName, uriCode, linguisticCatalog, description, creator);
             log(Level.INFO, loginController.getAccount(), "SAVE new language " + langName);
             lexiconCreationControllerTabViewList.updateLexiconLanguagesList();
+            tagColor = tagColor.isEmpty() ? getRandomColor() : tagColor;
             languageColorManager.insertLanguageColor(loginController.getAccount(), langName, creator, description, tagColor);
-            updateLanguageColorList(langName, tagColor);
+            updateLanguageColorList(langName, tagColor.isEmpty() ? "000000" : tagColor);
             FacesMessage message = new FacesMessage("Successful", "language " + langName + " was created.");
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
@@ -135,6 +138,12 @@ public class LexiconControllerLanguageDetail extends BaseController implements S
             FacesMessage message = new FacesMessage("Successful", "Negated creation of an empty language");
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
+    }
+    
+    private String getRandomColor() {
+        Random rand = new Random();
+        Color c = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+        return Integer.toString(c.getRed()) + Integer.toString(c.getGreen()) + Integer.toString(c.getBlue());
     }
     
     private void updateLanguageColorList(String lang, String color) {

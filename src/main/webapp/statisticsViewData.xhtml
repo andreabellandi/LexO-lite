@@ -7,7 +7,7 @@
 
     <h:form id="lexiconStatisticsDataForm">
 
-        <h:panelGrid columns="2" style="margin: auto;">
+        <h:panelGrid columns="1" style="margin: auto;">
             <h:panelGroup>
                 <h:panelGrid id="StatisticsDataHeaderGrid" columns="1" columnClasses="colCentered" cellpadding="5" 
                              style="margin-left: auto; margin-right: auto; padding-top: 10px; padding-bottom: 10px;">
@@ -68,7 +68,7 @@
             </h:panelGroup>
         </h:panelGrid>
 
-        <h:panelGrid columns="1" style="margin: auto; padding-top: 20px; width: 90%;">
+<!--        <h:panelGrid columns="1" style="margin: auto; padding-top: 20px; width: 90%;">
 
             <p:dataTable id="userStatTable" var="user" value="#{statisticsController.userStatistics}">
                 <p:ajax event="rowToggle" listener="#{statisticsController.onRowToggle}" 
@@ -100,13 +100,13 @@
                 </p:column>
 
                 <p:rowExpansion id="userStatDetail">
-                    <!--                    <p:scrollPanel  id="scrollPanelUserStatDetail" mode="native"  styleClass="roundedBox" style="height: 100px !important;">
+                                        <p:scrollPanel  id="scrollPanelUserStatDetail" mode="native"  styleClass="roundedBox" style="height: 100px !important;">
                                             <h:panelGrid id="userStatsDetailTable" columns="1" styleClass="userStatsDetailTable">
                                                 <ui:repeat value="#{statisticsController.usd}" var="usd">
                                                     <h:outputText style="display: block;" value="#{usd.IRI} #{usd.status == 1 ? ' created on ' : ' deleted on '} #{usd.date}" />
                                                 </ui:repeat>
                                             </h:panelGrid>
-                                        </p:scrollPanel>-->
+                                        </p:scrollPanel>
                     <p:dataTable  id="userStatsDetailTable"  value="#{statisticsController.usd}" var="usd"  scrollable="true" scrollHeight="300" >
                         <p:column headerText="IRI" >
                             <h:outputText value="#{usd.IRI}"/>
@@ -121,7 +121,7 @@
                 </p:rowExpansion>
             </p:dataTable>
 
-        </h:panelGrid>
+        </h:panelGrid>-->
     </h:form>
 
 </ui:composition>

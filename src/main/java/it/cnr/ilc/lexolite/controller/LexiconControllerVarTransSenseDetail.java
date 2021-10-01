@@ -349,6 +349,10 @@ public class LexiconControllerVarTransSenseDetail extends BaseController impleme
         lf.setTarget(sense);
     }
 
+    public int getSize(String senseIndividual) {
+        return senseIndividual.length() + 3;
+    }
+    
     public List<String> completeText(String sense) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         String currentSense = (String) component.getAttributes().get("currentSense");

@@ -249,5 +249,9 @@ public class LexiconControllerSynSemSenseDetail extends BaseController implement
         sensesSynSem.clear();
         sensesSynSemCopy.clear();
     }
+    
+    public int getSize(String senseIndividual) {
+        return senseIndividual.length() + 2;
+    }
 
 }
