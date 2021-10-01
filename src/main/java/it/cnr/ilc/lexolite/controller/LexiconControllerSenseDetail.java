@@ -154,11 +154,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         lexiconManager.saveSenseNote(sd, sensesCopy.get(order).getNote());
         sensesCopy.get(order).setNote(sd.getNote());
         info("template.message.saveSenseNote.summary", "template.message.saveSenseNote.description");
-        if (sd.getNote().isEmpty()) {
-            authoringManager.removeAuthoring(Authoring.IRIType.SENSE_NOTE, sd.getName());
-        } else {
-            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.SENSE_NOTE, sd.getName());
-        }
+//        if (sd.getNote().isEmpty()) {
+//            authoringManager.removeAuthoring(Authoring.IRIType.SENSE_NOTE, sd.getName());
+//        } else {
+//            authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.SENSE_NOTE, sd.getName());
+//        }
     }
 
     public void closeNote(String senseName) {
@@ -359,7 +359,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
                 log(Level.INFO, loginController.getAccount(), "DELETE Sense " + sd.getName());
                 lexiconManager.deleteSense(sd);
                 attestationManager.remove(sd.getName());
-                authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
+//                authoringManager.removeAuthoring(Authoring.IRIType.LEXICAL_SENSE, sd.getName());
                 info("template.message.deleteSense.summary", "template.message.deleteSense.description", sd.getName());
                 // remove the sense box
                 senses.remove(sd);
@@ -426,7 +426,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         SenseData sd = new SenseData();
         sd.setSaveButtonDisabled(true);
         lexiconManager.saveSense(sd, ld);
-        authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_SENSE, sd.getName());
+//        authoringManager.updateIRIAuthoring(loginController.getAccount(), Authoring.IRIType.LEXICAL_SENSE, sd.getName());
         senses.add(sd);
         addSenseCopy(sd);
         info("template.message.saveSense.summary", "template.message.saveSense.description", sd.getName());

@@ -324,74 +324,74 @@ public class StatisticsController extends BaseController implements Serializable
         return posDist;
     }
 
-    public ArrayList<UserStatistics> getUserStatistics() {
-        // 0=type of edit; 1=user; 2=user role
-        ArrayList<UserStatistics> al = new ArrayList<>();
-        List<Object[]> stats = authoringManager.getUserStatistics();
-        if (stats.size() > 0) {
-            String user = (String) stats.get(0)[1];
-            String role = (String) stats.get(0)[2];
-            int leNumber = 0, formNumber = 0, senseNumber = 0;
-            for (Object[] o : stats) {
-                if (user.equals(o[1])) {
-                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
-                        leNumber++;
-                    } else {
-                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
-                            formNumber++;
-                        } else {
-                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
-                                senseNumber++;
-                            }
-                        }
-                    }
-                } else {
-                    addUser(al, user, leNumber, formNumber, senseNumber, role);
-                    leNumber = 0;
-                    formNumber = 0;
-                    senseNumber = 0;
-                    user = o[1].toString();
-                    role = o[2].toString();
-                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
-                        leNumber++;
-                    } else {
-                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
-                            formNumber++;
-                        } else {
-                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
-                                senseNumber++;
-                            }
-                        }
-                    }
-                }
-            }
-            addUser(al, user, leNumber, formNumber, senseNumber, role);
-        }
-        return al;
-    }
-
-    private void addUser(ArrayList<UserStatistics> al, String user, int leNumber, int formNumber, int senseNumber, String role) {
-        UserStatistics us = new UserStatistics();
-        us.setUsername(user);
-        us.setRole(role);
-        us.setLeNumber(String.valueOf(leNumber));
-        us.setFormNumber(String.valueOf(formNumber));
-        us.setSenseNumber(String.valueOf(senseNumber));
-        us.setTotal(String.valueOf(leNumber + formNumber + senseNumber));
-        al.add(us);
-    }
-
-    public void onRowToggle(ToggleEvent event) {
-        // 0=iri; 1=creation; 2=status
-        usd.clear();
-        for (Object[] o : authoringManager.getStatDetails(((UserStatistics) event.getData()).username)) {
-            UserStatisticsDetail _usd = new UserStatisticsDetail();
-            _usd.setDate(o[1].toString());
-            _usd.setStatus(Integer.parseInt(o[2].toString()));
-            _usd.setIRI(o[0].toString());
-            usd.add(_usd);
-        }
-    }
+//    public ArrayList<UserStatistics> getUserStatistics() {
+//        // 0=type of edit; 1=user; 2=user role
+//        ArrayList<UserStatistics> al = new ArrayList<>();
+//        List<Object[]> stats = authoringManager.getUserStatistics();
+//        if (stats.size() > 0) {
+//            String user = (String) stats.get(0)[1];
+//            String role = (String) stats.get(0)[2];
+//            int leNumber = 0, formNumber = 0, senseNumber = 0;
+//            for (Object[] o : stats) {
+//                if (user.equals(o[1])) {
+//                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
+//                        leNumber++;
+//                    } else {
+//                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
+//                            formNumber++;
+//                        } else {
+//                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
+//                                senseNumber++;
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    addUser(al, user, leNumber, formNumber, senseNumber, role);
+//                    leNumber = 0;
+//                    formNumber = 0;
+//                    senseNumber = 0;
+//                    user = o[1].toString();
+//                    role = o[2].toString();
+//                    if (o[0].equals(Authoring.IRIType.LEXICAL_ENTRY.name())) {
+//                        leNumber++;
+//                    } else {
+//                        if (o[0].equals(Authoring.IRIType.FORM.name())) {
+//                            formNumber++;
+//                        } else {
+//                            if (o[0].equals(Authoring.IRIType.LEXICAL_SENSE.name())) {
+//                                senseNumber++;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            addUser(al, user, leNumber, formNumber, senseNumber, role);
+//        }
+//        return al;
+//    }
+//
+//    private void addUser(ArrayList<UserStatistics> al, String user, int leNumber, int formNumber, int senseNumber, String role) {
+//        UserStatistics us = new UserStatistics();
+//        us.setUsername(user);
+//        us.setRole(role);
+//        us.setLeNumber(String.valueOf(leNumber));
+//        us.setFormNumber(String.valueOf(formNumber));
+//        us.setSenseNumber(String.valueOf(senseNumber));
+//        us.setTotal(String.valueOf(leNumber + formNumber + senseNumber));
+//        al.add(us);
+//    }
+//
+//    public void onRowToggle(ToggleEvent event) {
+//        // 0=iri; 1=creation; 2=status
+//        usd.clear();
+//        for (Object[] o : authoringManager.getStatDetails(((UserStatistics) event.getData()).username)) {
+//            UserStatisticsDetail _usd = new UserStatisticsDetail();
+//            _usd.setDate(o[1].toString());
+//            _usd.setStatus(Integer.parseInt(o[2].toString()));
+//            _usd.setIRI(o[0].toString());
+//            usd.add(_usd);
+//        }
+//    }
 
     public static class UserStatistics {
 
