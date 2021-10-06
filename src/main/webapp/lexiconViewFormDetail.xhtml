@@ -61,10 +61,10 @@
                     <p:graphicImage style="padding-left: 5px;" value="#{'/resources/image/'.concat(comp.writtenRep.contains('not found') ? 'alertIcon.png' : 'checkIcon.png')}" 
                                     height="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}" width="#{comp.writtenRep.contains('not found') ? '20px' : '15px'}"/>
                 </h:column>
-<!--                <h:column>   
-                    <h:outputLabel styleClass="noLemmaFoundMessage" value="{comp.writtenRep}" 
-                                   rendered="{comp.writtenRep.contains('not found')}"/>
-                </h:column>-->
+                <!--                <h:column>   
+                                    <h:outputLabel styleClass="noLemmaFoundMessage" value="{comp.writtenRep}" 
+                                                   rendered="{comp.writtenRep.contains('not found')}"/>
+                                </h:column>-->
                 <h:column>              
                     <p:commandButton id="lexicalEntryViewButtons" title="View the lexical entry" icon="fa fa-eye" rendered="#{!comp.writtenRep.contains('not found')}"
                                      onstart="PF('loadingDialog').show()"  oncomplete="PF('loadingDialog').hide();" 
@@ -154,6 +154,29 @@
                     <p:commandButton title="Delete reference" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                      actionListener="#{lexiconControllerFormDetail.removeReference(reference)}" 
                                      disabled="#{reference.deleteButtonDisabled}" 
+                                     update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid"/> 
+                </h:panelGrid>
+            </ui:repeat>
+
+            <h:outputLabel styleClass="titleStyle" value="See Also (ext):" rendered="#{lexiconControllerFormDetail.lemma.ext_seeAlso.size() > 0}"/>
+            <ui:repeat value="#{lexiconControllerFormDetail.lemma.ext_seeAlso}" var="ext_reference" 
+                       rendered="#{lexiconControllerFormDetail.lemma.ext_seeAlso.size() > 0}">
+                <h:panelGrid id="ExtReference" columns="4">
+
+                    <p:inputText id="ext_seeAlsoInput" styleClass="inputTextStyle" value="#{ext_reference.writtenRep}"
+                                 readonly="#{lexiconControllerFormDetail.locked}">
+                        <p:ajax event="keyup" listener="#{lexiconControllerFormDetail.onExtSeeAlso(ext_reference)}" 
+                                update="ExtReference :editViewTab:lexiconFormDetailForm:lemmaButtons"/>
+                    </p:inputText>
+                    <p:watermark class="filterLabel" for="ext_seeAlsoInput" value="Paste a valid url"/>   
+                    <p:link title="Open the link in a separated browser tab" 
+                            href="#{lexiconControllerFormDetail.getseeAlsoExtUrl(ext_reference)}" target="_blank" 
+                            rendered="#{!ext_reference.viewButtonDisabled}">
+                        <p:graphicImage value="/resources/image/ext_link.png" height="20px" width="20px"/>
+                    </p:link>
+                    <p:commandButton title="Delete see also" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                                     actionListener="#{lexiconControllerFormDetail.removeExtSeeAlso(ext_reference)}" 
+                                     disabled="#{ext_reference.deleteButtonDisabled}" 
                                      update=":editViewTab:lexiconFormDetailForm:LemmaPanelGrid"/> 
                 </h:panelGrid>
             </ui:repeat>
@@ -345,7 +368,7 @@
                         </p:inputTextarea>
                     </h:column>
                     <h:column>
-                       <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
+                        <p:commandButton title="Delete #{extAtt.label}" icon="fa fa-trash-o" rendered="#{!lexiconControllerFormDetail.locked}"
                                          actionListener="#{lexiconControllerFormDetail.removeExtensionAttribute(extAtt, form)}" 
                                          update=":editViewTab:lexiconFormDetailForm:FormDataList"/>
                         <p:inputText styleClass="inputTextStyle"  

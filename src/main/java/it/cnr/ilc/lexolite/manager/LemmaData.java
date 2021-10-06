@@ -33,6 +33,7 @@ public class LemmaData implements Serializable {
     private ReferenceMenuTheme themeOWLClass;
     private boolean verified;
     private ArrayList<Word> seeAlso = new ArrayList();
+    private ArrayList<Word> ext_seeAlso = new ArrayList();
     private ArrayList<Word> multiword = new ArrayList();
 
     // modulo vartrans
@@ -141,6 +142,14 @@ public class LemmaData implements Serializable {
         this.multiword = multiword;
     }
 
+    public ArrayList<Word> getExt_seeAlso() {
+        return ext_seeAlso;
+    }
+
+    public void setExt_seeAlso(ArrayList<Word> ext_seeAlso) {
+        this.ext_seeAlso = ext_seeAlso;
+    }
+
     public ArrayList<Word> getSeeAlso() {
         return seeAlso;
     }
@@ -226,6 +235,7 @@ public class LemmaData implements Serializable {
         this.valid = "false";
         this.multiword.clear();
         this.seeAlso.clear();
+        this.ext_seeAlso.clear();
         this.lexRels.clear();
         this.reifiedLexRels.clear();
         this.synFrames.clear();

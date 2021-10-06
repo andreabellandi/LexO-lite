@@ -52,6 +52,10 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationSubject;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -75,6 +79,7 @@ import org.semanticweb.owlapi.search.Searcher;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
 import org.semanticweb.owlapi.util.OWLEntityRenamer;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.event.Level;
 
 /**
@@ -345,6 +350,7 @@ public class LexiconModel extends BaseController implements Serializable {
 //                oldLemma.getOWLClass().getName(), newLemma.getOWLClass().getName(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         //updateDataPropertyAxiom(entrySubject, "verified", oldLemma.getValid(), newLemma.getValid(), pm.getPrefixName2PrefixMap().get("dct:"));
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getSeeAlso(), newLemma.getSeeAlso(), "seeAlso");
+        updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getExt_seeAlso(), newLemma.getExt_seeAlso(), "seeAlso");
         updateExtensionAttribute(subject, oldLemma.getExtensionAttributeInstances(), newLemma.getExtensionAttributeInstances());
         if (oldLemma.getFormWrittenRepr().equals(newLemma.getFormWrittenRepr())) {
             if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
@@ -412,7 +418,15 @@ public class LexiconModel extends BaseController implements Serializable {
         for (Word w : oldWords) {
             if ((!contains(newWords, w)) && (!w.getWrittenRep().isEmpty())) {
                 if (rel.equals("seeAlso")) {
-                    removeObjectPropertyAxiom("rdf", getIndividual(sbj.replace("_lemma", "_entry")), rel, getIndividual(w.getOWLName().replace("_lemma", "_entry")));
+                    if (w.getOWLName().isEmpty()) {
+//                        removeDataPropertyAxiom("rdfs", getIndividual(sbj.replace("_lemma", "_entry")), rel, w.getWrittenRep());
+//                        removeObjectPropertyAxiom("rdf", getIndividual(sbj.replace("_lemma", "_entry")), rel, (OWLNamedIndividual)IRI.create(w.getWrittenRep()));
+                        removeAnnotationProperty(OWLRDFVocabulary.RDFS_SEE_ALSO, sbj.replace("_lemma", "_entry"), IRI.create(w.getWrittenRep()));
+                    } else {
+//                        removeObjectPropertyAxiom("rdfs", getIndividual(sbj.replace("_lemma", "_entry")), rel, getIndividual(w.getOWLName().replace("_lemma", "_entry")));
+                        removeAnnotationProperty(OWLRDFVocabulary.RDFS_SEE_ALSO, sbj.replace("_lemma", "_entry"),
+                                IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + w.getOWLName().replace("_lemma", "_entry")));
+                    }
                 }
             }
         }
@@ -420,7 +434,15 @@ public class LexiconModel extends BaseController implements Serializable {
         for (Word w : newWords) {
             if ((!contains(oldWords, w)) && (!w.getWrittenRep().isEmpty())) {
                 if (rel.equals("seeAlso")) {
-                    addObjectPropertyAxiom(rel, getIndividual(sbj.replace("_lemma", "_entry")), getIndividual(w.getOWLName().replace("_lemma", "_entry")), pm.getPrefixName2PrefixMap().get("rdf:"));
+                    if (w.getOWLName().isEmpty()) {
+                        addAnnotationProperty(OWLRDFVocabulary.RDFS_SEE_ALSO, sbj.replace("_lemma", "_entry"), IRI.create(w.getWrittenRep()));
+//                        addDataPropertyAxiom("seeAlso", getIndividual(sbj.replace("_lemma", "_entry")), w.getWrittenRep(), pm.getPrefixName2PrefixMap().get("rdfs:"));
+//                        addObjectPropertyAxiom(rel, getIndividual(sbj.replace("_lemma", "_entry")), (OWLNamedIndividual)IRI.create(w.getWrittenRep()), pm.getPrefixName2PrefixMap().get("rdf:"));
+                    } else {
+                        addAnnotationProperty(OWLRDFVocabulary.RDFS_SEE_ALSO, sbj.replace("_lemma", "_entry"),
+                                IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + w.getOWLName().replace("_lemma", "_entry")));
+//                        addObjectPropertyAxiom(rel, getIndividual(sbj.replace("_lemma", "_entry")), getIndividual(w.getOWLName().replace("_lemma", "_entry")), pm.getPrefixName2PrefixMap().get("rdfs:"));
+                    }
                 }
             }
         }
@@ -428,8 +450,16 @@ public class LexiconModel extends BaseController implements Serializable {
 
     private boolean contains(ArrayList<Word> alw, Word w) {
         for (Word _w : alw) {
-            if (w.getOWLName().equals(_w.getOWLName())) {
-                return true;
+            if (w.getOWLName().isEmpty() && _w.getOWLName().isEmpty()) {
+                if (w.getWrittenRep().equals(_w.getWrittenRep())) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (w.getOWLName().equals(_w.getOWLName())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1075,9 +1105,9 @@ public class LexiconModel extends BaseController implements Serializable {
         addObjectPropertyAxiom(OntoLexEntity.ObjectProperty.SENSE.getLabel(), le, s, pm.getPrefixName2PrefixMap().get("ontolex:"));
         sd.setName(s.getIRI().getShortForm());
         if (s.getIRI().getIRIString().contains("-")) {
-             sd.setName(s.getIRI().getIRIString().split("#")[1]);
+            sd.setName(s.getIRI().getIRIString().split("#")[1]);
         } else {
-             sd.setName(s.getIRI().getShortForm());
+            sd.setName(s.getIRI().getShortForm());
         }
     }
 
@@ -1335,6 +1365,38 @@ public class LexiconModel extends BaseController implements Serializable {
         OWLObjectProperty p = factory.getOWLObjectProperty(ns, objProp);
         OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(p, src, trg);
         manager.addAxiom(ontology, propertyAssertion);
+    }
+
+    private void addAnnotationProperty(OWLRDFVocabulary prop, String src, OWLNamedIndividual trg) {
+        if (prop.equals(OWLRDFVocabulary.RDFS_SEE_ALSO)) {
+            OWLAnnotation ann = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getRDFSSeeAlso(), (OWLAnnotationValue) trg);
+            OWLAxiom ax = manager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + src), ann);
+            manager.addAxiom(ontology, ax);
+        }
+    }
+
+    private void addAnnotationProperty(OWLRDFVocabulary prop, String src, IRI url) {
+        if (prop.equals(OWLRDFVocabulary.RDFS_SEE_ALSO)) {
+            OWLAnnotation ann = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getRDFSSeeAlso(), (OWLAnnotationValue) url);
+            OWLAxiom ax = manager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + src), ann);
+            manager.addAxiom(ontology, ax);
+        }
+    }
+
+    private void removeAnnotationProperty(OWLRDFVocabulary prop, String src, OWLNamedIndividual trg) {
+        if (prop.equals(OWLRDFVocabulary.RDFS_SEE_ALSO)) {
+            OWLAnnotation ann = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getRDFSSeeAlso(), (OWLAnnotationValue) trg);
+            OWLAxiom ax = manager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + src), ann);
+            ontology.removeAxiom(ax);
+        }
+    }
+
+    private void removeAnnotationProperty(OWLRDFVocabulary prop, String src, IRI url) {
+        if (prop.equals(OWLRDFVocabulary.RDFS_SEE_ALSO)) {
+            OWLAnnotation ann = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getRDFSSeeAlso(), (OWLAnnotationValue) url);
+            OWLAxiom ax = manager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + src), ann);
+            ontology.removeAxiom(ax);
+        }
     }
 
     private void addObjectPropertyAxiom(OWLObjectProperty srcObjProp, OWLObjectProperty trgObjProp) {

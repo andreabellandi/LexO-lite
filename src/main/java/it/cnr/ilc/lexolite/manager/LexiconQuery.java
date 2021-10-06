@@ -40,11 +40,15 @@ import java.util.regex.Pattern;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
+import org.semanticweb.owlapi.search.EntitySearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -371,7 +375,11 @@ public class LexiconQuery extends BaseController {
         ld.setMorphoTraits(getLemmaMorphoTraits(lemma, morphoTraits));
 
         ld.setNote(getLemmaNote(lemma));
-        ld.setSeeAlso(getLemmaReference(lemma));
+
+        ArrayList<Word> alw = getSeeAlsos(lemma);
+        ld.setSeeAlso(getIntSeeAlso(alw));
+        ld.setExt_seeAlso(getExtSeeAlso(alw));
+
         if (ld.getType().equals(OntoLexEntity.Class.MULTIWORD.getLabel())) {
             ld.setMultiword(getLemmaMultiword(lemma, ld.getFormWrittenRepr()));
         }
@@ -404,6 +412,28 @@ public class LexiconQuery extends BaseController {
 
     }
 
+    
+    private ArrayList<Word> getExtSeeAlso(ArrayList<Word> alw) {
+        ArrayList<Word> _alw = new ArrayList();
+        for (Word w : alw) {
+            if (w.getOWLName().isEmpty()) {
+                _alw.add(w);
+            }
+        }
+        return _alw;
+    }
+    
+    private ArrayList<Word> getIntSeeAlso(ArrayList<Word> alw) {
+        ArrayList<Word> _alw = new ArrayList();
+        for (Word w : alw) {
+            if (!w.getOWLName().isEmpty()) {
+                _alw.add(w);
+            }
+        }
+        return _alw;
+    }
+    
+    
     private String getExtAtt(String lemma, String attribute) {
         String val = getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <"
                 + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n"
@@ -430,8 +460,32 @@ public class LexiconQuery extends BaseController {
         return note.equals(Label.NO_ENTRY_FOUND) ? "" : note;
     }
 
-    private ArrayList<Word> getLemmaReference(String lemma) {
-        return getEntryAttributeWordList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_SEEALSO, "_LEMMA_", lemma);
+//    private ArrayList<Word> getLemmaReference(String lemma) {
+//        return getEntryAttributeWordList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_SEEALSO, "_LEMMA_", lemma);
+//    }
+    private Word getSeeAlso(String entry) {
+        return getEntryAttributeWord(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.LEMMA_SEEALSO, "_ENTRY_", entry);
+    }
+
+    private ArrayList<Word> getSeeAlsos(String lemma) {
+        ArrayList<Word> alw = new ArrayList();
+        Object[] seeAlsos = EntitySearcher.getAnnotationAssertionAxioms(IRI.create(LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + lemma.replace("_lemma", "_entry")), ontology).toArray();
+        for (Object obj : seeAlsos) {
+            OWLAnnotationAssertionAxiom ann = ((OWLAnnotationAssertionAxiom) obj);
+            String prop = ann.getProperty().getIRI().getShortForm();
+            if (prop.contains("seeAlso")) {
+                Word w = new Word();
+                if (ann.getValue().asIRI().toString().contains(LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY))) {
+                    // internal seeAlso
+                    w = getSeeAlso("lexicon:" + ann.getValue().asIRI().get().getShortForm());
+                } else {
+                    // external seeAlso
+                    w.setWrittenRep(((OWLAnnotationAssertionAxiom) ann).getValue().asIRI().get().getIRIString());
+                }
+                alw.add(w);
+            }
+        }
+        return alw;
     }
 
     private ArrayList<LemmaData.MorphoTrait> getLemmaMorphoTraits(String lemma, Set<String> morphoTraits) {
@@ -511,6 +565,15 @@ public class LexiconQuery extends BaseController {
             alw.add(getWord(m));
         }
         return alw;
+    }
+
+    private Word getEntryAttributeWord(String q, String t, String e) {
+        Word w = new Word();
+        List<Map<String, String>> wl = processQuery(q.replace(t, e));
+        for (Map<String, String> m : wl) {
+            w = getWord(m);
+        }
+        return w;
     }
 
     private Word getWord(Map<String, String> m) {

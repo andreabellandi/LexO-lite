@@ -498,6 +498,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         this.lemmaCopy.setNote(lemma.getNote());
         this.lemmaCopy.setVerified(lemma.isVerified());
         this.lemmaCopy.setSeeAlso(copyWordData(lemma.getSeeAlso()));
+        this.lemmaCopy.setExt_seeAlso(copyWordData(lemma.getExt_seeAlso()));
         this.lemmaCopy.setMultiword(copyWordData(lemma.getMultiword()));
         this.lemmaCopy.setExtensionAttributeInstances(copyExtensionAttributeInstances(lemma.getExtensionAttributeInstances()));
         this.lemmaCopy.setLexRels(copyLexicalRelationData(lemma.getLexRels()));
@@ -1332,6 +1333,13 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         reference.setDeleteButtonDisabled(false);
         reference.setViewButtonDisabled(false);
     }
+    
+    public void onExtSeeAlso(Word ext_reference) {
+        log(Level.INFO, loginController.getAccount(), "ADD Reference (external seeAlso) " + ext_reference.getWrittenRep() + " to the Lemma " + lemma.getFormWrittenRepr());
+        lemma.setSaveButtonDisabled(false);
+        ext_reference.setDeleteButtonDisabled(false);
+        ext_reference.setViewButtonDisabled(false);
+    }
 
     // w.getWrittenRep() has the following form: 'writtenrep (pos) @lang' 
     private void setLexicalRelationEntry(Word w) {
@@ -1344,6 +1352,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         w.setLanguage(wd.getLanguage());
     }
 
+    
     public void onWordSelect(Word word) {
         log(Level.INFO, loginController.getAccount(), "UPDATE the word " + word.getWrittenRep() + " of the Multiword " + lemma.getFormWrittenRepr());
         setMultiwordComponentButtons(word);
@@ -1433,6 +1442,14 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         reference.setViewButtonDisabled(true);
         lemma.getSeeAlso().add(reference);
     }
+    
+    // invoked by controller after an user selected add a reference (external seeAlso) to lemma
+    public void addExtSeeAlso() {
+        log(Level.INFO, loginController.getAccount(), "ADD empty reference (external seeAlso) to lemma " + lemma.getFormWrittenRepr());
+        Word ext_reference = new Word();
+        ext_reference.setViewButtonDisabled(true);
+        lemma.getExt_seeAlso().add(ext_reference);
+    }
 
     // invoked by controller after an user selected add phonetic to lemma
     public void addPhonetic() {
@@ -1479,6 +1496,16 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         log(Level.INFO, loginController.getAccount(), "REMOVE reference (seeAlso) " + (reference.getWrittenRep().isEmpty() ? " empty see also" : reference.getWrittenRep()) + " from " + lemma.getFormWrittenRepr());
         lemma.getSeeAlso().remove(reference);
         lemma.setSaveButtonDisabled(false);
+    }
+    
+    public void removeExtSeeAlso(Word ext_reference) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE reference (external seeAlso) " + (ext_reference.getWrittenRep().isEmpty() ? " empty see also" : ext_reference.getWrittenRep()) + " from " + lemma.getFormWrittenRepr());
+        lemma.getExt_seeAlso().remove(ext_reference);
+        lemma.setSaveButtonDisabled(false);
+    }
+    
+    public String getseeAlsoExtUrl(Word ext_seeAlso) {
+        return ext_seeAlso.getWrittenRep() == null ? "www.google.it" : ext_seeAlso.getWrittenRep();
     }
 
     public void removeExtensionAttribute(ExtensionAttributeIstance eai) {
@@ -1584,6 +1611,16 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         newSeeAlso.setCommand("#{lexiconControllerFormDetail.addReference()}");
         newSeeAlso.setOnstart("PF('loadingDialog').show();");
         newSeeAlso.setOncomplete("setHeight();PF('loadingDialog').hide()");
+        
+        DefaultMenuItem ext_newSeeAlso = new DefaultMenuItem();
+        ext_newSeeAlso.setValue("Add external see also");
+        ext_newSeeAlso.setStyleClass("lexiconTabView");
+        ext_newSeeAlso.setIcon("fa fa-plus");
+        ext_newSeeAlso.setDisabled(newAction);
+        ext_newSeeAlso.setUpdate("LemmaPanelGrid :systemMessage");
+        ext_newSeeAlso.setCommand("#{lexiconControllerFormDetail.addExtSeeAlso()}");
+        ext_newSeeAlso.setOnstart("PF('loadingDialog').show();");
+        ext_newSeeAlso.setOncomplete("setHeight();PF('loadingDialog').hide()");
 
         DefaultMenuItem phonetic = new DefaultMenuItem();
         phonetic.setValue("Add phonetic");
@@ -1598,6 +1635,7 @@ public class LexiconControllerFormDetail extends BaseController implements Seria
         addMenuModel.getElements().add(morphoMenu);
         addMenuModel.getElements().add(phonetic);
         addMenuModel.getElements().add(newSeeAlso);
+        addMenuModel.getElements().add(ext_newSeeAlso);
         addMenuModel.getElements().add(new DefaultSeparator());
         addMenuModel.getElements().add(newForm);
         addMenuModel.getElements().add(newSense);

@@ -177,10 +177,14 @@ public class LexicalQuery {
             + " PropertyValue(?le, ontolex:canonicalForm, ?individual), "
             + " PropertyValue(?individual, ontolex:writtenRep, \"_LEMMA_\") }";
 
+//    public static final String LEMMA_SEEALSO = "SELECT ?individual ?lang ?writtenRep WHERE { "
+//            + "PropertyValue(?_le, ontolex:canonicalForm, lexicon:_LEMMA_),   "
+//            + "PropertyValue(?_le, rdfs:seeAlso, ?le),   "
+//            + "PropertyValue(?le, ontolex:canonicalForm, ?individual),  "
+//            + "PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
+    
     public static final String LEMMA_SEEALSO = "SELECT ?individual ?lang ?writtenRep WHERE { "
-            + "PropertyValue(?_le, ontolex:canonicalForm, lexicon:_LEMMA_),   "
-            + "PropertyValue(?_le, rdf:seeAlso, ?le),   "
-            + "PropertyValue(?le, ontolex:canonicalForm, ?individual),  "
+            + "PropertyValue(_ENTRY_, ontolex:canonicalForm, ?individual),  "
             + "PropertyValue(?individual, ontolex:writtenRep, ?writtenRep) }";
 
     public static final String LEMMA_MORPHO_TRAITS = "SELECT ?trait ?value WHERE { "
