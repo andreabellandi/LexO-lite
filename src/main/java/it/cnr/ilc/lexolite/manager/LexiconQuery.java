@@ -831,6 +831,8 @@ public class LexiconQuery extends BaseController {
         sd.setName(sense);
         sd.setDefinition(getDefinition(sense));
         sd.setNote(getSenseNote(sense));
+        ArrayList<String> topics = getTopics(sense);
+        sd.setTopics((topics.get(0).equals(Label.NO_ENTRY_FOUND)) ? new ArrayList<String>() : topics);
         //sd.setOWLClass(getOntoClass(sense));
         sd.setThemeOWLClass(getOntoClass(sense, l));
         setFieldMaxLenght(sd.getName(), sd);
@@ -931,6 +933,10 @@ public class LexiconQuery extends BaseController {
         return getEntryAttribute(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_DEFINITION, "_SENSE_", sense);
     }
 
+    public ArrayList<String> getTopics(String sense) {
+        return getEntryAttributeList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + LexicalQuery.SENSE_TOPIC, "_SENSE_", sense);
+    }
+    
     public ArrayList<Openable> getSenseRelation(String sense, String query) {
         ArrayList<Openable> sdoList = new ArrayList();
         ArrayList<String> s = getEntryAttributeList(LexicalQuery.PREFIXES + "PREFIX lexicon: <" + LexOliteProperty.getProperty(Label.LEXICON_NAMESPACE_KEY) + ">\n" + query, "_SENSE_", sense);

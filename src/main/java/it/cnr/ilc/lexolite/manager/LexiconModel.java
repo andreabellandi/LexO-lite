@@ -198,11 +198,11 @@ public class LexiconModel extends BaseController implements Serializable {
 
     private String getMultiwordPoS(String pos) {
         switch (pos) {
-            case "nounPhrase":
+            case "noun":
                 return "noun";
-            case "verbPhrase":
+            case "verb":
                 return "verb";
-            case "adjectivePhrase":
+            case "adjective":
                 return "adjective";
         }
         return Label.UNSPECIFIED_POS;
@@ -1160,7 +1160,19 @@ public class LexiconModel extends BaseController implements Serializable {
         }
         //saveOntologyReference(sbj, oldSense.getOWLClass(), newSense.getOWLClass());
         saveOntologyReference(sbj, oldSense.getThemeOWLClass(), newSense.getThemeOWLClass());
+        saveTopic(sbj, oldSense.getTopics(), newSense.getTopics());
         updateExtensionAttribute(sbj, oldSense.getExtensionAttributeInstances(), newSense.getExtensionAttributeInstances());
+    }
+
+    private void saveTopic(OWLNamedIndividual sbj, ArrayList<String> oldTopics, ArrayList<String> newTopics) {
+        if ((!oldTopics.isEmpty()) || (!newTopics.isEmpty())) {
+            for (String top : oldTopics) {
+                removeObjectPropertyAxiom(Namespace.DCT, sbj, "subject", factory.getOWLNamedIndividual(IRI.create(top)));
+            }
+            for (String top : newTopics) {
+                addObjectPropertyAxiom("subject", sbj, factory.getOWLNamedIndividual(IRI.create(top)), Namespace.DCT);
+            }
+        }
     }
 
     private void saveOntologyReference(OWLNamedIndividual sbj, Openable oldR, Openable newR) {

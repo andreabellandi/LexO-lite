@@ -59,6 +59,36 @@
                                          update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/>
                     </h:panelGrid>
 
+
+
+
+
+                    <h:outputLabel styleClass="titleStyle" value="Topic:" rendered="#{sense.topics.size() > 0}"/>
+                    <ui:repeat value="#{sense.topics}" var="topic" rendered="#{sense.topics.size() > 0}">
+                        <h:panelGrid columns="4">
+                            <p:inputText id="topicInput" styleClass="inputTextStyle" value="#{topic}"
+                                         readonly="#{lexiconControllerSenseDetail.locked}">
+                                <p:ajax event="keyup" listener="#{lexiconControllerSenseDetail.onTopic}" 
+                                        update=":editViewTab:lexiconSenseDetailForm:SenseDataList:senseButtons"/>
+                                <f:attribute name="sense" value="#{sense}"/>
+                            </p:inputText>
+                            <p:watermark class="filterLabel" for="topicInput" value="Paste a valid url"/>   
+                            <p:link title="Open the link in a separated browser tab" 
+                                    href="#{lexiconControllerSenseDetail.getTopicUrl(topic)}" target="_blank" 
+                                    rendered="#{topic != ''}">
+                                <p:graphicImage value="/resources/image/ext_link.png" height="20px" width="20px"/>
+                            </p:link>
+                            <p:commandButton title="Delete topic" icon="fa fa-trash-o" rendered="#{!lexiconControllerSenseDetail.locked}"
+                                             actionListener="#{lexiconControllerSenseDetail.removeTopic(sense, topic)}" 
+                                             update=":editViewTab:lexiconSenseDetailForm:SenseDataList"/> 
+                        </h:panelGrid>
+                    </ui:repeat>
+
+
+
+
+
+
                     <h:outputLabel for="OntoRef" styleClass="titleStyle" value="Reference:" rendered="#{sense.themeOWLClass.id > 0}"/>
                     <h:panelGrid columns="4" rendered="#{sense.themeOWLClass.id > 0}">
                         <h:graphicImage name="image/#{sense.themeOWLClass.type}Icon.png" style="padding-top: 5px;" title="#{sense.themeOWLClass.type} - #{sense.themeOWLClass.namespace}"

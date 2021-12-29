@@ -30,6 +30,9 @@ public class SenseData implements Serializable {
 
     // array of images
     private ArrayList<ImageData> images;
+    
+    // array of topics
+    private ArrayList<String> topics;
 
     // if view button is true a reference has been specified, else it is false
     private Openable OWLClass;
@@ -57,6 +60,7 @@ public class SenseData implements Serializable {
         this.deleteButtonDisabled = false;
         this.name = "";
         this.note = "";
+        this.topics = new ArrayList();
         this.filedMaxLenght = 0;
         this.OWLClass = new Openable();
         this.themeOWLClass = new ReferenceMenuTheme();
@@ -69,6 +73,14 @@ public class SenseData implements Serializable {
         this.subOntoMap = new ArrayList();
         this.lexicalFunctions = new ArrayList();
         this.images = new ArrayList<>();
+    }
+
+    public ArrayList<String> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(ArrayList<String> topics) {
+        this.topics = topics;
     }
 
     public ArrayList<LemmaData.ExtensionAttributeIstance> getExtensionAttributeInstances() {

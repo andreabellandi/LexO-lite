@@ -209,6 +209,11 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         _sd.setThemeOWLClass(rmt);
         _sd.setDefinition(sd.getDefinition());
         _sd.setName(sd.getName());
+        ArrayList<String> topics = new ArrayList();
+        for (String t : sd.getTopics()) {
+            topics.add(t);
+        }
+        _sd.setTopics(topics);
         _sd.setNote(sd.getNote());
         _sd.setExtensionAttributeInstances(copyExtensionAttributeInstances(sd.getExtensionAttributeInstances()));
         return _sd;
@@ -294,6 +299,13 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         imageController.setSelectedSense(sd);
     }
 
+    public void addTopic() {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
+        log(Level.INFO, loginController.getAccount(), "ADD empty topic to sense " + sd.getName());
+        sd.getTopics().add("");
+    }
+    
     public void addSenseRelation(String relType) {
         UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
         SenseData sd = (SenseData) component.getAttributes().get("sense");
@@ -524,6 +536,15 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
         image.setCommand("#{lexiconControllerSenseDetail.imageUpload()}");
         image.setOnstart("PF('loadingDialog').show();");
         image.setOncomplete("setHeight();PF('dlgLexiconUploadImage').show();PF('loadingDialog').hide();");
+        
+        DefaultMenuItem topic = new DefaultMenuItem();
+        topic.setValue("Add topic");
+        topic.setStyleClass("lexiconTabView");
+        topic.setIcon("fa fa-plus");
+        topic.setUpdate(":editViewTab:lexiconSenseDetailForm:SenseDataList");
+        topic.setCommand("#{lexiconControllerSenseDetail.addTopic()}");
+        topic.setOnstart("PF('loadingDialog').show();");
+        topic.setOncomplete("setHeight();PF('loadingDialog').hide()");
 
         DefaultMenuItem reference = new DefaultMenuItem();
         reference.setValue("Add reference");
@@ -547,6 +568,7 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
 
         addSenseMenuModel.getElements().add(definition);
         addSenseMenuModel.getElements().add(image);
+        addSenseMenuModel.getElements().add(topic);
         addSenseMenuModel.getElements().add(reference);
         addSenseMenuModel.getElements().add(new DefaultSeparator());
         addSenseMenuModel.getElements().add(attestation);
@@ -598,8 +620,26 @@ public class LexiconControllerSenseDetail extends BaseController implements Seri
     }
 
     public int hasAttestation(String senseUri) {
-        
+
         return attestationManager.loadAttestationsBySense(senseUri).size();
-        
+
+    }
+
+    public void onTopic(AjaxBehaviorEvent e) {
+        UIComponent component = UIComponent.getCurrentComponent(FacesContext.getCurrentInstance());
+        SenseData sd = (SenseData) component.getAttributes().get("sense");
+        String topic = ((String) e.getComponent().getAttributes().get("value"));
+        log(Level.INFO, loginController.getAccount(), "ADD topic " + topic  + "to the sense " + sd.getName());
+        sd.setSaveButtonDisabled(false);
+    }
+    
+    public String getTopicUrl(String topic) {
+        return topic;
+    }
+    
+    public void removeTopic(SenseData sd, String topic) {
+        log(Level.INFO, loginController.getAccount(), "REMOVE " + topic + " from " + sd.getName());
+        sd.getTopics().remove(topic);
+        sd.setSaveButtonDisabled(false);
     }
 }

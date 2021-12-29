@@ -98,6 +98,9 @@ public class LexicalQuery {
 
     public static final String SENSE_DEFINITION = "SELECT ?def WHERE {"
             + " PropertyValue(lexicon:_SENSE_, skos:definition, ?def) }";
+    
+    public static final String SENSE_TOPIC = "SELECT ?topic WHERE {"
+            + " PropertyValue(lexicon:_SENSE_, dct:subject, ?topic) }";
 
     public static final String SENSE_RELATION = "SELECT ?s WHERE {"
             + " PropertyValue(lexicon:_SENSE_, lexinfo:_RELATION_, ?s) }";
