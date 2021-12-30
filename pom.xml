@@ -239,7 +239,7 @@
                 <envClassifier>lite</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <lexo.directory>/.LexO-lite/</lexo.directory>
@@ -251,9 +251,9 @@
                 <envClassifier>lite</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>root</db.user>
-                <db.password></db.password>
+                <db.password>root</db.password>
                 <lexo.directory>/.LexO-lite/</lexo.directory>
             </properties>
         </profile>       
@@ -263,7 +263,7 @@
                 <envClassifier></envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>lexo</db.user>
                 <db.password>Ri3faeh7yout</db.password>
                 <lexo.directory>/.LexO/</lexo.directory>
@@ -275,7 +275,7 @@
                 <envClassifier>PRIN</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellon_users</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellon_users?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <lexo.directory>/.LexO-mellon/</lexo.directory>
@@ -287,7 +287,7 @@
                 <envClassifier>lite</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_users?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>nimda</db.password>
                 <lexo.directory>/.LexO-lite/</lexo.directory>
@@ -299,7 +299,7 @@
                 <envClassifier>flavia-students</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_flavia_students</db.jdbcUrl>
+                <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_flavia_students?characterEncoding=UTF-8</db.jdbcUrl>
                 <db.user>root</db.user>
                 <db.password>root</db.password>
                 <lexo.directory>/.LexO-flavia-students/</lexo.directory>
