@@ -42,9 +42,9 @@
                                       value="#{sense[2]}" />
                         <ui:repeat value="#{lexiconControllerDictionary.getSenseExamples(sense[0])}" varStatus="status"
                                    var="example" rendered="#{lexiconControllerDictionary.getSenseExamples(sense[0]).size() > 0}">
-                            #{status.first ? ' ': ''}
+                            #{status.first ? ' — ': ''}
                             <h:outputText escape="false"  style="font-style: italic;"
-                                          value="#{example}" />#{not status.last ? ' ' : ''}
+                                          value="#{example}" />#{not status.last ? ' — ' : ''}
                         </ui:repeat>
                         
                         <h:panelGroup layout="block" id="LexicalFunctions"  rendered="#{not empty lexiconControllerDictionary.getSenseLexicalFunction(sense[0])}">

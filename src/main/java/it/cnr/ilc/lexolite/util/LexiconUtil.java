@@ -52,6 +52,7 @@ public class LexiconUtil {
         instance = instance.replaceAll("\\;", "");
         instance = instance.replaceAll("\\!", "");
         instance = instance.replaceAll("\\'", "_APOS_");
+        instance = instance.replaceAll("\\‛", "_APOS2_");
 //        instance = instance.replaceAll("\\'", "_");
         instance = instance.replaceAll("\\’", "");
         instance = instance.replaceAll("\\‘", "");

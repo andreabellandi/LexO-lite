@@ -713,6 +713,7 @@ public class LemmaData implements Serializable {
             name = name.replaceAll("_CB", ")");
             name = name.replaceAll("OSB_", "[");
             name = name.replaceAll("_CSB", "]");
+            name = name.replaceAll("_APOS2_", "‛");
             return name;
         }
 
