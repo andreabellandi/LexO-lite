@@ -272,7 +272,7 @@
         <profile>
             <id>prin-melloni</id>
             <properties>
-                <envClassifier>PRIN</envClassifier>
+                <envClassifier>diversity</envClassifier>
                 <postfix></postfix>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
                 <db.jdbcUrl>jdbc:mysql://localhost:3306/LexO_mellon_users?characterEncoding=UTF-8</db.jdbcUrl>
