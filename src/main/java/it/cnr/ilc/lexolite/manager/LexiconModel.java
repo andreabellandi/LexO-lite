@@ -168,8 +168,8 @@ public class LexiconModel extends BaseController implements Serializable {
 
     // NEW LEMMA ACTION: write all the triples about the new lemma entry
     public void addLemma(LemmaData ld, String lex) {
-        String lemmaInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "lemma");
-        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "entry");
+        String lemmaInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr().trim(), ld.getPoS(), ld.getLanguage(), "lemma");
+        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr().trim(), ld.getPoS(), ld.getLanguage(), "entry");
         ld.setIndividual(lemmaInstance);
         OWLNamedIndividual lexicon = getIndividual(lex);
         OWLNamedIndividual le = getEntry(entryInstance, ld.getType());
@@ -181,7 +181,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     private void setMoprhology(OWLNamedIndividual le, OWLNamedIndividual cf, LemmaData ld) {
-        addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), cf, ld.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+        addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), cf, ld.getFormWrittenRepr().trim(), pm.getPrefixName2PrefixMap().get("ontolex:"));
         if (!ld.getPoS().equals(Label.UNSPECIFIED_POS)) {
             if (ld.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || ld.getType().equals(OntoLexEntity.Class.AFFIX.getLabel())) {
                 addObjectPropertyAxiom("lexinfo", le, "partOfSpeech", ld.getPoS());
@@ -254,16 +254,16 @@ public class LexiconModel extends BaseController implements Serializable {
     // write all triples about lemma entry with RENAMING
     public AttestationRenaming updateLemmaWithRenaming(LemmaData oldLemma, LemmaData newLemma) {
         String oldLemmaInstance = oldLemma.getIndividual();
-        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
+        String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
         String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
-        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
+        String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
         newLemma.setIndividual(newLemmaInstance);
         updateLemma(oldLemma, newLemma);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
         OWLNamedIndividual le = getIndividual(oldEntryInstance);
         // form individuals renaming
         ArrayList<AttestationRenaming.AttestationFormUris> attestationFormUris = formRenaming(oldLemma, newLemma, le);
-        attestationFormUris.add(new AttestationRenaming.AttestationFormUris(oldLemmaInstance, newLemmaInstance, oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr()));
+        attestationFormUris.add(new AttestationRenaming.AttestationFormUris(oldLemmaInstance, newLemmaInstance, oldLemma.getFormWrittenRepr().trim(), newLemma.getFormWrittenRepr().trim()));
         // sense individuals renaming
         ArrayList<AttestationRenaming.AttestationSenseUris> attestationSenseUris = senseRenaming(oldLemma, newLemma, le);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldEntryInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newEntryInstance));
@@ -275,7 +275,7 @@ public class LexiconModel extends BaseController implements Serializable {
         OWLObjectProperty otherForm = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.ObjectProperty.OTHERFORM.getLabel());
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, otherForm, ontology).collect(Collectors.toList())) {
             String formInstance = i.toStringID().replace(pm.getPrefixName2PrefixMap().get("lexicon:"), "");
-            formInstance = formInstance.replace(LexiconUtil.sanitize(oldLemma.getFormWrittenRepr()), LexiconUtil.sanitize(newLemma.getFormWrittenRepr()));
+            formInstance = formInstance.replace(LexiconUtil.sanitize(oldLemma.getFormWrittenRepr().trim()), LexiconUtil.sanitize(newLemma.getFormWrittenRepr().trim()));
             if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
                 // old pos is unspecified
                 if (oldLemma.getPoS().isEmpty()) {
@@ -300,7 +300,7 @@ public class LexiconModel extends BaseController implements Serializable {
         OWLObjectProperty sense = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("ontolex:"), OntoLexEntity.ObjectProperty.SENSE.getLabel());
 //        int senseNumb = 1;
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, sense, ontology).collect(Collectors.toList())) {
-            String senseInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(),
+            String senseInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(),
                     newLemma.getPoS().isEmpty() ? Label.UNSPECIFIED_POS : newLemma.getPoS(), oldLemma.getLanguage(), "sense");
             int senseNumb = Integer.parseInt(i.toStringID().split("_sense")[1]);
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + senseInstance + senseNumb));
@@ -314,7 +314,7 @@ public class LexiconModel extends BaseController implements Serializable {
         OWLObjectProperty synBehavior = factory.getOWLObjectProperty(pm.getPrefixName2PrefixMap().get("synsem:"), OntoLexEntity.ObjectProperty.SYNBEHAVIOR.getLabel());
         int frame = 1;
         for (OWLIndividual i : EntitySearcher.getObjectPropertyValues(le, synBehavior, ontology).collect(Collectors.toList())) {
-            String frameInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(),
+            String frameInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(),
                     newLemma.getPoS().isEmpty() ? Label.UNSPECIFIED_POS : newLemma.getPoS(), oldLemma.getLanguage(), "frame");
             IRIrenaming(IRI.create(i.toStringID()), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + frameInstance + frame));
             frame++;
@@ -352,13 +352,13 @@ public class LexiconModel extends BaseController implements Serializable {
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getSeeAlso(), newLemma.getSeeAlso(), "seeAlso");
         updateLinkingRelation(oldLemma.getIndividual(), oldLemma.getExt_seeAlso(), newLemma.getExt_seeAlso(), "seeAlso");
         updateExtensionAttribute(subject, oldLemma.getExtensionAttributeInstances(), newLemma.getExtensionAttributeInstances());
-        if (oldLemma.getFormWrittenRepr().equals(newLemma.getFormWrittenRepr())) {
+        if (oldLemma.getFormWrittenRepr().trim().equals(newLemma.getFormWrittenRepr().trim())) {
             if (!oldLemma.getPoS().equals(newLemma.getPoS())) {
                 // it needs to modify IRI anyway
                 String oldLemmaInstance = oldLemma.getIndividual();
-                String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
+                String newLemmaInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(), newLemma.getPoS(), newLemma.getLanguage(), "lemma");
                 String oldEntryInstance = oldLemmaInstance.replace("_lemma", "_entry");
-                String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
+                String newEntryInstance = LexiconUtil.getIRI(newLemma.getFormWrittenRepr().trim(), newLemma.getPoS(), newLemma.getLanguage(), "entry");
                 newLemma.setIndividual(newLemmaInstance);
                 IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldLemmaInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newLemmaInstance));
                 OWLNamedIndividual le = getIndividual(oldEntryInstance);
@@ -396,7 +396,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     private void updateMorphology(OWLNamedIndividual entrySubject, OWLNamedIndividual subject, LemmaData oldLemma, LemmaData newLemma) {
-        updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldLemma.getFormWrittenRepr(), newLemma.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+        updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldLemma.getFormWrittenRepr().trim(), newLemma.getFormWrittenRepr().trim(), pm.getPrefixName2PrefixMap().get("ontolex:"));
 
         if (oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel()) || oldLemma.getType().equals(OntoLexEntity.Class.WORD.getLabel())) {
             updateObjectPropertyAxiom(entrySubject, "partOfSpeech", oldLemma.getPoS(), newLemma.getPoS(), pm.getPrefixName2PrefixMap().get("lexinfo:"));
@@ -954,8 +954,8 @@ public class LexiconModel extends BaseController implements Serializable {
 
     // NEW FORM ACTION: write all triples about the form
     public void addForm(FormData fd, LemmaData ld) {
-        String formInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), fd.getFormWrittenRepr(), "form");
-        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), "entry");
+        String formInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr().trim(), ld.getPoS(), ld.getLanguage(), fd.getFormWrittenRepr().trim(), "form");
+        String entryInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr().trim(), ld.getPoS(), ld.getLanguage(), "entry");
         OWLNamedIndividual le = getIndividual(entryInstance);
         OWLNamedIndividual of = getForm(formInstance);
         fd.setIndividual(formInstance);
@@ -964,7 +964,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     private void setMorphology(OWLNamedIndividual of, FormData fd) {
-        addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), of, fd.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+        addDataPropertyAxiom(OntoLexEntity.DataProperty.WRITTENREP.getLabel(), of, fd.getFormWrittenRepr().trim(), pm.getPrefixName2PrefixMap().get("ontolex:"));
 
         for (LemmaData.MorphoTrait mt : fd.getMorphoTraits()) {
             addObjectPropertyAxiom("lexinfo", of, mt.getName(), mt.getValue());
@@ -974,7 +974,7 @@ public class LexiconModel extends BaseController implements Serializable {
     // write all triples about a form with RENAMING
     public String addFormWithRenaming(FormData oldForm, FormData newForm, LemmaData ld) {
         String oldFormInstance = oldForm.getIndividual();
-        String newFormInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr(), ld.getPoS(), ld.getLanguage(), newForm.getFormWrittenRepr(), "form");
+        String newFormInstance = LexiconUtil.getIRI(ld.getFormWrittenRepr().trim(), ld.getPoS(), ld.getLanguage(), newForm.getFormWrittenRepr().trim(), "form");
         updateForm(oldForm, newForm, ld);
         IRIrenaming(IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + oldFormInstance), IRI.create(pm.getPrefixName2PrefixMap().get("lexicon:") + newFormInstance));
         return newFormInstance;
@@ -996,7 +996,7 @@ public class LexiconModel extends BaseController implements Serializable {
     }
 
     private void updateMorphology(OWLNamedIndividual subject, FormData oldForm, FormData newForm) {
-        updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldForm.getFormWrittenRepr(), newForm.getFormWrittenRepr(), pm.getPrefixName2PrefixMap().get("ontolex:"));
+        updateDataPropertyAxiom(subject, OntoLexEntity.DataProperty.WRITTENREP.getLabel(), oldForm.getFormWrittenRepr().trim(), newForm.getFormWrittenRepr().trim(), pm.getPrefixName2PrefixMap().get("ontolex:"));
 
         for (LemmaData.MorphoTrait mt : oldForm.getMorphoTraits()) {
             removeObjectPropertyAxiom("lexinfo", subject, mt.getName(),
