@@ -199,6 +199,7 @@ public class StatisticsController extends BaseController implements Serializable
         List<String> labels = new ArrayList<>();
         labels.add(OntoLexEntity.Class.WORD.getLabel());
         labels.add(OntoLexEntity.Class.MULTIWORD.getLabel());
+        /*labels.add(OntoLexEntity.Class.AFFIX.getLabel());*/
         data.setLabels(labels);
         barModel2.setData(data);
 
@@ -303,13 +304,13 @@ public class StatisticsController extends BaseController implements Serializable
                 }
             } else {
                 if (m.get("type").equals(OntoLexEntity.Class.MULTIWORD.getLabel())) {
-                    if (m.get("pos").equals("noun")) {
+                    if (m.get("pos").equals("nounPhrase")) {
                         posDist[3] = posDist[3] + 1;
                     } else {
-                        if (m.get("pos").equals("verb")) {
+                        if (m.get("pos").equals("verbPhrase")) {
                             posDist[4] = posDist[4] + 1;
                         } else {
-                            if (m.get("pos").equals("adjective")) {
+                            if (m.get("pos").equals("adjectivePhrase")) {
                                 posDist[5] = posDist[5] + 1;
                             }
                         }
