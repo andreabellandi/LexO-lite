@@ -377,15 +377,16 @@ public class LexiconControllerDictionary extends BaseController implements Seria
                 List<List<String>> relationList = new ArrayList<>();
 
                 for (SenseData.SenseRelation sr : sd.getSenseRels()) {
-                    int position = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getPosition();
-                    String label = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel();
-                    if (label.contains("ersetzung")) {
-                        label = "Übersetzung";
-                    } else if (label.contains("t auch")) {
-                        label = "...heißt auch";
+                    if (DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()) != null) {
+                        int position = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getPosition();
+                        String label = DictionaryRender.getDictionaryFetauresTable().get(sr.getRelation()).getLabel();
+                        if (label.contains("ersetzung")) {
+                            label = "Übersetzung";
+                        } else if (label.contains("t auch")) {
+                            label = "...heißt auch";
+                        }
+                        relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage(), sr.getRelation()));
                     }
-                    relations.computeIfAbsent(position, k -> new ArrayList<>()).add(Arrays.asList(label, sr.getWrittenRep(), sr.getLanguage(), sr.getRelation()));
-
                 }
 
                 for (Map.Entry<Integer, List<List<String>>> entry : relations.entrySet()) {
