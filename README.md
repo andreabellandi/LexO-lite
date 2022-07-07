@@ -1,5 +1,7 @@
 # LexO-lite v1.0
 
+[![Build Status](images/build-passing.png)](https://github.com/andreabellandi/LexO-lite) [![N|Solid](images/clarin.png)](https://www.clarin.eu/blog/clarin-it-presents-lexo-where-lexicography-meets-semantic-web) 
+
 This is the first version of LexO, a collaborative web editor for easily building and managing lexical and terminological resources in the context of the Semantic Web, based on the OntoLex-Lemon model.
 
 <b><h2>Table of content</h2></b>
@@ -47,7 +49,7 @@ This is the first version of LexO, a collaborative web editor for easily buildin
 </li>
   </ul>
 <li>
-    <a href="#restapi">LexO's REST API</a>
+    <a href="#citation">Citation</a>
 </li>
 <li>
     <a href="#ref">References</a>
@@ -392,28 +394,15 @@ In this way, the resource is ready for its publication according to the linked d
 </p>
 </p>
 
-<a name="restapi"><h3>LexO's REST API</h3></a>
+<a name="citation"><h3>Citation</h3></a>
+<p> Please, cite the following </p>
 <p>
-    LexO comes with a basic set of services returning information about your lexicon. Currently LexO implements the following services (let assume that http://localhotst:8080/LexO-lite precedes each of them):
-  </p>
-
-| Description | Example of invocation |
-| :--- | :--- |
-| List all the *lexicon languages* | `/lexicon/languages` |
-| List all the *lexicon lemmas* (only lang is mandatory)| `/lexicon/lemmas?lang=l&startswith=a&limit=10` |
-| List all the *lemma metadata* | `/lexicon/lemma?id=lemma_id` |
-| List all the lemmas involved in a specific *lexico-semantic relation* with a given lemma | `/lexicon/lemmaByRel?lang=l&entry=lemma_id&rel=translation` |
-| Get some lexicon *statistics* | `/lexicon/statistics?lang=l` |
+<b>Bellandi A</b>. (2021). LexO: An Open-source System for Managing OntoLex-Lemon Resources. In: <i>Language Resources and Evaluation</i>, 55(4), 1093-1126.
+</p>
 
 <a name="relpub"><h3>Related Publications</h3></a>
 <p>
-<b>Bellandi Andrea</b>, and <b>Fahad Khan</b>. Lexicography and the Semantic Web: A Demo with LexO. <i>Electronic lexicography in the 21st century</i> (eLex 2019): Smart lexicography: 53–56.
-</p>
-<p>
 <b>Bellandi Andrea</b>, <b>Fahad Khan</b>, and <b>Monica Monachini</b>. Enhancing Lexicography by Means of the Linked Data Paradigm: LexO for CLARIN. In Proceedings of the <i>CLARIN Annual Conference</i> 2019, edited by Kirl Simov and Maria Eskevich, 134–37. Leipzig.
-</p>
-<p>
-<b>Bellandi Andrea</b>, <b>Giovannetti Emiliano</b>, and <b>Piccini Silvia</b> 2018. Collaborative Editing of Lexical and Termino-ontological Resources: a quick introduction to LexO. In <i>XVIII EURALEX International Congress Lexicography in Global Contexts</i> – Book of Abstracts, 17-21 July 2018, Ljubljana, Slovenia, pp. 23-27.
 </p>
 <p>
 <b>Bellandi Andrea</b>, <b>Emiliano Giovannetti</b>, and <b>Anja Weingart.</b> Multilingual and Multiword Phenomena in a lemon Old Occitan Medico-Botanical Lexicon. <i>Information</i> 9, no. 3 (2018): 52.
